@@ -1,0 +1,40 @@
+# ====================================================================
+# (~);} *|* uXu-CyberCat-Sunflower *|* {;(~)
+# CUSTOM .GITIGNORE FOR MULTIMEDIA ARCHIVES
+# ====================================================================
+
+# --- OS Trash & System Cache ---
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# --- Gigantic Raw Audio & Video Formats (Prevents GitHub Sync Crashes) ---
+# Uncompressed raw master files belong on external clouds, not GitHub.
+*.wav
+*.aiff
+*.caf
+*.raw
+*.mov
+*.mkv
+*.avi
+
+# --- Allowed Media Formats (Compressed & Safe for Git Storage) ---
+# Git handles these well if kept under 50MB per file.
+!*.mp3
+!*.flac
+!*.ogg
+!*.mp4
+!*.webm
+!*.midi
+!*.mid
+
+# --- Digital Audio Workstation (DAW) & Video Editing Project Dumps ---
+# Ignore massive autosave cache folders from production software.
+*.als         # Ableton Live
+*.logic       # Logic Pro
+*.cpr         # Cubase
+*.flp         # FL Studio
+*.prproj      # Adobe Premiere
+*.drp         # DaVinci Resolve
+.render_cache/
