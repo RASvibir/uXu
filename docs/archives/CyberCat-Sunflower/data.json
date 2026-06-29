@@ -1,0 +1,126 @@
+{
+  "archiveName": "CyberCat Sunflower",
+  "artist": "Grateful Dead",
+  "curator": "Victor Birkle III",
+  "description": "A cyberpunk-inspired archive of landmark Grateful Dead live performances (1966-1995) with full setlists and audio integration from Internet Archive.",
+  "shows": [
+    {
+      "date": "1972-06-17",
+      "venue": "Lyceum Theatre",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Casey Jones", "Jack Straw", "China Cat Sunflower", "I Know You Rider", "Johnny B. Goode"],
+      "notes": "Historic two-night stand. Widely regarded as one of the greatest performances ever recorded.",
+      "archiveOrgId": "gd72-06-17.sbd.sbd"
+    },
+    {
+      "date": "1977-05-08",
+      "venue": "Cornell University",
+      "city": "Ithaca",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Bertha", "Good Lovin'", "Tennessee Jed", "Jack Straw", "Deal", "Estimated Prophet"],
+      "notes": "Rediscovered show - thought lost for 30 years. Pristine 24-bit audio.",
+      "archiveOrgId": "gd77-05-08.sbd.sbd"
+    },
+    {
+      "date": "1989-06-14",
+      "venue": "Shoreline Amphitheater",
+      "city": "Mountain View",
+      "state": "CA",
+      "country": "USA",
+      "setlist": ["Touch of Grey", "Franklin's Tower", "Lost Sailor", "Saint of Circumstance", "Dark Star"],
+      "notes": "Summer tour highlight during the later years.",
+      "archiveOrgId": "gd89-06-14.sbd.sbd"
+    },
+    {
+      "date": "1974-08-06",
+      "venue": "Red Rocks Amphitheater",
+      "city": "Morrison",
+      "state": "CO",
+      "country": "USA",
+      "setlist": ["Lazy Lightning", "Supplication", "Sugar Magnolia", "Johnny B. Goode"],
+      "notes": "First Red Rocks run. The venue and acoustics create legendary recordings.",
+      "archiveOrgId": "gd74-08-06.sbd.sbd"
+    },
+    {
+      "date": "1973-05-23",
+      "venue": "Lyceum Theatre",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Truckin'", "Eyes of the World", "Deal", "Scarlet Begonias", "Fire on the Mountain"],
+      "notes": "European tour standout. Another legendary London recording.",
+      "archiveOrgId": "gd73-05-23.sbd.sbd"
+    },
+    {
+      "date": "1980-10-30",
+      "venue": "Radio City Music Hall",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Loser", "Jack Straw", "Looks Like Rain", "Ramrod", "Scarlet Begonias"],
+      "notes": "Late period show from the band's residency at Radio City.",
+      "archiveOrgId": "gd80-10-30.sbd.sbd"
+    },
+    {
+      "date": "1981-09-26",
+      "venue": "Greek Theatre",
+      "city": "Berkeley",
+      "state": "CA",
+      "country": "USA",
+      "setlist": ["Brown Eyed Women", "Jack Straw", "Deal", "He's Gone", "Fire on the Mountain"],
+      "notes": "California show during a productive touring year.",
+      "archiveOrgId": "gd81-09-26.sbd.sbd"
+    },
+    {
+      "date": "1985-07-13",
+      "venue": "Red Rocks Amphitheater",
+      "city": "Morrison",
+      "state": "CO",
+      "country": "USA",
+      "setlist": ["Casey Jones", "Jack Straw", "Scarlet Begonias", "Fire on the Mountain"],
+      "notes": "Return to Red Rocks. Strong mid-80s performance with great energy.",
+      "archiveOrgId": "gd85-07-13.sbd.sbd"
+    },
+    {
+      "date": "1988-06-03",
+      "venue": "Meadowlands Arena",
+      "city": "New Jersey",
+      "state": "NJ",
+      "country": "USA",
+      "setlist": ["Touch of Grey", "Truckin'", "Jack Straw", "Deal", "Fire on the Mountain"],
+      "notes": "Summer tour show. High energy performance during revival period.",
+      "archiveOrgId": "gd88-06-03.sbd.sbd"
+    },
+    {
+      "date": "1995-06-09",
+      "venue": "Soldier Field",
+      "city": "Chicago",
+      "state": "IL",
+      "country": "USA",
+      "setlist": ["Cold Rain and Snow", "Morning Dew", "Scarlet Begonias", "Fire on the Mountain"],
+      "notes": "Jerry Garcia's final performances. Historically significant.",
+      "archiveOrgId": "gd95-06-09.sbd.sbd"
+    },
+    {
+      "date": "1970-05-23",
+      "venue": "Fillmore East",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Johnny B. Goode", "Casey Jones", "Truckin'"],
+      "notes": "Early 70s Fillmore East stand. Intimate early-period performance.",
+      "archiveOrgId": "gd70-05-23.sbd.sbd"
+    },
+    {
+      "date": "1982-03-18",
+      "venue": "The Omni",
+      "city": "Atlanta",
+      "state": "GA",
+      "country": "USA",
+      "setlist": ["Truckin'", "Loser", "Jack Straw", "Deal", "Fire on the Mountain"],
+      "notes": "Southern tour. Mid-period show with solid performances.",
+      "archiveOrgId": "gd82-03-18.sbd.sbd"
+    }
+  ]
+}
