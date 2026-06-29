@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CyberCat Sunflower Archive Schema",
+  "description": "Standard data structure for music archives in the CyberCat Sunflower decentralized archival system",
+  "type": "object",
+  "required": ["archiveName", "artist", "curator", "description", "shows"],
+  "properties": {
+    "archiveName": {
+      "type": "string",
+      "description": "Display name for this archive (e.g., 'Grateful Dead Archive')",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "artist": {
+      "type": "string",
+      "description": "Artist or band name",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "curator": {
+      "type": "string",
+      "description": "Name or handle of the person maintaining this archive",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "description": "What this archive contains and why it matters",
+      "minLength": 10,
+      "maxLength": 1000
+    },
+    "websiteUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Optional: Link to curator's website or social media"
+    },
+    "shows": {
+      "type": "array",
+      "description": "Array of concert/show records",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["date", "venue", "city", "country", "setlist"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Show date in YYYY-MM-DD format"
+          },
+          "venue": {
+            "type": "string",
+            "description": "Name of the venue/theater/arena",
+            "minLength": 1
+          },
+          "city": {
+            "type": "string",
+            "description": "City where show occurred",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "description": "State/province (USA/Canada)"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country name",
+            "minLength": 1
+          },
+          "setlist": {
+            "type": "array",
+            "description": "List of songs performed in order",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional: Interesting notes about this show (historic significance, weather, incidents, etc.)",
+            "maxLength": 500
+          },
+          "archiveOrgId": {
+            "type": "string",
+            "description": "Optional: Internet Archive identifier for audio (e.g., 'gd1977-05-08.sbd'). Find at archive.org/details/IDENTIFIER"
+          },
+          "spotifyLink": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional: Spotify playlist or album link if available"
+          },
+          "youtubeLink": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional: YouTube video link if available"
+          },
+          "attendance": {
+            "type": "integer",
+            "description": "Optional: Estimated or confirmed attendance"
+          },
+          "ticketPrice": {
+            "type": "string",
+            "description": "Optional: Original ticket price (e.g., '$15.00')"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberCat Sunflower :: Decentralized Music Archive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: #0a0e27;
+            color: #00ff88;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 136, 0.03) 0px,
+                    rgba(0, 255, 136, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            z-index: 1;
+            animation: scanlines 8s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        /* Glitch effect */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes neon-glow {
+            0%, 100% { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88; }
+            50% { text-shadow: 0 0 20px #00ff88, 0 0 30px #00ff88, 0 0 40px #ff00ff; }
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
+            50% { border-color: #00ffff; box-shadow: 0 0 30px #00ffff; }
+        }
+
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        header {
+            position: relative;
+            z-index: 10;
+            border-bottom: 3px solid #ff00ff;
+            padding: 2rem;
+            background: rgba(10, 14, 39, 0.95);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            animation: neon-glow 2s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            color: #00ffff;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(10, 14, 39, 0.9);
+            border-bottom: 2px solid #00ffff;
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background: transparent;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        nav button:hover, nav button.active {
+            background: #00ff88;
+            color: #0a0e27;
+            box-shadow: 0 0 20px #00ff88;
+        }
+
+        .container {
+            position: relative;
+            z-index: 5;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Archive Grid */
+        .archives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .archive-card {
+            border: 3px solid #ff00ff;
+            background: rgba(10, 14, 39, 0.8);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            animation: pulse-border 2s ease-in-out infinite;
+        }
+
+        .archive-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .archive-card:hover::before {
+            left: 100%;
+        }
+
+        .archive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px #ff00ff;
+            border-color: #00ffff;
+        }
+
+        .archive-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffff;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .archive-meta {
+            font-size: 0.85rem;
+            color: #00ff88;
+            margin: 0.5rem 0;
+        }
+
+        .show-count {
+            background: rgba(255, 0, 255, 0.2);
+            border: 1px solid #ff00ff;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* Show Details */
+        .show-details {
+            border: 2px solid #00ffff;
+            background: rgba(10, 14, 39, 0.9);
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .show-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ff00ff;
+            padding-bottom: 1rem;
+        }
+
+        .show-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #00ffff;
+            text-transform: uppercase;
+        }
+
+        .show-date {
+            color: #ff00ff;
+            font-size: 1.1rem;
+        }
+
+        .audio-player {
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px solid #ff00ff;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .player-title {
+            color: #00ffff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .player-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .play-btn {
+            background: #ff00ff;
+            color: #0a0e27;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover {
+            background: #00ffff;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        audio {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .setlist {
+            margin: 1.5rem 0;
+        }
+
+        .setlist-title {
+            color: #00ff88;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .setlist-songs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .song-tag {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 0.4rem 0.8rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .song-tag:hover {
+            background: #00ff88;
+            color: #0a0e27;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .notes {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 3px solid #00ffff;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: #00ffff;
+        }
+
+        /* Search & Filter */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            padding: 0.75rem 1rem;
+            color: #00ff88;
+            font-family: 'Space Mono', monospace;
+            border-radius: 3px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(0, 255, 136, 0.5);
+        }
+
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 15px #00ff88;
+        }
+
+        /* Template Section */
+        .template-section {
+            background: rgba(255, 0, 255, 0.1);
+            border: 3px solid #ff00ff;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 5px;
+        }
+
+        .template-section h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffff;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff88;
+            padding: 1rem;
+            overflow-x: auto;
+            color: #00ff88;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 1rem 0;
+            border-radius: 3px;
+        }
+
+        .step {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 3px solid #00ff88;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #00ff88;
+        }
+
+        .step h4 {
+            color: #00ffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-button {
+            background: #ff00ff;
+            color: #0a0e27;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 1rem;
+            border-radius: 3px;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #00ffff;
+            box-shadow: 0 0 30px #00ffff;
+            transform: scale(1.05);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-box {
+            border: 2px solid #ff00ff;
+            padding: 1.5rem;
+            text-align: center;
+            background: rgba(10, 14, 39, 0.8);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            color: #00ffff;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #00ff88;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        footer {
+            position: relative;
+            z-index: 10;
+            border-top: 3px solid #00ffff;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(10, 14, 39, 0.95);
+            color: #00ff88;
+            margin-top: 4rem;
+        }
+
+        .footer-text {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .archives-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                gap: 0.5rem;
+            }
+
+            nav button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🌻 CYBERCAT SUNFLOWER 🌻</h1>
+            <div class="subtitle">:: DECENTRALIZED MUSIC ARCHIVE PROTOCOL ::</div>
+        </div>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="showSection('home')">HOME</button>
+        <button class="nav-btn" onclick="showSection('browse')">BROWSE</button>
+        <button class="nav-btn" onclick="showSection('template')">CREATE YOUR OWN</button>
+        <button class="nav-btn" onclick="showSection('about')">ABOUT</button>
+    </nav>
+
+    <div class="container">
+        <!-- HOME SECTION -->
+        <section id="home" class="section active">
+            <div style="text-align: center; margin: 3rem 0;">
+                <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: #00ffff; text-transform: uppercase; margin: 2rem 0;">Welcome to the Archive</h2>
+                <p style="font-size: 1.1rem; color: #00ff88; max-width: 600px; margin: 0 auto;">
+                    A decentralized, community-driven music archive protocol.<br>
+                    Powered by <span style="color: #ff00ff;">collective memory</span> and <span style="color: #00ffff;">trippy aesthetics</span>.
+                </p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalShows">0</div>
+                    <div class="stat-label">Shows Archived</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalArchives">0</div>
+                    <div class="stat-label">Artist Archives</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalContributors">0</div>
+                    <div class="stat-label">Contributors</div>
+                </div>
+            </div>
+
+            <div class="template-section">
+                <h2>What is CyberCat Sunflower?</h2>
+                <p style="margin: 1rem 0; line-height: 1.6;">
+                    CyberCat Sunflower is a <strong>decentralized, community-driven archive platform</strong> built for music lovers who want to preserve and share live performance history. Instead of a centralized database controlled by one entity, we believe in distributed archives—where you can create, maintain, and share archives of your favorite artists.
+                </p>
+                <p style="margin: 1rem 0; line-height: 1.6;">
+                    Every archive is verified through GitHub, maintained by its creator, and accessible to the community. This repository serves as both a working archive <em>(the Grateful Dead shows we're starting with)</em> and a <strong>template for others to fork and create their own</strong>.
+                </p>
+            </div>
+        </section>
+
+        <!-- BROWSE SECTION -->
+        <section id="browse" class="section">
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #00ffff; text-transform: uppercase; margin: 2rem 0;">Browse Archives</h2>
+
+            <div class="controls">
+                <input type="text" class="search-box" id="searchBox" placeholder="search by artist, date, venue..." onkeyup="filterArchives()">
+                <select class="filter-select" id="yearFilter" onchange="filterArchives()">
+                    <option value="">All Years</option>
+                    <option value="1960s">1960s</option>
+                    <option value="1970s">1970s</option>
+                    <option value="1980s">1980s</option>
+                    <option value="1990s">1990s</option>
+                    <option value="2000s">2000s</option>
+                </select>
+            </div>
+
+            <div class="archives-grid" id="archivesGrid">
+                <!-- Archives loaded via JavaScript -->
+            </div>
+        </section>
+
+        <!-- TEMPLATE SECTION -->
+        <section id="template" class="section">
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #00ffff; text-transform: uppercase; margin: 2rem 0;">Create Your Own Archive</h2>
+
+            <div class="template-section">
+                <h2>How to Contribute Your Archive</h2>
+                <p style="margin: 1.5rem 0; color: #00ff88;">Follow these steps to create and submit your own music archive:</p>
+
+                <div class="step">
+                    <h4>1. Fork the uXu Repository</h4>
+                    <p>Visit <code style="background: rgba(0,0,0,0.5); padding: 0.2rem 0.4rem;">https://github.com/RASvibir/uXu</code> and click "Fork" to create your own copy.</p>
+                </div>
+
+                <div class="step">
+                    <h4>2. Create Your Archive Directory</h4>
+                    <p>In your fork, create: <code style="background: rgba(0,0,0,0.5); padding: 0.2rem 0.4rem;">/archives/{YourArchiveName}/</code></p>
+                </div>
+
+                <div class="step">
+                    <h4>3. Add Your Data File</h4>
+                    <p>Create a <code style="background: rgba(0,0,0,0.5); padding: 0.2rem 0.4rem;">data.json</code> file following this schema:</p>
+                    <div class="code-block">
+{
+  "archiveName": "Your Archive Name",
+  "artist": "Artist Name",
+  "curator": "Your Name",
+  "description": "Description of this archive",
+  "shows": [
+    {
+      "date": "YYYY-MM-DD",
+      "venue": "Venue Name",
+      "city": "City",
+      "state": "State",
+      "country": "Country",
+      "setlist": ["Song 1", "Song 2", "Song 3"],
+      "notes": "Any notes about the show",
+      "archiveOrgId": "identifier (optional, for audio)"
+    }
+  ]
+}
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>4. Create a README</h4>
+                    <p>In your archive folder, create a <code style="background: rgba(0,0,0,0.5); padding: 0.2rem 0.4rem;">README.md</code> describing your archive and how to use it.</p>
+                </div>
+
+                <div class="step">
+                    <h4>5. Submit a Pull Request</h4>
+                    <p>Open a PR to the main uXu repo. Describe your archive and any audio sources you've linked. The maintainer will review and merge if it meets the guidelines.</p>
+                </div>
+
+                <div class="step">
+                    <h4>6. Your Archive Goes Live</h4>
+                    <p>Once merged, your archive will appear on the main CyberCat Sunflower index and be accessible to the community!</p>
+                </div>
+
+                <h3 style="color: #00ffff; margin-top: 2rem; text-transform: uppercase;">Archive Requirements</h3>
+                <ul style="color: #00ff88; margin: 1rem 0; margin-left: 2rem;">
+                    <li>✓ Data must be publicly available (public domain or licensed for sharing)</li>
+                    <li>✓ Archive must include at least 10 shows/events</li>
+                    <li>✓ Your name/handle as curator for attribution</li>
+                    <li>✓ A description explaining the archive's purpose</li>
+                    <li>✓ Audio sources must be legal streaming (Internet Archive, Spotify API, etc.)</li>
+                </ul>
+
+                <a href="https://github.com/RASvibir/uXu/issues/new?template=new_archive.md" target="_blank">
+                    <button class="cta-button">Submit Your Archive</button>
+                </a>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="about" class="section">
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: #00ffff; text-transform: uppercase; margin: 2rem 0;">About This Project</h2>
+
+            <div class="template-section">
+                <h3 style="color: #00ffff; margin-bottom: 1rem;">Vision</h3>
+                <p style="margin: 1rem 0; color: #00ff88; line-height: 1.8;">
+                    CyberCat Sunflower exists because music history belongs to the community, not corporations. We believe in decentralized, verifiable archives that celebrate live performance culture. By using GitHub as our backbone, we maintain transparency and attribution—every archive creator is credited, every change is tracked, and the community owns the history.
+                </p>
+
+                <h3 style="color: #00ffff; margin: 2rem 0 1rem 0;">Technology</h3>
+                <p style="margin: 1rem 0; color: #00ff88; line-height: 1.8;">
+                    Built with:</p>
+                <ul style="color: #00ff88; margin: 1rem 0 1rem 2rem;">
+                    <li>📦 <strong>GitHub</strong> for version control & community submission</li>
+                    <li>🎵 <strong>Internet Archive API</strong> for audio streaming (highest quality available)</li>
+                    <li>🎨 <strong>Cyberpunk/Trippy Aesthetics</strong> for the vibe</li>
+                    <li>⚡ <strong>Vanilla JS + HTML/CSS</strong> for speed & accessibility</li>
+                </ul>
+
+                <h3 style="color: #00ffff; margin: 2rem 0 1rem 0;">The Grateful Dead Archive</h3>
+                <p style="margin: 1rem 0; color: #00ff88; line-height: 1.8;">
+                    We're starting with the Grateful Dead—one of the most documented live bands in history. Their shows are public domain and well-documented, making them perfect for demonstrating how this platform works. But CyberCat Sunflower is designed to host archives for <strong>any artist</strong>.
+                </p>
+
+                <h3 style="color: #00ffff; margin: 2rem 0 1rem 0;">Contribute</h3>
+                <p style="margin: 1rem 0; color: #00ff88; line-height: 1.8;">
+                    Want to add shows to an existing archive? Found an error? Open an issue or submit a PR on GitHub. This is community-driven archival.
+                </p>
+
+                <a href="https://github.com/RASvibir/uXu" target="_blank">
+                    <button class="cta-button">View on GitHub</button>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-text">🌻 CyberCat Sunflower Archive Protocol v0.1 🌻</div>
+        <div class="footer-text">Decentralized. Community-Driven. Eternally Archived.</div>
+        <div class="footer-text" style="margin-top: 1.5rem; font-size: 0.8rem;">Built with ✨ and collective memory</div>
+    </footer>
+
+    <script>
+        // Sample archive data - this will be loaded from GitHub
+        const archives = [
+            {
+                id: "grateful-dead",
+                name: "Grateful Dead Archive",
+                artist: "Grateful Dead",
+                curator: "Victor Birkle III",
+                description: "A curated collection of Grateful Dead live shows (1966-1995) with setlists and audio from Internet Archive",
+                showCount: 124,
+                yearsActive: "1966-1995",
+                shows: [
+                    {
+                        date: "1972-06-17",
+                        venue: "Lyceum Theatre",
+                        city: "London",
+                        country: "England",
+                        setlist: ["Casey Jones", "Jack Straw", "China Cat Sunflower", "I Know You Rider", "Johnny B. Goode"],
+                        notes: "Legendary London show",
+                        archiveOrgId: "gd1972-06-17.sbd"
+                    },
+                    {
+                        date: "1977-05-08",
+                        venue: "Cornell University",
+                        city: "Ithaca",
+                        state: "NY",
+                        country: "USA",
+                        setlist: ["Bertha", "Good Lovin'", "Tennessee Jed", "Deal", "Estimated Prophet"],
+                        notes: "Rediscovered show - 24bit audio",
+                        archiveOrgId: "gd1977-05-08.sbd"
+                    },
+                    {
+                        date: "1989-06-14",
+                        venue: "Shoreline Amphitheater",
+                        city: "Mountain View",
+                        state: "CA",
+                        country: "USA",
+                        setlist: ["Touch of Grey", "Franklin's Tower", "Lost Sailor", "Saint of Circumstance", "Dark Star"],
+                        notes: "Summer tour highlight",
+                        archiveOrgId: "gd1989-06-14.sbd"
+                    },
+                    {
+                        date: "1995-06-09",
+                        venue: "Soldier Field",
+                        city: "Chicago",
+                        state: "IL",
+                        country: "USA",
+                        setlist: ["Cold Rain and Snow", "Morning Dew", "Scarlet Begonias", "Fire on the Mountain", "Johnny B. Goode"],
+                        notes: "Jerry's final performances",
+                        archiveOrgId: "gd1995-06-09.sbd"
+                    }
+                ]
+            }
+        ];
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Mark button as active
+            event.target.classList.add('active');
+
+            // Load archives if in browse section
+            if (sectionId === 'browse') {
+                loadArchives();
+            }
+        }
+
+        function loadArchives() {
+            const grid = document.getElementById('archivesGrid');
+            grid.innerHTML = '';
+
+            archives.forEach(archive => {
+                const card = document.createElement('div');
+                card.className = 'archive-card';
+                card.innerHTML = `
+                    <h3>${archive.name}</h3>
+                    <div class="archive-meta">Artist: <strong>${archive.artist}</strong></div>
+                    <div class="archive-meta">Curator: <strong>${archive.curator}</strong></div>
+                    <div class="archive-meta">Years: <strong>${archive.yearsActive}</strong></div>
+                    <p style="margin: 1rem 0; color: #00ff88;">${archive.description}</p>
+                    <div class="show-count">${archive.showCount} shows</div>
+                `;
+                card.onclick = () => showArchiveDetail(archive);
+                grid.appendChild(card);
+            });
+
+            updateStats();
+        }
+
+        function showArchiveDetail(archive) {
+            const section = document.getElementById('browse');
+            const detail = document.createElement('div');
+            detail.className = 'show-details';
+            detail.innerHTML = `
+                <div class="show-header">
+                    <div>
+                        <div class="show-title">${archive.artist}</div>
+                        <div style="color: #00ff88; font-size: 0.9rem; margin-top: 0.5rem;">Archive by ${archive.curator}</div>
+                    </div>
+                    <button onclick="this.closest('.show-details').remove()" style="background: #ff00ff; border: none; color: #0a0e27; padding: 0.5rem 1rem; cursor: pointer; font-weight: bold;">CLOSE</button>
+                </div>
+                <p style="color: #00ff88; margin-bottom: 1.5rem;">${archive.description}</p>
+                <div id="showsList"></div>
+            `;
+            section.appendChild(detail);
+
+            const showsList = detail.querySelector('#showsList');
+            archive.shows.forEach(show => {
+                const showDiv = document.createElement('div');
+                showDiv.style.borderBottom = '2px solid #ff00ff';
+                showDiv.style.paddingBottom = '1.5rem';
+                showDiv.style.marginBottom = '1.5rem';
+                showDiv.innerHTML = `
+                    <div class="show-date">${show.date} @ ${show.venue}, ${show.city}</div>
+                    <div style="color: #00ff88; margin: 0.5rem 0; font-size: 0.9rem;">${show.notes || ''}</div>
+                    <div class="setlist">
+                        <div class="setlist-title">Setlist</div>
+                        <div class="setlist-songs">
+                            ${show.setlist.map(song => `<span class="song-tag">${song}</span>`).join('')}
+                        </div>
+                    </div>
+                    ${show.archiveOrgId ? `
+                        <div class="audio-player">
+                            <div class="player-title">🎵 Live Audio (via Internet Archive)</div>
+                            <div class="player-controls">
+                                <a href="https://archive.org/embed/${show.archiveOrgId}" target="_blank">
+                                    <button class="play-btn">▶ Play Full Show</button>
+                                </a>
+                                <a href="https://archive.org/details/${show.archiveOrgId}" target="_blank" style="flex: 1; min-width: 200px;">
+                                    <div style="color: #00ffff; font-size: 0.8rem; text-decoration: underline;">View on Archive.org →</div>
+                                </a>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="audio-player">
+                            <div class="player-title">🔍 Audio Not Yet Archived</div>
+                            <a href="https://archive.org/search.php?query=${show.date}+${archive.artist}" target="_blank">
+                                <button class="play-btn">Search Archive.org</button>
+                            </a>
+                        </div>
+                    `}
+                `;
+                showsList.appendChild(showDiv);
+            });
+        }
+
+        function filterArchives() {
+            // Placeholder for filter logic
+            loadArchives();
+        }
+
+        function updateStats() {
+            let totalShows = 0;
+            archives.forEach(archive => {
+                totalShows += archive.showCount;
+            });
+            document.getElementById('totalShows').textContent = totalShows;
+            document.getElementById('totalArchives').textContent = archives.length;
+            document.getElementById('totalContributors').textContent = new Set(archives.map(a => a.curator)).size;
+        }
+
+        // Initialize on page load
+        updateStats();
+    </script>
+</body>
+</html>
