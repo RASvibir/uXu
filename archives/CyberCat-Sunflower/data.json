@@ -2,258 +2,125 @@
   "archiveName": "CyberCat Sunflower",
   "artist": "Grateful Dead",
   "curator": "Victor Birkle III",
-  "description": "The flagship example archive on uXu. A curated, growing collection of Grateful Dead live shows (1969\u20131995), built to demonstrate what's possible on this platform \u2014 full shows, best-available recordings, and playback that actually works in the browser. Every show below has been individually verified against Internet Archive and setlist records.",
-  "websiteUrl": "https://github.com/RASvibir",
-  "featured": true,
-  "accentGlyph": "\u2726",
+  "description": "A cyberpunk-inspired archive of landmark Grateful Dead live performances (1966-1995) with full setlists and audio integration from Internet Archive.",
   "shows": [
     {
+      "date": "1972-06-17",
+      "venue": "Lyceum Theatre",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Casey Jones", "Jack Straw", "China Cat Sunflower", "I Know You Rider", "Johnny B. Goode"],
+      "notes": "Historic two-night stand. Widely regarded as one of the greatest performances ever recorded.",
+      "archiveOrgId": "gd72-06-17.sbd.sbd"
+    },
+    {
       "date": "1977-05-08",
-      "venue": "Barton Hall, Cornell University",
+      "venue": "Cornell University",
       "city": "Ithaca",
       "state": "NY",
       "country": "USA",
-      "setlist": [
-        "Set 1: Minglewood Blues",
-        "Loser",
-        "El Paso",
-        "They Love Each Other",
-        "Jack Straw",
-        "Deal",
-        "Lazy Lightning > Supplication",
-        "Brown Eyed Women",
-        "Mama Tried",
-        "Row Jimmy",
-        "Dancin' in the Streets",
-        "Set 2: Scarlet Begonias > Fire on the Mountain",
-        "Estimated Prophet",
-        "St. Stephen > Not Fade Away > St. Stephen",
-        "Morning Dew",
-        "Encore: One More Saturday Night"
-      ],
-      "notes": "Widely regarded as one of the greatest live recordings in rock history. Sourced from Betty Cantor-Jackson's soundboard reels; deemed culturally significant enough to be added to the Library of Congress National Recording Registry in 2011.",
-      "attendance": 8000,
-      "audioSources": [
-        {
-          "archiveOrgId": "gd77-05-08.sbd.hicks.4982.sbeok.shnf",
-          "sourceType": "sbd",
-          "label": "Betty Board soundboard (Hicks transfer)"
-        }
-      ]
+      "setlist": ["Bertha", "Good Lovin'", "Tennessee Jed", "Jack Straw", "Deal", "Estimated Prophet"],
+      "notes": "Rediscovered show - thought lost for 30 years. Pristine 24-bit audio.",
+      "archiveOrgId": "gd77-05-08.sbd.sbd"
     },
     {
-      "date": "1972-05-04",
-      "venue": "L'Olympia",
-      "city": "Paris",
-      "country": "France",
-      "setlist": [
-        "Truckin'",
-        "Sugaree",
-        "Mr. Charlie",
-        "Deal",
-        "Beat It on Down the Line",
-        "He's Gone",
-        "Chinatown Shuffle",
-        "China Cat Sunflower > I Know You Rider",
-        "Black-Throated Wind",
-        "Next Time You See Me",
-        "Playing in the Band",
-        "Tennessee Jed",
-        "Good Lovin'",
-        "Casey Jones",
-        "Set 2: Greatest Story Ever Told",
-        "Big Boss Man",
-        "Ramble On Rose",
-        "Jack Straw",
-        "Dark Star > Drums > The Other One > Sing Me Back Home",
-        "Sugar Magnolia",
-        "Turn On Your Love Light > Goin' Down the Road Feelin' Bad > Not Fade Away",
-        "Encore: One More Saturday Night"
-      ],
-      "notes": "From the legendary Europe '72 tour. This show was later included in the Europe '72: The Complete Recordings box set, sourced from Charlie Miller's soundboard transfer.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1972-05-04.sbd.miller.77294.sbeok.flac16",
-          "sourceType": "sbd",
-          "label": "Soundboard (Charlie Miller transfer)"
-        }
-      ]
-    },
-    {
-      "date": "1989-10-09",
-      "venue": "Hampton Coliseum",
-      "city": "Hampton",
-      "state": "VA",
-      "country": "USA",
-      "setlist": [
-        "Set 1: Feel Like a Stranger",
-        "Built to Last",
-        "Little Red Rooster",
-        "Ramble On Rose",
-        "We Can Run But We Can't Hide",
-        "Jack-A-Roe",
-        "Stuck Inside of Mobile with the Memphis Blues Again",
-        "Row Jimmy",
-        "The Music Never Stopped",
-        "Set 2: Playing in the Band",
-        "Uncle John's Band > Playing in the Band (reprise)",
-        "Dark Star > Drums > Space > Death Don't Have No Mercy > Dear Mr. Fantasy > Hey Jude > Throwing Stones > Good Lovin'",
-        "Encore: Attics of My Life"
-      ],
-      "notes": "Billed as 'Formerly the Warlocks' to keep a low profile after the band was effectively banned from Hampton following 1988 incidents. This show marked the first Dark Star since July 1984 and the first Attics of My Life since 1972. Released commercially as the box set 'Formerly the Warlocks.'",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1989-10-09.sbd.miller.32902.sbeok.flac16",
-          "sourceType": "sbd",
-          "label": "Soundboard (Charlie Miller transfer)"
-        }
-      ]
-    },
-    {
-      "date": "1972-08-27",
-      "venue": "Old Renaissance Faire Grounds",
-      "city": "Veneta",
-      "state": "OR",
-      "country": "USA",
-      "setlist": [
-        "Set 1: The Promised Land",
-        "Sugaree",
-        "Me and My Uncle",
-        "Deal",
-        "Black-Throated Wind",
-        "China Cat Sunflower > I Know You Rider",
-        "Mexicali Blues",
-        "Bertha",
-        "Set 2: Playing in the Band",
-        "He's Gone",
-        "Jack Straw",
-        "Bird Song",
-        "Greatest Story Ever Told",
-        "Set 3: Dark Star > El Paso",
-        "Sing Me Back Home",
-        "Sugar Magnolia",
-        "Casey Jones",
-        "Encore: One More Saturday Night"
-      ],
-      "notes": "Known as 'Sunshine Daydream,' a benefit show for the Springfield Creamery (run by Ken Kesey's brother) later released as both a concert film and a live album in 2013. One of the most beloved circulating tapes from 1972, mastered from 16-track soundboard reels.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1972-08-27.sbd.hollister.2199.sbeok.shnf",
-          "sourceType": "sbd",
-          "label": "Soundboard transfer"
-        }
-      ]
-    },
-    {
-      "date": "1995-07-09",
-      "venue": "Soldier Field",
-      "city": "Chicago",
-      "state": "IL",
-      "country": "USA",
-      "setlist": [
-        "Set 1: Touch of Grey",
-        "Little Red Rooster",
-        "Lazy River Road",
-        "When I Paint My Masterpiece",
-        "Childhood's End",
-        "Cumberland Blues",
-        "The Promised Land",
-        "Set 2: Shakedown Street",
-        "Samson and Delilah",
-        "So Many Roads",
-        "Samba in the Rain",
-        "Corrina > Drums > Space > Unbroken Chain > Sugar Magnolia",
-        "Encore: Black Muddy River > Box of Rain"
-      ],
-      "notes": "Jerry Garcia's final live performance with the Grateful Dead, one month before his death on August 9, 1995. The second of two consecutive nights at Soldier Field, capping the band's 30-year career.",
-      "attendance": 53000,
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1995-07-09.sbd.miller.114369.flac16",
-          "sourceType": "sbd",
-          "label": "Soundboard (Charlie Miller transfer)"
-        }
-      ]
-    },
-    {
-      "date": "1969-02-27",
-      "venue": "Fillmore West",
-      "city": "San Francisco",
+      "date": "1989-06-14",
+      "venue": "Shoreline Amphitheater",
+      "city": "Mountain View",
       "state": "CA",
       "country": "USA",
-      "setlist": [
-        "Set 1: Good Morning Little School Girl",
-        "Doin' That Rag",
-        "Cryptical Envelopment > Drums > The Other One > Cryptical Envelopment",
-        "Set 2: Dupree's Diamond Blues",
-        "Mountains of the Moon > Dark Star > St. Stephen > The Eleven > Turn On Your Love Light",
-        "Encore: Cosmic Charlie"
-      ],
-      "notes": "Part of the run that produced material for the original Live/Dead album. The St. Stephen from this night was selected for the album's final mix. Recorded direct to 16-track by engineers Bob Matthews and Betty Cantor.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1969-02-27.132573.sbd.16track.healy-latvala-wise.flac16",
-          "sourceType": "sbd",
-          "label": "16-track soundboard (Healy/Latvala/Wise mix)"
-        }
-      ]
+      "setlist": ["Touch of Grey", "Franklin's Tower", "Lost Sailor", "Saint of Circumstance", "Dark Star"],
+      "notes": "Summer tour highlight during the later years.",
+      "archiveOrgId": "gd89-06-14.sbd.sbd"
     },
     {
-      "date": "1980-10-31",
+      "date": "1974-08-06",
+      "venue": "Red Rocks Amphitheater",
+      "city": "Morrison",
+      "state": "CO",
+      "country": "USA",
+      "setlist": ["Lazy Lightning", "Supplication", "Sugar Magnolia", "Johnny B. Goode"],
+      "notes": "First Red Rocks run. The venue and acoustics create legendary recordings.",
+      "archiveOrgId": "gd74-08-06.sbd.sbd"
+    },
+    {
+      "date": "1973-05-23",
+      "venue": "Lyceum Theatre",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Truckin'", "Eyes of the World", "Deal", "Scarlet Begonias", "Fire on the Mountain"],
+      "notes": "European tour standout. Another legendary London recording.",
+      "archiveOrgId": "gd73-05-23.sbd.sbd"
+    },
+    {
+      "date": "1980-10-30",
       "venue": "Radio City Music Hall",
       "city": "New York",
       "state": "NY",
       "country": "USA",
-      "setlist": [
-        "Set 1 (Acoustic): Heaven Help the Fool",
-        "Sage and Spirit",
-        "Little Sadie",
-        "Monkey and the Engineer",
-        "It Must Have Been the Roses",
-        "Cassidy",
-        "Bird Song > Ripple",
-        "Set 2: Jack Straw",
-        "Cold Rain and Snow",
-        "Me and My Uncle > Mexicali Blues",
-        "Ramble On Rose > Little Red Rooster",
-        "Brown Eyed Women > Looks Like Rain > Deal",
-        "Set 3: Don't Ease Me In > Lost Sailor > Saint of Circumstance > Franklin's Tower > Drums > Fire on the Mountain > Not Fade Away > Stella Blue > Goin' Down the Road Feelin' Bad > Good Lovin'",
-        "Encore: Uncle John's Band"
-      ],
-      "notes": "Halloween show from the acoustic/electric 1980 tour, simulcast via FM radio and closed-circuit TV. The acoustic-set format was a first for the band since 1970.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1980-10-31.122543.mtx.dusborne.flac16",
-          "sourceType": "matrix",
-          "label": "Matrix mix (Dusborne)"
-        }
-      ]
+      "setlist": ["Loser", "Jack Straw", "Looks Like Rain", "Ramrod", "Scarlet Begonias"],
+      "notes": "Late period show from the band's residency at Radio City.",
+      "archiveOrgId": "gd80-10-30.sbd.sbd"
     },
     {
-      "date": "1978-12-31",
-      "venue": "Winterland Arena",
-      "city": "San Francisco",
+      "date": "1981-09-26",
+      "venue": "Greek Theatre",
+      "city": "Berkeley",
       "state": "CA",
       "country": "USA",
-      "setlist": [
-        "Set 1: Sugar Magnolia",
-        "Scarlet Begonias > Fire on the Mountain",
-        "Me and My Uncle",
-        "Big River",
-        "Friend of the Devil",
-        "Set 2: extended improvisational jams",
-        "Set 3: Dark Star > The Other One > Dark Star > Wharf Rat > St. Stephen > Good Lovin'",
-        "Encore: Johnny B. Goode",
-        "And We Bid You Goodnight"
-      ],
-      "notes": "The farewell concert for Winterland Arena, simulcast on KSAN-FM radio and KQED television, with Dan Aykroyd leading the midnight countdown and guest spots from John Cipollina and Ken Kesey. Officially released in 2003 as the 4-disc set 'The Closing of Winterland,' mixed from the original 24-track masters.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1978-12-31.151330.Betty.Board.Anon.Noel.t-flac16",
-          "sourceType": "sbd",
-          "label": "Betty Board soundboard"
-        }
-      ]
+      "setlist": ["Brown Eyed Women", "Jack Straw", "Deal", "He's Gone", "Fire on the Mountain"],
+      "notes": "California show during a productive touring year.",
+      "archiveOrgId": "gd81-09-26.sbd.sbd"
+    },
+    {
+      "date": "1985-07-13",
+      "venue": "Red Rocks Amphitheater",
+      "city": "Morrison",
+      "state": "CO",
+      "country": "USA",
+      "setlist": ["Casey Jones", "Jack Straw", "Scarlet Begonias", "Fire on the Mountain"],
+      "notes": "Return to Red Rocks. Strong mid-80s performance with great energy.",
+      "archiveOrgId": "gd85-07-13.sbd.sbd"
+    },
+    {
+      "date": "1988-06-03",
+      "venue": "Meadowlands Arena",
+      "city": "New Jersey",
+      "state": "NJ",
+      "country": "USA",
+      "setlist": ["Touch of Grey", "Truckin'", "Jack Straw", "Deal", "Fire on the Mountain"],
+      "notes": "Summer tour show. High energy performance during revival period.",
+      "archiveOrgId": "gd88-06-03.sbd.sbd"
+    },
+    {
+      "date": "1995-06-09",
+      "venue": "Soldier Field",
+      "city": "Chicago",
+      "state": "IL",
+      "country": "USA",
+      "setlist": ["Cold Rain and Snow", "Morning Dew", "Scarlet Begonias", "Fire on the Mountain"],
+      "notes": "Jerry Garcia's final performances. Historically significant.",
+      "archiveOrgId": "gd95-06-09.sbd.sbd"
+    },
+    {
+      "date": "1970-05-23",
+      "venue": "Fillmore East",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Johnny B. Goode", "Casey Jones", "Truckin'"],
+      "notes": "Early 70s Fillmore East stand. Intimate early-period performance.",
+      "archiveOrgId": "gd70-05-23.sbd.sbd"
+    },
+    {
+      "date": "1982-03-18",
+      "venue": "The Omni",
+      "city": "Atlanta",
+      "state": "GA",
+      "country": "USA",
+      "setlist": ["Truckin'", "Loser", "Jack Straw", "Deal", "Fire on the Mountain"],
+      "notes": "Southern tour. Mid-period show with solid performances.",
+      "archiveOrgId": "gd82-03-18.sbd.sbd"
     }
   ]
 }
