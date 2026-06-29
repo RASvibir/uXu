@@ -2,125 +2,124 @@
   "archiveName": "CyberCat Sunflower",
   "artist": "Grateful Dead",
   "curator": "Victor Birkle III",
+  "featured": true,
   "description": "A cyberpunk-inspired archive of landmark Grateful Dead live performances (1966-1995) with full setlists and audio integration from Internet Archive.",
   "shows": [
     {
-      "date": "1972-06-17",
-      "venue": "Lyceum Theatre",
-      "city": "London",
-      "country": "England",
-      "setlist": ["Casey Jones", "Jack Straw", "China Cat Sunflower", "I Know You Rider", "Johnny B. Goode"],
-      "notes": "Historic two-night stand. Widely regarded as one of the greatest performances ever recorded.",
-      "archiveOrgId": "gd72-06-17.sbd.sbd"
-    },
-    {
       "date": "1977-05-08",
-      "venue": "Cornell University",
+      "venue": "Barton Hall, Cornell University",
       "city": "Ithaca",
       "state": "NY",
       "country": "USA",
-      "setlist": ["Bertha", "Good Lovin'", "Tennessee Jed", "Jack Straw", "Deal", "Estimated Prophet"],
-      "notes": "Rediscovered show - thought lost for 30 years. Pristine 24-bit audio.",
-      "archiveOrgId": "gd77-05-08.sbd.sbd"
+      "setlist": ["Bertha", "Good Lovin'", "Tennessee Jed", "Jack Straw", "Deal", "Estimated Prophet", "Scarlet Begonias", "Fire on the Mountain", "Morning Dew"],
+      "notes": "Widely considered the greatest GD show ever recorded. The Betty Board soundboard is pristine.",
+      "audioSources": [{ "archiveOrgId": "gd77-05-08.sbd.hicks.4982.sbeok.shnf", "sourceType": "sbd", "label": "Betty Board SBD" }]
     },
     {
-      "date": "1989-06-14",
-      "venue": "Shoreline Amphitheater",
-      "city": "Mountain View",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Touch of Grey", "Franklin's Tower", "Lost Sailor", "Saint of Circumstance", "Dark Star"],
-      "notes": "Summer tour highlight during the later years.",
-      "archiveOrgId": "gd89-06-14.sbd.sbd"
-    },
-    {
-      "date": "1974-08-06",
-      "venue": "Red Rocks Amphitheater",
-      "city": "Morrison",
-      "state": "CO",
-      "country": "USA",
-      "setlist": ["Lazy Lightning", "Supplication", "Sugar Magnolia", "Johnny B. Goode"],
-      "notes": "First Red Rocks run. The venue and acoustics create legendary recordings.",
-      "archiveOrgId": "gd74-08-06.sbd.sbd"
-    },
-    {
-      "date": "1973-05-23",
-      "venue": "Lyceum Theatre",
+      "date": "1972-05-26",
+      "venue": "Strand Lyceum",
       "city": "London",
       "country": "England",
-      "setlist": ["Truckin'", "Eyes of the World", "Deal", "Scarlet Begonias", "Fire on the Mountain"],
-      "notes": "European tour standout. Another legendary London recording.",
-      "archiveOrgId": "gd73-05-23.sbd.sbd"
+      "setlist": ["The Promised Land", "Sugaree", "Black Throated Wind", "China Cat Sunflower", "I Know You Rider", "Truckin'", "The Other One", "Morning Dew", "Casey Jones"],
+      "notes": "Europe '72 tour highlight. Later officially released. Incredible energy from the London crowd.",
+      "audioSources": [{ "archiveOrgId": "gd72-05-26.sbd.hollister.12758.sbeok.shnf", "sourceType": "sbd", "label": "SBD master reel" }]
     },
     {
-      "date": "1980-10-30",
-      "venue": "Radio City Music Hall",
-      "city": "New York",
-      "state": "NY",
-      "country": "USA",
-      "setlist": ["Loser", "Jack Straw", "Looks Like Rain", "Ramrod", "Scarlet Begonias"],
-      "notes": "Late period show from the band's residency at Radio City.",
-      "archiveOrgId": "gd80-10-30.sbd.sbd"
+      "date": "1972-05-23",
+      "venue": "Strand Lyceum",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Truckin'", "Eyes of the World", "Deal", "Scarlet Begonias", "Fire on the Mountain", "Dark Star"],
+      "notes": "Opening night of the legendary Lyceum run. Rex Jackson 2-track SBD.",
+      "audioSources": [{ "archiveOrgId": "gd72-05-23.sbd.cribbs.17700.sbeok.shnf", "sourceType": "sbd", "label": "MSR master" }]
     },
     {
-      "date": "1981-09-26",
-      "venue": "Greek Theatre",
-      "city": "Berkeley",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Brown Eyed Women", "Jack Straw", "Deal", "He's Gone", "Fire on the Mountain"],
-      "notes": "California show during a productive touring year.",
-      "archiveOrgId": "gd81-09-26.sbd.sbd"
-    },
-    {
-      "date": "1985-07-13",
-      "venue": "Red Rocks Amphitheater",
-      "city": "Morrison",
-      "state": "CO",
-      "country": "USA",
-      "setlist": ["Casey Jones", "Jack Straw", "Scarlet Begonias", "Fire on the Mountain"],
-      "notes": "Return to Red Rocks. Strong mid-80s performance with great energy.",
-      "archiveOrgId": "gd85-07-13.sbd.sbd"
-    },
-    {
-      "date": "1988-06-03",
-      "venue": "Meadowlands Arena",
-      "city": "New Jersey",
-      "state": "NJ",
-      "country": "USA",
-      "setlist": ["Touch of Grey", "Truckin'", "Jack Straw", "Deal", "Fire on the Mountain"],
-      "notes": "Summer tour show. High energy performance during revival period.",
-      "archiveOrgId": "gd88-06-03.sbd.sbd"
-    },
-    {
-      "date": "1995-06-09",
-      "venue": "Soldier Field",
-      "city": "Chicago",
-      "state": "IL",
-      "country": "USA",
-      "setlist": ["Cold Rain and Snow", "Morning Dew", "Scarlet Begonias", "Fire on the Mountain"],
-      "notes": "Jerry Garcia's final performances. Historically significant.",
-      "archiveOrgId": "gd95-06-09.sbd.sbd"
-    },
-    {
-      "date": "1970-05-23",
+      "date": "1970-02-13",
       "venue": "Fillmore East",
       "city": "New York",
       "state": "NY",
       "country": "USA",
-      "setlist": ["Johnny B. Goode", "Casey Jones", "Truckin'"],
-      "notes": "Early 70s Fillmore East stand. Intimate early-period performance.",
-      "archiveOrgId": "gd70-05-23.sbd.sbd"
+      "setlist": ["China Cat Sunflower", "I Know You Rider", "Dark Star", "The Other One", "Turn On Your Love Light", "We Bid You Good Night"],
+      "notes": "Late show. Featured on Dick's Picks Vol. 4. One of the legendary early Dark Stars.",
+      "audioSources": [{ "archiveOrgId": "gd1970-02-13.123814.aud.cooper.flac16", "sourceType": "aud", "label": "Jim Cooper AUD" }]
     },
     {
-      "date": "1982-03-18",
-      "venue": "The Omni",
-      "city": "Atlanta",
-      "state": "GA",
+      "date": "1995-07-09",
+      "venue": "Soldier Field",
+      "city": "Chicago",
+      "state": "IL",
       "country": "USA",
-      "setlist": ["Truckin'", "Loser", "Jack Straw", "Deal", "Fire on the Mountain"],
-      "notes": "Southern tour. Mid-period show with solid performances.",
-      "archiveOrgId": "gd82-03-18.sbd.sbd"
+      "setlist": ["Touch of Grey", "Little Red Rooster", "Lazy River Road", "Cumberland Blues", "Shakedown Street", "So Many Roads", "Unbroken Chain", "Sugar Magnolia", "Black Muddy River", "Box of Rain"],
+      "notes": "The final Grateful Dead concert. Jerry Garcia died 31 days later. Historically irreplaceable.",
+      "audioSources": [{ "archiveOrgId": "gd1995-07-09.147058.walsh.suraci.at835.flac24", "sourceType": "aud", "label": "AT835 AUD" }]
+    },
+    {
+      "date": "1970-07-12",
+      "venue": "Fillmore East",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Johnny B. Goode", "Casey Jones", "Truckin'", "Sugar Magnolia", "Dark Star"],
+      "notes": "Early period Fillmore East. Intimate and exploratory.",
+      "audioSources": [{ "archiveOrgId": "gd1970-07-12.aud.unknown.sirmick.24663.sbefail.shnf", "sourceType": "aud", "label": "AUD via SirMick" }]
+    },
+    {
+      "date": "1972-05-24",
+      "venue": "Strand Lyceum",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Playing in the Band", "The Other One", "Cold Rain and Snow", "Black Peter", "Truckin'"],
+      "notes": "Night two of the Lyceum run. Features one of the best Playing in the Band of the tour.",
+      "audioSources": [{ "archiveOrgId": "gd72-05-24.jones.macdonald.5920.sbeok.shnf", "sourceType": "aud", "label": "Chris Jones AUD" }]
+    },
+    {
+      "date": "1970-09-17",
+      "venue": "Fillmore East",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Truckin'", "Friend of the Devil", "Box of Rain", "Dark Star", "Saint Stephen", "Good Lovin'"],
+      "notes": "With David Nelson on mandolin. Acoustic and electric sets.",
+      "audioSources": [{ "archiveOrgId": "gd1970-09-17.aud.cbass.15983.sbeok.shnf", "sourceType": "aud", "label": "cbass AUD" }]
+    },
+    {
+      "date": "1977-05-07",
+      "venue": "Boston Garden",
+      "city": "Boston",
+      "state": "MA",
+      "country": "USA",
+      "setlist": ["Bertha", "Cassidy", "Deal", "Jack Straw", "Tennessee Jed", "Mississippi Half-Step", "Big River"],
+      "notes": "Night before Cornell. The full Spring '77 run was exceptional.",
+      "audioSources": [{ "archiveOrgId": "gd1977-05-07.sbd.miller.88525.flac16", "sourceType": "sbd", "label": "Charlie Miller SBD" }]
+    },
+    {
+      "date": "1977-05-09",
+      "venue": "Buffalo Memorial Auditorium",
+      "city": "Buffalo",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Promised Land", "Sugaree", "Lazy Lightning", "Supplication", "Scarlet Begonias", "Fire on the Mountain", "Estimated Prophet", "Eyes of the World"],
+      "notes": "Night after Cornell. Betty Board SBD. Spring '77 at its peak.",
+      "audioSources": [{ "archiveOrgId": "gd77-05-09.sbd.connor.8304.sbeok.shnf", "sourceType": "sbd", "label": "Betty Cantor SBD" }]
+    },
+    {
+      "date": "1970-07-11",
+      "venue": "Fillmore East",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": ["Casey Jones", "Truckin'", "Dark Star", "The Other One", "Not Fade Away"],
+      "notes": "Early July Fillmore run. Downloadable AUD with MP3s.",
+      "audioSources": [{ "archiveOrgId": "gd70-07-11.aud.cotsman.9379.sbefail.shnf", "sourceType": "aud", "label": "JCotsman AUD" }]
+    },
+    {
+      "date": "1972-05-25",
+      "venue": "Strand Lyceum",
+      "city": "London",
+      "country": "England",
+      "setlist": ["Truckin'", "Ramble on Rose", "Sugar Magnolia", "Dark Star", "Cumberland Blues"],
+      "notes": "Night three of the Lyceum run. Part of the Europe '72 complete recordings.",
+      "audioSources": [{ "archiveOrgId": "gd72-05-25.psbd.hamilton.147.sbeok.shnf", "sourceType": "sbd", "label": "Pre-SBD Hamilton" }]
     }
   ]
 }
