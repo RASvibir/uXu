@@ -1,24 +1,23 @@
-# 🌻 CyberCat Sunflower: Decentralized Music Archive Protocol
+# 🌻 uXu: Decentralized Music Archive Protocol
 
-> **A cyberpunk-inspired, community-driven music archival platform where anyone can create, maintain, and share live performance history.**
+> **A cyberpunk-inspired, community-driven platform for archiving live music history — fork it, build your own archive, and add it here.**
 
-## What is CyberCat Sunflower?
+## What is uXu?
 
-CyberCat Sunflower is a **decentralized archival system** for live music. Instead of relying on a single centralized authority, we believe music history belongs to the community—curated by passionate fans, verified through GitHub, and accessible to all.
+**uXu is the platform.** It's a decentralized, GitHub-based system for archiving live music — no central server, no database, just JSON data and static pages, verified through pull requests.
 
-This repository contains:
-1. **The Grateful Dead Archive** — A complete starting archive of GD shows (1966-1995)
-2. **The CyberCat Sunflower Platform** — A template system for creating your own music archives
-3. **Community Submissions** — Archives created and maintained by community members
+**CyberCat Sunflower is the example.** It's the flagship archive living inside uXu — a Grateful Dead collection built to show exactly what's possible: full shows, real setlists, and a working in-browser audio player streaming directly from the Internet Archive.
 
-### Why CyberCat Sunflower?
+Anyone can add their own archive — any artist, any genre, any legal live-music collection — right alongside it.
 
-- 🌻 **Decentralized** — No central authority; community-owned archives
-- ✅ **Verified** — Every archive is tracked via GitHub PRs; all changes are auditable
-- 🎵 **Audio-Integrated** — Direct links to Internet Archive streams (legal, public domain)
-- 🎨 **Cyberpunk Vibes** — Because archival culture deserves aesthetics
-- 📖 **Template-Ready** — Fork it and create archives for *any* artist
-- 🤝 **Community-Driven** — Add shows, fix errors, expand archives via PRs
+### Why uXu?
+
+- 🌻 **Decentralized** — no central authority; every archive is community-owned
+- 🎵 **Actually playable** — full shows stream and play track-to-track with a persistent player, not just links out
+- ✅ **Open contribution** — anyone can add an archive; nothing is gatekept before it exists in the repo
+- 📌 **Curated front page** — the maintainer can feature any archive (starting with CyberCat Sunflower) so quality work gets visibility
+- 🔔 **Notified, not blind** — every addition comes in as a GitHub PR, so the maintainer always knows what's been proposed
+- 🎨 **Cyberpunk vibes** — archival culture deserves aesthetics
 
 ---
 
@@ -26,337 +25,67 @@ This repository contains:
 
 ```
 uXu/
-├── README.md (main platform overview)
+├── README.md              ← you are here
+├── index.html              ← the platform UI (archive browser + player)
+├── data.schema.json         ← schema every archive's data.json must follow
 └── archives/
-    ├── CyberCat-Sunflower/
-    │   ├── index.html (main archive interface)
-    │   ├── data.schema.json (data validation schema)
-    │   ├── grateful-dead.json (sample archive data)
-    │   ├── README.md (this file)
-    │   └── docs/
-    │       ├── CONTRIBUTING.md (how to contribute)
-    │       └── CURATOR_GUIDE.md (guide for archive creators)
-    ├── {OtherArchiveName}/
-    │   ├── index.html
+    ├── CyberCat-Sunflower/   ← the flagship example archive (Grateful Dead)
     │   ├── data.json
-    │   └── README.md
+    │   └── docs/
+    │       ├── CONTRIBUTING.md
+    │       └── CURATOR_GUIDE.md
+    ├── {YourArchiveName}/    ← your archive goes here
+    │   └── data.json
     └── ...
 ```
 
 ---
 
-## Getting Started
+## For Listeners
 
-### For Viewers
+Open `index.html` (or the live GitHub Pages link) to:
 
-Visit the [CyberCat Sunflower Index](./index.html) to:
-- **Browse Archives** — Explore existing music archives
-- **Search Shows** — Find specific performances by date, venue, or song
-- **Stream Audio** — Listen to full shows via Internet Archive embeds
-- **Learn** — Understand how the platform works
+- **Browse archives** — featured archives up top, everything else below
+- **Search shows** — by date, venue, city, or song
+- **Stream full shows** — soundboard-quality audio where available, playable straight from the browser with a persistent player bar (play, pause, skip, seek)
 
-### For Contributors
+## For Contributors
 
-Want to add shows to an existing archive or create your own?
+Want to add your own archive, or shows to an existing one? See [`archives/CyberCat-Sunflower/docs/CONTRIBUTING.md`](archives/CyberCat-Sunflower/docs/CONTRIBUTING.md) for the full guide. Short version:
 
-#### Option 1: Add to Existing Archive (Easiest)
+1. Fork the repo
+2. Add `archives/{YourArchiveName}/data.json` (validates against `data.schema.json`)
+3. Register it in `ARCHIVE_REGISTRY` inside `index.html`
+4. Open a PR
 
-1. Fork the [uXu repo](https://github.com/RASvibir/uXu)
-2. Edit `archives/{ArchiveName}/data.json` to add new shows
-3. Submit a PR with your changes
-4. Maintainer reviews and merges
-
-**Show Format:**
-```json
-{
-  "date": "YYYY-MM-DD",
-  "venue": "Venue Name",
-  "city": "City",
-  "state": "State",
-  "country": "Country",
-  "setlist": ["Song 1", "Song 2", "Song 3"],
-  "notes": "Optional context about this show",
-  "archiveOrgId": "identifier-for-audio (optional)"
-}
-```
-
-#### Option 2: Create Your Own Archive
-
-1. **Fork the repo**
-   ```bash
-   git clone https://github.com/RASvibir/uXu.git
-   cd uXu
-   ```
-
-2. **Create your archive directory**
-   ```bash
-   mkdir -p archives/{YourArchiveName}
-   cd archives/{YourArchiveName}
-   ```
-
-3. **Add a `data.json` file** (following `data.schema.json`)
-   ```json
-   {
-     "archiveName": "Your Archive Name",
-     "artist": "Artist Name",
-     "curator": "Your Name",
-     "description": "Description of what this archive contains",
-     "shows": [
-       {
-         "date": "YYYY-MM-DD",
-         "venue": "Venue Name",
-         "city": "City",
-         "country": "Country",
-         "setlist": ["Song 1", "Song 2"],
-         "notes": "Any notes",
-         "archiveOrgId": "archive-id (optional)"
-       }
-     ]
-   }
-   ```
-
-4. **Create a `README.md`**
-   ```markdown
-   # Your Archive Name
-   
-   **Artist:** Artist Name
-   **Curator:** Your Name
-   **Shows:** Number of shows
-   
-   ## About
-   
-   Brief description of this archive and why it matters.
-   
-   ## How to Contribute
-   
-   Found an error? Want to add more shows? Submit a PR!
-   ```
-
-5. **Optional: Add audio**
-   - Search [Internet Archive](https://archive.org/advancedsearch.php?q=collection:audio_bees+mediatype:audio&fl=identifier&output=json)
-   - Find your show's archive.org ID
-   - Add `"archiveOrgId"` to the show object
-
-6. **Commit and push**
-   ```bash
-   git add archives/{YourArchiveName}/
-   git commit -m "Add {YourArchiveName} archive"
-   git push origin main
-   ```
-
-7. **Open a Pull Request**
-   - Go to [uXu main repo](https://github.com/RASvibir/uXu)
-   - Click "New Pull Request"
-   - Describe your archive and why you created it
-   - Maintainer will review and merge!
+You don't need permission to start — any legal archive is welcome. The maintainer gets notified of every PR automatically through GitHub, and may choose to feature standout archives on the front page.
 
 ---
 
 ## Data Schema
 
-All archives must follow the `data.schema.json` specification:
+Every archive's `data.json` must validate against [`data.schema.json`](data.schema.json). Key fields:
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `archiveName` | string | ✓ | Display name of archive |
-| `artist` | string | ✓ | Artist/band name |
-| `curator` | string | ✓ | Your name or handle (for attribution) |
-| `description` | string | ✓ | What this archive contains (10-1000 chars) |
-| `shows` | array | ✓ | Array of show objects (min. 10 shows) |
-| `websiteUrl` | string | - | Optional link to your site/social |
+| Field | Required | Notes |
+|---|---|---|
+| `archiveName`, `artist`, `curator`, `description` | ✓ | Basic identity of the archive |
+| `shows` | ✓ | Array of show objects |
+| `featured` | – | Set by the uXu maintainer to promote an archive to the front page |
+| `accentGlyph` | – | Optional small personal signature glyph next to your curator credit |
 
-### Show Object Requirements
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `date` | string | ✓ | YYYY-MM-DD format |
-| `venue` | string | ✓ | Venue/theater name |
-| `city` | string | ✓ | City |
-| `country` | string | ✓ | Country |
-| `state` | string | - | State/province (US/Canada) |
-| `setlist` | array | ✓ | List of songs performed |
-| `notes` | string | - | Context about the show |
-| `archiveOrgId` | string | - | Internet Archive identifier |
-| `spotifyLink` | string | - | Spotify link if available |
-| `youtubeLink` | string | - | YouTube link if available |
-| `attendance` | integer | - | Attendance estimate |
-| `ticketPrice` | string | - | Original ticket price |
+Each show supports `audioSources` — one or more Internet Archive recordings, ranked best-first (soundboard > matrix > audience), which the player resolves live and queues up for full-show playback. See `data.schema.json` for the complete spec.
 
 ---
 
-## Finding Audio on Internet Archive
+## Audio & Legality
 
-Most live music is archived at [archive.org](https://archive.org). Here's how to find your show:
-
-1. Go to https://archive.org
-2. Search: `"Artist Name" "YYYY-MM-DD"` or `"Artist Name" "Venue Name"`
-3. Look for recordings labeled `sbd` (soundboard) or `aud` (audience)
-4. Click the show, then copy the identifier from the URL
-   - Example: `archive.org/details/gd1977-05-08.sbd` → `archiveOrgId: "gd1977-05-08.sbd"`
-5. Add to your `data.json`
-
-**Quality Hierarchy:**
-- `sbd` (soundboard) — Best quality, direct from mixing board
-- `mat` (matrix) — Multi-track masters
-- `aud` (audience) — Fan recordings, good energy
-- MP3 VBR — Highest quality streamable format (FLAC available but not browser-streamable)
-
----
-
-## Audio Streaming
-
-The CyberCat Sunflower interface automatically:
-- Detects the `archiveOrgId` in your show data
-- Embeds the Internet Archive player
-- Lets users click **"Play Full Show"** to stream all tracks
-- Falls back to "Search Archive.org" if no ID is provided
-
-**Important:** All audio must be legally available (public domain, Creative Commons, or artist-approved). The Grateful Dead encourage taping and sharing, making them perfect for this platform.
-
----
-
-## Archive Requirements for Submission
-
-To submit your archive via PR, it must meet these criteria:
-
-- ✅ **Legal Data** — Public domain, Creative Commons, or licensed for sharing
-- ✅ **Minimum 10 Shows** — Enough data to be meaningful
-- ✅ **Proper Attribution** — Your name as curator
-- ✅ **Valid JSON** — Must pass `data.schema.json` validation
-- ✅ **README** — Explains the archive and how to contribute
-- ✅ **Legal Audio** — All audio links must be licensed/public domain
-
----
-
-## Contributing to Existing Archives
-
-Want to add a show to the Grateful Dead archive or another existing collection?
-
-1. **Fork the repo**
-2. **Edit `archives/{ArchiveName}/data.json`**
-3. **Add your show object** (following the schema)
-4. **Submit a PR** with context about the show
-
-Example:
-```json
-{
-  "date": "1974-08-06",
-  "venue": "Red Rocks Amphitheater",
-  "city": "Morrison",
-  "state": "CO",
-  "country": "USA",
-  "setlist": ["Lazy Lightning", "Supplication", "Sugar Magnolia", "Johnny B. Goode"],
-  "notes": "First Red Rocks run - legendary recordings",
-  "archiveOrgId": "gd1974-08-06.sbd"
-}
-```
-
----
-
-## How the Platform Works
-
-### Static Site Architecture
-
-CyberCat Sunflower is intentionally **static and lightweight**:
-- **No backend server** required
-- **No database** needed
-- **All data in JSON** files in the repo
-- **GitHub is the database** — changes tracked, verified, attributed
-- **Internet Archive API** for audio streaming (no hosting cost)
-
-### Data Flow
-
-```
-Community PR → GitHub Review → Merge → GitHub Pages Rebuild → Live on Archive
-```
-
-### Why GitHub?
-
-1. **Decentralized** — Anyone can fork and create their own platform variant
-2. **Transparent** — All changes, contributors, and history visible
-3. **Verified** — Pull requests enable curation and review
-4. **Free** — No hosting fees or infrastructure costs
-5. **Versioned** — Every change has a timestamp and attribution
-6. **Community** — Familiar to developers, encourages forks
-
----
-
-## Customization
-
-### For Your Own Platform Variant
-
-Want to create your own branded archive platform?
-
-1. **Fork this repo**
-2. **Edit `index.html`**:
-   - Change colors in the `<style>` section
-   - Modify the header/footer
-   - Customize the aesthetic
-3. **Load your own archives** from your fork's JSON files
-4. **Deploy to GitHub Pages** or any static host
-
-### CSS Variables (Easy Customization)
-
-The design uses these color themes—edit `index.html` to change:
-- Neon green: `#00ff88`
-- Neon cyan: `#00ffff`
-- Hot magenta: `#ff00ff`
-- Dark background: `#0a0e27`
-
----
-
-## FAQ
-
-**Q: Can I use this for a non-music archive?**
-A: Absolutely! The schema works for any live event (theater, comedy, lectures, sports, etc.). Fork it and customize!
-
-**Q: Do I need technical skills to contribute?**
-A: Basic GitHub knowledge helps, but we have templates. Contact the maintainer if you need help.
-
-**Q: What if I find an error in an archive?**
-A: Open an issue or submit a PR with the correction and source.
-
-**Q: Can I monetize shows in my archive?**
-A: No. All shows must remain free and public. CyberCat Sunflower celebrates shared culture.
-
-**Q: How do I promote my archive?**
-A: Share the link! Once merged into the main repo, it's indexed on the CyberCat Sunflower homepage.
-
-**Q: What about copyright?**
-A: Only include audio that's legally available (public domain, Creative Commons, artist-approved). We link to Internet Archive, which handles licensing verification.
-
----
-
-## Roadmap
-
-- ✅ v0.1 — Static archive platform with GitHub PR workflow
-- 🔄 v0.2 — Keycloak user authentication (when Keycloak realm is ready)
-- 🔄 v0.3 — Real-time community contributions without PRs
-- 🔄 v0.4 — Archive stats & analytics
-- 🔄 v0.5 — Discord bot for archive announcements
-- 🔄 v1.0 — Multi-archive platform federation
-
----
-
-## Community
-
-- **GitHub Issues** — Report bugs, suggest features
-- **GitHub Discussions** — Discuss archival practices, share tips
-- **Pull Requests** — Submit your archive or contribute to existing ones
+All audio streams directly from the [Internet Archive](https://archive.org), which hosts these recordings under terms the rights holders or taper communities have agreed to (the Grateful Dead, for instance, explicitly encourage taping and free circulation of live recordings). uXu never re-hosts audio — it only links to and streams from sources that are already legally public. Contributors are responsible for only adding `archiveOrgId`s that are legitimately public on Internet Archive.
 
 ---
 
 ## License
 
-All code in this repository is open source. Archive data is maintained by individual curators. Check individual archive READMEs for specific licensing of show data.
-
----
-
-## Credits
-
-**CyberCat Sunflower** created by [Victor Birkle III](https://github.com/RASvibir)
-
-Inspired by the Grateful Dead's philosophy of archival freedom and the community's passion for preserving live music history.
+Code in this repository is open source. Archive data is maintained by individual curators; check each archive's own documentation for specifics.
 
 ---
 

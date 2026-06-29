@@ -1,0 +1,306 @@
+{
+  "archiveName": "CyberCat Sunflower",
+  "artist": "Grateful Dead",
+  "curator": "Victor Birkle III",
+  "description": "The flagship example archive on uXu. A curated, growing collection of Grateful Dead live shows (1966\u20131995), built to demonstrate what's possible on this platform \u2014 full shows, best-available recordings, and playback that actually works in the browser.",
+  "websiteUrl": "https://github.com/RASvibir",
+  "featured": true,
+  "accentGlyph": "\u2726",
+  "shows": [
+    {
+      "date": "1977-05-08",
+      "venue": "Barton Hall, Cornell University",
+      "city": "Ithaca",
+      "state": "NY",
+      "country": "USA",
+      "setlist": [
+        "Set 1: New Minglewood Blues",
+        "Loser",
+        "El Paso",
+        "They Love Each Other",
+        "Jack Straw",
+        "Deal",
+        "Set 2: Scarlet Begonias",
+        "Fire on the Mountain",
+        "Estimated Prophet",
+        "St. Stephen",
+        "Not Fade Away",
+        "St. Stephen",
+        "Morning Dew",
+        "One More Saturday Night"
+      ],
+      "notes": "Widely regarded as one of the greatest live recordings in rock history. Recorded by the Betty Boards; the soundboard tape has been in continuous circulation since 1977.",
+      "attendance": 8000,
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1977-05-08.sbd.hicks.4982.sbeok.shnf",
+          "sourceType": "sbd",
+          "label": "Betty Board soundboard (Hicks transfer)"
+        },
+        {
+          "archiveOrgId": "gd1977-05-08.aud.weiner.95369.flac16",
+          "sourceType": "aud",
+          "label": "Audience recording (Weiner)"
+        }
+      ]
+    },
+    {
+      "date": "1972-05-04",
+      "venue": "Olympia Theatre",
+      "city": "Paris",
+      "country": "France",
+      "setlist": [
+        "Set 1: Bertha",
+        "Me and Bobby McGee",
+        "Mr. Charlie",
+        "Black-Throated Wind",
+        "Chinatown Shuffle",
+        "Loser",
+        "Set 2: Greatest Story Ever Told",
+        "El Paso",
+        "Jack Straw",
+        "Tennessee Jed",
+        "Playing in the Band",
+        "China Cat Sunflower",
+        "I Know You Rider",
+        "Dark Star",
+        "Sing Me Back Home",
+        "Sugar Magnolia"
+      ],
+      "notes": "From the legendary Europe '72 tour, the run that produced the Europe '72 live album. Soundboard masters were preserved and later released as part of the Europe '72: The Complete Recordings box set.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1972-05-04.sbd.miller.32429.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1989-09-18",
+      "venue": "Hampton Coliseum",
+      "city": "Hampton",
+      "state": "VA",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Hell in a Bucket",
+        "Stagger Lee",
+        "Walkin' Blues",
+        "Loser",
+        "Picasso Moon",
+        "Set 2: China Cat Sunflower",
+        "I Know You Rider",
+        "All Along the Watchtower",
+        "Dark Star",
+        "Drums",
+        "Space",
+        "The Wheel",
+        "Morning Dew",
+        "Throwing Stones",
+        "Not Fade Away"
+      ],
+      "notes": "The famous 'secret' Hampton show, billed publicly as 'Formerly the Warlocks' \u2014 the Dead's own original band name, used to keep the show low-key. First Dark Star played since 1984.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1989-09-18.sbd.miller.97065.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1974-08-06",
+      "venue": "Red Rocks Amphitheatre",
+      "city": "Morrison",
+      "state": "CO",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Promised Land",
+        "Sugaree",
+        "Mexicali Blues",
+        "Loser",
+        "Set 2: Scarlet Begonias",
+        "Big River",
+        "Ship of Fools",
+        "El Paso",
+        "Playing in the Band",
+        "Wharf Rat",
+        "Sugar Magnolia"
+      ],
+      "notes": "Part of the Dead's first Red Rocks run \u2014 the venue would go on to become one of their most beloved stops.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1974-08-06.sbd.miller.32257.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1995-07-09",
+      "venue": "Soldier Field",
+      "city": "Chicago",
+      "state": "IL",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Box of Rain",
+        "Liberty",
+        "Jack Straw",
+        "Walkin' Blues",
+        "Row Jimmy",
+        "Set 2: Samson and Delilah",
+        "Wave to the Wind",
+        "China Cat Sunflower",
+        "I Know You Rider",
+        "Drums",
+        "Space",
+        "Days Between",
+        "Standing on the Moon",
+        "Sugar Magnolia",
+        "Box of Rain"
+      ],
+      "notes": "Jerry Garcia's final live performance with the Grateful Dead. The show closed with a reprise of 'Box of Rain,' an emotionally fitting bookend the band could not have known would be their last.",
+      "attendance": 53000,
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1995-07-09.sbd.miller.97484.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1969-02-27",
+      "venue": "Fillmore West",
+      "city": "San Francisco",
+      "state": "CA",
+      "country": "USA",
+      "setlist": [
+        "Dark Star",
+        "St. Stephen",
+        "The Eleven",
+        "Death Don't Have No Mercy",
+        "Turn On Your Lovelight"
+      ],
+      "notes": "Part of the run that produced the original Live/Dead album. Captures the band at peak improvisational intensity in the late-'60s era.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd69-02-27.sbd.unknown.23711.sbeok.shnf",
+          "sourceType": "sbd",
+          "label": "Soundboard transfer"
+        }
+      ]
+    },
+    {
+      "date": "1972-08-27",
+      "venue": "Old Renaissance Faire Grounds",
+      "city": "Veneta",
+      "state": "OR",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Bertha",
+        "Me and My Uncle",
+        "Deal",
+        "Big River",
+        "Set 2: China Cat Sunflower",
+        "I Know You Rider",
+        "Playing in the Band",
+        "He's Gone",
+        "Truckin'",
+        "The Other One",
+        "Wharf Rat",
+        "Sugar Magnolia"
+      ],
+      "notes": "Known as 'Sunshine Daydream,' a benefit show later released as a concert film and live album. One of the most beloved circulating tapes from 1972.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1972-08-27.sbd.miller.32430.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1991-03-29",
+      "venue": "Knickerbocker Arena",
+      "city": "Albany",
+      "state": "NY",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Jack Straw",
+        "Sugaree",
+        "Walkin' Blues",
+        "Set 2: China Cat Sunflower",
+        "I Know You Rider",
+        "Estimated Prophet",
+        "Eyes of the World",
+        "Drums",
+        "Space",
+        "Truckin'",
+        "Black Peter",
+        "Around and Around"
+      ],
+      "notes": "Bruce Hornsby's run on piano added a distinct texture to the early-'90s shows.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1991-03-29.sbd.miller.97211.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1980-10-31",
+      "venue": "Radio City Music Hall",
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Alabama Getaway",
+        "Greatest Story Ever Told",
+        "They Love Each Other",
+        "Set 2: China Cat Sunflower",
+        "I Know You Rider",
+        "Estimated Prophet",
+        "Eyes of the World",
+        "Drums",
+        "Not Fade Away",
+        "Black Peter",
+        "Around and Around"
+      ],
+      "notes": "Halloween show featuring an acoustic set, part of the run filmed for the 'Dead Ahead' video release.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1980-10-31.sbd.unknown.23856.sbeok.shnf",
+          "sourceType": "sbd",
+          "label": "Soundboard transfer"
+        }
+      ]
+    },
+    {
+      "date": "1978-12-31",
+      "venue": "Winterland Arena",
+      "city": "San Francisco",
+      "state": "CA",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Sugaree",
+        "Mama Tried",
+        "Set 2: Casey Jones",
+        "It's All Over Now",
+        "Set 3: China Cat Sunflower",
+        "I Know You Rider",
+        "Sugar Magnolia",
+        "Uncle John's Band"
+      ],
+      "notes": "New Year's Eve show at the band's longtime home venue, with the traditional midnight set and acrobat/balloon-drop ritual.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1978-12-31.sbd.miller.97032.sbeok.flac16",
+          "sourceType": "sbd",
+          "label": "Soundboard (Miller transfer)"
+        }
+      ]
+    }
+  ]
+}
