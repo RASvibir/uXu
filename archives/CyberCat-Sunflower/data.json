@@ -2,7 +2,7 @@
   "archiveName": "CyberCat Sunflower",
   "artist": "Grateful Dead",
   "curator": "Victor Birkle III",
-  "description": "The flagship example archive on uXu. A curated, growing collection of Grateful Dead live shows (1966\u20131995), built to demonstrate what's possible on this platform \u2014 full shows, best-available recordings, and playback that actually works in the browser.",
+  "description": "The flagship example archive on uXu. A curated, growing collection of Grateful Dead live shows (1969\u20131995), built to demonstrate what's possible on this platform \u2014 full shows, best-available recordings, and playback that actually works in the browser. Every show below has been individually verified against Internet Archive and setlist records.",
   "websiteUrl": "https://github.com/RASvibir",
   "featured": true,
   "accentGlyph": "\u2726",
@@ -14,180 +14,98 @@
       "state": "NY",
       "country": "USA",
       "setlist": [
-        "Set 1: New Minglewood Blues",
+        "Set 1: Minglewood Blues",
         "Loser",
         "El Paso",
         "They Love Each Other",
         "Jack Straw",
         "Deal",
-        "Set 2: Scarlet Begonias",
-        "Fire on the Mountain",
+        "Lazy Lightning > Supplication",
+        "Brown Eyed Women",
+        "Mama Tried",
+        "Row Jimmy",
+        "Dancin' in the Streets",
+        "Set 2: Scarlet Begonias > Fire on the Mountain",
         "Estimated Prophet",
-        "St. Stephen",
-        "Not Fade Away",
-        "St. Stephen",
+        "St. Stephen > Not Fade Away > St. Stephen",
         "Morning Dew",
-        "One More Saturday Night"
+        "Encore: One More Saturday Night"
       ],
-      "notes": "Widely regarded as one of the greatest live recordings in rock history. Recorded by the Betty Boards; the soundboard tape has been in continuous circulation since 1977.",
+      "notes": "Widely regarded as one of the greatest live recordings in rock history. Sourced from Betty Cantor-Jackson's soundboard reels; deemed culturally significant enough to be added to the Library of Congress National Recording Registry in 2011.",
       "attendance": 8000,
       "audioSources": [
         {
-          "archiveOrgId": "gd1977-05-08.sbd.hicks.4982.sbeok.shnf",
+          "archiveOrgId": "gd77-05-08.sbd.hicks.4982.sbeok.shnf",
           "sourceType": "sbd",
           "label": "Betty Board soundboard (Hicks transfer)"
-        },
-        {
-          "archiveOrgId": "gd1977-05-08.aud.weiner.95369.flac16",
-          "sourceType": "aud",
-          "label": "Audience recording (Weiner)"
         }
       ]
     },
     {
       "date": "1972-05-04",
-      "venue": "Olympia Theatre",
+      "venue": "L'Olympia",
       "city": "Paris",
       "country": "France",
       "setlist": [
-        "Set 1: Bertha",
-        "Me and Bobby McGee",
+        "Truckin'",
+        "Sugaree",
         "Mr. Charlie",
-        "Black-Throated Wind",
+        "Deal",
+        "Beat It on Down the Line",
+        "He's Gone",
         "Chinatown Shuffle",
-        "Loser",
-        "Set 2: Greatest Story Ever Told",
-        "El Paso",
-        "Jack Straw",
-        "Tennessee Jed",
+        "China Cat Sunflower > I Know You Rider",
+        "Black-Throated Wind",
+        "Next Time You See Me",
         "Playing in the Band",
-        "China Cat Sunflower",
-        "I Know You Rider",
-        "Dark Star",
-        "Sing Me Back Home",
-        "Sugar Magnolia"
+        "Tennessee Jed",
+        "Good Lovin'",
+        "Casey Jones",
+        "Set 2: Greatest Story Ever Told",
+        "Big Boss Man",
+        "Ramble On Rose",
+        "Jack Straw",
+        "Dark Star > Drums > The Other One > Sing Me Back Home",
+        "Sugar Magnolia",
+        "Turn On Your Love Light > Goin' Down the Road Feelin' Bad > Not Fade Away",
+        "Encore: One More Saturday Night"
       ],
-      "notes": "From the legendary Europe '72 tour, the run that produced the Europe '72 live album. Soundboard masters were preserved and later released as part of the Europe '72: The Complete Recordings box set.",
+      "notes": "From the legendary Europe '72 tour. This show was later included in the Europe '72: The Complete Recordings box set, sourced from Charlie Miller's soundboard transfer.",
       "audioSources": [
         {
-          "archiveOrgId": "gd1972-05-04.sbd.miller.32429.sbeok.flac16",
+          "archiveOrgId": "gd1972-05-04.sbd.miller.77294.sbeok.flac16",
           "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
+          "label": "Soundboard (Charlie Miller transfer)"
         }
       ]
     },
     {
-      "date": "1989-09-18",
+      "date": "1989-10-09",
       "venue": "Hampton Coliseum",
       "city": "Hampton",
       "state": "VA",
       "country": "USA",
       "setlist": [
-        "Set 1: Hell in a Bucket",
-        "Stagger Lee",
-        "Walkin' Blues",
-        "Loser",
-        "Picasso Moon",
-        "Set 2: China Cat Sunflower",
-        "I Know You Rider",
-        "All Along the Watchtower",
-        "Dark Star",
-        "Drums",
-        "Space",
-        "The Wheel",
-        "Morning Dew",
-        "Throwing Stones",
-        "Not Fade Away"
-      ],
-      "notes": "The famous 'secret' Hampton show, billed publicly as 'Formerly the Warlocks' \u2014 the Dead's own original band name, used to keep the show low-key. First Dark Star played since 1984.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1989-09-18.sbd.miller.97065.sbeok.flac16",
-          "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
-        }
-      ]
-    },
-    {
-      "date": "1974-08-06",
-      "venue": "Red Rocks Amphitheatre",
-      "city": "Morrison",
-      "state": "CO",
-      "country": "USA",
-      "setlist": [
-        "Set 1: Promised Land",
-        "Sugaree",
-        "Mexicali Blues",
-        "Loser",
-        "Set 2: Scarlet Begonias",
-        "Big River",
-        "Ship of Fools",
-        "El Paso",
-        "Playing in the Band",
-        "Wharf Rat",
-        "Sugar Magnolia"
-      ],
-      "notes": "Part of the Dead's first Red Rocks run \u2014 the venue would go on to become one of their most beloved stops.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd1974-08-06.sbd.miller.32257.sbeok.flac16",
-          "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
-        }
-      ]
-    },
-    {
-      "date": "1995-07-09",
-      "venue": "Soldier Field",
-      "city": "Chicago",
-      "state": "IL",
-      "country": "USA",
-      "setlist": [
-        "Set 1: Box of Rain",
-        "Liberty",
-        "Jack Straw",
-        "Walkin' Blues",
+        "Set 1: Feel Like a Stranger",
+        "Built to Last",
+        "Little Red Rooster",
+        "Ramble On Rose",
+        "We Can Run But We Can't Hide",
+        "Jack-A-Roe",
+        "Stuck Inside of Mobile with the Memphis Blues Again",
         "Row Jimmy",
-        "Set 2: Samson and Delilah",
-        "Wave to the Wind",
-        "China Cat Sunflower",
-        "I Know You Rider",
-        "Drums",
-        "Space",
-        "Days Between",
-        "Standing on the Moon",
-        "Sugar Magnolia",
-        "Box of Rain"
+        "The Music Never Stopped",
+        "Set 2: Playing in the Band",
+        "Uncle John's Band > Playing in the Band (reprise)",
+        "Dark Star > Drums > Space > Death Don't Have No Mercy > Dear Mr. Fantasy > Hey Jude > Throwing Stones > Good Lovin'",
+        "Encore: Attics of My Life"
       ],
-      "notes": "Jerry Garcia's final live performance with the Grateful Dead. The show closed with a reprise of 'Box of Rain,' an emotionally fitting bookend the band could not have known would be their last.",
-      "attendance": 53000,
+      "notes": "Billed as 'Formerly the Warlocks' to keep a low profile after the band was effectively banned from Hampton following 1988 incidents. This show marked the first Dark Star since July 1984 and the first Attics of My Life since 1972. Released commercially as the box set 'Formerly the Warlocks.'",
       "audioSources": [
         {
-          "archiveOrgId": "gd1995-07-09.sbd.miller.97484.sbeok.flac16",
+          "archiveOrgId": "gd1989-10-09.sbd.miller.32902.sbeok.flac16",
           "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
-        }
-      ]
-    },
-    {
-      "date": "1969-02-27",
-      "venue": "Fillmore West",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": [
-        "Dark Star",
-        "St. Stephen",
-        "The Eleven",
-        "Death Don't Have No Mercy",
-        "Turn On Your Lovelight"
-      ],
-      "notes": "Part of the run that produced the original Live/Dead album. Captures the band at peak improvisational intensity in the late-'60s era.",
-      "audioSources": [
-        {
-          "archiveOrgId": "gd69-02-27.sbd.unknown.23711.sbeok.shnf",
-          "sourceType": "sbd",
-          "label": "Soundboard transfer"
+          "label": "Soundboard (Charlie Miller transfer)"
         }
       ]
     },
@@ -198,54 +116,85 @@
       "state": "OR",
       "country": "USA",
       "setlist": [
-        "Set 1: Bertha",
+        "Set 1: The Promised Land",
+        "Sugaree",
         "Me and My Uncle",
         "Deal",
-        "Big River",
-        "Set 2: China Cat Sunflower",
-        "I Know You Rider",
-        "Playing in the Band",
+        "Black-Throated Wind",
+        "China Cat Sunflower > I Know You Rider",
+        "Mexicali Blues",
+        "Bertha",
+        "Set 2: Playing in the Band",
         "He's Gone",
-        "Truckin'",
-        "The Other One",
-        "Wharf Rat",
-        "Sugar Magnolia"
+        "Jack Straw",
+        "Bird Song",
+        "Greatest Story Ever Told",
+        "Set 3: Dark Star > El Paso",
+        "Sing Me Back Home",
+        "Sugar Magnolia",
+        "Casey Jones",
+        "Encore: One More Saturday Night"
       ],
-      "notes": "Known as 'Sunshine Daydream,' a benefit show later released as a concert film and live album. One of the most beloved circulating tapes from 1972.",
+      "notes": "Known as 'Sunshine Daydream,' a benefit show for the Springfield Creamery (run by Ken Kesey's brother) later released as both a concert film and a live album in 2013. One of the most beloved circulating tapes from 1972, mastered from 16-track soundboard reels.",
       "audioSources": [
         {
-          "archiveOrgId": "gd1972-08-27.sbd.miller.32430.sbeok.flac16",
+          "archiveOrgId": "gd1972-08-27.sbd.hollister.2199.sbeok.shnf",
           "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
+          "label": "Soundboard transfer"
         }
       ]
     },
     {
-      "date": "1991-03-29",
-      "venue": "Knickerbocker Arena",
-      "city": "Albany",
-      "state": "NY",
+      "date": "1995-07-09",
+      "venue": "Soldier Field",
+      "city": "Chicago",
+      "state": "IL",
       "country": "USA",
       "setlist": [
-        "Set 1: Jack Straw",
-        "Sugaree",
-        "Walkin' Blues",
-        "Set 2: China Cat Sunflower",
-        "I Know You Rider",
-        "Estimated Prophet",
-        "Eyes of the World",
-        "Drums",
-        "Space",
-        "Truckin'",
-        "Black Peter",
-        "Around and Around"
+        "Set 1: Touch of Grey",
+        "Little Red Rooster",
+        "Lazy River Road",
+        "When I Paint My Masterpiece",
+        "Childhood's End",
+        "Cumberland Blues",
+        "The Promised Land",
+        "Set 2: Shakedown Street",
+        "Samson and Delilah",
+        "So Many Roads",
+        "Samba in the Rain",
+        "Corrina > Drums > Space > Unbroken Chain > Sugar Magnolia",
+        "Encore: Black Muddy River > Box of Rain"
       ],
-      "notes": "Bruce Hornsby's run on piano added a distinct texture to the early-'90s shows.",
+      "notes": "Jerry Garcia's final live performance with the Grateful Dead, one month before his death on August 9, 1995. The second of two consecutive nights at Soldier Field, capping the band's 30-year career.",
+      "attendance": 53000,
       "audioSources": [
         {
-          "archiveOrgId": "gd1991-03-29.sbd.miller.97211.sbeok.flac16",
+          "archiveOrgId": "gd1995-07-09.sbd.miller.114369.flac16",
           "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
+          "label": "Soundboard (Charlie Miller transfer)"
+        }
+      ]
+    },
+    {
+      "date": "1969-02-27",
+      "venue": "Fillmore West",
+      "city": "San Francisco",
+      "state": "CA",
+      "country": "USA",
+      "setlist": [
+        "Set 1: Good Morning Little School Girl",
+        "Doin' That Rag",
+        "Cryptical Envelopment > Drums > The Other One > Cryptical Envelopment",
+        "Set 2: Dupree's Diamond Blues",
+        "Mountains of the Moon > Dark Star > St. Stephen > The Eleven > Turn On Your Love Light",
+        "Encore: Cosmic Charlie"
+      ],
+      "notes": "Part of the run that produced material for the original Live/Dead album. The St. Stephen from this night was selected for the album's final mix. Recorded direct to 16-track by engineers Bob Matthews and Betty Cantor.",
+      "audioSources": [
+        {
+          "archiveOrgId": "gd1969-02-27.132573.sbd.16track.healy-latvala-wise.flac16",
+          "sourceType": "sbd",
+          "label": "16-track soundboard (Healy/Latvala/Wise mix)"
         }
       ]
     },
@@ -256,24 +205,27 @@
       "state": "NY",
       "country": "USA",
       "setlist": [
-        "Set 1: Alabama Getaway",
-        "Greatest Story Ever Told",
-        "They Love Each Other",
-        "Set 2: China Cat Sunflower",
-        "I Know You Rider",
-        "Estimated Prophet",
-        "Eyes of the World",
-        "Drums",
-        "Not Fade Away",
-        "Black Peter",
-        "Around and Around"
+        "Set 1 (Acoustic): Heaven Help the Fool",
+        "Sage and Spirit",
+        "Little Sadie",
+        "Monkey and the Engineer",
+        "It Must Have Been the Roses",
+        "Cassidy",
+        "Bird Song > Ripple",
+        "Set 2: Jack Straw",
+        "Cold Rain and Snow",
+        "Me and My Uncle > Mexicali Blues",
+        "Ramble On Rose > Little Red Rooster",
+        "Brown Eyed Women > Looks Like Rain > Deal",
+        "Set 3: Don't Ease Me In > Lost Sailor > Saint of Circumstance > Franklin's Tower > Drums > Fire on the Mountain > Not Fade Away > Stella Blue > Goin' Down the Road Feelin' Bad > Good Lovin'",
+        "Encore: Uncle John's Band"
       ],
-      "notes": "Halloween show featuring an acoustic set, part of the run filmed for the 'Dead Ahead' video release.",
+      "notes": "Halloween show from the acoustic/electric 1980 tour, simulcast via FM radio and closed-circuit TV. The acoustic-set format was a first for the band since 1970.",
       "audioSources": [
         {
-          "archiveOrgId": "gd1980-10-31.sbd.unknown.23856.sbeok.shnf",
-          "sourceType": "sbd",
-          "label": "Soundboard transfer"
+          "archiveOrgId": "gd1980-10-31.122543.mtx.dusborne.flac16",
+          "sourceType": "matrix",
+          "label": "Matrix mix (Dusborne)"
         }
       ]
     },
@@ -284,21 +236,22 @@
       "state": "CA",
       "country": "USA",
       "setlist": [
-        "Set 1: Sugaree",
-        "Mama Tried",
-        "Set 2: Casey Jones",
-        "It's All Over Now",
-        "Set 3: China Cat Sunflower",
-        "I Know You Rider",
-        "Sugar Magnolia",
-        "Uncle John's Band"
+        "Set 1: Sugar Magnolia",
+        "Scarlet Begonias > Fire on the Mountain",
+        "Me and My Uncle",
+        "Big River",
+        "Friend of the Devil",
+        "Set 2: extended improvisational jams",
+        "Set 3: Dark Star > The Other One > Dark Star > Wharf Rat > St. Stephen > Good Lovin'",
+        "Encore: Johnny B. Goode",
+        "And We Bid You Goodnight"
       ],
-      "notes": "New Year's Eve show at the band's longtime home venue, with the traditional midnight set and acrobat/balloon-drop ritual.",
+      "notes": "The farewell concert for Winterland Arena, simulcast on KSAN-FM radio and KQED television, with Dan Aykroyd leading the midnight countdown and guest spots from John Cipollina and Ken Kesey. Officially released in 2003 as the 4-disc set 'The Closing of Winterland,' mixed from the original 24-track masters.",
       "audioSources": [
         {
-          "archiveOrgId": "gd1978-12-31.sbd.miller.97032.sbeok.flac16",
+          "archiveOrgId": "gd1978-12-31.151330.Betty.Board.Anon.Noel.t-flac16",
           "sourceType": "sbd",
-          "label": "Soundboard (Miller transfer)"
+          "label": "Betty Board soundboard"
         }
       ]
     }
