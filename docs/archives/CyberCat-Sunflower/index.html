@@ -28,7 +28,7 @@
     color: var(--text-bright);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
-    padding-bottom: 90px; /* room for player bar */
+    padding-bottom: 130px; /* room for player bar + equalizer */
   }
 
   a { color: var(--neon-cyan); text-decoration: none; }
@@ -246,7 +246,7 @@
   /* ---------- Persistent player bar ---------- */
   #player-bar {
     position: fixed;
-    bottom: 0; left: 0; right: 0;
+    bottom: 42px; left: 0; right: 0;
     background: var(--bg-panel-2);
     border-top: 1px solid var(--neon-green);
     box-shadow: 0 -4px 24px rgba(0, 255, 136, 0.08);
@@ -291,10 +291,76 @@
   }
   #close-player { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 1rem; }
 
+  /* ---------- Graphic Equalizer Bar ---------- */
+  #eq-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, rgba(17, 22, 58, 0.95), rgba(22, 28, 74, 0.95));
+    border-top: 1px solid rgba(0, 255, 136, 0.3);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 18px;
+    z-index: 999;
+    height: 42px;
+  }
+  #eq-bar.active { display: flex; }
+
+  .eq-slider-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .eq-slider {
+    width: 24px;
+    height: 80px;
+    writing-mode: bt-lr; /* bottom-to-top */
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    accent-color: var(--neon-cyan);
+    cursor: pointer;
+    background: linear-gradient(to top, rgba(0, 255, 136, 0.2), rgba(0, 255, 255, 0.3));
+    border-radius: 4px;
+  }
+
+  .eq-label {
+    font-size: 0.65rem;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .eq-reset-btn {
+    background: transparent;
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    color: var(--text-dim);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .eq-reset-btn:hover {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(0, 255, 136, 0.1);
+  }
+
   @media (max-width: 640px) {
     #player-bar { padding: 8px 10px; }
     #seek-row { order: 3; flex-basis: 100%; }
     #vol-bar { display: none; }
+    #eq-bar { gap: 4px; padding: 6px 10px; }
+    .eq-slider { width: 18px; height: 60px; }
+    .eq-label { font-size: 0.6rem; }
   }
 
   .loading-msg, .empty-msg { color: var(--text-dim); text-align: center; padding: 30px; font-size: 0.9rem; }
@@ -370,6 +436,31 @@
   <span class="source-label" id="source-label">SBD</span>
   <input type="range" id="vol-bar" min="0" max="100" value="80" aria-label="Volume">
   <button id="close-player" title="Close player" aria-label="Close player">&times;</button>
+</div>
+
+<!-- Graphic Equalizer Bar -->
+<div id="eq-bar" role="region" aria-label="Audio equalizer">
+  <div class="eq-slider-group">
+    <input type="range" class="eq-slider" id="eq-60" min="0" max="100" value="50" aria-label="60 Hz bass">
+    <span class="eq-label">60 Hz</span>
+  </div>
+  <div class="eq-slider-group">
+    <input type="range" class="eq-slider" id="eq-250" min="0" max="100" value="50" aria-label="250 Hz low-mid">
+    <span class="eq-label">250 Hz</span>
+  </div>
+  <div class="eq-slider-group">
+    <input type="range" class="eq-slider" id="eq-1k" min="0" max="100" value="50" aria-label="1 kHz mid">
+    <span class="eq-label">1 kHz</span>
+  </div>
+  <div class="eq-slider-group">
+    <input type="range" class="eq-slider" id="eq-4k" min="0" max="100" value="50" aria-label="4 kHz high-mid">
+    <span class="eq-label">4 kHz</span>
+  </div>
+  <div class="eq-slider-group">
+    <input type="range" class="eq-slider" id="eq-16k" min="0" max="100" value="50" aria-label="16 kHz treble">
+    <span class="eq-label">16 kHz</span>
+  </div>
+  <button class="eq-reset-btn" id="eq-reset" title="Reset equalizer">Reset</button>
 </div>
 
 <audio id="audio-el" preload="metadata"></audio>
@@ -512,6 +603,7 @@
   // ============================================================
   const audioEl = document.getElementById("audio-el");
   const playerBar = document.getElementById("player-bar");
+  const eqBar = document.getElementById("eq-bar");
   const playPauseBtn = document.getElementById("play-pause-btn");
   const prevBtn = document.getElementById("prev-btn");
   const nextBtn = document.getElementById("next-btn");
@@ -524,17 +616,91 @@
   const sourceLabel = document.getElementById("source-label");
   const closePlayerBtn = document.getElementById("close-player");
 
+  // ---- Equalizer setup ----
+  let eqFilters = {};
+  const eqFrequencies = [60, 250, 1000, 4000, 16000];
+  let audioContext = null;
+
+  function initAudioContext() {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createMediaElementAudioSource(audioEl);
+      
+      // Create gain node for master output
+      const masterGain = audioContext.createGain();
+      masterGain.gain.value = 1;
+
+      // Create equalizer nodes
+      eqFrequencies.forEach(freq => {
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'peaking';
+        filter.frequency.value = freq;
+        filter.Q.value = 1;
+        filter.gain.value = 0;
+        eqFilters[freq] = filter;
+      });
+
+      // Connect audio graph: source -> filters -> master -> destination
+      source.connect(eqFilters[60]);
+      for (let i = 0; i < eqFrequencies.length - 1; i++) {
+        eqFilters[eqFrequencies[i]].connect(eqFilters[eqFrequencies[i + 1]]);
+      }
+      eqFilters[eqFrequencies[eqFrequencies.length - 1]].connect(masterGain);
+      masterGain.connect(audioContext.destination);
+    }
+  }
+
+  function setEQSlider(freq, value) {
+    if (eqFilters[freq]) {
+      const normalizedValue = (value - 50) * 2.4; // -120 to +120
+      eqFilters[freq].gain.value = normalizedValue / 100;
+    }
+  }
+
+  document.getElementById("eq-60").addEventListener("input", (e) => {
+    setEQSlider(60, e.target.value);
+  });
+  document.getElementById("eq-250").addEventListener("input", (e) => {
+    setEQSlider(250, e.target.value);
+  });
+  document.getElementById("eq-1k").addEventListener("input", (e) => {
+    setEQSlider(1000, e.target.value);
+  });
+  document.getElementById("eq-4k").addEventListener("input", (e) => {
+    setEQSlider(4000, e.target.value);
+  });
+  document.getElementById("eq-16k").addEventListener("input", (e) => {
+    setEQSlider(16000, e.target.value);
+  });
+
+  document.getElementById("eq-reset").addEventListener("click", () => {
+    document.getElementById("eq-60").value = 50;
+    document.getElementById("eq-250").value = 50;
+    document.getElementById("eq-1k").value = 50;
+    document.getElementById("eq-4k").value = 50;
+    document.getElementById("eq-16k").value = 50;
+    
+    eqFrequencies.forEach(freq => {
+      if (eqFilters[freq]) {
+        eqFilters[freq].gain.value = 0;
+      }
+    });
+  });
+
   let queue = [];        // [{title, url}]
   let queueIndex = 0;
   let currentShowLabel = "";
 
   async function playShow(show) {
+    initAudioContext(); // Initialize Web Audio API on first play
+    
     const source = show.audioSources[0];
     sourceLabel.textContent = source.sourceType.toUpperCase();
     currentShowLabel = `${show.date} \u2014 ${show.venue}, ${show.city}`;
     npShow.textContent = currentShowLabel;
     npTrack.textContent = "Loading tracklist\u2026";
     playerBar.classList.add("active");
+    eqBar.classList.add("active");
 
     let tracks = source.tracks;
 
@@ -634,6 +800,7 @@
     audioEl.pause();
     audioEl.src = "";
     playerBar.classList.remove("active");
+    eqBar.classList.remove("active");
     queue = [];
   });
 
