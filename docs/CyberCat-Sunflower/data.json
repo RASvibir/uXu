@@ -13,7 +13,7 @@
       "country": "USA",
       "setlist": ["Bertha", "Good Lovin'", "Tennessee Jed", "Jack Straw", "Deal"],
       "notes": "Widely considered the greatest GD show ever recorded.",
-      "audioSources": [{ "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", "sourceType": "stream", "label": "Test Audio - Stream 1" }]
+      "audioSources": [{ "url": "https://test-streams.mux.dev/mux-video-component.mp4", "sourceType": "stream", "label": "Test Audio Stream 1" }]
     },
     {
       "date": "1972-05-26",
@@ -22,7 +22,7 @@
       "country": "England",
       "setlist": ["The Promised Land", "Sugaree", "China Cat Sunflower", "I Know You Rider", "Truckin'"],
       "notes": "Europe '72 tour highlight. Later officially released.",
-      "audioSources": [{ "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", "sourceType": "stream", "label": "Test Audio - Stream 2" }]
+      "audioSources": [{ "url": "https://test-streams.mux.dev/mux-video-component.mp4", "sourceType": "stream", "label": "Test Audio Stream 2" }]
     },
     {
       "date": "1970-02-13",
@@ -32,7 +32,7 @@
       "country": "USA",
       "setlist": ["China Cat Sunflower", "Dark Star", "The Other One", "Turn On Your Love Light"],
       "notes": "Late show. One of the legendary early Dark Stars.",
-      "audioSources": [{ "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", "sourceType": "stream", "label": "Test Audio - Stream 3" }]
+      "audioSources": [{ "url": "https://test-streams.mux.dev/mux-video-component.mp4", "sourceType": "stream", "label": "Test Audio Stream 3" }]
     },
     {
       "date": "1995-07-09",
@@ -42,7 +42,7 @@
       "country": "USA",
       "setlist": ["Touch of Grey", "Shakedown Street", "So Many Roads", "Sugar Magnolia"],
       "notes": "The final Grateful Dead concert.",
-      "audioSources": [{ "url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", "sourceType": "stream", "label": "Test Audio - Stream 4" }]
+      "audioSources": [{ "url": "https://test-streams.mux.dev/mux-video-component.mp4", "sourceType": "stream", "label": "Test Audio Stream 4" }]
     }
   ]
 }
