@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uXu ARCHIVE SYSTEM v4.20 - COMPAQ PRESARIO</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        * { box-sizing: border-box; }
+        
+        body { 
+            background: #020105; 
+            color: #39ff14; 
+            font-family: 'Courier Prime', monospace; 
+            padding: 10px; 
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Psychedelic CRT Glass Tube Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Trippy Retro Bezel Border Frame */
+        .crt-bezel {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            border: 16px solid #1c1525;
+            border-image: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00, #ff00ff) 1;
+            box-shadow: inset 0 0 60px rgba(255, 0, 255, 0.6), 0 0 30px rgba(57, 255, 20, 0.4);
+            z-index: 999;
+            pointer-events: none;
+            animation: hue-cycle 20s infinite linear;
+        }
+
+        @keyframes hue-cycle {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* DOS Header Bar */
+        .dos-topbar {
+            background: #ff00ff;
+            color: #000;
+            font-weight: bold;
+            padding: 3px 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        /* Core Workspace Layout Split */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 460px 1fr;
+            gap: 15px;
+            flex: 1;
+            min-height: 0; /* Prevents overflow blowout */
+            padding-bottom: 5px;
+        }
+
+        /* Panels Shared Rules */
+        .panel {
+            background: rgba(10, 5, 20, 0.9);
+            border: 2px solid #39ff14;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 0 15px rgba(57, 255, 20, 0.2);
+            position: relative;
+        }
+
+        .panel-header {
+            color: #ffff00;
+            background: rgba(57, 255, 20, 0.1);
+            padding: 2px 8px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #39ff14;
+        }
+
+        /* LEFT SIDEBAR: Persistent Audio Engine Structure */
+        .persistent-console {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+        }
+
+        .audio-deck-box {
+            border: 1px dashed #ff00ff;
+            padding: 10px;
+            background: #000;
+        }
+
+        audio { 
+            width: 100%; 
+            margin-top: 5px; 
+            filter: invert(1) hue-rotate(270deg) saturate(3); 
+        }
+
+        /* 5-Band Slider Frame Grid */
+        .eq-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            background: rgba(255, 0, 255, 0.05);
+            padding: 8px;
+            border: 1px solid #ff00ff;
+        }
+        .eq-slider-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 18%;
+        }
+        .eq-slider-cell input[type=range] {
+            appearance: slider-vertical;
+            writing-mode: vertical-lr;
+            direction: rtl;
+            width: 16px;
+            height: 90px;
+            background: #111;
+            cursor: pointer;
+        }
+        .eq-slider-cell label { font-size: 9px; color: #ff00ff; margin-bottom: 4px; font-weight: bold; }
+        .eq-slider-cell span { font-size: 9px; color: #00ffff; margin-top: 4px; }
+
+        /* Dynamic Persistent Setlist Engine Window */
+        .setlist-monitor-box {
+            flex: 1;
+            min-height: 0;
+            background: #000;
+            border: 1px solid #ffff00;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .setlist-scroller {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #fff;
+            line-height: 1.6;
+        }
+        .setlist-scroller div {
+            border-bottom: 1px dotted #333;
+            padding: 4px 0;
+        }
+
+        /* RIGHT SIDEBAR: Multi-Tab Collection Matrix */
+        .collection-hub {
+            min-height: 0;
+        }
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #39ff14;
+            padding-bottom: 5px;
+        }
+        .tab-btn {
+            background: transparent;
+            color: #39ff14;
+            border: 1px solid #39ff14;
+            padding: 4px 12px;
+            font-family: inherit;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .tab-btn.active {
+            background: #39ff14;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 10px #39ff14;
+        }
+        .tab-btn:hover {
+            background: #00ffff;
+            color: #000;
+            border-color: #00ffff;
+        }
+
+        .tab-content-viewport {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Show Cards Layout */
+        .tape-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #333;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .tape-card:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.05);
+        }
+        .tape-card h4 { margin: 0 0 5px 0; color: #ffff00; font-size: 14px; }
+        .tape-card p { margin: 4px 0; font-size: 12px; color: #ccc; }
+
+        .action-btn {
+            background: #000;
+            color: #39ff14;
+            border: 1px solid #39ff14;
+            padding: 4px 10px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        .action-btn:hover {
+            background: #39ff14;
+            color: #000;
+        }
+
+        /* Custom ASCII Scrollbars for that authentic DOS edge */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #05020a; }
+        ::-webkit-scrollbar-thumb { background: #ff00ff; border: 1px solid #000; }
+
+        /* General layout blocks for non-tape text logs */
+        .manifesto-log {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #00ffff;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="crt-bezel"></div>
+
+    <div class="dos-topbar">
+        <span>uXu SYSTEM CORE v4.20</span>
+        <span>DRIVE A: \ARCHIVES\CYBERCAT-SUNFLOWER</span>
+        <span id="live-clock">00:00:00</span>
+    </div>
+
+    <div class="workspace-grid">
+        
+        <div class="persistent-console">
+            
+            <div class="panel">
+                <div class="panel-header">▲ MASTER_AUDIO_DECK</div>
+                <div class="audio-deck-box">
+                    <div style="font-size:10px; color:#aaa; margin-bottom:4px;">OUTPUT TUBE HARDWARE EMULATION:</div>
+                    <audio id="main-player" controls crossorigin="anonymous"></audio>
+                </div>
+
+                <div class="eq-container">
+                    <div style="font-size:10px; color:#ffff00; font-weight:bold; letter-spacing:1px;">🎛️ 5-BAND ANALOG CONTROLLER</div>
+                    <div class="eq-grid">
+                        <div class="eq-slider-cell">
+                            <label>60Hz</label>
+                            <input type="range" id="eq-60" min="-12" max="12" value="0" step="1">
+                            <span id="v-60">0dB</span>
+                        </div>
+                        <div class="eq-slider-cell">
+                            <label>230Hz</label>
+                            <input type="range" id="eq-230" min="-12" max="12" value="0" step="1">
+                            <span id="v-230">0dB</span>
+                        </div>
+                        <div class="eq-slider-cell">
+                            <label>910Hz</label>
+                            <input type="range" id="eq-910" min="-12" max="12" value="0" step="1">
+                            <span id="v-910">0dB</span>
+                        </div>
+                        <div class="eq-slider-cell">
+                            <label>4kHz</label>
+                            <input type="range" id="eq-4k" min="-12" max="12" value="0" step="1">
+                            <span id="v-4k">0dB</span>
+                        </div>
+                        <div class="eq-slider-cell">
+                            <label>14kHz</label>
+                            <input type="range" id="eq-14k" min="-12" max="12" value="0" step="1">
+                            <span id="v-14k">0dB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setlist-monitor-box">
+                <div style="font-size:11px; color:#00ffff; font-weight:bold; margin-bottom:6px; border-bottom:1px dashed #00ffff; padding-bottom:3px;">📊 CURRENT_SETLIST_MONITOR</div>
+                <div id="live-setlist-output" class="setlist-scroller">
+                    [No track loaded. Use collection indexes on right to stream an archive segment.]
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel collection-hub">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchCollectionTab('tapes')">F1: TAPES_INDEX</button>
+                <button class="tab-btn" onclick="switchCollectionTab('manifest')">F2: ARCHIVE_LOG</button>
+                <button class="tab-btn" onclick="switchCollectionTab('specs')">F3: SYS_CONFIG</button>
+            </div>
+
+            <div class="tab-content-viewport">
+                <div id="tab-zone-tapes">
+                    <div style="font-size:11px; margin-bottom:10px; color:#ff00ff;">SELECT ARCHIVE ENTRY TO BIND PATH TO TUBE PLAYER:</div>
+                    <div id="tapes-injection-zone">Reading directory sectors...</div>
+                </div>
+
+                <div id="tab-zone-manifest" style="display:none;">
+                    <div class="manifesto-log" id="manifesto-text-block">Loading description context...</div>
+                </div>
+
+                <div id="tab-zone-specs" style="display:none;">
+                    <div class="manifesto-log">
+===================================================================
+uXu TERMINAL EMULATION SYSTEM DATA LABELS
+===================================================================
+[+] DISPLAY MODE : 80x25 Color CRT Matrix Interlaced
+[+] DECENTRALIZATION VECTOR : Fully Autonomous Standalone Sub-Cache
+[+] AUDIO PIPELINE STRING : Web Audio Context Filter Chain API
+[+] BEZEL REWIND RATE : Dynamic Keyframe Trippy Frame Rate Shader 
+[+] TARGET EMULATION RUNTIME : 1996 Compaq Presario Architecture
+
+* System running correctly. All hooks loaded safely into standard arrays.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const player = document.getElementById('main-player');
+        let audioCtx = null, filters = [], initialized = false;
+
+        // Simple Clock Matrix
+        setInterval(() => {
+            const d = new Date();
+            document.getElementById('live-clock').textContent = d.toTimeString().split(' ')[0];
+        }, 1000);
+
+        // Core Audio Node Injection
+        function initAudioEngine() {
+            if (initialized) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaElementSource(player);
+            
+            const freqs = [60, 230, 910, 4000, 14000];
+            filters = freqs.map((freq, idx) => {
+                let filter = audioCtx.createBiquadFilter();
+                filter.type = (idx === 0) ? 'lowshelf' : (idx === freqs.length - 1) ? 'highshelf' : 'peaking';
+                filter.frequency.value = freq;
+                filter.gain.value = 0;
+                return filter;
+            });
+
+            source.connect(filters[0]);
+            for(let i=0; i<filters.length - 1; i++) {
+                filters[i].connect(filters[i+1]);
+            }
+            filters[filters.length - 1].connect(audioCtx.destination);
+
+            bindSlider('eq-60', filters[0], 'v-60');
+            bindSlider('eq-230', filters[1], 'v-230');
+            bindSlider('eq-910', filters[2], 'v-910');
+            bindSlider('eq-4k', filters[3], 'v-4k');
+            bindSlider('eq-14k', filters[4], 'v-14k');
+            
+            initialized = true;
+        }
+
+        function bindSlider(id, node, labelId) {
+            const slider = document.getElementById(id);
+            const label = document.getElementById(labelId);
+            slider.addEventListener('input', (e) => {
+                node.gain.setValueAtTime(e.target.value, audioCtx.currentTime);
+                label.textContent = `${e.target.value > 0 ? '+' : ''}${e.target.value}dB`;
+            });
+        }
+
+        player.addEventListener('play', initAudioEngine);
+
+        // Dynamic File Tab Handling Matrix
+        function switchCollectionTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('tab-zone-tapes').style.display = (tabId === 'tapes') ? 'block' : 'none';
+            document.getElementById('tab-zone-manifest').style.display = (tabId === 'manifest') ? 'block' : 'none';
+            document.getElementById('tab-zone-specs').style.display = (tabId === 'specs') ? 'block' : 'none';
+        }
+
+        // Live Loader & Tracker Bridge
+        function queueTapeTrack(url, setlistString) {
+            player.src = url;
+            player.play();
+            
+            const monitor = document.getElementById('live-setlist-output');
+            monitor.innerHTML = '';
+            
+            const items = setlistString.split(',');
+            items.forEach((song, idx) => {
+                const div = document.createElement('div');
+                div.textContent = `${(idx + 1).toString().padStart(2, '0')} - ${song.trim().toUpperCase()}`;
+                monitor.appendChild(div);
+            });
+        }
+
+        // Populate Cache From Local JSON Manifest Maps
+        fetch('data.json')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('manifesto-text-block').textContent = `--- ARCHIVE COLLECTION MANIFESTO ---\n\n${data.description.toUpperCase()}`;
+                
+                const list = document.getElementById('tapes-injection-zone');
+                list.innerHTML = '';
+                
+                data.shows.forEach(show => {
+                    const card = document.createElement('div');
+                    card.className = 'tape-card';
+                    
+                    let streamUrl = show.audioSources && show.audioSources[0] 
+                        ? `https://archive.org/download/${show.audioSources[0].archiveOrgId}`
+                        : '#';
+                    
+                    let dynamicSetlistEscaped = show.setlist.join(',').replace(/'/g, "\\'");
+                        
+                    card.innerHTML = `
+                        <h4>Tape Sector: ${show.date} // ${show.venue.toUpperCase()}</h4>
+                        <p>Locality: ${show.city.toUpperCase()}, ${show.country.toUpperCase()}</p>
+                        <p style="color:#aaa;"><em>${show.notes.toUpperCase()}</em></p>
+                        <button class="action-btn" onclick="queueTapeTrack('${streamUrl}', '${dynamicSetlistEscaped}')">⚡ ENGAGE TAPE CONSOLE</button>
+                    `;
+                    list.appendChild(card);
+                });
+            }).catch(e => {
+                document.getElementById('tapes-injection-zone').textContent = "[ERROR: Launch python local server to read core json index vectors]";
+            });
+    </script>
+</body>
+</html>

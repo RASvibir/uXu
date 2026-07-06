@@ -1,0 +1,37 @@
+{
+  "catalog_meta": {
+    "title": "uXu Grateful Dead Tablature & Lyric Index",
+    "version": "1.0.0"
+  },
+  "songs": {
+    "gd-dark-star": {
+      "title": "Dark Star",
+      "music": "Jerry Garcia",
+      "lyrics": "Robert Hunter",
+      "key": "A",
+      "scale": "Mixolydian",
+      "structure": [
+        "[A] Dark star crashes, pouring its [G] light into ashes",
+        "[A] Reason tatters, the forces [G] tear loose from the axis",
+        "[A] Searchlight casting for faults in the [G] clouds of delusion",
+        "[A] Shall we go, you and I while we [G] can",
+        "[A] Through the transitive nightfall of [G] diamonds"
+      ]
+    },
+    "gd-franklins-tower": {
+      "title": "Franklin's Tower",
+      "music": "Garcia/Kreutzmann",
+      "lyrics": "Robert Hunter",
+      "key": "A",
+      "scale": "Mixolydian",
+      "structure": [
+        "Intro Riff: [A]  [G]  [D]  [G]",
+        "[A] In another times [G] forgotten space",
+        "[D] Your eyes looked from your [G] mother's face",
+        "[A] Wildflower seed on the [G] sand and stone",
+        "[D] May the four winds blow you [G] safely home",
+        "Chorus: [A] Roll away... [G] the [D] dew [G]"
+      ]
+    }
+  }
+}
