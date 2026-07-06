@@ -1,0 +1,12 @@
+{
+  "archiveName": "STRING",
+  "artist": "STRING",
+  "shows": [
+    {
+      "date": "YYYY-MM-DD",
+      "venue": "STRING",
+      "setlist": ["SONG1", "SONG2"],
+      "audioSources": [{"archiveOrgId": "PATH_TO_MP3"}]
+    }
+  ]
+}

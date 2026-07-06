@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>uXu Archive Entry Template</title>
+</head>
+<body>
+    <div id="player-container">
+        <audio id="main-player" controls></audio>
+        <div id="setlist"></div>
+    </div>
+    <div id="archive-list"></div>
+
+    <script>
+        // Minimal logic: Fetch data.json, render list, bind player.src
+        fetch('data.json').then(r => r.json()).then(data => {
+            // Logic to render show cards and update player.src
+        });
+    </script>
+</body>
+</html>
