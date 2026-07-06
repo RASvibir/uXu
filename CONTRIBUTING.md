@@ -1,6 +1,10 @@
 # uXu Archive Contribution Guidelines
 
-1. **Isolation:** Every archive entry MUST be contained within its own folder in `/archives/`.
-2. **Neutrality:** The repository root is for archive indexing only. No portfolio branding, personal links, or tracking scripts allowed in the root.
-3. **Autonomy:** Contributors own their entry’s design. Do not rely on shared CSS or JS libraries from the root. Use local, self-contained files.
-4. **Standard:** Each entry must include a `data.json` following the `data.schema.json` format found in `/templates/`.
+1. **Isolation:** Every archive entry lives in its own folder under `/archives/`.
+2. **Neutrality:** The repository root is for governance and indexing only. No portfolio branding, personal links, or tracking scripts in root.
+3. **Autonomy:** Build your entry however you want. No required schema, no required stack, no design standards.
+4. **Legal & Safe:** Your content must be legal to share and safe (no harassment, no dangerous content).
+
+That's it. No other rules.
+
+`/templates/` and existing entries like `CyberCat-Sunflower/` are *optional references* — examples of how previous contributors chose to structure their work. Use them if they help, ignore them if they don't.
