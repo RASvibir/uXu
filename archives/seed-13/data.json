@@ -1,0 +1,21 @@
+{
+  "archiveName": "Seed-13 Baseline",
+  "artist": "Community Archive Seed",
+  "curator": "uXu Project",
+  "description": "The 13-show baseline archive for player testing and standard development.",
+  "shows": [
+    {"date": "seed-01", "venue": "Baseline Venue 01", "city": "N/A", "country": "N/A", "setlist": ["Test Track 1"]},
+    {"date": "seed-02", "venue": "Baseline Venue 02", "city": "N/A", "country": "N/A", "setlist": ["Test Track 2"]},
+    {"date": "seed-03", "venue": "Baseline Venue 03", "city": "N/A", "country": "N/A", "setlist": ["Test Track 3"]},
+    {"date": "seed-04", "venue": "Baseline Venue 04", "city": "N/A", "country": "N/A", "setlist": ["Test Track 4"]},
+    {"date": "seed-05", "venue": "Baseline Venue 05", "city": "N/A", "country": "N/A", "setlist": ["Test Track 5"]},
+    {"date": "seed-06", "venue": "Baseline Venue 06", "city": "N/A", "country": "N/A", "setlist": ["Test Track 6"]},
+    {"date": "seed-07", "venue": "Baseline Venue 07", "city": "N/A", "country": "N/A", "setlist": ["Test Track 7"]},
+    {"date": "seed-08", "venue": "Baseline Venue 08", "city": "N/A", "country": "N/A", "setlist": ["Test Track 8"]},
+    {"date": "seed-09", "venue": "Baseline Venue 09", "city": "N/A", "country": "N/A", "setlist": ["Test Track 9"]},
+    {"date": "seed-10", "venue": "Baseline Venue 10", "city": "N/A", "country": "N/A", "setlist": ["Test Track 10"]},
+    {"date": "seed-11", "venue": "Baseline Venue 11", "city": "N/A", "country": "N/A", "setlist": ["Test Track 11"]},
+    {"date": "seed-12", "venue": "Baseline Venue 12", "city": "N/A", "country": "N/A", "setlist": ["Test Track 12"]},
+    {"date": "seed-13", "venue": "Baseline Venue 13", "city": "N/A", "country": "N/A", "setlist": ["Test Track 13"]}
+  ]
+}
