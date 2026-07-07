@@ -1,119 +1,79 @@
-# 🌻 uXu: The Archive Without Limits
+# uXu
 
-> **No gatekeepers. No standards. No requirements—just culture.**
+## Shared Archive Commons
 
-uXu is a **decentralized community archive**. A safe hub where anyone can preserve and share anything—live performances, lectures, cultural events, text files, images, code, documentation, or whatever you want to archive.
+uXu is a shared archive commons layer. It does not own archive content.  
+It provides registration, identification, preservation, discovery, and declared relationships between independent archives.
 
-We believe culture belongs to the people who lived it. Every contribution is a standalone archive, curated and presented however the contributor chooses. No templates. No schemas. No enforced structure.
+## Canonical Hierarchy
 
----
+```text
+uXu
+└── 0?0.uXu.0000
+    ├── Registry
+    ├── RTFM Library
+    ├── Transparency
+    └── Relationships
+```
 
-## What is uXu?
+## Root Archive
 
-**A repository of repositories.** Each folder under `archives/` is an independent archive created and maintained by a community member. You own your archive. You design it. You curate it.
+`0?0.uXu.0000` is the canonical navigation point, archive index, repository guide, operational reference, transparency record, and documentation center.
 
-Some archives might be:
-- Interactive web players with rich metadata (like CyberCat Sunflower)
-- Simple folders with audio files and a text description
-- A single `.md` file with links
-- Video documentation with custom styling
-- Anything legal and cyber-safe
+## Finding the Center
 
-**There is no "correct" way to archive. Your way is the right way.**
+No matter how deep into the chasms you travel, there is always a path back to the spoke.
 
----
+Searching for `0` or `?` — either one alone — will always resolve toward the center of uXu.  
+Both are shorthand pings to the `0?0` control interface.
 
-## How to Contribute Your Archive
+> If you can’t decide which home is better... why not both?!
 
-### The Only Requirements
+## Archive Identity
 
-- **Legal:** You must have the right to share the content you're archiving.
-- **Safe:** Content must not violate basic safety guidelines (no harassment, dangerous content, etc.).
+Archive format:
 
-**That's it. Everything else is up to you.**
+```text
+Title.uXu.Registry.Archive-Serial
+```
 
-### Steps to Add Your Archive
+Archive numbers are historical registration identifiers. They do not represent ownership, authority, importance, or ranking.
 
-1. **Fork the repository**
-   ```bash
-   git clone https://github.com/RASvibir/uXu.git
-   cd uXu
-   ```
+## Relationship Marker
 
-2. **Create your archive folder**
-   ```bash
-   mkdir -p archives/{YourArchiveName}
-   ```
+`*:*` is the uXu declared relationship marker.
 
-3. **Build your archive however you want**
-   - Create an `index.html` with custom styling and interactivity
-   - Write a README describing your collection
-   - Add a `data.json` file (or don't)
-   - Include images, code, documentation, audio files
-   - Use whatever structure makes sense for your content
+It records a connection between archives, sources, mirrors, references, migrations, or attribution paths.
 
-4. **Commit and push**
-   ```bash
-   git add archives/{YourArchiveName}/
-   git commit -m "Add {YourArchiveName} archive"
-   git push origin main
-   ```
+Example:
 
-5. **Open a Pull Request**
-   - Link to your archive in the PR description
-   - Briefly explain what you're archiving and why it matters
-   - We review for legality and safety only
-   - If it passes, it's merged into uXu
+```text
+Archive_A.uXu*:*Archive_B.uXu
+```
 
----
+means Archive A declares a relationship with Archive B.
 
-## Examples in This Repo
+`*:*` does not imply ownership, endorsement, authorship, or control.
 
-**CyberCat Sunflower** — An interactive web-based archive of transformative Grateful Dead performances. Includes a custom audio player, setlist browsing, and cyberpunk-themed UI. This is one contributor's vision of how to present a music archive.
+## Documentation
 
-**RTFM** — A searchable archive of working code, templates, and instructions. If you want to build an interactive archive like CyberCat, or learn how others solved problems, this is where contributors share what worked.
+RTFM is a library inside `0?0`.
 
----
+RTFM provides manuals, technical references, contribution guides, provenance rules, indexing methods, and development notes.
 
-## What Belongs in RTFM?
+## Independence Principle
 
-RTFM is a **shared resource archive**—not rules, not a standard, but **working examples and helpful documentation** that other contributors can learn from if they choose.
+Each archive remains an independent node with its own creator, community, technology, and purpose.
 
-Examples:
-- HTML/CSS/JS code that works for audio players, galleries, etc.
-- Markdown templates for common archive types
-- Guides on sourcing legal audio (Internet Archive, Creative Commons, etc.)
-- Tips on structuring metadata
-- Examples of data.json files
-- Troubleshooting and gotchas
+uXu preserves connections without replacing archive identity.
 
-**Using RTFM is optional.** You can completely ignore it and build from scratch. Or you can learn from it. Your choice.
+## Data & Privacy
 
----
+User activity and shared content may be stored as compressed shared data archives, isolated to account authenticity.
+Users may request downloads of their own shared archive data.
+Those requests are authenticated to the requesting account before release.
 
-## Community Values
+## Initial Registry
 
-- **No gatekeepers**: We don't tell you what to archive or how to present it.
-- **No standards**: Massive interactive app? Single text file? Both are valid.
-- **Radical transparency**: Your archive is public. Your curation is visible. Your choices stand.
-- **Legal & safe**: The only hard lines. Everything else is free thought.
-- **Preservation**: Once archived here, it stays. We're not a platform—we're a vault.
-
----
-
-## License
-
-MIT License — Use this code however you want. See `LICENSE` for details.
-
----
-
-## Questions?
-
-- **"Can I archive [thing]?"** → If it's legal and safe, yes.
-- **"Do I have to follow a format?"** → No. Build what you want.
-- **"Can I look at how others did it?"** → Yes. Check RTFM or browse existing archives.
-- **"What if my archive is weird/experimental?"** → Perfect. That's the point.
-
----
-
-**The perimeter is protected, but the gates are open for sharing.** 🌻
+- `0?0.uXu.0000` — canonical root archive
+- `CyberCat_Sunflower.uXu.0001` — first registered non-root archive
