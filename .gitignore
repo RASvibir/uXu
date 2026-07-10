@@ -38,3 +38,12 @@ Icon?
 *.prproj      # Adobe Premiere
 *.drp         # DaVinci Resolve
 .render_cache/
+
+# ini runtime secrets and build artifacts
+apps/ini/.env
+apps/ini/.env.*
+apps/ini/.dev.vars
+apps/ini/.dev.vars.*
+apps/ini/.wrangler/
+apps/ini/node_modules/
+apps/ini/.dev.vars

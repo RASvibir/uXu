@@ -1,68 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>uXu: The Archive Without Limits</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0a0e27;
-            color: #00ff88;
-            text-align: center;
-            padding: 5rem 2rem;
-            margin: 0;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-        .archives {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        a {
-            display: inline-block;
-            background: #ff00ff;
-            color: #0a0e27;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-        a:hover {
-            background: #00ffff;
-            box-shadow: 0 0 20px #00ffff;
-        }
-        .footer {
-            margin-top: 3rem;
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>0?0.uXu.0000 :: ROOT ARCHIVE</title>
+  <style>
+    body {
+      margin: 0;
+      background: #c9c3b8; /* beige CRT shell */
+      font-family: monospace;
+    }
+    .crt-shell {
+      margin: 2rem auto;
+      max-width: 960px;
+      padding: 1rem;
+      background: #d5cec2;
+      border: 8px solid #8b8375;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+    .screen {
+      background: #020402;
+      color: #00ff55;
+      padding: 0.75rem;
+      border: 3px inset #314031;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+    .status-line {
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #0f3010;
+    }
+    .status-line span {
+      margin-right: 1ch;
+    }
+    .columns {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 2fr 3fr 2fr;
+      gap: 1ch;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .panel {
+      border: 1px solid #0f3010;
+      padding: 0.5rem;
+    }
+    .panel-title {
+      border-bottom: 1px solid #0f3010;
+      margin-bottom: 0.25rem;
+    }
+    .prompt-row {
+      border-top: 1px solid #0f3010;
+      padding-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .command-input {
+      background: #000;
+      color: #00ff55;
+      border: 1px solid #0f3010;
+      padding: 0.25rem 0.5rem;
+      font-family: monospace;
+    }
+    .legend {
+      font-size: 0.8rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th, td {
+      padding: 0.1rem 0.25rem;
+      border-bottom: 1px solid #0f3010;
+    }
+    tr.active {
+      background: #042804;
+    }
+  </style>
 </head>
 <body>
-    <h1>🌻 uXu: The Archive Without Limits</h1>
-    <p>A decentralized archive platform where anyone can preserve and share anything.</p>
-    
-    <div class="archives">
-        <a href="CyberCat-Sunflower/index.html">🌻 CyberCat Sunflower</a>
-        <a href="seed-13/index.html">🌱 seed-13</a>
+  <div class="crt-shell">
+    <div class="screen" aria-label="0?0 root archive console">
+      <div class="status-line">
+        <span>0?0.uXu.0000</span>:: ROOT ARCHIVE :: REGISTRY :: MANUAL :: LOGS
+      </div>
+      <div class="columns">
+        <section class="panel" id="registry-panel">
+          <div class="panel-title">ARCHIVE REGISTRY</div>
+          <table id="registry-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>TITLE</th><th>STATUS</th><th>TYPE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- rows will be injected by JS -->
+            </tbody>
+          </table>
+        </section>
+        <section class="panel" id="active-panel">
+          <div class="panel-title">ACTIVE RECORD</div>
+          <pre id="active-summary">
+welcome to 0?0.uXu.0000
+root archive :: manual library :: transparency logs
+          </pre>
+        </section>
+        <section class="panel" id="nav-panel">
+          <div class="panel-title">QUICK NAV</div>
+          <pre>
+INDEX
+MANUAL LIBRARY
+PROVENANCE MAP
+TRANSPARENCY LOGS
+SYSTEM INFO
+HELP
+EXIT
+          </pre>
+        </section>
+      </div>
+      <div class="prompt-row">
+        <input id="command-input" class="command-input" type="text" placeholder=">_ ENTER COMMAND (e.g. LOAD 0001, HELP)" />
+        <div class="legend">F1 HELP   F2 INDEX   F3 MANUAL   F4 LOGS   F5 MAP</div>
+      </div>
     </div>
-    
-    <div class="footer">
-        <p>No gatekeepers. No paywalls. Just culture.</p>
-        <p><a href="https://github.com/RASvibir/uXu" style="color: #00ff88;">View on GitHub</a></p>
-    </div>
+  </div>
+
+  <script>
+    const registry = [
+      {
+        id: "0?0.uXu.0000",
+        title: "Root Archive Console",
+        slug: "root-archive",
+        status: "ACTIVE",
+        type: "SYSTEM",
+        path: "archives/index.html",
+        summary: "Root archive registry and operator console for uXu_repo.",
+        updatedAt: "2026-07-08"
+      },
+      {
+        id: "CyberCat_Sunflower.uXu.0001",
+        title: "CyberCat Sunflower",
+        slug: "cybercat-sunflower",
+        status: "STAGED",
+        type: "CONTRIBUTOR",
+        path: "../CyberCat-Sunflower",
+        summary: "Contributor archive with stronger visual personality beneath the root.",
+        updatedAt: "2026-07-08"
+      },
+      {
+        id: "RTFM.uXu.0002",
+        title: "RTFM Manual Library",
+        slug: "rtfm",
+        status: "ACTIVE",
+        type: "MANUAL",
+        path: "../RTFM",
+        summary: "Manual library and system docs for the uXu archive.",
+        updatedAt: "2026-07-08"
+      }
+    ];
+
+    const tbody = document.querySelector('#registry-table tbody');
+    const activeSummary = document.querySelector('#active-summary');
+    const commandInput = document.querySelector('#command-input');
+
+    function renderRegistry() {
+      tbody.innerHTML = "";
+      registry.forEach((entry, idx) => {
+        const tr = document.createElement('tr');
+        tr.tabIndex = 0;
+        tr.dataset.id = entry.id;
+        tr.innerHTML = `
+          <td>${entry.id}</td>
+          <td>${entry.title}</td>
+          <td>${entry.status}</td>
+          <td>${entry.type}</td>
+        `;
+        tr.addEventListener('click', () => activateEntry(entry));
+        tr.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            activateEntry(entry);
+          }
+        });
+        tbody.appendChild(tr);
+        if (idx === 0) tr.classList.add('active');
+      });
+    }
+
+    function activateEntry(entry) {
+      document.querySelectorAll('#registry-table tbody tr').forEach(tr => {
+        tr.classList.toggle('active', tr.dataset.id === entry.id);
+      });
+      activeSummary.textContent =
+`id:        ${entry.id}
+title:     ${entry.title}
+status:    ${entry.status}
+type:      ${entry.type}
+path:      ${entry.path}
+updated:   ${entry.updatedAt}
+
+summary:
+${entry.summary}
+
+provenance:
+source:    uXu_repo :: archives
+validation: PENDING
+`;
+    }
+
+    function handleCommand(cmdRaw) {
+      const cmd = cmdRaw.trim().toUpperCase();
+      if (!cmd) return;
+      if (cmd === "HELP") {
+        activeSummary.textContent =
+`HELP
+
+LOAD 0001         load archive by numeric suffix
+OPEN CYBERCAT     load archive by name
+MAP 0000          show root provenance
+LOGS              show transparency logs
+MANUAL            show manual library
+SYSTEM            show system info
+EXIT              no-op for now (root stays loaded)`;
+        return;
+      }
+      if (cmd.startsWith("LOAD ")) {
+        const suffix = cmd.replace("LOAD ", "");
+        const entry = registry.find(e => e.id.endsWith(suffix));
+        if (entry) activateEntry(entry);
+        return;
+      }
+      if (cmd.startsWith("OPEN ")) {
+        const name = cmd.replace("OPEN ", "").toLowerCase();
+        const entry = registry.find(e =>
+          e.slug === name || e.title.toLowerCase().includes(name)
+        );
+        if (entry) activateEntry(entry);
+        return;
+      }
+      if (cmd === "LOGS") {
+        activeSummary.textContent =
+`TRANSPARENCY LOGS
+
+[2026-07-08] root ingest :: registry seeded
+[2026-07-08] CyberCat_Sunflower.uXu.0001 :: STAGED
+[2026-07-08] RTFM.uXu.0002 :: ACTIVE :: manuals available`;
+        return;
+      }
+      if (cmd === "MANUAL") {
+        activeSummary.textContent =
+`MANUAL LIBRARY
+
+Naming system:
+  uXu = independent public archive collection
+  0?0 = root archive console label
+  CyberCat Sunflower = contributor archive entry
+
+Text/media policy:
+  Root archive hosts registry, metadata, provenance, routing, manuals, status, transparency info.
+  Child archives host richer media and themed content.`;
+        return;
+      }
+      if (cmd === "SYSTEM") {
+        activeSummary.textContent =
+`SYSTEM INFO
+
+repo:       uXu_repo
+identity:   uXu = independent public archive collection
+root:       0?0.uXu.0000
+schema:     v0.1 (conical protocols)
+archives:   ${registry.length}
+mode:       BROWSE :: ROOT CONSOLE
+
+cache:      not implemented (neutral)
+build:      manual seed, DOS CRT layout`;
+        return;
+      }
+      if (cmd === "MAP 0000" || cmd === "MAP") {
+        activeSummary.textContent =
+`PROVENANCE MAP :: ROOT
+
+0?0.uXu.0000
+  ├─ CyberCat_Sunflower.uXu.0001  (contributor archive)
+  └─ RTFM.uXu.0002                 (manual library)`;
+        return;
+      }
+    }
+
+    commandInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleCommand(commandInput.value);
+        commandInput.value = "";
+      }
+    });
+
+    renderRegistry();
+    activateEntry(registry[0]);
+  </script>
 </body>
 </html>
