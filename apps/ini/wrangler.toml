@@ -1,0 +1,9 @@
+name = "uxu-ini"
+main = "src/index.js"
+compatibility_date = "2026-07-08"
+
+[env.preview]
+name = "uxu-ini-preview"
+
+[env.production]
+name = "uxu-ini-production"
