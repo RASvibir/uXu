@@ -1,0 +1,2 @@
+# Copy to .dev.vars for local wrangler dev (already gitignored — do not commit .dev.vars itself)
+DATABASE_URL=postgresql://<user>:<password>@<neon-host>/<db>?sslmode=require

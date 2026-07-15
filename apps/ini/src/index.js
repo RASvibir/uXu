@@ -1,28 +1,96 @@
 import { neon } from '@neondatabase/serverless';
 
+const ROOT_ID = '0?0.uXu.0000';
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+function json(data, status = 200) {
+  return Response.json(data, { status, headers: CORS_HEADERS });
+}
+
+async function handleRoot(sql) {
+  const root = await sql`
+    select * from archive_records where id = ${ROOT_ID} limit 1
+  `;
+  const children = await sql`
+    select id, title, type, status, parent, path, summary
+    from archive_records
+    where parent = ${ROOT_ID}
+    order by id
+  `;
+  return json({ root: root[0] || null, children });
+}
+
+async function handleRegistry(sql) {
+  const records = await sql`
+    select * from archive_records order by root, parent nulls first, id
+  `;
+  return json({ records });
+}
+
+async function handleManuals(sql) {
+  const manuals = await sql`
+    select * from manual_entries order by title
+  `;
+  return json({ manuals });
+}
+
+async function handleProvenance(sql) {
+  const events = await sql`
+    select * from provenance_events order by event_date desc limit 200
+  `;
+  return json({ events });
+}
+
+async function handleLogs(sql) {
+  const logs = await sql`
+    select * from transparency_logs order by created_at desc limit 200
+  `;
+  return json({ logs });
+}
+
+async function handleSystem(sql) {
+  const state = await sql`
+    select * from system_state where id = 'singleton' limit 1
+  `;
+  return json({ system: state[0] || null });
+}
+
+const ROUTES = {
+  '/api/root': handleRoot,
+  '/api/root/registry': handleRegistry,
+  '/api/root/manuals': handleManuals,
+  '/api/root/provenance': handleProvenance,
+  '/api/root/logs': handleLogs,
+  '/api/root/system': handleSystem,
+};
+
 export default {
   async fetch(request, env) {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: CORS_HEADERS });
+    }
+
     const url = new URL(request.url);
-    if (url.pathname !== '/api/root') {
+    const handler = ROUTES[url.pathname];
+
+    if (!handler) {
       return new Response('Not found', { status: 404 });
     }
     if (!env.DATABASE_URL) {
-      return Response.json({ error: 'DATABASE_URL missing' }, { status: 500 });
+      return json({ error: 'DATABASE_URL missing' }, 500);
     }
 
     const sql = neon(env.DATABASE_URL);
-    const root = await sql`
-      select * from archive_records
-      where id = '0?0.uXu.0000'
-      limit 1
-    `;
-    const children = await sql`
-      select id, title, type, status, parent
-      from archive_records
-      where parent = '0?0.uXu.0000'
-      order by id
-    `;
 
-    return Response.json({ root: root[0] || null, children });
-  }
+    try {
+      return await handler(sql);
+    } catch (err) {
+      return json({ error: 'query failed', detail: String(err) }, 500);
+    }
+  },
 };

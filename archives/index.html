@@ -128,42 +128,57 @@ EXIT
   </div>
 
   <script>
-    const registry = [
-      {
-        id: "0?0.uXu.0000",
-        title: "Root Archive Console",
-        slug: "root-archive",
-        status: "ACTIVE",
-        type: "SYSTEM",
-        path: "archives/index.html",
-        summary: "Root archive registry and operator console for uXu_repo.",
-        updatedAt: "2026-07-08"
-      },
-      {
-        id: "CyberCat_Sunflower.uXu.0001",
-        title: "CyberCat Sunflower",
-        slug: "cybercat-sunflower",
-        status: "STAGED",
-        type: "CONTRIBUTOR",
-        path: "../CyberCat-Sunflower",
-        summary: "Contributor archive with stronger visual personality beneath the root.",
-        updatedAt: "2026-07-08"
-      },
-      {
-        id: "RTFM.uXu.0002",
-        title: "RTFM Manual Library",
-        slug: "rtfm",
-        status: "ACTIVE",
-        type: "MANUAL",
-        path: "../RTFM",
-        summary: "Manual library and system docs for the uXu archive.",
-        updatedAt: "2026-07-08"
-      }
-    ];
+    // Fill in the deployed Worker URL (from `wrangler deploy` output, or your
+    // custom domain if bound to one). Left blank on purpose — do not guess it.
+    const API_BASE = "https://uxu-ini-production.chrf-podcast.workers.dev"; // e.g. "https://uxu-ini-production.<subdomain>.workers.dev"
+
+    let registry = [];
 
     const tbody = document.querySelector('#registry-table tbody');
     const activeSummary = document.querySelector('#active-summary');
     const commandInput = document.querySelector('#command-input');
+
+    async function loadRegistry() {
+      if (!API_BASE) {
+        activeSummary.textContent =
+`ERROR: API_BASE not configured.
+
+Set API_BASE at the top of this script to your deployed
+apps/ini Worker URL, then reload.`;
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/api/root/registry`);
+        if (!res.ok) throw new Error(`registry fetch failed: ${res.status}`);
+        const data = await res.json();
+        registry = (data.records || []).map(r => ({
+          id: r.id,
+          title: r.title,
+          slug: r.slug,
+          status: (r.status || "unknown").toUpperCase(),
+          type: (r.type || "unknown").toUpperCase(),
+          path: r.path || "unknown",
+          summary: r.summary || "unknown",
+          updatedAt: r.updated_at ? r.updated_at.slice(0, 10) : "unknown",
+          certainty: r.certainty || "unknown",
+          unresolved: r.unresolved || [],
+          parent: r.parent || null,
+        }));
+        if (!registry.length) {
+          activeSummary.textContent = "registry loaded :: 0 records found";
+          return;
+        }
+        renderRegistry();
+        activateEntry(registry[0]);
+      } catch (err) {
+        activeSummary.textContent =
+`ERROR loading registry from ${API_BASE}/api/root/registry
+
+${err.message}
+
+Check that the Worker is deployed and CORS is enabled.`;
+      }
+    }
 
     function renderRegistry() {
       tbody.innerHTML = "";
@@ -193,6 +208,9 @@ EXIT
       document.querySelectorAll('#registry-table tbody tr').forEach(tr => {
         tr.classList.toggle('active', tr.dataset.id === entry.id);
       });
+      const unresolvedBlock = entry.unresolved && entry.unresolved.length
+        ? `\n\nunresolved:\n${entry.unresolved.map(u => `  - ${u}`).join('\n')}`
+        : '';
       activeSummary.textContent =
 `id:        ${entry.id}
 title:     ${entry.title}
@@ -200,13 +218,14 @@ status:    ${entry.status}
 type:      ${entry.type}
 path:      ${entry.path}
 updated:   ${entry.updatedAt}
+certainty: ${entry.certainty}
 
 summary:
 ${entry.summary}
 
 provenance:
-source:    uXu_repo :: archives
-validation: PENDING
+source:    Neon :: archive_records
+validation: ${entry.certainty}${unresolvedBlock}
 `;
     }
 
@@ -241,50 +260,55 @@ EXIT              no-op for now (root stays loaded)`;
         return;
       }
       if (cmd === "LOGS") {
-        activeSummary.textContent =
-`TRANSPARENCY LOGS
-
-[2026-07-08] root ingest :: registry seeded
-[2026-07-08] CyberCat_Sunflower.uXu.0001 :: STAGED
-[2026-07-08] RTFM.uXu.0002 :: ACTIVE :: manuals available`;
+        activeSummary.textContent = "loading transparency logs...";
+        fetch(`${API_BASE}/api/root/logs`).then(r => r.json()).then(data => {
+          const logs = data.logs || [];
+          activeSummary.textContent = logs.length
+            ? "TRANSPARENCY LOGS\n\n" + logs.map(l =>
+                `[${l.created_at ? l.created_at.slice(0,10) : "unknown"}] ${l.scope} :: ${l.message}`
+              ).join('\n')
+            : "TRANSPARENCY LOGS\n\nno entries yet";
+        }).catch(err => activeSummary.textContent = `ERROR loading logs: ${err.message}`);
         return;
       }
       if (cmd === "MANUAL") {
-        activeSummary.textContent =
-`MANUAL LIBRARY
-
-Naming system:
-  uXu = independent public archive collection
-  0?0 = root archive console label
-  CyberCat Sunflower = contributor archive entry
-
-Text/media policy:
-  Root archive hosts registry, metadata, provenance, routing, manuals, status, transparency info.
-  Child archives host richer media and themed content.`;
+        activeSummary.textContent = "loading manual library...";
+        fetch(`${API_BASE}/api/root/manuals`).then(r => r.json()).then(data => {
+          const manuals = data.manuals || [];
+          activeSummary.textContent = manuals.length
+            ? "MANUAL LIBRARY\n\n" + manuals.map(m => `${m.title} (${m.status})`).join('\n')
+            : "MANUAL LIBRARY\n\nno manuals ingested yet";
+        }).catch(err => activeSummary.textContent = `ERROR loading manuals: ${err.message}`);
         return;
       }
       if (cmd === "SYSTEM") {
-        activeSummary.textContent =
-`SYSTEM INFO
+        activeSummary.textContent = "loading system info...";
+        fetch(`${API_BASE}/api/root/system`).then(r => r.json()).then(data => {
+          const s = data.system;
+          activeSummary.textContent = s
+            ? `SYSTEM INFO
 
-repo:       uXu_repo
-identity:   uXu = independent public archive collection
-root:       0?0.uXu.0000
-schema:     v0.1 (conical protocols)
-archives:   ${registry.length}
-mode:       BROWSE :: ROOT CONSOLE
-
-cache:      not implemented (neutral)
-build:      manual seed, DOS CRT layout`;
+schema_version: ${s.schema_version}
+runtime:        ${s.runtime}
+neon_branch:    ${s.neon_branch || "unknown"}
+status:         ${s.status}
+archives:       ${registry.length}
+updated:        ${s.updated_at ? s.updated_at.slice(0,10) : "unknown"}`
+            : "SYSTEM INFO\n\nno system_state row found";
+        }).catch(err => activeSummary.textContent = `ERROR loading system info: ${err.message}`);
         return;
       }
       if (cmd === "MAP 0000" || cmd === "MAP") {
+        const root = registry.find(e => !e.parent);
+        const children = registry.filter(e => e.parent === (root && root.id));
+        const lines = children.map((c, i) =>
+          `  ${i === children.length - 1 ? '└─' : '├─'} ${c.id}  (${c.type.toLowerCase()})`
+        );
         activeSummary.textContent =
 `PROVENANCE MAP :: ROOT
 
-0?0.uXu.0000
-  ├─ CyberCat_Sunflower.uXu.0001  (contributor archive)
-  └─ RTFM.uXu.0002                 (manual library)`;
+${root ? root.id : "unknown"}
+${lines.length ? lines.join('\n') : '  (no child records found)'}`;
         return;
       }
     }
@@ -296,8 +320,7 @@ build:      manual seed, DOS CRT layout`;
       }
     });
 
-    renderRegistry();
-    activateEntry(registry[0]);
+    loadRegistry();
   </script>
 </body>
 </html>
