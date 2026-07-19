@@ -16,6 +16,7 @@
       background: #d5cec2;
       border: 8px solid #8b8375;
       box-shadow: 0 0 40px rgba(0,0,0,0.5);
+      box-sizing: border-box;
     }
     .screen {
       background: #020402;
@@ -25,6 +26,8 @@
       min-height: 480px;
       display: flex;
       flex-direction: column;
+      box-sizing: border-box;
+      overflow: hidden;
     }
     .status-line {
       padding-bottom: 0.5rem;
@@ -40,14 +43,23 @@
       gap: 1ch;
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
+      min-width: 0;
     }
     .panel {
       border: 1px solid #0f3010;
       padding: 0.5rem;
+      min-width: 0;
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .panel-title {
       border-bottom: 1px solid #0f3010;
       margin-bottom: 0.25rem;
+    }
+    .panel pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
     }
     .prompt-row {
       border-top: 1px solid #0f3010;
@@ -62,6 +74,8 @@
       border: 1px solid #0f3010;
       padding: 0.25rem 0.5rem;
       font-family: monospace;
+      box-sizing: border-box;
+      width: 100%;
     }
     .legend {
       font-size: 0.8rem;
@@ -70,13 +84,20 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.8rem;
+      table-layout: fixed;
     }
     th, td {
       padding: 0.1rem 0.25rem;
       border-bottom: 1px solid #0f3010;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     tr.active {
       background: #042804;
+    }
+    tr {
+      cursor: pointer;
     }
   </style>
 </head>
