@@ -32,13 +32,6 @@ async function handleRegistry(sql) {
   return json({ records });
 }
 
-async function handleManuals(sql) {
-  const manuals = await sql`
-    select * from manual_entries order by title
-  `;
-  return json({ manuals });
-}
-
 async function handleProvenance(sql) {
   const events = await sql`
     select * from provenance_events order by event_date desc limit 200
@@ -53,20 +46,11 @@ async function handleLogs(sql) {
   return json({ logs });
 }
 
-async function handleSystem(sql) {
-  const state = await sql`
-    select * from system_state where id = 'singleton' limit 1
-  `;
-  return json({ system: state[0] || null });
-}
-
 const ROUTES = {
   '/api/root': handleRoot,
   '/api/root/registry': handleRegistry,
-  '/api/root/manuals': handleManuals,
   '/api/root/provenance': handleProvenance,
   '/api/root/logs': handleLogs,
-  '/api/root/system': handleSystem,
 };
 
 export default {
@@ -81,6 +65,7 @@ export default {
     if (!handler) {
       return new Response('Not found', { status: 404 });
     }
+
     if (!env.DATABASE_URL) {
       return json({ error: 'DATABASE_URL missing' }, 500);
     }
