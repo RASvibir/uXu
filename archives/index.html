@@ -479,7 +479,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
-              <input id="command-input" type="text" placeholder="HELP · INDEX · OPEN CYBERCAT · LOAD 0001" spellcheck="false" />
+              <input id="command-input" type="text" placeholder="OPEN CYBERCAT · LOAD 0001 · HELP" spellcheck="false" />
             </form>
           </section>
 
@@ -564,36 +564,149 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
     setTimeout(apply, 160);
   }
 
-  function localArchiveHref(path){
+  // Pages publishes archives/ as site root. Neon may still store /archives/... paths.
+  const LOCAL_ARCHIVE_PATHS = {
+    'CyberCat_Sunflower.uXu': 'CyberCat-Sunflower/index.html',
+    'cybercat-sunflower': 'CyberCat-Sunflower/index.html',
+    'CyberCat Sunflower': 'CyberCat-Sunflower/index.html',
+  };
+
+  function siteBase(){
+    let path = location.pathname || '/';
+    if (path.endsWith('.html')) path = path.slice(0, path.lastIndexOf('/') + 1);
+    if (!path.endsWith('/')) path += '/';
+    return path;
+  }
+
+  function normalizeRegistryPath(path){
     if (!path || path === 'unknown') return null;
     if (/^https?:\/\//i.test(path)) return path;
-    if (path.startsWith('/CyberCat-Sunflower')) return `.${path}`;
-    if (path.startsWith('/archives/')) return path.replace(/^\/archives/, '.') || './index.html';
-    if (path.startsWith('/')) return `.${path}`;
-    return path;
+    let p = String(path).trim();
+    p = p.replace(/^\/archives\//, '/');
+    p = p.replace(/^\.\//, '');
+    p = p.replace(/^\//, '');
+    return p;
+  }
+
+  function localArchiveHref(entryOrPath){
+    if (!entryOrPath) return null;
+
+    if (typeof entryOrPath === 'object') {
+      const entry = entryOrPath;
+      const byId = LOCAL_ARCHIVE_PATHS[entry.id] || LOCAL_ARCHIVE_PATHS[entry.slug] || LOCAL_ARCHIVE_PATHS[entry.title];
+      if (byId) return siteBase() + byId;
+
+      // Child records (e.g. .0001) inherit open target from openable parent.
+      if (entry.parent) {
+        const parent = registry.find(r => r.id === entry.parent);
+        if (parent) {
+          const parentHref = localArchiveHref(parent);
+          if (parentHref && isLocalPlayerHref(parentHref)) return parentHref;
+        }
+      }
+
+      return localArchiveHref(entry.path);
+    }
+
+    const path = entryOrPath;
+    if (/^https?:\/\//i.test(path)) return path;
+    const normalized = normalizeRegistryPath(path);
+    if (!normalized) return null;
+    if (/^https?:\/\//i.test(normalized)) return normalized;
+    return siteBase() + normalized;
+  }
+
+  function isLocalPlayerHref(href){
+    if (!href) return false;
+    if (/^https?:\/\//i.test(href)) {
+      try {
+        const u = new URL(href, location.href);
+        return u.origin === location.origin && /\.html?$/i.test(u.pathname);
+      } catch {
+        return false;
+      }
+    }
+    return /\.html?$/i.test(href) || href.includes('CyberCat-Sunflower');
+  }
+
+  function isSelfHref(href){
+    try {
+      const target = new URL(href, location.href);
+      const here = new URL(location.href);
+      const norm = (p) => p.replace(/\/index\.html?$/i, '/').replace(/\/$/, '/') || '/';
+      return target.origin === here.origin && norm(target.pathname) === norm(here.pathname);
+    } catch {
+      return false;
+    }
   }
 
   function canOpen(entry){
     if (!entry) return false;
-    const href = localArchiveHref(entry.path);
+    if (entry.type === 'ROOT-CONSOLE' || entry.id === '0?0.uXu.0000') return false;
+    const href = localArchiveHref(entry);
     if (!href) return false;
-    if (/^https?:\/\//i.test(href) && !href.includes('CyberCat')) return false;
-    return href.endsWith('.html') || href.includes('CyberCat') || href.includes('index');
+    if (isSelfHref(href)) return false;
+    if (/^https?:\/\//i.test(href)) {
+      try {
+        const u = new URL(href);
+        // External text dumps are inspect-only unless same-origin HTML.
+        if (u.origin !== location.origin) return false;
+      } catch {
+        return false;
+      }
+    }
+    return isLocalPlayerHref(href);
   }
 
   function openEntry(entry){
-    const href = localArchiveHref(entry.path);
+    if (!entry) {
+      toast('No archive selected');
+      return;
+    }
+    const href = localArchiveHref(entry);
     if (!href) {
       toast('No openable path on this record');
+      showOutput('ERROR', `Record ${entry.id} has no local archive path.\npath: ${entry.path}`);
       return;
     }
-    if (/^https?:\/\//i.test(href) && !href.includes(location.hostname)) {
-      window.open(href, '_blank', 'noopener');
-      toast('External link opened');
+    if (isSelfHref(href)) {
+      toast('Already at this archive');
       return;
+    }
+    if (/^https?:\/\//i.test(href)) {
+      try {
+        const u = new URL(href);
+        if (u.origin !== location.origin) {
+          window.open(href, '_blank', 'noopener');
+          toast('External link opened');
+          return;
+        }
+      } catch {/* fall through */}
     }
     toast(`Loading ${entry.title}…`);
-    location.href = href;
+    location.assign(href);
+  }
+
+  function findArchive(query){
+    const q = String(query || '').trim().toLowerCase();
+    if (!q) return selected;
+    const compact = q.replace(/[\s_\-]+/g, '');
+
+    const scored = registry.map(e => {
+      const id = (e.id || '').toLowerCase();
+      const title = (e.title || '').toLowerCase();
+      const slug = (e.slug || '').toLowerCase();
+      let score = 0;
+      if (id === q || slug === q || title === q) score = 100;
+      else if (id.endsWith(q) || id.endsWith('.' + q)) score = 90;
+      else if (slug.includes(q) || title.includes(q) || id.includes(q.replace(/\s+/g, '_'))) score = 70;
+      else if (id.replace(/[\s_\-?.]/g, '').includes(compact) || title.replace(/[\s_\-]+/g, '').includes(compact)) score = 60;
+      if (score && canOpen(e)) score += 15;
+      if (score && e.type === 'ARCHIVE') score += 10;
+      return { e, score };
+    }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+
+    return scored.length ? scored[0].e : null;
   }
 
   async function loadRegistry() {
@@ -672,7 +785,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
       ? `\n\nunresolved:\n${entry.unresolved.map(u => `  - ${typeof u === 'string' ? u : JSON.stringify(u)}`).join('\n')}`
       : '';
     const openHint = canOpen(entry)
-      ? `\n\n[Enter / Open Archive] launch ${localArchiveHref(entry.path)}`
+      ? `\n\n[Enter / Open Archive / OPEN] launch ${localArchiveHref(entry)}`
       : '\n\n[Inspect only — no local player path]';
     showOutput(entry.id,
 `title:     ${entry.title}
@@ -711,8 +824,10 @@ validation: ${entry.certainty}${unresolvedBlock}${openHint}`);
     if (cmd === "HELP") {
       setActiveNav("HELP");
       showOutput("HELP",
-`LOAD 0001         inspect archive by numeric suffix
-OPEN CYBERCAT     open archive by name (navigates when local)
+`OPEN CYBERCAT     open archive by name (navigates)
+OPEN              open currently selected archive
+LOAD 0001         load/open by id suffix (opens parent if needed)
+GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
 MAP               show root provenance
 LOGS              show transparency logs
@@ -727,26 +842,26 @@ Keyboard
   F1–F6           quick nav shortcuts`);
       return;
     }
-    if (cmd.startsWith("LOAD ")) {
-      const suffix = cmd.replace("LOAD ", "").trim();
-      const entry = registry.find(e => e.id.toUpperCase().endsWith(suffix));
-      if (entry) activateEntry(entry, { inspect: true });
-      else showOutput("ERROR", `no archive matching suffix "${suffix}"`);
-      return;
-    }
-    if (cmd.startsWith("OPEN ")) {
-      const name = cmd.replace("OPEN ", "").trim().toLowerCase();
-      const entry = registry.find(e =>
-        (e.slug && e.slug.toLowerCase() === name) ||
-        e.title.toLowerCase().includes(name) ||
-        e.id.toLowerCase().includes(name.replace(/\s+/g, '_'))
-      );
+    if (cmd === "OPEN" || cmd === "GO" || cmd.startsWith("OPEN ") || cmd.startsWith("GO ") || cmd.startsWith("LOAD ")) {
+      const raw = cmd.replace(/^(OPEN|GO|LOAD)\s*/, '').trim();
+      const entry = findArchive(raw);
       if (!entry) {
-        showOutput("ERROR", `no archive matching "${name}"`);
+        showOutput("ERROR", raw
+          ? `no archive matching "${raw}"`
+          : "nothing selected — click a registry row or OPEN <name>");
         return;
       }
       activateEntry(entry, { inspect: true });
-      if (canOpen(entry)) openEntry(entry);
+      if (canOpen(entry)) {
+        openEntry(entry);
+      } else {
+        showOutput("ERROR",
+`Found ${entry.id} but it is not a local openable archive.
+
+path: ${entry.path}
+Try: OPEN CYBERCAT
+Or select CyberCat Sunflower in the registry and press Enter.`);
+      }
       return;
     }
     if (cmd === "LOGS") {
