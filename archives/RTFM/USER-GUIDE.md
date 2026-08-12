@@ -58,9 +58,7 @@ On 0?0: **RTFM** opens the interactive 0?0 manual. **MANUAL LIBRARY** opens
 the pamphlet index. While docs are open, **INDEX ARCHIVE MANUALS** finds
 creator manuals declared in `data.json` → `uxu.manuals`.
 
-The registry lists **ARCHIVE ID** (`Title.uXu.NNNN`) and **NAME**.
-Hover the name for the full title when the column is clipped.
-
+The registry lists **ID** (`uXu.NNNN`) and **NAME** (hover the name for the full title when clipped).
 Ids are forever. If access ends you still see a placemarker such as
 **(deleted by user)**, **(removed by admin)**, **(locked archive)**, or
 **(under investigation)** — so the count of created archives stays honest.

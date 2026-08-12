@@ -259,8 +259,8 @@
     position:sticky; top:0;
     background:rgba(3,8,5,.95);
   }
-  th:nth-child(1), td:nth-child(1){width:34%;}
-  th:nth-child(2), td:nth-child(2){width:22%;}
+  th:nth-child(1), td:nth-child(1){width:18%;}
+  th:nth-child(2), td:nth-child(2){width:38%;}
   th:nth-child(3), td:nth-child(3){width:28%;}
   th:nth-child(4), td:nth-child(4){width:16%;}
   td{
@@ -364,6 +364,94 @@
     color:var(--cyan);
     font-size:.72rem;
     word-break:break-all;
+  }
+  .id-modal{
+    position:fixed;
+    z-index:10000;
+    min-width:16rem;
+    max-width:min(34rem, calc(100vw - 1.5rem));
+    padding:.65rem .8rem .75rem;
+    background:rgba(4,12,8,.98);
+    border:1px solid var(--cyan);
+    box-shadow:
+      0 0 0 1px rgba(3,8,5,.9),
+      0 12px 40px rgba(0,0,0,.75),
+      0 0 24px rgba(94,240,255,.15);
+    color:var(--green-bright);
+    font-family:var(--mono);
+    font-size:.82rem;
+    line-height:1.5;
+    pointer-events:auto;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .12s var(--ease);
+  }
+  .id-modal.show{
+    opacity:1;
+    visibility:visible;
+  }
+  .id-modal .nm-k{
+    display:block;
+    color:var(--green-dim);
+    font-size:.62rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:.2rem;
+  }
+  .id-modal .nm-v{
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    font-size:.86rem;
+    color:var(--cyan);
+  }
+  .id-modal .nm-name{
+    margin-top:.35rem;
+    color:var(--highlight-fg);
+    font-size:.8rem;
+    overflow-wrap:anywhere;
+  }
+  .id-modal .nm-path-block{
+    margin-top:.5rem;
+    padding-top:.45rem;
+    border-top:1px dashed var(--green-line);
+  }
+  .id-modal .nm-path{
+    display:block;
+    margin:.2rem 0 .45rem;
+    color:var(--green-bright);
+    font-size:.7rem;
+    word-break:break-all;
+    user-select:all;
+  }
+  .id-modal .nm-path.is-empty{ color:var(--green-dim); font-style:italic; }
+  .id-modal .copy-path-btn{
+    font:inherit;
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:#031018;
+    background:var(--cyan);
+    border:1px solid var(--cyan);
+    padding:.28rem .55rem;
+    cursor:pointer;
+  }
+  .id-modal .copy-path-btn:hover,
+  .id-modal .copy-path-btn:focus-visible{
+    filter:brightness(1.08);
+    outline:none;
+  }
+  .id-modal .copy-path-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+  }
+  td.col-id .id-hit{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    cursor:help;
+    border-bottom:1px dotted rgba(94,240,255,.4);
   }
 
   .output-panel{flex:1; display:flex; flex-direction:column; min-height:10rem;}
@@ -1003,15 +1091,25 @@
               <div class="registry-wrap">
                 <table id="registry-table">
                   <thead>
-                    <tr><th>NAME</th><th>uXu.No</th><th>MARKER</th><th>TYPE</th></tr>
+                    <tr><th>ID</th><th>NAME</th><th>MARKER</th><th>TYPE</th></tr>
                   </thead>
                   <tbody></tbody>
                 </table>
               </div>
               <div class="name-modal" id="name-modal" role="tooltip" hidden>
-                <span class="nm-k">Archive name</span>
+                <span class="nm-k">Full archive name</span>
                 <div class="nm-v" id="name-modal-title"></div>
                 <div class="nm-id" id="name-modal-id"></div>
+              </div>
+              <div class="id-modal" id="id-modal" role="dialog" aria-label="Archive id and pathway" hidden>
+                <span class="nm-k">Archive id</span>
+                <div class="nm-v" id="id-modal-fullid"></div>
+                <div class="nm-name" id="id-modal-name"></div>
+                <div class="nm-path-block">
+                  <span class="nm-k">File pathway</span>
+                  <code class="nm-path" id="id-modal-path"></code>
+                  <button type="button" class="copy-path-btn" id="id-modal-copy">Copy pathway</button>
+                </div>
               </div>
               <div class="rtfm-tip" id="rtfm-tip" role="tooltip" hidden>
                 <span class="rtfm-tip-k">psst</span>
@@ -1690,6 +1788,50 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     return n ? `uXu.${n[1]}` : (id || '—');
   }
 
+  /** Human display name only — never the Title.uXu.NNNN composite id. */
+  function archiveDisplayName(entry) {
+    const id = String(entry?.id || '');
+    let title = String(entry?.title || '').trim();
+    if (title && title !== id) {
+      title = title.replace(/\.?uXu\.\d{4}$/i, '').trim();
+      if (title) return title;
+    }
+    const stem = id
+      .replace(/\.?uXu\.\d{4}$/i, '')
+      .replace(/\.\d{4}$/, '')
+      .replace(/_/g, ' ')
+      .trim();
+    return stem || title || '—';
+  }
+
+  function archiveIdOnly(entry) {
+    return archiveSerialLabel(entry?.id);
+  }
+
+  /** Best file pathway for display/copy (site-relative when possible). */
+  function archiveFilePathway(entry) {
+    if (!entry) return '';
+    const href = localArchiveHref(entry);
+    if (href) {
+      try {
+        const u = new URL(href, location.href);
+        if (u.origin === location.origin) {
+          const base = siteBase();
+          let path = u.pathname + (u.search || '');
+          if (path.startsWith(base)) path = path.slice(base.length);
+          return path.replace(/^\//, '') || u.pathname;
+        }
+        return href;
+      } catch {
+        return href;
+      }
+    }
+    const normalized = normalizeRegistryPath(entry.path);
+    if (normalized && normalized !== 'unknown') return normalized;
+    if (entry.path && entry.path !== 'unknown') return String(entry.path);
+    return '';
+  }
+
   const nameModal = document.getElementById('name-modal');
   const nameModalTitle = document.getElementById('name-modal-title');
   const nameModalId = document.getElementById('name-modal-id');
@@ -1697,6 +1839,17 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
   // Keep tooltip outside CRT overflow/transform ancestors so it never clips into the index box
   if (nameModal && nameModal.parentElement !== document.body) {
     document.body.appendChild(nameModal);
+  }
+
+  const idModal = document.getElementById('id-modal');
+  const idModalFullId = document.getElementById('id-modal-fullid');
+  const idModalName = document.getElementById('id-modal-name');
+  const idModalPath = document.getElementById('id-modal-path');
+  const idModalCopy = document.getElementById('id-modal-copy');
+  let idModalTimer = null;
+  let idModalPathway = '';
+  if (idModal && idModal.parentElement !== document.body) {
+    document.body.appendChild(idModal);
   }
 
   const rtfmTip = document.getElementById('rtfm-tip');
@@ -1756,36 +1909,27 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     nameModal.hidden = true;
   }
 
-  function showNameModal(entry, anchorEl) {
-    clearTimeout(nameModalTimer);
-    const mark = placemarkerInfo(entry);
-    nameModalTitle.textContent = entry.title || '(unnamed)';
-    nameModalId.textContent = `${entry.id || ''}\n${archiveSerialLabel(entry.id)} · ${mark.label}`;
-    nameModal.hidden = false;
-    nameModal.classList.remove('show');
-    nameModal.style.left = '0px';
-    nameModal.style.top = '0px';
-    nameModal.style.visibility = 'hidden';
-    nameModal.style.opacity = '0';
+  function placeFixedModal(modalEl, anchorEl) {
+    modalEl.style.left = '0px';
+    modalEl.style.top = '0px';
+    modalEl.style.visibility = 'hidden';
+    modalEl.style.opacity = '0';
 
-    // Measure at final content, then place in the viewport (prefer beside/below cell, never clipped)
     const rect = anchorEl.getBoundingClientRect();
     const pad = 12;
-    const mw = Math.max(nameModal.offsetWidth || 240, 200);
-    const mh = Math.max(nameModal.offsetHeight || 90, 70);
+    const mw = Math.max(modalEl.offsetWidth || 260, 200);
+    const mh = Math.max(modalEl.offsetHeight || 110, 70);
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
     let left = rect.left;
     let top = rect.bottom + pad;
 
-    // Prefer right of the cell if it fits better on small heights
     const belowFits = top + mh <= vh - pad;
     const aboveFits = rect.top - pad - mh >= pad;
     if (!belowFits && aboveFits) {
       top = rect.top - mh - pad;
     } else if (!belowFits) {
-      // Park beside the registry column so it stays on-screen
       left = Math.min(rect.right + pad, vw - mw - pad);
       top = Math.min(Math.max(pad, rect.top), vh - mh - pad);
     }
@@ -1795,16 +1939,102 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     if (top + mh > vh - pad) top = Math.max(pad, vh - mh - pad);
     if (top < pad) top = pad;
 
-    nameModal.style.left = `${Math.round(left)}px`;
-    nameModal.style.top = `${Math.round(top)}px`;
-    nameModal.style.visibility = '';
-    nameModal.style.opacity = '';
-    requestAnimationFrame(() => nameModal.classList.add('show'));
+    modalEl.style.left = `${Math.round(left)}px`;
+    modalEl.style.top = `${Math.round(top)}px`;
+    modalEl.style.visibility = '';
+    modalEl.style.opacity = '';
+    requestAnimationFrame(() => modalEl.classList.add('show'));
+  }
+
+  function showNameModal(entry, anchorEl) {
+    clearTimeout(nameModalTimer);
+    hideIdModal();
+    const mark = placemarkerInfo(entry);
+    const fullName = archiveDisplayName(entry);
+    nameModalTitle.textContent = fullName;
+    nameModalId.textContent = `${archiveIdOnly(entry)} · ${mark.label}`;
+    nameModal.hidden = false;
+    nameModal.classList.remove('show');
+    placeFixedModal(nameModal, anchorEl);
+  }
+
+  function hideIdModal() {
+    clearTimeout(idModalTimer);
+    if (!idModal) return;
+    idModal.classList.remove('show');
+    idModal.hidden = true;
+  }
+
+  function showIdModal(entry, anchorEl) {
+    clearTimeout(idModalTimer);
+    hideNameModal();
+    if (!idModal) return;
+    const fullId = entry.id || archiveIdOnly(entry);
+    const name = archiveDisplayName(entry);
+    const pathway = archiveFilePathway(entry);
+    idModalPathway = pathway;
+    idModalFullId.textContent = fullId;
+    idModalName.textContent = `name: ${name}`;
+    idModalPath.textContent = pathway || '(no local file pathway on this record)';
+    idModalPath.classList.toggle('is-empty', !pathway);
+    if (idModalCopy) {
+      idModalCopy.disabled = !pathway;
+      idModalCopy.textContent = 'Copy pathway';
+    }
+    idModal.hidden = false;
+    idModal.classList.remove('show');
+    placeFixedModal(idModal, anchorEl);
+  }
+
+  async function copyIdModalPathway() {
+    if (!idModalPathway) {
+      toast('No pathway to copy');
+      return;
+    }
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(idModalPathway);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = idModalPathway;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      if (idModalCopy) idModalCopy.textContent = 'Copied';
+      toast('Pathway copied');
+      setTimeout(() => {
+        if (idModalCopy && idModalPathway) idModalCopy.textContent = 'Copy pathway';
+      }, 1400);
+    } catch (err) {
+      toast(`Copy failed: ${err.message || 'blocked'}`);
+    }
+  }
+
+  if (idModalCopy) {
+    idModalCopy.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      copyIdModalPathway();
+    });
+  }
+  if (idModal) {
+    idModal.addEventListener('mouseenter', () => clearTimeout(idModalTimer));
+    idModal.addEventListener('mouseleave', () => {
+      idModalTimer = setTimeout(hideIdModal, 180);
+    });
+    window.addEventListener('scroll', hideIdModal, true);
+    window.addEventListener('resize', hideIdModal);
   }
 
   function renderRegistry() {
     tbody.innerHTML = "";
     hideNameModal();
+    hideIdModal();
     registry.forEach((entry, idx) => {
       const mark = placemarkerInfo(entry);
       const tr = document.createElement('tr');
@@ -1816,13 +2046,36 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       if (mark.kind === 'admin-removed') tr.classList.add('is-admin-removed');
       if (mark.kind === 'investigate') tr.classList.add('is-investigate');
 
+      const displayName = archiveDisplayName(entry);
+      const idOnly = archiveIdOnly(entry);
+
+      const tdId = document.createElement('td');
+      tdId.className = 'col-id';
+      const idHit = document.createElement('span');
+      idHit.className = 'id-hit';
+      idHit.textContent = idOnly;
+      idHit.tabIndex = 0;
+      idHit.setAttribute('aria-label', `Archive id ${entry.id || idOnly}. Open for pathway copy.`);
+      idHit.addEventListener('mouseenter', (e) => {
+        e.stopPropagation();
+        showIdModal(entry, idHit);
+      });
+      idHit.addEventListener('mouseleave', () => {
+        idModalTimer = setTimeout(hideIdModal, 200);
+      });
+      idHit.addEventListener('focus', () => showIdModal(entry, idHit));
+      idHit.addEventListener('blur', () => {
+        idModalTimer = setTimeout(hideIdModal, 200);
+      });
+      tdId.appendChild(idHit);
+
       const tdName = document.createElement('td');
       tdName.className = 'col-name';
       const hit = document.createElement('span');
       hit.className = 'name-hit';
-      hit.textContent = entry.title || '—';
+      hit.textContent = displayName;
       hit.tabIndex = 0;
-      hit.setAttribute('aria-label', `Full archive name: ${entry.title || 'unnamed'} ${mark.label}`);
+      hit.setAttribute('aria-label', `Full archive name: ${displayName}`);
       hit.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
         showNameModal(entry, hit);
@@ -1833,12 +2086,6 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       hit.addEventListener('focus', () => showNameModal(entry, hit));
       hit.addEventListener('blur', hideNameModal);
       tdName.appendChild(hit);
-
-      const tdId = document.createElement('td');
-      tdId.className = 'col-id';
-      const serial = archiveSerialLabel(entry.id);
-      tdId.textContent = serial;
-      tdId.title = entry.id;
 
       const tdStatus = document.createElement('td');
       tdStatus.className = 'col-status';
@@ -1851,7 +2098,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       const tdType = document.createElement('td');
       tdType.textContent = entry.type;
 
-      tr.append(tdName, tdId, tdStatus, tdType);
+      tr.append(tdId, tdName, tdStatus, tdType);
 
       tr.addEventListener('click', () => activateEntry(entry, { inspect: true }));
       tr.addEventListener('dblclick', () => {
@@ -1898,7 +2145,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         : '\n\n[Inspect only — no local player path]';
     showOutput(entry.id,
 `archive id: ${entry.id}
-name:       ${entry.title}
+name:       ${archiveDisplayName(entry)}
 marker:     ${mark.label}
 status:     ${entry.status}
 type:       ${entry.type}
@@ -2797,7 +3044,7 @@ INDEX ARCHIVE MANUALS · BACK · MANUAL · RTFM`);
         ? `Placed forever: ${s.total} · currently openable: ${s.live}\n(ids are never reused; removals leave placemarkers)\n\n` +
           registry.map(e => {
             const m = placemarkerInfo(e);
-            return `${e.id}\n  name: ${e.title}\n  ${m.label} · ${e.type}`;
+            return `${archiveIdOnly(e)}\n  name: ${archiveDisplayName(e)}\n  ${m.label} · ${e.type}`;
           }).join('\n\n')
         : "no records loaded");
       return;
