@@ -341,7 +341,7 @@
     position:fixed;
     z-index:10000;
     min-width:14rem;
-    max-width:min(32rem, calc(100vw - 1.5rem));
+    max-width:min(36rem, calc(100vw - 1.5rem));
     padding:.65rem .8rem;
     background:rgba(4,12,8,.98);
     border:1px solid var(--cyan);
@@ -394,6 +394,34 @@
     color:var(--cyan);
     font-size:.72rem;
     word-break:break-all;
+  }
+  .name-modal .nm-blurb{
+    margin-top:.45rem;
+    padding-top:.45rem;
+    border-top:1px dashed var(--green-line);
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    font-size:.74rem;
+    line-height:1.45;
+    color:var(--green-bright);
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:4;
+    overflow:hidden;
+  }
+  .name-modal .nm-blurb.is-empty,
+  .name-modal .nm-blurb.is-loading{
+    color:var(--green-dim);
+    font-style:italic;
+  }
+  .name-modal .nm-blurb-src{
+    display:block;
+    margin-top:.3rem;
+    font-size:.58rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--green-dim);
   }
   .id-modal{
     position:fixed;
@@ -1369,6 +1397,8 @@
                 <span class="nm-k">Full archive name</span>
                 <div class="nm-v" id="name-modal-title"></div>
                 <div class="nm-id" id="name-modal-id"></div>
+                <div class="nm-blurb is-empty" id="name-modal-blurb" hidden></div>
+                <span class="nm-blurb-src" id="name-modal-blurb-src" hidden></span>
               </div>
               <div class="id-modal" id="id-modal" role="dialog" aria-label="Archive id and pathway" hidden>
                 <span class="nm-k">Archive id</span>
@@ -2154,11 +2184,20 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         parent: r.parent || null,
         iniOptIn: false,
         iniTag: 'iNi',
+        publicMetaLoaded: false,
+        description: '',
+        artist: '',
+        curator: '',
+        collectionMode: '',
+        tags: [],
+        manualCount: 0,
+        showCount: 0,
+        archiveName: '',
       }));
       refreshRegistryCount();
       renderRegistry();
       toast('Registry linked to Neon');
-      scanIniOptIns();
+      enrichOpenableArchives();
     } catch (err) {
       showOutput("ERROR", `Could not load registry from\n${API_BASE}/api/root/registry\n\n${err.message}`);
     }
@@ -2235,7 +2274,10 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
   const nameModal = document.getElementById('name-modal');
   const nameModalTitle = document.getElementById('name-modal-title');
   const nameModalId = document.getElementById('name-modal-id');
+  const nameModalBlurb = document.getElementById('name-modal-blurb');
+  const nameModalBlurbSrc = document.getElementById('name-modal-blurb-src');
   let nameModalTimer = null;
+  let nameModalEntryId = null;
   // Keep tooltip outside CRT overflow/transform ancestors so it never clips into the index box
   if (nameModal && nameModal.parentElement !== document.body) {
     document.body.appendChild(nameModal);
@@ -2416,6 +2458,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     if (!force && isModalHovered(nameModal)) return;
     nameModal.classList.remove('show');
     nameModal.hidden = true;
+    nameModalEntryId = null;
   }
 
   function hideIdModal(force = false) {
@@ -2500,11 +2543,50 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     if (isModalHovered(idModal)) return;
     const mark = placemarkerInfo(entry);
     const fullName = archiveDisplayName(entry);
+    nameModalEntryId = entry.id;
     nameModalTitle.textContent = fullName;
     nameModalId.textContent = `${archiveIdOnly(entry)} · ${mark.label}`;
+    applyNameModalBlurb(resolveArchiveBlurb(entry));
     nameModal.hidden = false;
     nameModal.classList.remove('show');
     placeFixedModal(nameModal, anchorEl, opts);
+    if (!entry.publicMetaLoaded && placemarkerInfo(entry).openable) {
+      enrichOneArchive(entry).then(() => {
+        if (nameModalEntryId !== entry.id || nameModal.hidden) return;
+        applyNameModalBlurb(resolveArchiveBlurb(entry));
+      });
+    }
+  }
+
+  function applyNameModalBlurb(resolved) {
+    if (!nameModalBlurb) return;
+    const text = resolved && resolved.text ? String(resolved.text) : '';
+    const source = resolved && resolved.source ? String(resolved.source) : '';
+    const loading = !!(resolved && resolved.loading);
+    if (!text && !loading) {
+      nameModalBlurb.hidden = true;
+      nameModalBlurb.textContent = '';
+      nameModalBlurb.classList.add('is-empty');
+      nameModalBlurb.classList.remove('is-loading');
+      if (nameModalBlurbSrc) {
+        nameModalBlurbSrc.hidden = true;
+        nameModalBlurbSrc.textContent = '';
+      }
+      return;
+    }
+    nameModalBlurb.hidden = false;
+    nameModalBlurb.textContent = text;
+    nameModalBlurb.classList.toggle('is-loading', loading);
+    nameModalBlurb.classList.toggle('is-empty', !text || loading);
+    if (nameModalBlurbSrc) {
+      if (source && !loading) {
+        nameModalBlurbSrc.hidden = false;
+        nameModalBlurbSrc.textContent = source;
+      } else {
+        nameModalBlurbSrc.hidden = true;
+        nameModalBlurbSrc.textContent = '';
+      }
+    }
   }
 
   function showIdModal(entry, anchorEl, opts = {}) {
@@ -2952,27 +3034,122 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     renderArchiveManualIndex();
   }
 
-  async function scanIniOptIns() {
+  async function enrichOpenableArchives() {
     const candidates = registry.filter((e) => placemarkerInfo(e).openable);
     let changed = false;
     await Promise.all(candidates.map(async (entry) => {
-      const dir = archiveDirFromEntry(entry);
-      if (!dir) return;
-      try {
-        const res = await fetch(siteBase() + dir + 'data.json', { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = await res.json();
-        const ini = data.uxu && data.uxu.ini;
-        const optIn = !!(ini && ini.optIn === true);
-        const tag = (ini && ini.tag) ? String(ini.tag) : 'iNi';
-        if (entry.iniOptIn !== optIn || entry.iniTag !== tag) {
-          entry.iniOptIn = optIn;
-          entry.iniTag = tag;
-          changed = true;
-        }
-      } catch (_) { /* skip unreachable archives */ }
+      const beforeOpt = entry.iniOptIn;
+      const beforeTag = entry.iniTag;
+      await enrichOneArchive(entry);
+      if (entry.iniOptIn !== beforeOpt || entry.iniTag !== beforeTag) changed = true;
     }));
     if (changed) renderRegistry();
+    // Refresh open name modal if enrichment finished while it was visible
+    if (nameModalEntryId && nameModal && !nameModal.hidden) {
+      const open = registry.find((e) => e.id === nameModalEntryId);
+      if (open) applyNameModalBlurb(resolveArchiveBlurb(open));
+    }
+  }
+
+  async function enrichOneArchive(entry) {
+    if (!entry || entry.publicMetaLoaded) return entry;
+    if (entry._enrichPromise) return entry._enrichPromise;
+    entry._enrichPromise = (async () => {
+      const dir = archiveDirFromEntry(entry);
+      if (!dir) {
+        entry.publicMetaLoaded = true;
+        return entry;
+      }
+      try {
+        const res = await fetch(siteBase() + dir + 'data.json', { cache: 'no-store' });
+        if (!res.ok) {
+          entry.publicMetaLoaded = true;
+          return entry;
+        }
+        const data = await res.json();
+        applyPublicMetaFromData(entry, data);
+      } catch (_) {
+        entry.publicMetaLoaded = true;
+      }
+      return entry;
+    })();
+    try {
+      return await entry._enrichPromise;
+    } finally {
+      delete entry._enrichPromise;
+    }
+  }
+
+  const TEMPLATE_DESCRIPTION = 'Short description of this independent archive.';
+
+  function applyPublicMetaFromData(entry, data) {
+    const ini = data.uxu && data.uxu.ini;
+    const optIn = !!(ini && ini.optIn === true);
+    const tag = (ini && ini.tag) ? String(ini.tag) : 'iNi';
+    entry.iniOptIn = optIn;
+    entry.iniTag = tag;
+    entry.archiveName = String(data.archiveName || '').trim();
+    entry.artist = String(data.artist || '').trim();
+    entry.curator = String(data.curator || '').trim();
+    entry.collectionMode = String(data.collectionMode || '').trim();
+    const rawDesc = String(data.description || '').trim();
+    entry.description = (rawDesc && rawDesc !== TEMPLATE_DESCRIPTION) ? rawDesc : '';
+    const tags = (data.uxu && Array.isArray(data.uxu.tags)) ? data.uxu.tags : (Array.isArray(data.tags) ? data.tags : []);
+    entry.tags = tags.map((t) => String(t).trim()).filter(Boolean);
+    const manualsRaw = (data.uxu && data.uxu.manuals) || data.manuals || [];
+    entry.manualCount = Array.isArray(manualsRaw) ? manualsRaw.length : 0;
+    entry.showCount = Array.isArray(data.shows) ? data.shows.length
+      : (Array.isArray(data.items) ? data.items.length : 0);
+    entry.publicMetaLoaded = true;
+  }
+
+  function resolveArchiveBlurb(entry) {
+    if (!entry) return { text: '', source: '', loading: false };
+    const desc = String(entry.description || '').trim();
+    if (desc) {
+      return { text: desc, source: 'creator description', loading: false };
+    }
+    const summary = String(entry.summary || '').trim();
+    if (summary && summary.toLowerCase() !== 'unknown') {
+      return { text: summary, source: 'registry summary', loading: false };
+    }
+    if (!entry.publicMetaLoaded && placemarkerInfo(entry).openable) {
+      return { text: 'loading public notes…', source: '', loading: true };
+    }
+    const synth = synthesizePublicBlurb(entry);
+    if (synth) {
+      return { text: synth, source: 'from public metadata', loading: false };
+    }
+    return { text: '', source: '', loading: false };
+  }
+
+  function synthesizePublicBlurb(entry) {
+    const name = entry.archiveName || archiveDisplayName(entry);
+    const bits = [];
+    if (entry.artist) bits.push(`artist ${entry.artist}`);
+    if (entry.curator) bits.push(`curated by ${entry.curator}`);
+    if (entry.collectionMode) bits.push(entry.collectionMode.replace(/-/g, ' '));
+    const counts = [];
+    if (entry.showCount > 0) counts.push(`${entry.showCount} listed item${entry.showCount === 1 ? '' : 's'}`);
+    if (entry.manualCount > 0) counts.push(`${entry.manualCount} manual${entry.manualCount === 1 ? '' : 's'}`);
+    if (counts.length) bits.push(counts.join(', '));
+    if (entry.tags && entry.tags.length) bits.push(`tags: ${entry.tags.slice(0, 4).join(', ')}`);
+    const type = String(entry.type || '').toLowerCase();
+    const status = String(entry.status || '').toLowerCase();
+    const typeStatus = [type, status].filter((s) => s && s !== 'unknown').join(' · ');
+    if (!bits.length && !typeStatus && !entry.iniOptIn) return '';
+    let line = name ? `${name}` : 'Archive';
+    if (typeStatus) line += ` — ${typeStatus}`;
+    else line += ' — public archive';
+    if (bits.length) line += `. ${bits.join('; ')}.`;
+    else line += '.';
+    if (entry.iniOptIn) line += ` iNi provenance opted in.`;
+    return line.replace(/\s+/g, ' ').trim();
+  }
+
+  /** @deprecated name kept as alias — prefer enrichOpenableArchives */
+  async function scanIniOptIns() {
+    return enrichOpenableArchives();
   }
 
   async function openArchiveManualAt(idx) {
@@ -3043,6 +3220,7 @@ loading guide...`);
   New archives take the next free number in Title.uXu.NNNN
 
 Declare visitor manuals in data.json → uxu.manuals so INDEX ARCHIVE MANUALS can find them.
+Write data.json description — it appears when visitors hover the registry title.
 
 ${manualOpen.body}
 

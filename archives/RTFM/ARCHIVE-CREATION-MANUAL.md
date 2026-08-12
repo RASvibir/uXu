@@ -21,7 +21,10 @@ That is enough.
 1. Copy `/templates/` (includes home door + fork policy fields) or fork an
    existing archive that allows template forks.
 2. Put your folder under `archives/`.
-3. Write a clear name, a short description, and at least one item in `data.json`.
+3. Write a clear name, a short **description**, and at least one item in `data.json`.
+   That description is what visitors see in the 0?0 registry when they hover (or
+   focus) the archive title. At registration, keep the Neon registry `summary`
+   in sync with the same short line when possible.
 4. Pick a **commons link** style: public **uXu** chip (default) or **← 0?0** back control.
 5. List visitor manuals under `uxu.manuals` (starter: `manuals/USER-MANUAL.md`) so
    **0?0 → RTFM → INDEX ARCHIVE MANUALS** can find them.
@@ -212,7 +215,9 @@ The number is a historical registration serial — not rank, ownership, or quali
 On 0?0, **CREATE ARCHIVE** shows the next free serial before the guide body.
 
 Use a clear human **name** (shown in the NAME column) plus the full **archive id**.
-In the registry table, hover (or focus) the name to see the full title if it is truncated.
+In the registry table, hover (or focus) the name to see the full title and a brief
+explanation (your `data.json` description, else registry summary, else a short
+line from public metadata).
 
 ### Forever placemarkers
 
