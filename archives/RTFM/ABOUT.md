@@ -45,7 +45,8 @@ uXu  ← site · repo · app
 
 On the interface: boot lands on Quick Nav · `↑↓` move · `Enter` run ·
 `→` enters the registry · `←→` move one zone (no wrap) · `Tab` cycles zones
-(wraps) · `r` registry · `q` Quick Nav · `/` command · `a` account · `?` map.
+(wraps) · click a panel to adopt it as the keyboard highlight · `r` registry ·
+`q` Quick Nav · `/` command · `a` account · `?` map.
 Long docs open at the **top**.
 
 ## iNi (opt-in provenance)

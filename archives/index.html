@@ -230,12 +230,15 @@
     transition:border-color .25s var(--ease), box-shadow .25s var(--ease);
   }
   .box:focus-within{
-    border-color:var(--green-dim);
-    box-shadow:0 0 0 1px rgba(61,232,114,.15);
+    border-color:var(--green-line);
   }
   .box.kb-focus{
     border-color:var(--cyan);
     box-shadow:0 0 0 1px rgba(94,240,255,.35), 0 0 18px rgba(94,240,255,.12);
+  }
+  .box.kb-focus:focus-within{
+    border-color:var(--cyan);
+    box-shadow:0 0 0 1px rgba(94,240,255,.45), 0 0 18px rgba(94,240,255,.16);
   }
   #registry-actions .ghost-btn:focus-visible{
     outline:2px solid var(--cyan);
@@ -1782,7 +1785,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · → registry · ←→ one zone · T
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v10';
+    const SW_BUST = 'uxu_sw_bust_v11';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -2795,7 +2798,12 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
 
       tr.append(tdId, tdName, tdStatus, tdType);
 
-      tr.addEventListener('click', () => activateEntry(entry, { inspect: true }));
+      tr.addEventListener('click', () => {
+        userChoseZone = true;
+        focusZone = 'registry';
+        paintFocusZone();
+        activateEntry(entry, { inspect: true });
+      });
       tr.addEventListener('dblclick', () => {
         if (canOpen(entry)) openEntry(entry);
         else activateEntry(entry, { inspect: true });
@@ -3503,6 +3511,7 @@ const list = document.getElementById('archive-list');
 <ul>
   <li>Boot lands on <strong>Quick Nav</strong> · <kbd>↑↓</kbd> · <kbd>Enter</kbd> run (default highlight: ARCHIVE INDEX)</li>
   <li><kbd>→</kbd> from Quick Nav enters the <strong>registry</strong> · <kbd>←→</kbd> move one zone (no wrap) · <kbd>Tab</kbd> cycles (wraps)</li>
+  <li>Click any panel to adopt it as the keyboard highlight (mouse and keys share one focus)</li>
   <li><kbd>r</kbd> registry · <kbd>q</kbd> Quick Nav · <kbd>/</kbd> command line · <kbd>a</kbd> account</li>
   <li>Registry: <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect / toggle detail modals</li>
   <li><kbd>?</kbd> full keyboard map</li>
@@ -4576,9 +4585,24 @@ Then attest here so SETUP MASTER can check it off.`);
     commandInput.value = "";
   });
 
-  btnOpen.addEventListener('click', () => { if (selected && canOpen(selected)) openEntry(selected); });
-  btnInspect.addEventListener('click', () => { if (selected) activateEntry(selected, { inspect: true }); });
-  btnCreate.addEventListener('click', () => openCreateArchiveManual());
+  btnOpen.addEventListener('click', () => {
+    userChoseZone = true;
+    focusZone = 'actions';
+    paintFocusZone();
+    if (selected && canOpen(selected)) openEntry(selected);
+  });
+  btnInspect.addEventListener('click', () => {
+    userChoseZone = true;
+    focusZone = 'actions';
+    paintFocusZone();
+    if (selected) activateEntry(selected, { inspect: true });
+  });
+  btnCreate.addEventListener('click', () => {
+    userChoseZone = true;
+    focusZone = 'actions';
+    paintFocusZone();
+    openCreateArchiveManual();
+  });
 
   authForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -4608,6 +4632,7 @@ Then attest here so SETUP MASTER can check it off.`);
   navList.addEventListener('click', (e) => {
     const toggle = e.target.closest('li[data-nav-toggle]');
     if (toggle) {
+      userChoseZone = true;
       focusZone = 'nav';
       paintFocusZone();
       toggleUserOptions();
@@ -4616,6 +4641,7 @@ Then attest here so SETUP MASTER can check it off.`);
     }
     const li = e.target.closest('li[data-cmd]');
     if (li) {
+      userChoseZone = true;
       focusZone = 'nav';
       paintFocusZone();
       if (li.classList.contains('nav-rtfm')) hideRtfmTip();
@@ -4763,9 +4789,10 @@ Then attest here so SETUP MASTER can check it off.`);
   });
 
   // —— Keyboard-first console (mouse optional) ——
-  const FOCUS_ZONES = ['registry', 'actions', 'nav', 'auth', 'command'];
+  const ZONE_ORDER = ['nav', 'registry', 'actions', 'command', 'auth'];
   let focusZone = 'nav';
   let bootNavReady = false;
+  let userChoseZone = false;
 
   function isTypingTarget(el) {
     if (!el || el === document.body) return false;
@@ -4777,6 +4804,19 @@ Then attest here so SETUP MASTER can check it off.`);
     }
     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) return true;
     return false;
+  }
+
+  function zoneFromElement(el) {
+    if (!el || !el.closest) return null;
+    if (el.closest('#nav-list') || el.closest('#nav-box')) return 'nav';
+    if (el.closest('#registry-actions')) return 'actions';
+    if (el.closest('#registry-table') || el.closest('.registry-wrap')) return 'registry';
+    if (el.closest('#auth-form')) return 'auth';
+    const authBox = document.getElementById('auth-form')?.closest('.box');
+    if (authBox && authBox.contains(el)) return 'auth';
+    if (el.closest('#command-form') || el === commandInput) return 'command';
+    if (el.closest('.output-panel')) return 'command';
+    return null;
   }
 
   function paintFocusZone() {
@@ -4791,20 +4831,83 @@ Then attest here so SETUP MASTER can check it off.`);
     // registry + actions share the middle column box — highlight that box for both
     if (focusZone === 'registry' || focusZone === 'actions') {
       map.registry?.classList.add('kb-focus');
+      map.registry?.classList.toggle('kb-focus-actions', focusZone === 'actions');
     } else {
+      map.registry?.classList.remove('kb-focus-actions');
       map[focusZone]?.classList.add('kb-focus');
     }
     const hint = document.getElementById('nav-hint');
     if (hint) {
       const labels = {
         registry: 'REGISTRY · ↑↓ select · Enter/o open · i inspect · ←→ zone',
-        actions: 'ACTIONS · ←→ buttons · Enter press · Esc / ← registry',
-        nav: 'QUICK NAV · ↑↓ · Enter · ▸ USER OPTIONS · → registry · ← stays',
-        auth: 'ACCOUNT · Tab fields · Enter sign in · ← command',
-        command: 'COMMAND · type + Enter · Esc back · ← actions · → account',
+        actions: 'ACTIONS · ←→ buttons · Enter press · ← registry · → command',
+        nav: 'QUICK NAV · ↑↓ · Enter · ▸ USER OPTIONS · → registry',
+        auth: 'ACCOUNT · Tab fields · ←→ leave zone · Esc back',
+        command: 'COMMAND · type + Enter · ←→ leave zone · Esc back',
       };
       hint.textContent = labels[focusZone] || hint.textContent;
     }
+  }
+
+  function enterZone(zone, opts = {}) {
+    if (!ZONE_ORDER.includes(zone)) return;
+    focusZone = zone;
+    paintFocusZone();
+    if (opts.focus === false) return;
+    if (zone === 'registry') {
+      if (selected) {
+        const row = tbody.querySelector(`tr[data-id="${CSS.escape(selected.id)}"]`);
+        if (row) { row.focus({ preventScroll: true }); return; }
+      }
+      focusRegistryRow(0);
+      return;
+    }
+    if (zone === 'actions') {
+      const btns = [...document.querySelectorAll('#registry-actions .ghost-btn')].filter((b) => !b.disabled && !b.hidden);
+      (opts.focusEl && btns.includes(opts.focusEl) ? opts.focusEl : btns[0])?.focus({ preventScroll: true });
+      return;
+    }
+    if (zone === 'nav') {
+      if (opts.focusEl?.closest?.('#nav-list')) {
+        opts.focusEl.focus({ preventScroll: true });
+        return;
+      }
+      focusNavItem(0);
+      return;
+    }
+    if (zone === 'auth') {
+      if (opts.focusEl?.closest?.('#auth-form')) {
+        opts.focusEl.focus({ preventScroll: true });
+        return;
+      }
+      authEmail?.focus();
+      return;
+    }
+    if (zone === 'command') {
+      if (opts.focusEl === commandInput || opts.focusEl?.closest?.('#command-form')) {
+        (opts.focusEl || commandInput).focus({ preventScroll: true });
+        return;
+      }
+      commandInput?.focus();
+    }
+  }
+
+  function adoptZoneFromEventTarget(target, opts = {}) {
+    const zone = zoneFromElement(target);
+    if (!zone) return false;
+    userChoseZone = true;
+    // If user clicked a concrete control, keep that focus; only paint zone
+    const keepEl = opts.keepFocus && target && (
+      target.matches?.('input, textarea, button, select, a, [tabindex]')
+      || target.closest?.('input, textarea, button, select, a, [tabindex], #nav-list li, #registry-table tbody tr')
+    );
+    if (keepEl) {
+      focusZone = zone;
+      paintFocusZone();
+      return true;
+    }
+    enterZone(zone, { focusEl: target });
+    return true;
   }
 
   function focusRegistryRow(idx) {
@@ -4812,19 +4915,15 @@ Then attest here so SETUP MASTER can check it off.`);
     if (!rows.length) return;
     const i = Math.max(0, Math.min(rows.length - 1, idx));
     const row = rows[i];
-    row.focus();
+    focusZone = 'registry';
+    paintFocusZone();
+    row.focus({ preventScroll: true });
     const entry = registry[i];
     if (entry) activateEntry(entry, { inspect: true });
   }
 
   function focusRegistrySelectedOrFirst() {
-    focusZone = 'registry';
-    paintFocusZone();
-    if (selected) {
-      const row = tbody.querySelector(`tr[data-id="${CSS.escape(selected.id)}"]`);
-      if (row) { row.focus(); return; }
-    }
-    focusRegistryRow(0);
+    enterZone('registry');
   }
 
   function focusNavItem(delta = 0) {
@@ -4839,7 +4938,6 @@ Then attest here so SETUP MASTER can check it off.`);
       idx = items.findIndex((li) => li.classList.contains('active') && li.dataset.cmd);
     }
     if (idx < 0) {
-      // Default land: ARCHIVE INDEX
       idx = items.findIndex((li) => li.dataset.cmd === 'INDEX');
     }
     if (idx < 0) idx = 0;
@@ -4858,42 +4956,27 @@ Then attest here so SETUP MASTER can check it off.`);
     const cur = btns.indexOf(document.activeElement);
     let idx = cur >= 0 ? cur + delta : 0;
     idx = Math.max(0, Math.min(btns.length - 1, idx));
-    btns[idx].focus();
+    btns[idx].focus({ preventScroll: true });
   }
 
   function focusAuth() {
-    focusZone = 'auth';
-    paintFocusZone();
-    authEmail?.focus();
+    enterZone('auth');
   }
 
   function focusCommand() {
-    focusZone = 'command';
-    paintFocusZone();
-    commandInput.focus();
+    enterZone('command');
   }
 
   function cycleZone(dir, opts = {}) {
     const wrap = opts.wrap !== false;
-    const order = ['nav', 'registry', 'actions', 'command', 'auth'];
-    // Re-sync from focused element so ←→ never fights a stale focusZone
-    const ae = document.activeElement;
-    let i = order.indexOf(focusZone);
-    if (ae?.closest?.('#nav-list')) i = order.indexOf('nav');
-    else if (ae?.closest?.('#registry-actions')) i = order.indexOf('actions');
-    else if (ae?.closest?.('#registry-table')) i = order.indexOf('registry');
-    else if (ae?.closest?.('#auth-form')) i = order.indexOf('auth');
-    else if (ae === commandInput || ae?.closest?.('#command-form')) i = order.indexOf('command');
+    // focusZone is source of truth — do not let Account Gate autofill hijack the index
+    let i = ZONE_ORDER.indexOf(focusZone);
     if (i < 0) i = 0;
     const next = i + dir;
-    if (!wrap && (next < 0 || next >= order.length)) return;
-    i = wrap ? ((next % order.length) + order.length) % order.length : next;
-    focusZone = order[i];
-    if (focusZone === 'registry') focusRegistrySelectedOrFirst();
-    else if (focusZone === 'actions') focusActionButtons(0);
-    else if (focusZone === 'nav') focusNavItem(0);
-    else if (focusZone === 'auth') focusAuth();
-    else focusCommand();
+    if (!wrap && (next < 0 || next >= ZONE_ORDER.length)) return;
+    i = wrap ? ((next % ZONE_ORDER.length) + ZONE_ORDER.length) % ZONE_ORDER.length : next;
+    userChoseZone = true;
+    enterZone(ZONE_ORDER[i]);
   }
 
   function showKeyboardHelp() {
@@ -4904,6 +4987,7 @@ Zones
   Order: Quick Nav → registry → actions → command → account
   ← →     move one zone (no wrap — stops at the ends)
   Tab / Shift+Tab   cycle zones (wraps)
+  Click   mouse click adopts that zone as the keyboard highlight
   Jump keys: q nav · r registry · c command · a account · / command
 
 Boot
@@ -4916,7 +5000,7 @@ Quick Nav
   ←       collapse USER OPTIONS / previous zone
   Bottom: iNi Provenance · RTFM (flair)
 
-Registry (press r or → from Quick Nav)
+Registry (press r, click it, or → from Quick Nav)
   ↑ ↓     move selection
   Home/End  first / last
   Enter / o   open archive (if openable)
@@ -4927,6 +5011,10 @@ Registry (press r or → from Quick Nav)
 Actions toolbar
   ← →     between Open / Inspect / Create / Install
   Enter   press focused button
+
+Account / command fields
+  ← →     leave the field and change zone (not trapped by autofill)
+  Esc     blur field · return toward registry
 
 Global (when not typing in a field)
   /       focus command line
@@ -4950,6 +5038,8 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
   document.addEventListener('keydown', (e) => {
     // Always allow F-keys and ? from almost anywhere except raw password? Allow F-keys always.
     const typing = isTypingTarget(e.target);
+    const inAuthField = !!(e.target.closest && e.target.closest('#auth-form'));
+    const inCommandField = e.target === commandInput;
 
     if (e.key === 'Escape') {
       if (typing) {
@@ -5011,12 +5101,44 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
 
     if (mapFKeys(e)) return;
 
+    // ←→ always change zones — even from Account Gate / command line (otherwise autofill traps you)
+    if (!e.altKey && !e.metaKey && !e.ctrlKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      if (e.target.closest?.('#nav-list')) {
+        // Quick Nav handler owns these (may stopPropagation)
+      } else if (manualMode === 'rtfm' && e.target.closest?.('.rtfm-tabs, .rtfm-code-tabs, .rtfm-panel')) {
+        const order = ['about', 'ease', 'nav', 'commands', 'depth', 'code', 'source'];
+        const idx = order.indexOf(rtfmTab);
+        e.preventDefault();
+        if (e.key === 'ArrowRight') setRtfmTab(order[Math.min(order.length - 1, idx + 1)]);
+        else setRtfmTab(order[Math.max(0, idx - 1)]);
+        return;
+      } else if (focusZone === 'actions' || e.target.closest?.('#registry-actions')) {
+        e.preventDefault();
+        const btns = [...document.querySelectorAll('#registry-actions .ghost-btn')].filter((b) => !b.disabled && !b.hidden);
+        const cur = btns.indexOf(document.activeElement);
+        if (e.key === 'ArrowRight' && (cur < 0 || cur >= btns.length - 1)) {
+          cycleZone(1, { wrap: false });
+          return;
+        }
+        if (e.key === 'ArrowLeft' && cur <= 0) {
+          cycleZone(-1, { wrap: false });
+          return;
+        }
+        focusActionButtons(e.key === 'ArrowRight' ? 1 : -1);
+        return;
+      } else if (inAuthField || inCommandField || !typing) {
+        e.preventDefault();
+        cycleZone(e.key === 'ArrowRight' ? 1 : -1, { wrap: false });
+        return;
+      }
+    }
+
     if (typing) {
-      // In command line, Esc handled above; allow Ctrl+Enter noop
+      // In fields: Esc handled above; allow caret/typing otherwise
       return;
     }
 
-    // Zone cycling — Tab wraps; ←→ clamp (no wrap) and never double-fire with local handlers
+    // Zone cycling — Tab wraps
     if (e.key === 'Tab') {
       const inGroup = e.target.closest?.('#auth-form')
         || e.target.closest?.('#registry-actions')
@@ -5026,30 +5148,6 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
       if (inGroup) return; // native tab within the group
       e.preventDefault();
       cycleZone(e.shiftKey ? -1 : 1, { wrap: true });
-      return;
-    }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      // Quick Nav owns its own ←→ (USER OPTIONS fold / zone leave)
-      if (e.target.closest?.('#nav-list')) return;
-
-      // RTFM inner tabs when focus is inside the panel
-      if (manualMode === 'rtfm' && e.target.closest?.('.rtfm-tabs, .rtfm-code-tabs, .rtfm-panel')) {
-        const order = ['about', 'ease', 'nav', 'commands', 'depth', 'code', 'source'];
-        const idx = order.indexOf(rtfmTab);
-        e.preventDefault();
-        if (e.key === 'ArrowRight') setRtfmTab(order[Math.min(order.length - 1, idx + 1)]);
-        else setRtfmTab(order[Math.max(0, idx - 1)]);
-        return;
-      }
-
-      // Actions toolbar: move between buttons
-      if (focusZone === 'actions' || e.target.closest?.('#registry-actions')) {
-        e.preventDefault();
-        focusActionButtons(e.key === 'ArrowRight' ? 1 : -1);
-        return;
-      }
-      e.preventDefault();
-      cycleZone(e.key === 'ArrowRight' ? 1 : -1, { wrap: false });
       return;
     }
 
@@ -5201,16 +5299,31 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     return false;
   }
 
+  // Click / focus adopts the keyboard zone so mouse and keys share one highlight
+  document.addEventListener('mousedown', (e) => {
+    adoptZoneFromEventTarget(e.target, { keepFocus: true });
+  }, true);
+  document.addEventListener('focusin', (e) => {
+    const zone = zoneFromElement(e.target);
+    if (!zone) return;
+    // Don't let Account Gate autofill steal the zone during boot
+    if (!userChoseZone && zone === 'auth' && !bootNavReady) return;
+    if (!userChoseZone && zone === 'auth' && focusZone === 'nav') return;
+    focusZone = zone;
+    paintFocusZone();
+  });
+
   // Boot: arrows control Quick Nav from the start (ARCHIVE INDEX land).
-  // Always take focus from Account Gate autofill/password managers.
+  // Always take focus from Account Gate autofill/password managers — until the user chooses a zone.
   function bootFocusQuickNav() {
+    if (userChoseZone) return;
     setUserOptionsOpen(false);
     const active = document.activeElement;
     if (active === commandInput) return;
     if (active && active.closest && active.closest('#auth-form')) {
       try { active.blur(); } catch (_) { /* ignore */ }
     }
-    focusNavItem(0);
+    enterZone('nav');
     bootNavReady = true;
   }
 
@@ -5223,8 +5336,9 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
   paintAuth();
   refreshAuth();
   setUserOptionsOpen(false);
+  paintFocusZone();
   loadRegistry().finally(() => {
-    if (!bootNavReady || document.activeElement?.closest?.('#auth-form')) {
+    if (!userChoseZone && (!bootNavReady || document.activeElement?.closest?.('#auth-form'))) {
       bootFocusQuickNav();
     }
   });
