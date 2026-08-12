@@ -14,7 +14,7 @@ Admin (humans): **rasip@chloreform.org**
 |---------|------|
 | **uXu** (landing / PWA) | Public door into the commons |
 | **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
-| **iNi** | Opt-in provenance protocol · community face [soloist.ai/uxu](https://soloist.ai/uxu) (Quick Nav **iNi Provenance** / `INI` · `INI SITE`) |
+| **iNi** | Opt-in provenance protocol (self-attestation). Optional public notes: [soloist.ai/uxu](https://soloist.ai/uxu) via **iNi Provenance** / `INI` / `INI SITE` |
 | **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
 | **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
@@ -64,7 +64,7 @@ Archive_A.uXu*:*Archive_B.uXu
 On the live console:
 
 - **ABOUT** / **RTFM** — 0?0 story and operator manual  
-- **iNi Provenance** — opt-in authenticity protocol · community site https://soloist.ai/uxu (`INI SITE` / see website on INI panel)  
+- **iNi Provenance** — opt-in authenticity protocol · optional notes https://soloist.ai/uxu (`INI SITE` on the INI panel)  
 - **USER OPTIONS** — Manual Library, Install, Map, Logs, System, …  
 - **CREATE ARCHIVE** — next serial + creation guide  
 
@@ -73,6 +73,8 @@ In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, …).
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
+
+**Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater.
 
 ## License
 

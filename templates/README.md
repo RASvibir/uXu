@@ -100,7 +100,7 @@ iNi is an optional authenticity protocol beside uXu — not required to publish.
 
 Setting `optIn: true` means you filled provenance seriously and accept iNi
 expectations. Starter fields ship in `templates/data.json` with `optIn: false`.
-On 0?0: **INI**. Community site: https://soloist.ai/uxu (`INI SITE` / **see website**).
+On 0?0: **INI**. Optional public notes: https://soloist.ai/uxu (`INI SITE`).
 Pamphlet: `archives/RTFM/INI-PROVENANCE.md`.
 
 ## Create flow (simple)
