@@ -1,5 +1,5 @@
-/* uXu landing PWA — caches 0?0 shell only; archive subfolders stay network. */
-const CACHE = 'uxu-landing-v1';
+/* uXu landing PWA — network-first shell so Quick Nav / flair updates show up. */
+const CACHE = 'uxu-landing-v3';
 const LANDING = [
   './',
   './index.html',
@@ -24,13 +24,9 @@ self.addEventListener('activate', (event) => {
 });
 
 function isLandingRequest(url) {
-  // Only handle the Pages site root shell — not CyberCat or other archives.
   const path = url.pathname.replace(/\/+$/, '') || '/';
-  const base = path.endsWith('/uXu') ? path : path;
-  // Match /uXu, /uXu/, /uXu/index.html (and local equivalents)
-  const leaf = base.split('/').filter(Boolean).pop() || '';
+  const leaf = path.split('/').filter(Boolean).pop() || '';
   if (leaf === 'uXu' || leaf === 'index.html' || leaf === '') {
-    // Exclude known archive subpaths
     if (/\/(CyberCat-Sunflower|RTFM|seed-13|icons)\b/i.test(url.pathname)) return false;
     return true;
   }
@@ -42,24 +38,31 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-
-  // Never hijack nested archive navigations/assets
   if (/\/(CyberCat-Sunflower|RTFM|seed-13)\//i.test(url.pathname)) return;
 
+  // Navigate: network first, fall back to cache (was cache-first — hid nav updates)
   if (req.mode === 'navigate' && isLandingRequest(url)) {
     event.respondWith(
-      caches.match('./index.html').then((hit) => hit || fetch(req))
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put('./index.html', copy));
+          return res;
+        })
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
 
   if (LANDING.some((p) => url.pathname.endsWith(p.replace('./', '/')))) {
     event.respondWith(
-      caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy));
-        return res;
-      }))
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
     );
   }
 });

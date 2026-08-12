@@ -597,67 +597,84 @@
   #nav-list li.nav-ini{
     color:var(--cyan);
     font-weight:800;
-    letter-spacing:.04em;
-    margin-top:.2rem;
-    border:1px solid rgba(94,240,255,.4);
-    background:linear-gradient(105deg, rgba(94,240,255,.1), rgba(61,232,114,.06));
-    text-shadow:0 0 10px rgba(94,240,255,.3);
+    letter-spacing:.06em;
+    margin-top:.45rem;
+    padding:.32rem .4rem .32rem 1.7ch;
+    border:1px solid rgba(94,240,255,.5);
+    background:linear-gradient(105deg, rgba(94,240,255,.16), rgba(61,232,114,.08) 55%, rgba(94,240,255,.05));
+    text-shadow:0 0 12px rgba(94,240,255,.45);
+    box-shadow:inset 0 0 12px rgba(94,240,255,.08), 0 0 10px rgba(94,240,255,.12);
   }
   #nav-list li.nav-ini::before{
     content:"◈";
     color:var(--cyan);
     font-weight:800;
+    filter:drop-shadow(0 0 4px rgba(94,240,255,.7));
   }
   #nav-list li.nav-ini:hover,
   #nav-list li.nav-ini:focus-visible{
     color:#041018;
-    background:var(--cyan);
-    border-color:var(--cyan);
-    transform:translateX(2px);
+    background:linear-gradient(105deg, #7af5ff, #5ef0ff 40%, #3de872);
+    border-color:#b8fbff;
+    transform:translateX(3px);
     outline-color:var(--cyan);
     text-shadow:none;
+    box-shadow:0 0 16px rgba(94,240,255,.45);
   }
   #nav-list li.nav-ini.active{
-    background:rgba(94,240,255,.28);
+    background:rgba(94,240,255,.32);
     color:#e8ffff;
-    border-color:var(--cyan);
+    border-color:#b8fbff;
+    box-shadow:inset 0 0 16px rgba(94,240,255,.2), 0 0 12px rgba(94,240,255,.25);
   }
   #nav-list li.nav-ini.active::before{content:"›"; color:#e8ffff;}
+  @keyframes ini-shimmer{
+    0%,100%{ box-shadow:inset 0 0 10px rgba(94,240,255,.06), 0 0 8px rgba(94,240,255,.1); }
+    50%{ box-shadow:inset 0 0 16px rgba(94,240,255,.18), 0 0 14px rgba(94,240,255,.22); }
+  }
+  #nav-list li.nav-ini:not(.active){
+    animation:ini-shimmer 3.2s var(--ease) infinite;
+  }
   #nav-list li.nav-rtfm{
     color:var(--rtfm);
     font-weight:800;
-    letter-spacing:.18em;
+    letter-spacing:.2em;
     text-transform:uppercase;
-    margin-top:.12rem;
-    border:1px solid rgba(255,59,47,.45);
-    background:rgba(255,30,20,.08);
-    text-shadow:0 0 10px rgba(255,59,47,.35);
+    margin-top:.18rem;
+    padding:.34rem .4rem .34rem 1.7ch;
+    border:1px solid rgba(255,59,47,.55);
+    background:linear-gradient(120deg, rgba(255,30,20,.18), rgba(255,80,40,.08) 60%, rgba(255,30,20,.12));
+    text-shadow:0 0 12px rgba(255,59,47,.5);
+    box-shadow:inset 0 0 14px rgba(255,59,47,.12), 0 0 12px rgba(255,59,47,.15);
   }
   #nav-list li.nav-rtfm::before{
     content:"!";
     color:var(--rtfm);
     font-weight:800;
+    filter:drop-shadow(0 0 5px rgba(255,59,47,.8));
   }
   #nav-list li.nav-rtfm:hover,
   #nav-list li.nav-rtfm:focus-visible{
     color:#fff;
-    background:rgba(255,40,28,.28);
-    border-color:var(--rtfm);
-    transform:translateX(2px);
+    background:linear-gradient(120deg, rgba(255,50,35,.55), rgba(255,90,50,.35));
+    border-color:#ff8a7a;
+    transform:translateX(3px) scale(1.01);
     outline-color:var(--rtfm);
+    box-shadow:0 0 18px rgba(255,59,47,.45);
   }
   #nav-list li.nav-rtfm.active{
-    background:rgba(255,40,28,.38);
+    background:rgba(255,40,28,.45);
     color:#fff;
     border-color:#ff6a5a;
+    box-shadow:inset 0 0 18px rgba(255,59,47,.25), 0 0 14px rgba(255,59,47,.3);
   }
   #nav-list li.nav-rtfm.active::before{content:"›"; color:#fff;}
   @keyframes rtfm-pulse{
-    0%,100%{ box-shadow:inset 0 0 0 0 transparent; }
-    50%{ box-shadow:inset 0 0 14px rgba(255,59,47,.22); }
+    0%,100%{ box-shadow:inset 0 0 0 0 transparent, 0 0 8px rgba(255,59,47,.12); }
+    50%{ box-shadow:inset 0 0 18px rgba(255,59,47,.28), 0 0 16px rgba(255,59,47,.28); }
   }
   #nav-list li.nav-rtfm:not(.active){
-    animation:rtfm-pulse 2.4s var(--ease) infinite;
+    animation:rtfm-pulse 2.1s var(--ease) infinite;
   }
   #nav-box{
     display:flex;
@@ -681,7 +698,8 @@
     border-radius:10px 10px 10px 2px;
     box-shadow:
       0 10px 28px rgba(0,0,0,.45),
-      0 0 0 1px rgba(255,255,255,.35) inset;
+      0 0 0 1px rgba(255,255,255,.35) inset,
+      0 0 18px rgba(255,59,47,.25);
     color:#5a2a22;
     font-family:var(--display);
     font-size:.88rem;
@@ -716,6 +734,55 @@
     font-size:.72rem;
     font-weight:400;
     color:#8a554c;
+    font-style:italic;
+  }
+  .ini-tip{
+    position:fixed;
+    z-index:10001;
+    min-width:11.5rem;
+    max-width:min(17rem, calc(100vw - 1.5rem));
+    padding:.7rem .85rem .75rem;
+    background:linear-gradient(165deg, #f2fffb 0%, #dffaf5 55%, #e8fbff 100%);
+    border:2px solid var(--cyan);
+    border-radius:2px 12px 12px 12px;
+    box-shadow:
+      0 10px 28px rgba(0,0,0,.4),
+      0 0 0 1px rgba(255,255,255,.4) inset,
+      0 0 16px rgba(94,240,255,.28);
+    color:#0a3a3a;
+    font-family:var(--display);
+    font-size:.88rem;
+    line-height:1.35;
+    pointer-events:none;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(4px) scale(.98);
+    transition:opacity .14s var(--ease), transform .18s var(--ease), visibility .14s;
+  }
+  .ini-tip.show{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0) scale(1);
+  }
+  .ini-tip .ini-tip-k{
+    display:block;
+    font-family:var(--mono);
+    font-size:.58rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#0a7a88;
+    margin-bottom:.28rem;
+  }
+  .ini-tip .ini-tip-v{
+    font-weight:700;
+    color:#063636;
+  }
+  .ini-tip .ini-tip-soft{
+    display:block;
+    margin-top:.35rem;
+    font-size:.72rem;
+    font-weight:400;
+    color:#3a6a6a;
     font-style:italic;
   }
 
@@ -1162,8 +1229,9 @@
   @media (prefers-reduced-motion:reduce){
     .screen{animation:none;}
     .power-led{animation:none;}
-    #active-summary, #nav-list li, tbody tr td, .ghost-btn, .prompt-row, .toast, .rtfm-tip{transition:none;}
-    #nav-list li.nav-rtfm:not(.active){animation:none;}
+    #active-summary, #nav-list li, tbody tr td, .ghost-btn, .prompt-row, .toast, .rtfm-tip, .ini-tip{transition:none;}
+    #nav-list li.nav-rtfm:not(.active),
+    #nav-list li.nav-ini:not(.active){animation:none;}
   }
 </style>
 </head>
@@ -1249,6 +1317,11 @@
                 <span class="rtfm-tip-v">read the friendly manual</span>
                 <span class="rtfm-tip-soft">about → ease → nav → commands → depth → code → source</span>
               </div>
+              <div class="ini-tip" id="ini-tip" role="tooltip" hidden>
+                <span class="ini-tip-k">iNi</span>
+                <span class="ini-tip-v">join our community</span>
+                <span class="ini-tip-soft">opt-in provenance · I and I</span>
+              </div>
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
                 <button type="button" class="ghost-btn" id="btn-inspect" disabled title="Inspect selected archive">Inspect</button>
@@ -1323,7 +1396,7 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
                 <li data-cmd="SYSTEM" data-user-opt tabindex="-1" class="nav-user-opt" hidden>SYSTEM INFO</li>
                 <li data-cmd="SETUP MASTER" data-user-opt tabindex="-1" class="nav-user-opt" hidden>SETUP MASTER</li>
                 <li data-cmd="EXIT" data-user-opt tabindex="-1" class="nav-user-opt" hidden>EXIT TO DOS</li>
-                <li data-cmd="INI" tabindex="0" class="nav-ini">iNi Provenance</li>
+                <li data-cmd="INI" tabindex="0" class="nav-ini" aria-describedby="ini-tip">iNi Provenance</li>
                 <li data-cmd="RTFM" tabindex="0" class="nav-rtfm" aria-describedby="rtfm-tip">RTFM</li>
               </ul>
             </div>
@@ -2038,29 +2111,28 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
 
   const rtfmTip = document.getElementById('rtfm-tip');
   const rtfmNav = document.querySelector('#nav-list li.nav-rtfm');
+  const iniTip = document.getElementById('ini-tip');
+  const iniNav = document.querySelector('#nav-list li.nav-ini');
   if (rtfmTip && rtfmTip.parentElement !== document.body) {
     document.body.appendChild(rtfmTip);
   }
-
-  function hideRtfmTip() {
-    if (!rtfmTip) return;
-    rtfmTip.classList.remove('show');
-    rtfmTip.hidden = true;
+  if (iniTip && iniTip.parentElement !== document.body) {
+    document.body.appendChild(iniTip);
   }
 
-  function showRtfmTip(anchorEl) {
-    if (!rtfmTip || !anchorEl) return;
-    rtfmTip.hidden = false;
-    rtfmTip.classList.remove('show');
-    rtfmTip.style.left = '0px';
-    rtfmTip.style.top = '0px';
-    rtfmTip.style.visibility = 'hidden';
-    rtfmTip.style.opacity = '0';
+  function placeTip(el, anchorEl) {
+    if (!el || !anchorEl) return;
+    el.hidden = false;
+    el.classList.remove('show');
+    el.style.left = '0px';
+    el.style.top = '0px';
+    el.style.visibility = 'hidden';
+    el.style.opacity = '0';
 
     const rect = anchorEl.getBoundingClientRect();
     const pad = 10;
-    const mw = Math.max(rtfmTip.offsetWidth || 200, 180);
-    const mh = Math.max(rtfmTip.offsetHeight || 70, 60);
+    const mw = Math.max(el.offsetWidth || 200, 180);
+    const mh = Math.max(el.offsetHeight || 70, 60);
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
@@ -2071,11 +2143,33 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     if (top < pad) top = pad;
     if (top + mh > vh - pad) top = Math.max(pad, vh - mh - pad);
 
-    rtfmTip.style.left = `${Math.round(left)}px`;
-    rtfmTip.style.top = `${Math.round(top)}px`;
-    rtfmTip.style.visibility = '';
-    rtfmTip.style.opacity = '';
-    requestAnimationFrame(() => rtfmTip.classList.add('show'));
+    el.style.left = `${Math.round(left)}px`;
+    el.style.top = `${Math.round(top)}px`;
+    el.style.visibility = '';
+    el.style.opacity = '';
+    requestAnimationFrame(() => el.classList.add('show'));
+  }
+
+  function hideRtfmTip() {
+    if (!rtfmTip) return;
+    rtfmTip.classList.remove('show');
+    rtfmTip.hidden = true;
+  }
+
+  function showRtfmTip(anchorEl) {
+    hideIniTip();
+    placeTip(rtfmTip, anchorEl);
+  }
+
+  function hideIniTip() {
+    if (!iniTip) return;
+    iniTip.classList.remove('show');
+    iniTip.hidden = true;
+  }
+
+  function showIniTip(anchorEl) {
+    hideRtfmTip();
+    placeTip(iniTip, anchorEl);
   }
 
   if (rtfmNav && rtfmTip) {
@@ -2083,9 +2177,15 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     rtfmNav.addEventListener('mouseleave', hideRtfmTip);
     rtfmNav.addEventListener('focus', () => showRtfmTip(rtfmNav));
     rtfmNav.addEventListener('blur', hideRtfmTip);
-    window.addEventListener('scroll', hideRtfmTip, true);
-    window.addEventListener('resize', hideRtfmTip);
   }
+  if (iniNav && iniTip) {
+    iniNav.addEventListener('mouseenter', () => showIniTip(iniNav));
+    iniNav.addEventListener('mouseleave', hideIniTip);
+    iniNav.addEventListener('focus', () => showIniTip(iniNav));
+    iniNav.addEventListener('blur', hideIniTip);
+  }
+  window.addEventListener('scroll', () => { hideRtfmTip(); hideIniTip(); }, true);
+  window.addEventListener('resize', () => { hideRtfmTip(); hideIniTip(); });
 
   function hideDetailHint() {
     clearTimeout(keyboardUseTimer);
@@ -3237,6 +3337,7 @@ README.md`;
 
   function openRtfm(opts = {}) {
     if (typeof hideRtfmTip === 'function') hideRtfmTip();
+    if (typeof hideIniTip === 'function') hideIniTip();
     setActiveNav(opts.nav || 'RTFM');
     manualMode = 'rtfm';
     manualOpen = null;
@@ -3313,6 +3414,8 @@ README.md`;
   }
 
   function openIni() {
+    if (typeof hideIniTip === 'function') hideIniTip();
+    if (typeof hideRtfmTip === 'function') hideRtfmTip();
     hideManualToolbar();
     setActiveNav('INI');
     manualMode = 'ini';
@@ -4086,6 +4189,7 @@ Then attest here so SETUP MASTER can check it off.`);
     const li = e.target.closest('li[data-cmd]');
     if (li) {
       if (li.classList.contains('nav-rtfm')) hideRtfmTip();
+      if (li.classList.contains('nav-ini')) hideIniTip();
       handleCommand(li.dataset.cmd);
     }
   });
@@ -4577,11 +4681,11 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
     return false;
   }
 
-  // Boot: land keyboard focus on registry so arrows work immediately
+  // Boot: arrows control Quick Nav from the start (ARCHIVE INDEX land)
   window.addEventListener('load', () => {
     setTimeout(() => {
       setUserOptionsOpen(false);
-      if (!isTypingTarget(document.activeElement)) focusRegistrySelectedOrFirst();
+      if (!isTypingTarget(document.activeElement)) focusNavItem(0);
     }, 400);
   });
 
