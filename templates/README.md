@@ -105,16 +105,12 @@ Pamphlet: `archives/RTFM/INI-PROVENANCE.md`.
 
 ## Create flow (simple)
 
-1. Open the public practice room: on 0?0 type `OPEN STARTER` (or browse `archives/Starter/`).
-2. Copy `archives/Starter/` → `archives/Your-Archive-Name/`  
-   (or copy this `templates/` folder for a blank twin).
-3. Edit `data.json` (name, `homeLink.style`, `shows`, optional `uxu.manuals` / `uxu.ini`).
-4. Open `index.html` locally; edit `manuals/USER-MANUAL.md` if you keep it.
-5. Register via PR or email rasip@chloreform.org — next `Title.uXu.NNNN` is assigned.
+1. On 0?0: sign in, then `CREATE ARCHIVE` (or Create Archive) — opens the template.
+2. Rename **Anon Archive**, add a short description, **Save & create**, confirm.
+3. Optional: for a static repo folder, copy this `templates/` tree → `archives/Your-Archive-Name/` and edit `data.json`.
+4. Live rooms created on 0?0 open from the registry immediately.
 
-Personal archives (e.g. private rooms) are separate — copy Starter; don’t empty the teaching copy.
-
-See RTFM **Archive Creation Manual** for the complexity tree. On 0?0, `CREATE ARCHIVE` prints the short recipe.
+See RTFM **Archive Creation Manual** for the complexity tree.
 
 ## License
 

@@ -1209,6 +1209,24 @@
     font-weight:700;
   }
   .guide-scroll details[open] summary{margin-bottom:.35rem;}
+  .create-form details{
+    border:1px solid rgba(61,232,114,.22);
+    background:rgba(0,12,6,.35);
+    padding:.35rem .5rem .5rem;
+    margin:.15rem 0;
+  }
+  .create-form details summary::-webkit-details-marker{display:none;}
+  .create-form details summary{list-style:none;}
+  .create-form details summary::before{content:'▸ '; color:var(--green-dim);}
+  .create-form details[open] summary::before{content:'▾ ';}
+  .create-form details[open] summary{margin-bottom:.45rem;}
+  .create-form .create-more{display:grid; gap:.45rem; margin-top:.2rem;}
+  .create-simple-hint{
+    font-size:.72rem;
+    color:var(--green-dim);
+    margin:0 0 .4rem;
+    line-height:1.45;
+  }
   .create-form{
     display:grid;
     gap:.45rem;
@@ -1787,7 +1805,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v17';
+    const SW_BUST = 'uxu_sw_bust_v20';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -3385,11 +3403,7 @@ Created on 0?0. Live page is already registered.
 ## Files
 
 - \`data.json\` — your metadata (downloaded)
-- Copy \`archives/Starter/index.html\` (or repo \`templates/index.html\`) beside it if you want a static folder in the repo.
-
-## Open
-
-On 0?0: \`OPEN ${String(name).split(/\\s+/)[0].toUpperCase()}\`
+- Copy repo \`templates/index.html\` beside data.json if you want a static folder in the repo.
 `;
     return {
       'data.json': JSON.stringify(data, null, 2) + '\n',
@@ -3397,96 +3411,117 @@ On 0?0: \`OPEN ${String(name).split(/\\s+/)[0].toUpperCase()}\`
     };
   }
 
-  async function openCreateArchiveWizard(prefill = {}) {
+  async function openCreateArchiveWizard() {
     setActiveNav('CREATE');
     hideManualToolbar();
     document.getElementById('active-title').textContent = 'CREATE ARCHIVE';
 
-    if (authState.role === 'GUEST') {
-      showCreateUi();
-      const scroll = document.getElementById('create-scroll');
-      if (scroll) {
-        scroll.innerHTML = `
-<p class="lede">Create a real archive in the commons — starts from a simple template.</p>
-<p class="muted">Sign in first (Account Gate, or <code>SIGNUP</code> / <code>SIGNIN</code>). Then come back to <strong>CREATE ARCHIVE</strong>.</p>
-<p class="muted">Nothing is registered until you press <strong>Save &amp; create</strong> and confirm.</p>`;
-      }
-      showOutput('CREATE ARCHIVE',
-`Sign in required.
-
-  SIGNUP you@email.com yourpassword YourName
-  SIGNIN you@email.com yourpassword
-
-Then: CREATE ARCHIVE
-Or click Create Archive.`);
-      toast('sign in to create');
-      return;
-    }
-
+    const signedIn = authState.role !== 'GUEST';
     const defaultTitle = 'Anon Archive';
     const next = nextArchiveSerial();
-    const previewName = prefill.title || defaultTitle;
-    const exampleId = formatArchiveIdExample(String(previewName).replace(/\s+/g, '_'));
+    const exampleId = formatArchiveIdExample(defaultTitle.replace(/\s+/g, '_'));
 
     showCreateUi();
     const scroll = document.getElementById('create-scroll');
     if (!scroll) return;
 
     scroll.innerHTML = `
-<p class="lede">Starter template — rename <strong>Anon Archive</strong> to your title before you save.</p>
+<p class="lede">Simple folder archive</p>
+<p class="create-simple-hint">Required: a <strong>name</strong> and a short <strong>description</strong>. Everything else is optional — expand below.</p>
 <form class="create-form" id="create-archive-form">
-  <label>Archive name (change this)
-    <input id="create-title" name="title" type="text" required maxlength="80" placeholder="Anon Archive" value="${escapeHtml(prefill.title || defaultTitle)}" />
+  <label>Name
+    <input id="create-title" name="title" type="text" required maxlength="80" value="${escapeHtml(defaultTitle)}" autocomplete="off" />
   </label>
-  <label>Short description
-    <textarea id="create-description" name="description" maxlength="400" placeholder="One or two sentences visitors will see">${escapeHtml(prefill.description || '')}</textarea>
+  <label>Description
+    <textarea id="create-description" name="description" maxlength="400" placeholder="One short sentence about this archive"></textarea>
   </label>
-  <label>First item (optional)
-    <input id="create-first-item" name="firstItem" type="text" maxlength="120" placeholder="A note, show, or link title" value="${escapeHtml(prefill.firstItem || '')}" />
-  </label>
-  <label>Home link style
-    <select id="create-home-style" name="homeLinkStyle">
-      <option value="uXu" selected>uXu chip (public)</option>
-      <option value="0?0">← 0?0 (console back)</option>
-    </select>
-  </label>
-  <label class="tag-row" style="text-transform:none;letter-spacing:0;display:flex;gap:.5rem;align-items:center;">
-    <input id="create-private" name="private" type="checkbox" ${prefill.private ? 'checked' : ''} />
-    <span>Private (only you / stewards can open)</span>
-  </label>
-  <div class="folder-preview" id="create-id-preview">Will register as ~ ${escapeHtml(exampleId)} (next free .${next})</div>
+
+  <div class="folder-preview" id="create-id-preview">Will become ~ ${escapeHtml(exampleId)}
+  Anon-Archive/
+    index.html
+    data.json
+    README.md</div>
+
   <div class="ini-actions">
-    <button type="submit" class="ghost-btn accent" id="create-save-btn">Save &amp; create</button>
+    <button type="submit" class="ghost-btn accent" id="create-save-btn">${signedIn ? 'Save &amp; create' : 'Sign in to save'}</button>
     <button type="button" class="ghost-btn" id="create-cancel-btn">Cancel</button>
   </div>
+
+  <details>
+    <summary style="cursor:pointer;color:var(--cyan);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;">More options</summary>
+    <div class="create-more">
+      <label>First item <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--green-dim)">(optional)</span>
+        <input id="create-first-item" type="text" maxlength="120" placeholder="A note, show, or link title" />
+      </label>
+      <label>Home link
+        <select id="create-home-style">
+          <option value="uXu" selected>uXu chip</option>
+          <option value="0?0">← 0?0</option>
+        </select>
+      </label>
+      <label class="tag-row" style="text-transform:none;letter-spacing:0;display:flex;gap:.5rem;align-items:center;">
+        <input id="create-private" type="checkbox" />
+        <span>Private (only you can open)</span>
+      </label>
+    </div>
+  </details>
+
+  <details>
+    <summary style="cursor:pointer;color:var(--cyan);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;">Grow later (complexity)</summary>
+    <div class="create-more">
+      <p class="create-simple-hint" style="margin:0">This saves <strong>Tier 1</strong> — a simple folder. Expand later when you want:</p>
+      <ul style="margin:.25rem 0 0;padding-left:1.1rem;color:var(--green-dim);font-size:.72rem;line-height:1.45;">
+        <li>Tier 2 — search / richer lists</li>
+        <li>Tier 3 — custom player / UI</li>
+        <li>iNi — optional provenance (<code>INI</code>)</li>
+      </ul>
+      <p class="create-simple-hint" style="margin:.4rem 0 0">Guide: <code>READ archive-creation</code></p>
+    </div>
+  </details>
 </form>
-<p class="muted">On save you’ll get an “are you sure?” check. The name you enter becomes the archive id (e.g. Your_Name.uXu.NNNN).</p>
-<p class="muted">Commands: <code>CREATE ARCHIVE</code> · <code>CREATE ARCHIVE Anon Archive</code> · <code>NEW ARCHIVE</code></p>`;
+<p class="muted">${signedIn
+  ? 'Nothing is created until you save and confirm.'
+  : 'You can fill this in now — <strong>SIGNIN</strong> before Save registers it.'}</p>
+<p class="muted">Next free serial: .${next}</p>`;
 
     const titleInput = document.getElementById('create-title');
     const preview = document.getElementById('create-id-preview');
     const updatePreview = () => {
       const t = (titleInput?.value || defaultTitle).trim() || defaultTitle;
-      preview.textContent = `Will register as ~ ${formatArchiveIdExample(t.replace(/\s+/g, '_'))} (next free .${nextArchiveSerial()})`;
+      const folder = t.replace(/\s+/g, '-') || 'Anon-Archive';
+      preview.textContent =
+        `Will become ~ ${formatArchiveIdExample(t.replace(/\s+/g, '_'))}\n` +
+        `  ${folder}/\n    index.html\n    data.json\n    README.md`;
     };
     titleInput?.addEventListener('input', updatePreview);
-    if (titleInput && !prefill.title) {
-      titleInput.select();
-    }
+    titleInput?.select();
 
     document.getElementById('create-cancel-btn')?.addEventListener('click', () => {
       hideGuidePanels();
-      showOutput('CREATE ARCHIVE', 'Cancelled. Template was not saved — nothing was created.');
+      showOutput('CREATE ARCHIVE', 'Cancelled — nothing created.');
       toast('cancelled');
     });
 
     document.getElementById('create-archive-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (authState.role === 'GUEST') {
+        showOutput('CREATE ARCHIVE',
+`Sign in to save this template.
+
+  SIGNIN you@email.com yourpassword
+  SIGNUP you@email.com yourpassword YourName
+
+Then press Save & create again.`);
+        toast('sign in to save');
+        authEmail?.focus();
+        return;
+      }
+
       const title = document.getElementById('create-title').value.trim();
       const description = document.getElementById('create-description').value.trim();
-      const firstItem = document.getElementById('create-first-item').value.trim();
-      const homeLinkStyle = document.getElementById('create-home-style').value;
-      const isPrivate = document.getElementById('create-private').checked;
+      const firstItem = document.getElementById('create-first-item')?.value.trim() || '';
+      const homeLinkStyle = document.getElementById('create-home-style')?.value || 'uXu';
+      const isPrivate = !!document.getElementById('create-private')?.checked;
       if (!title) {
         toast('name required');
         return;
@@ -3494,27 +3529,20 @@ Or click Create Archive.`);
       const tentativeId = formatArchiveIdExample(title.replace(/\s+/g, '_'));
       if (title === 'Anon Archive') {
         const keep = window.confirm(
-          'The name is still “Anon Archive”.\n\n' +
-          'OK = create it with that name anyway\n' +
-          'Cancel = go back and type your own title'
+          'Name is still “Anon Archive”.\n\nOK = use it anyway\nCancel = rename first'
         );
         if (!keep) {
           titleInput?.focus();
           titleInput?.select();
-          toast('rename first');
           return;
         }
       }
       const ok = window.confirm(
-        `Create archive "${title}"?\n\n` +
-        `This will register it in the commons as roughly:\n${tentativeId}\n\n` +
-        (isPrivate ? 'Visibility: PRIVATE (stewards only)\n\n' : 'Visibility: public in the registry\n\n') +
-        'Are you sure? Click OK to create, Cancel to keep editing.'
+        `Create "${title}"?\n\n~ ${tentativeId}\n` +
+        (isPrivate ? 'Private\n\n' : 'Public registry\n\n') +
+        'Are you sure?'
       );
-      if (!ok) {
-        toast('not created');
-        return;
-      }
+      if (!ok) return;
 
       const saveBtn = document.getElementById('create-save-btn');
       if (saveBtn) saveBtn.disabled = true;
@@ -3549,18 +3577,16 @@ Or click Create Archive.`);
 
         hideGuidePanels();
         showOutput('CREATE ARCHIVE',
-`Created.
+`Done.
 
   id:     ${data.id}
   title:  ${data.title}
   status: ${data.status}
-  open:   OPEN ${String(data.title).split(/\s+/)[0].toUpperCase()}
-          or select it in the registry → Open Archive
 
-Starter files downloaded (data.json + README).
-Live page is ready now — you do not need a git push to open it.
+Select it in the registry → Open Archive
+(or OPEN ${String(data.title).split(/\s+/)[0].toUpperCase()})
 
-${data.message || ''}`);
+Files downloaded. Live page works now.`);
         toast(`created ${data.id}`);
       } catch (err) {
         showOutput('ERROR', err.message);
@@ -3568,13 +3594,14 @@ ${data.message || ''}`);
         if (saveBtn) saveBtn.disabled = false;
       }
     });
-
-    titleInput?.focus();
   }
 
-  /** @deprecated name kept — wizard is the create path */
-  async function openCreateArchiveManual(prefill) {
-    return openCreateArchiveWizard(typeof prefill === 'object' ? prefill : {});
+  function openCreateArchiveMenu() {
+    return openCreateArchiveWizard();
+  }
+
+  function openCreateArchiveManual() {
+    return openCreateArchiveWizard();
   }
 
   function escapeHtml(s) {
@@ -3773,7 +3800,7 @@ const list = document.getElementById('archive-list');
   <tr><th>Control</th><th>Job</th></tr>
   <tr><td>ABOUT</td><td>What <strong>uXu</strong> is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
-  <tr><td>CREATE ARCHIVE</td><td>Starter path + next serial</td></tr>
+  <tr><td>CREATE ARCHIVE</td><td>Simple template · expandable options</td></tr>
   <tr><td>ARCHIVE INDEX</td><td>Back to registry welcome / focus</td></tr>
   <tr><td>USER OPTIONS ▸</td><td>Fold-out: Manual · Install · Map · Logs · System · Setup · Exit</td></tr>
   <tr><td>iNi Provenance</td><td>Opt-in authenticity protocol (bottom flair)</td></tr>
@@ -3842,7 +3869,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><td><code>SECTION &lt;n&gt;</code></td><td>Jump to ## heading while reading</td></tr>
   <tr><td><code>ARCHIVE MANUALS</code></td><td>Index creator manuals from data.json</td></tr>
   <tr><td><code>FIND MANUAL &lt;q&gt;</code></td><td>Filter that index</td></tr>
-  <tr><td><code>CREATE ARCHIVE</code></td><td>Open create form — registers only when you Save &amp; confirm</td></tr>
+  <tr><td><code>CREATE ARCHIVE</code></td><td>Open simple template (expand for more options) · save + confirm to register</td></tr>
   <tr><td><code>BACK</code></td><td>Return one step in manuals</td></tr>
   <tr><td><code>HELP</code></td><td>Compact command list</td></tr>
 </table>
@@ -4065,7 +4092,7 @@ README.md`;
 </details>
 <details>
   <summary>How do I create an archive?</summary>
-  <p>Sign in, then <strong>CREATE ARCHIVE</strong> (or the Create Archive button). Fill the template, press <strong>Save &amp; create</strong>, confirm the warning — that registers your room and downloads starter files. You can open it from the registry right away.</p>
+  <p>Hit <strong>CREATE ARCHIVE</strong> (or the Create Archive button). Rename Anon Archive, add a short description, Save &amp; create, confirm. Expand <em>More options</em> / <em>Grow later</em> only if you want extras.</p>
 </details>
 <details>
   <summary>Do I need an account?</summary>
@@ -4335,9 +4362,8 @@ INI SITE          open optional iNi public notes (soloist.ai/uxu)
 MANUAL            manual library index (pamphlets)
 ARCHIVE MANUALS   index / search manuals from created archives
 FIND MANUAL <q>   filter that index
-CREATE ARCHIVE    open template (default name: Anon Archive — change it)
-CREATE ARCHIVE …  same, with your name filled in
-NEW ARCHIVE       alias for CREATE ARCHIVE
+CREATE ARCHIVE         open the create template
+NEW ARCHIVE            same
 INSTALL           install the public uXu app (invite / home screen)
 SETUP MASTER      interactive guide: claim → lock → recovery → 2FA
 RECOVERY …        ADD / LIST / REMOVE / 2FA (admin + SUDO)
@@ -4486,12 +4512,8 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       else loadManualList();
       return;
     }
-    if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd === "NEW ARCHIVE" || cmd === "NEW" || cmd.startsWith("CREATE ") || cmd.startsWith("NEW ARCHIVE ")) {
-      let title = '';
-      if (cmd.startsWith('CREATE ARCHIVE ')) title = cmdRaw.trim().slice('CREATE ARCHIVE '.length).trim();
-      else if (cmd.startsWith('CREATE ') && cmd !== 'CREATE ARCHIVE') title = cmdRaw.trim().slice('CREATE '.length).trim();
-      else if (cmd.startsWith('NEW ARCHIVE ')) title = cmdRaw.trim().slice('NEW ARCHIVE '.length).trim();
-      openCreateArchiveWizard(title ? { title } : {});
+    if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd === "NEW ARCHIVE" || cmd === "NEW" || cmd.startsWith("CREATE ") || cmd.startsWith("NEW ")) {
+      openCreateArchiveWizard();
       return;
     }
     if (cmd === "INSTALL" || cmd === "INSTALL UXU" || cmd === "PWA") {
@@ -5088,7 +5110,7 @@ Then attest here so SETUP MASTER can check it off.`);
     userChoseZone = true;
     focusZone = 'actions';
     paintFocusZone();
-    openCreateArchiveManual();
+    openCreateArchiveWizard();
   });
 
   authForm.addEventListener('submit', (e) => {
@@ -5708,7 +5730,7 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     }
     if (k === 'n') {
       e.preventDefault();
-      openCreateArchiveManual();
+      openCreateArchiveWizard();
       return;
     }
     if (k === 'p' && btnInstall && !btnInstall.hidden) {

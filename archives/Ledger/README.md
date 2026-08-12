@@ -4,7 +4,7 @@
 **Access:** private — stewards only (signed in on 0?0).
 
 This is **Ledger’s personal room**. It can grow with his own items, notes, and manuals.  
-The public teaching copy for everyone else is **Starter** (`OPEN STARTER`) — leave that alone so future users always have a clear example.
+The how-to for new creators is **CREATE ARCHIVE** on 0?0 (opens the create template). This folder is Ledger’s personal room.
 
 ## Stewards
 

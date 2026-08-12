@@ -1314,7 +1314,7 @@ async function handleArchiveCreate(sql, request, env) {
       homeLink: { style: homeStyle, href: '../index.html' },
       allowTemplateForks: false,
       templateForkDepth: 1,
-      templateOf: 'Starter.uXu.0003',
+      templateOf: null,
       templateDepth: 1,
       manuals: [
         {

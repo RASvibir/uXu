@@ -19,9 +19,8 @@ That’s enough for a first archive.
 
 ## Make yours in four steps
 
-1. **Look here first** — on 0?0 type `OPEN STARTER` (or open this `index.html`).
-2. **Copy this folder** → `archives/Your-Name/`  
-   (or copy repo `/templates/` if you want a blank twin).
+1. **CREATE ARCHIVE** on 0?0 — opens the template (rename Anon Archive, save, confirm).
+2. Optional: copy this folder’s sibling patterns from repo `templates/` if you want static files.
 3. **Edit `data.json`** — `archiveName`, `description`, and `shows`.
 4. **Open your `index.html`**, then ask to register: pull request, or email **rasip@chloreform.org**.
 
