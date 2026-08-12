@@ -58,6 +58,33 @@ Ids are forever. If access ends you still see a placemarker such as
 **(deleted by user)**, **(removed by admin)**, **(locked archive)**, or
 **(under investigation)** — so the count of created archives stays honest.
 
+## Install uXu (landing app)
+
+Outside a specific archive, the door is always **0?0**.
+
+On the root console, use **Install uXu** when your browser offers it
+(or browser menu → Add to Home Screen). The icon is the wordmark **uXu**.
+That install opens the landing only — CyberCat and other archives keep
+their own pages and are not part of the landing PWA package.
+
+Canonical link anytime: https://rasvibir.github.io/uXu/
+
+## Add ← 0?0 or ← uXu on your archive
+
+Every archive should offer a way home. In manuals / templates this is the
+**home door**:
+
+- Label **← 0?0** or **← uXu** (your choice)
+- Link to `../index.html` (from `archives/Your-Archive/`)
+
+Copy from `templates/snippets/home-link.html`, or set in `data.json`:
+
+```json
+"uxu": { "homeLink": { "style": "0?0", "href": "../index.html" } }
+```
+
+Use `"style": "uXu"` if you prefer that label.
+
 ## Accounts (Simple View)
 
 You can browse as a guest.

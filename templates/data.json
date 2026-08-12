@@ -1,0 +1,17 @@
+{
+  "archiveName": "Your Archive",
+  "artist": "",
+  "curator": "",
+  "description": "Short description of this independent archive.",
+  "uxu": {
+    "homeLink": {
+      "style": "0?0",
+      "href": "../index.html"
+    },
+    "allowTemplateForks": false,
+    "templateForkDepth": 1,
+    "templateOf": null,
+    "templateDepth": 0
+  },
+  "shows": []
+}

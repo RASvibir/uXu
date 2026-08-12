@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>0?0.uXu.0000 :: ROOT ARCHIVE</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#030805">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="uXu">
+<link rel="apple-touch-icon" href="./icons/uxu-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/uxu-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -592,6 +599,7 @@
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled>Open Archive</button>
                 <button type="button" class="ghost-btn" id="btn-inspect" disabled>Inspect</button>
                 <button type="button" class="ghost-btn" id="btn-create">Create Archive</button>
+                <button type="button" class="ghost-btn" id="btn-install" hidden>Install uXu</button>
               </div>
             </div>
             <div class="box output-panel">
@@ -617,6 +625,7 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
                 <li data-cmd="MANUAL" tabindex="0">MANUAL LIBRARY</li>
                 <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
+                <li data-cmd="INSTALL" tabindex="0">INSTALL uXu</li>
                 <li data-cmd="MAP" tabindex="0">PROVENANCE MAP</li>
                 <li data-cmd="LOGS" tabindex="0">TRANSPARENCY LOGS</li>
                 <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
@@ -672,8 +681,44 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
   const btnOpen = document.querySelector('#btn-open');
   const btnInspect = document.querySelector('#btn-inspect');
   const btnCreate = document.querySelector('#btn-create');
+  const btnInstall = document.querySelector('#btn-install');
   const LANDING_MANUAL_SLUG = 'user-guide';
   const CREATE_MANUAL_SLUG = 'archive-creation';
+
+  // Landing-only PWA (0?0). Nested archives like CyberCat are unchanged.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+  }
+  let deferredInstall = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstall = e;
+    if (btnInstall) btnInstall.hidden = false;
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstall = null;
+    if (btnInstall) btnInstall.hidden = true;
+    toast('uXu installed');
+  });
+  if (btnInstall) {
+    btnInstall.addEventListener('click', async () => {
+      if (!deferredInstall) {
+        showOutput('INSTALL uXu',
+`Add the uXu landing (0?0) to your home screen / apps.
+
+Mobile: browser menu → Add to Home Screen / Install App
+Desktop Chrome/Edge: install icon in the address bar
+
+Icon is the wordmark: uXu
+This install is for the landing console only — CyberCat and other archives keep their own pages.`);
+        return;
+      }
+      deferredInstall.prompt();
+      await deferredInstall.userChoice;
+      deferredInstall = null;
+      btnInstall.hidden = true;
+    });
+  }
   const toastEl = document.querySelector('#toast');
   const authForm = document.querySelector('#auth-form');
   const authEmail = document.querySelector('#auth-email');
@@ -1430,6 +1475,7 @@ MAP               show root provenance
 LOGS              show transparency logs
 MANUAL            open manuals (lands on User Guide)
 CREATE ARCHIVE    open the Archive Creation Manual
+INSTALL           install landing PWA (uXu wordmark icon)
 READ <slug|n>     open a manual (or Enter on selection)
 BACK              return to manual list
 SECTION <n>       jump to ## heading while reading
@@ -1506,6 +1552,17 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
     }
     if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd.startsWith("CREATE ")) {
       openCreateArchiveManual();
+      return;
+    }
+    if (cmd === "INSTALL" || cmd === "INSTALL UXU" || cmd === "PWA") {
+      setActiveNav("INSTALL");
+      if (btnInstall && !btnInstall.hidden && deferredInstall) {
+        btnInstall.click();
+      } else if (btnInstall) {
+        btnInstall.click();
+      } else {
+        showOutput("INSTALL uXu", "Use browser Add to Home Screen / Install. Icon wordmark: uXu");
+      }
       return;
     }
     if (cmd === "READ" || cmd.startsWith("READ ")) {

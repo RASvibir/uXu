@@ -1,12 +1,83 @@
 {
-  "archiveName": "STRING",
-  "artist": "STRING",
-  "shows": [
-    {
-      "date": "YYYY-MM-DD",
-      "venue": "STRING",
-      "setlist": ["SONG1", "SONG2"],
-      "audioSources": [{"archiveOrgId": "PATH_TO_MP3"}]
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "uXu archive data.json",
+  "type": "object",
+  "required": ["archiveName"],
+  "properties": {
+    "archiveName": { "type": "string" },
+    "artist": { "type": "string" },
+    "curator": { "type": "string" },
+    "description": { "type": "string" },
+    "uxu": {
+      "type": "object",
+      "description": "Commons automations and template-fork policy",
+      "properties": {
+        "homeLink": {
+          "type": "object",
+          "properties": {
+            "style": {
+              "type": "string",
+              "enum": ["0?0", "uXu"],
+              "description": "Label on the back-home control"
+            },
+            "href": {
+              "type": "string",
+              "default": "../index.html",
+              "description": "Relative path back to the uXu landing (0?0)"
+            }
+          }
+        },
+        "allowTemplateForks": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, others may fork this archive as a starter template"
+        },
+        "templateForkDepth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "default": 1,
+          "description": "How deep forks of forks may go. 0 = no forks. 1 = direct forks only. 2+ = nested."
+        },
+        "templateOf": {
+          "type": ["string", "null"],
+          "description": "Archive id this was forked from, if any"
+        },
+        "templateDepth": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Depth of this archive in a fork chain (0 = original)"
+        }
+      }
+    },
+    "shows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string" },
+          "venue": { "type": "string" },
+          "title": { "type": "string" },
+          "setlist": { "type": "array", "items": { "type": "string" } },
+          "audioSources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "archiveOrgId": { "type": "string" },
+                "url": { "type": "string" },
+                "sourceType": { "type": "string" },
+                "label": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "description": "Generic non-show items (optional alternative to shows)"
     }
-  ]
+  }
 }

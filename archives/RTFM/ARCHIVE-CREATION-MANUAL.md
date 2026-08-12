@@ -18,14 +18,57 @@ That is enough.
 
 ### Tiny checklist
 
-1. Copy the idea from `/templates/` or from CyberCat Sunflower (optional).
+1. Copy `/templates/` (includes home door + fork policy fields) or fork an
+   existing archive that allows template forks.
 2. Put your folder under `archives/`.
 3. Write a clear name, a short description, and at least one item in `data.json`.
-4. Open `index.html` in a browser and confirm it loads.
-5. Open a pull request, or email **rasip@chloreform.org** and ask to be registered.
-6. Stay legal and safe (see CONTRIBUTING.md).
+4. Keep a **← 0?0** or **← uXu** link home (templates do this by default).
+5. Open `index.html` in a browser and confirm it loads.
+6. Open a pull request, or email **rasip@chloreform.org** and ask to be registered.
+7. Stay legal and safe (see CONTRIBUTING.md).
 
 You do not need a custom app, a database, or special security on day one.
+Do **not** attach the landing PWA manifest to child archives — Install uXu is for 0?0 only.
+
+## Home door (← 0?0 / ← uXu)
+
+Paste from `templates/snippets/home-link.html`, or configure:
+
+```json
+"uxu": {
+  "homeLink": { "style": "0?0", "href": "../index.html" }
+}
+```
+
+`"style": "uXu"` shows **← uXu** instead. Same destination: the commons landing.
+
+## Template forks (creator's choice)
+
+You may allow others to start from your archive as a template:
+
+```json
+"uxu": {
+  "allowTemplateForks": true,
+  "templateForkDepth": 2
+}
+```
+
+| Depth | Meaning |
+|------|---------|
+| 0 | No forks |
+| 1 | Direct forks only |
+| 2 | Forks of forks allowed up to depth 2 |
+| 3+ | Deeper chains up to your number |
+
+When forking, record lineage:
+
+```json
+"templateOf": "Source_Archive.uXu.0007",
+"templateDepth": 1
+```
+
+Only publish a further-forkable template if your new depth stays within the
+source archive's `templateForkDepth`. Details: `templates/README.md`.
 
 ## Complexity Tree
 
