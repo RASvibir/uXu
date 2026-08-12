@@ -218,6 +218,14 @@
     border-color:var(--green-dim);
     box-shadow:0 0 0 1px rgba(61,232,114,.15);
   }
+  .box.kb-focus{
+    border-color:var(--cyan);
+    box-shadow:0 0 0 1px rgba(94,240,255,.35), 0 0 18px rgba(94,240,255,.12);
+  }
+  #registry-actions .ghost-btn:focus-visible{
+    outline:2px solid var(--cyan);
+    outline-offset:2px;
+  }
   .box-title{
     font-size:.7rem;
     font-weight:700;
@@ -539,7 +547,7 @@
         <div class="topbar">
           <span class="id">0?0.uXu.0000</span>
           <span class="path">ROOT ARCHIVE :: NAVIGATION :: INDEX :: MANUAL LIBRARY</span>
-          <span class="hint" id="nav-hint">↑↓ navigate · Enter open · F3 MANUAL · / focus command</span>
+          <span class="hint" id="nav-hint">Tab panels · ←→ zones · ↑↓ move · Enter act · / cmd · ? keys</span>
         </div>
         <div class="rule"></div>
 
@@ -595,11 +603,11 @@
                 <div class="nm-v" id="name-modal-title"></div>
                 <div class="nm-id" id="name-modal-id"></div>
               </div>
-              <div class="action-row">
-                <button type="button" class="ghost-btn accent" id="btn-open" disabled>Open Archive</button>
-                <button type="button" class="ghost-btn" id="btn-inspect" disabled>Inspect</button>
-                <button type="button" class="ghost-btn" id="btn-create">Create Archive</button>
-                <button type="button" class="ghost-btn" id="btn-install" hidden>Install uXu</button>
+              <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
+                <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
+                <button type="button" class="ghost-btn" id="btn-inspect" disabled accesskey="i" title="Inspect (i)">Inspect</button>
+                <button type="button" class="ghost-btn" id="btn-create" accesskey="n" title="Create (n)">Create Archive</button>
+                <button type="button" class="ghost-btn" id="btn-install" hidden title="Install uXu (p)">Install uXu</button>
               </div>
             </div>
             <div class="box output-panel">
@@ -610,6 +618,7 @@ Preserve. Connect. Discover.
 You are in 0?0 — the root of the archive.
 
 Click a registry row, use Quick Nav, or type HELP.
+Keyboard-first: press ? for the map · Tab/←→ zones · ↑↓ move · / command.
 F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
@@ -619,9 +628,9 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
           </section>
 
           <section class="col">
-            <div class="box">
-              <div class="box-title">QUICK NAV</div>
-              <ul id="nav-list">
+            <div class="box" id="nav-box">
+              <div class="box-title">QUICK NAV <span class="meta">←→ zone</span></div>
+              <ul id="nav-list" role="menu" aria-label="Quick navigation">
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
                 <li data-cmd="MANUAL" tabindex="0">MANUAL LIBRARY</li>
                 <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
@@ -650,7 +659,7 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
 
         <div class="rule"></div>
         <div class="statusbar">
-          <span class="keys"><kbd>F1</kbd>HELP <kbd>F2</kbd>INDEX <kbd>F3</kbd>MANUAL <kbd>F4</kbd>MAP <kbd>F5</kbd>LOGS <kbd>F6</kbd>SYS <kbd>/</kbd>CMD</span>
+          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>zone <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>inspect <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
           <span class="foot">uXu — built to archive. tuned to overachieve.</span>
         </div>
         <div class="toast" id="toast" role="status"></div>
@@ -1508,10 +1517,13 @@ Roles
   SUDO   temporary ADMIN elevation
 
 Keyboard
-  ↑↓              move registry / manual list / quick nav
-  Enter           open selected archive or manual
-  /               focus command line
-  F1–F6           quick nav shortcuts`);
+  ?               full keyboard map (mouse optional)
+  Tab / ←→        move between zones
+  ↑↓              registry or quick nav
+  Enter / o       open · i inspect · n create
+  /               command line · Esc back
+  a r q c         account / registry / nav / command
+  F1–F6           HELP INDEX MANUAL MAP LOGS SYSTEM`);
       return;
     }
     if (cmd === "OPEN" || cmd === "GO" || cmd.startsWith("OPEN ") || cmd.startsWith("GO ") || cmd.startsWith("LOAD ")) {
@@ -1986,18 +1998,253 @@ Then attest here so SETUP MASTER can check it off.`);
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCommand(li.dataset.cmd); }
     if (e.key === 'ArrowDown' && items[idx + 1]) { e.preventDefault(); items[idx + 1].focus(); }
     if (e.key === 'ArrowUp' && items[idx - 1]) { e.preventDefault(); items[idx - 1].focus(); }
+    if (e.key === 'Home') { e.preventDefault(); items[0]?.focus(); }
+    if (e.key === 'End') { e.preventDefault(); items[items.length - 1]?.focus(); }
   });
 
+  // —— Keyboard-first console (mouse optional) ——
+  const FOCUS_ZONES = ['registry', 'actions', 'nav', 'auth', 'command'];
+  let focusZone = 'registry';
+
+  function isTypingTarget(el) {
+    if (!el || el === document.body) return false;
+    if (el === commandInput) return true;
+    if (el.closest && el.closest('#auth-form')) {
+      const tag = el.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
+    }
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable) return true;
+    return false;
+  }
+
+  function paintFocusZone() {
+    document.querySelectorAll('.box.kb-focus').forEach((b) => b.classList.remove('kb-focus'));
+    const map = {
+      registry: document.querySelector('.registry-wrap')?.closest('.box'),
+      actions: document.getElementById('registry-actions')?.closest('.box'),
+      nav: document.getElementById('nav-box'),
+      auth: document.getElementById('auth-form')?.closest('.box'),
+      command: document.getElementById('command-form')?.closest('.box') || document.querySelector('.output-panel')?.closest('.box'),
+    };
+    // registry + actions share the middle column box — highlight that box for both
+    if (focusZone === 'registry' || focusZone === 'actions') {
+      map.registry?.classList.add('kb-focus');
+    } else {
+      map[focusZone]?.classList.add('kb-focus');
+    }
+    const hint = document.getElementById('nav-hint');
+    if (hint) {
+      const labels = {
+        registry: 'REGISTRY · ↑↓ select · Enter/o open · i inspect · ←→ zone',
+        actions: 'ACTIONS · ←→ buttons · Enter press · Esc registry',
+        nav: 'QUICK NAV · ↑↓ · Enter run · ←→ zone',
+        auth: 'ACCOUNT · Tab fields · Enter sign in',
+        command: 'COMMAND · type + Enter · Esc back',
+      };
+      hint.textContent = labels[focusZone] || hint.textContent;
+    }
+  }
+
+  function focusRegistryRow(idx) {
+    const rows = [...tbody.querySelectorAll('tr[data-idx]')];
+    if (!rows.length) return;
+    const i = Math.max(0, Math.min(rows.length - 1, idx));
+    const row = rows[i];
+    row.focus();
+    const entry = registry[i];
+    if (entry) activateEntry(entry, { inspect: true });
+  }
+
+  function focusRegistrySelectedOrFirst() {
+    focusZone = 'registry';
+    paintFocusZone();
+    if (selected) {
+      const row = tbody.querySelector(`tr[data-id="${CSS.escape(selected.id)}"]`);
+      if (row) { row.focus(); return; }
+    }
+    focusRegistryRow(0);
+  }
+
+  function focusNavItem(delta = 0) {
+    focusZone = 'nav';
+    paintFocusZone();
+    const items = [...navList.querySelectorAll('li[data-cmd]')];
+    if (!items.length) return;
+    const active = document.activeElement?.closest?.('li[data-cmd]');
+    let idx = active ? items.indexOf(active) : items.findIndex((li) => li.classList.contains('active'));
+    if (idx < 0) idx = 0;
+    idx = Math.max(0, Math.min(items.length - 1, idx + delta));
+    items[idx].focus();
+  }
+
+  function focusActionButtons(delta = 0) {
+    focusZone = 'actions';
+    paintFocusZone();
+    const btns = [...document.querySelectorAll('#registry-actions .ghost-btn')].filter((b) => !b.disabled && !b.hidden);
+    if (!btns.length) return;
+    const cur = btns.indexOf(document.activeElement);
+    let idx = cur >= 0 ? cur + delta : 0;
+    idx = Math.max(0, Math.min(btns.length - 1, idx));
+    btns[idx].focus();
+  }
+
+  function focusAuth() {
+    focusZone = 'auth';
+    paintFocusZone();
+    authEmail?.focus();
+  }
+
+  function focusCommand() {
+    focusZone = 'command';
+    paintFocusZone();
+    commandInput.focus();
+  }
+
+  function cycleZone(dir) {
+    const order = ['registry', 'actions', 'nav', 'auth', 'command'];
+    let i = order.indexOf(focusZone);
+    if (i < 0) i = 0;
+    i = (i + dir + order.length) % order.length;
+    focusZone = order[i];
+    if (focusZone === 'registry') focusRegistrySelectedOrFirst();
+    else if (focusZone === 'actions') focusActionButtons(0);
+    else if (focusZone === 'nav') focusNavItem(0);
+    else if (focusZone === 'auth') focusAuth();
+    else focusCommand();
+  }
+
+  function showKeyboardHelp() {
+    showOutput("KEYBOARD",
+`Mouse optional — full console from the keys.
+
+Zones (Tab / Shift+Tab or ← →)
+  registry → actions → quick nav → account → command
+
+Registry
+  ↑ ↓     move selection
+  Home/End  first / last
+  Enter / o   open archive (if openable)
+  i         inspect
+  n         create archive
+  Space     inspect (same as click)
+
+Quick Nav
+  ↑ ↓     move · Enter / Space run command
+
+Actions toolbar
+  ← →     between Open / Inspect / Create / Install
+  Enter   press focused button
+
+Global (when not typing in a field)
+  /       focus command line
+  Esc     leave field → registry (or BACK in manuals)
+  a       account gate
+  c       command line
+  r       registry
+  q       quick nav
+  F1–F6   HELP INDEX MANUAL MAP LOGS SYSTEM
+  ?       this map
+
+Manuals
+  ↑ ↓ Enter  browse / open · Esc / Backspace list
+
+Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
+    toast('keyboard map');
+  }
+
   document.addEventListener('keydown', (e) => {
-    if (e.target === commandInput || e.target.closest('#auth-form')) return;
-    const map = { F1:'HELP', F2:'INDEX', F3:'MANUAL', F4:'MAP', F5:'LOGS', F6:'SYSTEM' };
-    if (map[e.key]) { e.preventDefault(); handleCommand(map[e.key]); return; }
-    if (e.key === '/' && document.activeElement !== commandInput) {
-      e.preventDefault();
-      commandInput.focus();
+    // Always allow F-keys and ? from almost anywhere except raw password? Allow F-keys always.
+    const typing = isTypingTarget(e.target);
+
+    if (e.key === 'Escape') {
+      if (typing) {
+        e.preventDefault();
+        e.target.blur();
+        focusRegistrySelectedOrFirst();
+        return;
+      }
+      const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active');
+      if (manualNavOn && manualMode === 'read') {
+        e.preventDefault();
+        renderManualList();
+        return;
+      }
+      focusRegistrySelectedOrFirst();
       return;
     }
-    // Manual library browse when MANUAL nav is active and list is showing
+
+    if (!typing && (e.key === '?' || (e.shiftKey && e.key === '/'))) {
+      e.preventDefault();
+      showKeyboardHelp();
+      return;
+    }
+
+    if (mapFKeys(e)) return;
+
+    if (typing) {
+      // In command line, Esc handled above; allow Ctrl+Enter noop
+      return;
+    }
+
+    // Zone cycling — ←→ always; Tab cycles only when not inside a field group
+    if (e.key === 'Tab') {
+      const inGroup = e.target.closest?.('#auth-form')
+        || e.target.closest?.('#registry-actions')
+        || e.target.closest?.('#nav-list')
+        || e.target.closest?.('#registry-table');
+      if (inGroup) return; // native tab within the group
+      e.preventDefault();
+      cycleZone(e.shiftKey ? -1 : 1);
+      return;
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      // If in actions toolbar, move between buttons
+      if (focusZone === 'actions' || document.activeElement?.closest?.('#registry-actions')) {
+        e.preventDefault();
+        focusActionButtons(e.key === 'ArrowRight' ? 1 : -1);
+        return;
+      }
+      e.preventDefault();
+      cycleZone(e.key === 'ArrowRight' ? 1 : -1);
+      return;
+    }
+
+    // Letter jumps
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (k === '/') {
+      e.preventDefault();
+      focusCommand();
+      return;
+    }
+    if (k === 'a') { e.preventDefault(); focusAuth(); return; }
+    if (k === 'c') { e.preventDefault(); focusCommand(); return; }
+    if (k === 'r') { e.preventDefault(); focusRegistrySelectedOrFirst(); return; }
+    if (k === 'q') { e.preventDefault(); focusNavItem(0); return; }
+    if (k === 'o') {
+      e.preventDefault();
+      if (selected && canOpen(selected)) openEntry(selected);
+      else if (selected) activateEntry(selected, { inspect: true });
+      else toast('select an archive first');
+      return;
+    }
+    if (k === 'i') {
+      e.preventDefault();
+      if (selected) activateEntry(selected, { inspect: true });
+      else toast('select an archive first');
+      return;
+    }
+    if (k === 'n') {
+      e.preventDefault();
+      openCreateArchiveManual();
+      return;
+    }
+    if (k === 'p' && btnInstall && !btnInstall.hidden) {
+      e.preventDefault();
+      btnInstall.click();
+      return;
+    }
+
+    // Manual list mode
     const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active');
     if (manualNavOn && manualMode === 'list' && manuals.length) {
       if (e.key === 'ArrowDown') {
@@ -2018,10 +2265,58 @@ Then attest here so SETUP MASTER can check it off.`);
         return;
       }
     }
-    if (manualNavOn && manualMode === 'read' && (e.key === 'Escape' || e.key === 'Backspace')) {
+    if (manualNavOn && manualMode === 'read' && e.key === 'Backspace') {
       e.preventDefault();
       renderManualList();
+      return;
     }
+
+    // Registry arrows when in registry zone or focus on a row
+    const onRow = document.activeElement?.closest?.('#registry-table tbody tr');
+    if (focusZone === 'registry' || onRow) {
+      const rows = [...tbody.querySelectorAll('tr[data-idx]')];
+      if (!rows.length) return;
+      let idx = onRow ? Number(onRow.dataset.idx) : (selected ? registry.indexOf(selected) : 0);
+      if (Number.isNaN(idx) || idx < 0) idx = 0;
+      if (e.key === 'ArrowDown') { e.preventDefault(); focusRegistryRow(idx + 1); return; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); focusRegistryRow(idx - 1); return; }
+      if (e.key === 'Home') { e.preventDefault(); focusRegistryRow(0); return; }
+      if (e.key === 'End') { e.preventDefault(); focusRegistryRow(rows.length - 1); return; }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selected && canOpen(selected)) openEntry(selected);
+        else if (selected) activateEntry(selected, { inspect: true });
+        return;
+      }
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (selected) activateEntry(selected, { inspect: true });
+        return;
+      }
+    }
+
+    // Nav zone arrows if focus on nav li
+    if (focusZone === 'nav' || document.activeElement?.closest?.('#nav-list')) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); focusNavItem(1); return; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); focusNavItem(-1); return; }
+    }
+  });
+
+  function mapFKeys(e) {
+    const map = { F1:'HELP', F2:'INDEX', F3:'MANUAL', F4:'MAP', F5:'LOGS', F6:'SYSTEM' };
+    if (map[e.key]) {
+      e.preventDefault();
+      handleCommand(map[e.key]);
+      return true;
+    }
+    return false;
+  }
+
+  // Boot: land keyboard focus on registry so arrows work immediately
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (!isTypingTarget(document.activeElement)) focusRegistrySelectedOrFirst();
+    }, 400);
   });
 
   paintAuth();
