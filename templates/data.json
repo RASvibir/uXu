@@ -11,7 +11,15 @@
     "allowTemplateForks": false,
     "templateForkDepth": 1,
     "templateOf": null,
-    "templateDepth": 0
+    "templateDepth": 0,
+    "manuals": [
+      {
+        "title": "Visitor Guide",
+        "path": "manuals/USER-MANUAL.md",
+        "description": "How to use this archive — listed in 0?0 INDEX ARCHIVE MANUALS"
+      }
+    ],
+    "tags": []
   },
   "shows": []
 }

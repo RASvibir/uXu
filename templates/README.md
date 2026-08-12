@@ -9,6 +9,7 @@ Optional starters for new uXu archives. Nothing here is required.
 | `index.html` | Starter page with configurable commons link |
 | `data.json` | Example metadata + `uxu` automations block |
 | `data.schema.json` | Shape reference (including template-fork fields) |
+| `manuals/USER-MANUAL.md` | Starter visitor manual (declare in `uxu.manuals`) |
 | `snippets/home-link.html` | Copy-paste home-link markup |
 
 ## Commons link (creator chooses)
@@ -56,11 +57,31 @@ When forking:
 
 Honor the source's depth cap.
 
+## Archive manuals (optional but recommended)
+
+List visitor manuals in `data.json` so **0?0 → RTFM → INDEX ARCHIVE MANUALS** can find them:
+
+```json
+"uxu": {
+  "manuals": [
+    {
+      "title": "Visitor Guide",
+      "path": "manuals/USER-MANUAL.md",
+      "description": "How to use this archive"
+    }
+  ]
+}
+```
+
+Starter file: `templates/manuals/USER-MANUAL.md`. Paths are relative to your archive folder.
+
+On 0?0: open **RTFM** (0?0 User Guide), then the **INDEX ARCHIVE MANUALS** button (or type `ARCHIVE MANUALS` / `FIND MANUAL <words>`).
+
 ## Create flow (simple)
 
 1. Copy `templates/` → `archives/Your-Archive-Name/`.
-2. Edit `data.json` (name, `homeLink.style`, fork policy).
-3. Build out `index.html` or keep the starter.
+2. Edit `data.json` (name, `homeLink.style`, fork policy, `uxu.manuals`).
+3. Build out `index.html` or keep the starter; edit `manuals/USER-MANUAL.md`.
 4. Register via PR or email rasip@chloreform.org — next `Title.uXu.NNNN` is assigned.
 
 See RTFM **Archive Creation Manual** for the complexity tree and placemarker rules.

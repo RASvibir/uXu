@@ -23,9 +23,11 @@ That is enough.
 2. Put your folder under `archives/`.
 3. Write a clear name, a short description, and at least one item in `data.json`.
 4. Pick a **commons link** style: public **uXu** chip (default) or **← 0?0** back control.
-5. Open `index.html` in a browser and confirm it loads.
-6. Open a pull request, or email **rasip@chloreform.org** and ask to be registered.
-7. Stay legal and safe (see CONTRIBUTING.md).
+5. List visitor manuals under `uxu.manuals` (starter: `manuals/USER-MANUAL.md`) so
+   **0?0 → RTFM → INDEX ARCHIVE MANUALS** can find them.
+6. Open `index.html` in a browser and confirm it loads.
+7. Open a pull request, or email **rasip@chloreform.org** and ask to be registered.
+8. Stay legal and safe (see CONTRIBUTING.md).
 
 You do not need a custom app, a database, or special security on day one.
 Do **not** attach the public uXu PWA manifest to child archives — that install is the invite app only.
@@ -47,6 +49,28 @@ Creators decide how the link home looks:
 
 Same destination either way. Optional `"label"` overrides the text.
 Snippet: `templates/snippets/home-link.html`.
+
+## Archive manuals (for INDEX ARCHIVE MANUALS)
+
+Publish visitor docs so 0?0 can index them:
+
+```json
+"uxu": {
+  "manuals": [
+    {
+      "title": "Visitor Guide",
+      "path": "manuals/USER-MANUAL.md",
+      "description": "How to use this archive"
+    }
+  ]
+}
+```
+
+Paths are relative to your archive folder. Starter file:
+`templates/manuals/USER-MANUAL.md`.
+
+On 0?0: **RTFM** → interactive 0?0 manual → **INDEX ARCHIVE MANUALS**, or type `ARCHIVE MANUALS` /
+`FIND MANUAL cybercat`.
 
 ## Template forks (creator's choice)
 

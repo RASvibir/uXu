@@ -52,6 +52,7 @@
 
   <h1 id="archive-title">Your Archive</h1>
   <p class="tag" id="archive-tag">uXu independent archive</p>
+  <p id="archive-manuals" class="tag" hidden></p>
 
   <div id="player-container">
     <audio id="main-player" controls crossorigin="anonymous"></audio>
@@ -80,6 +81,18 @@
         home.textContent = hl.label || 'uXu';
         home.className = 'home-link badge';
         home.dataset.uxuHome = 'uXu';
+      }
+
+      const manualsEl = document.getElementById('archive-manuals');
+      const manuals = (data.uxu && data.uxu.manuals) || [];
+      if (manualsEl && manuals.length) {
+        manualsEl.hidden = false;
+        manualsEl.innerHTML = manuals.map((m) => {
+          const path = typeof m === 'string' ? m : (m && m.path);
+          const label = (typeof m === 'object' && m && m.title) || path || 'Manual';
+          if (!path) return '';
+          return `<a href="${path}" style="color:var(--accent);margin-right:1rem;">${label}</a>`;
+        }).join('');
       }
 
       const list = document.getElementById('archive-list');

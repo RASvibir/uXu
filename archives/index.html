@@ -28,6 +28,8 @@
     --green-line:#0d3a1e;
     --cyan:#5ef0ff;
     --magenta:#ff4fd8;
+    --rtfm:#ff3b2f;
+    --rtfm-soft:#ffc4b8;
     --highlight-bg:#0f3a22;
     --highlight-fg:#eaffef;
     --mono:'JetBrains Mono', ui-monospace, monospace;
@@ -410,6 +412,91 @@
     outline:1px solid var(--green-bright);
     outline-offset:-1px;
   }
+  #nav-list li.nav-rtfm{
+    color:var(--rtfm);
+    font-weight:800;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    margin-top:.15rem;
+    border:1px solid rgba(255,59,47,.45);
+    background:rgba(255,30,20,.08);
+    text-shadow:0 0 10px rgba(255,59,47,.35);
+  }
+  #nav-list li.nav-rtfm::before{
+    content:"!";
+    color:var(--rtfm);
+    font-weight:800;
+  }
+  #nav-list li.nav-rtfm:hover,
+  #nav-list li.nav-rtfm:focus-visible{
+    color:#fff;
+    background:rgba(255,40,28,.28);
+    border-color:var(--rtfm);
+    transform:translateX(2px);
+    outline-color:var(--rtfm);
+  }
+  #nav-list li.nav-rtfm.active{
+    background:rgba(255,40,28,.38);
+    color:#fff;
+    border-color:#ff6a5a;
+  }
+  #nav-list li.nav-rtfm.active::before{content:"›"; color:#fff;}
+  @keyframes rtfm-pulse{
+    0%,100%{ box-shadow:inset 0 0 0 0 transparent; }
+    50%{ box-shadow:inset 0 0 14px rgba(255,59,47,.22); }
+  }
+  #nav-list li.nav-rtfm:not(.active){
+    animation:rtfm-pulse 2.4s var(--ease) infinite;
+  }
+
+  .rtfm-tip{
+    position:fixed;
+    z-index:10001;
+    min-width:12rem;
+    max-width:min(18rem, calc(100vw - 1.5rem));
+    padding:.7rem .85rem .75rem;
+    background:linear-gradient(165deg, #fff8f4 0%, #ffe8e0 100%);
+    border:2px solid var(--rtfm);
+    border-radius:10px 10px 10px 2px;
+    box-shadow:
+      0 10px 28px rgba(0,0,0,.45),
+      0 0 0 1px rgba(255,255,255,.35) inset;
+    color:#5a2a22;
+    font-family:var(--display);
+    font-size:.88rem;
+    line-height:1.35;
+    pointer-events:none;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(4px) scale(.98);
+    transition:opacity .14s var(--ease), transform .18s var(--ease), visibility .14s;
+  }
+  .rtfm-tip.show{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0) scale(1);
+  }
+  .rtfm-tip .rtfm-tip-k{
+    display:block;
+    font-family:var(--mono);
+    font-size:.58rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#c44a3a;
+    margin-bottom:.28rem;
+  }
+  .rtfm-tip .rtfm-tip-v{
+    font-weight:700;
+    color:#3a1814;
+  }
+  .rtfm-tip .rtfm-tip-soft{
+    display:block;
+    margin-top:.35rem;
+    font-size:.72rem;
+    font-weight:400;
+    color:#8a554c;
+    font-style:italic;
+  }
 
   .prompt-row{
     display:flex;
@@ -479,6 +566,319 @@
     color:#031018;
     border-color:var(--cyan);
   }
+  .manual-toolbar{
+    display:none;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:.4rem;
+    margin:0 0 .5rem;
+    padding:.35rem 0 .45rem;
+    border-bottom:1px dashed var(--green-line);
+  }
+  .manual-toolbar.is-on{display:flex;}
+  .manual-toolbar .ghost-btn.rtfm-index{
+    color:#fff;
+    border-color:rgba(255,59,47,.65);
+    background:rgba(255,40,28,.2);
+    font-weight:800;
+    letter-spacing:.06em;
+  }
+  .manual-toolbar .ghost-btn.rtfm-index:hover,
+  .manual-toolbar .ghost-btn.rtfm-index:focus-visible{
+    background:rgba(255,40,28,.38);
+    border-color:var(--rtfm, #ff3b2f);
+    color:#fff;
+    box-shadow:0 0 14px rgba(255,59,47,.3);
+  }
+  .manual-toolbar .manual-search{
+    flex:1 1 10rem;
+    min-width:8rem;
+    font:inherit;
+    font-size:.74rem;
+    color:var(--green-bright);
+    background:rgba(0,20,8,.55);
+    border:1px solid var(--green-line);
+    padding:.28rem .45rem;
+  }
+  .manual-toolbar .manual-search:focus{
+    outline:none;
+    border-color:var(--cyan);
+  }
+  .manual-toolbar .manual-search[hidden]{display:none !important;}
+  #active-summary[hidden]{display:none !important;}
+  .rtfm-panel{
+    display:none;
+    flex-direction:column;
+    flex:1;
+    min-height:10rem;
+    overflow:hidden;
+  }
+  .rtfm-panel.is-on{display:flex;}
+  .rtfm-panel[hidden]{display:none !important;}
+  .rtfm-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.25rem;
+    margin:0 0 .55rem;
+    padding:0 0 .45rem;
+    border-bottom:1px solid var(--green-line);
+  }
+  .rtfm-tabs button{
+    font:inherit;
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--green-dim);
+    background:transparent;
+    border:1px solid transparent;
+    padding:.28rem .5rem;
+    cursor:pointer;
+    border-radius:1px;
+  }
+  .rtfm-tabs button:hover,
+  .rtfm-tabs button:focus-visible{
+    color:var(--green-bright);
+    border-color:var(--green-line);
+    outline:none;
+  }
+  .rtfm-tabs button[aria-selected="true"]{
+    color:#041208;
+    background:var(--green-bright);
+    border-color:var(--green-bright);
+  }
+  .rtfm-tabs button.tab-source[aria-selected="true"]{
+    background:var(--cyan);
+    border-color:var(--cyan);
+    color:#031018;
+  }
+  .rtfm-body{
+    flex:1;
+    overflow-y:auto;
+    font-size:.74rem;
+    line-height:1.55;
+    color:var(--green);
+  }
+  .rtfm-body h3{
+    margin:.15rem 0 .45rem;
+    font-size:.82rem;
+    color:var(--green-bright);
+    letter-spacing:.04em;
+  }
+  .rtfm-body h4{
+    margin:.85rem 0 .3rem;
+    font-size:.72rem;
+    color:var(--cyan);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .rtfm-body p, .rtfm-body li{margin:.25rem 0;}
+  .rtfm-body ul{margin:.2rem 0 .5rem; padding-left:1.2rem;}
+  .rtfm-body .lede{
+    color:var(--highlight-fg);
+    margin-bottom:.65rem;
+  }
+  .rtfm-body .muted{color:var(--green-dim);}
+  .rtfm-body table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.7rem;
+    margin:.4rem 0 .7rem;
+  }
+  .rtfm-body th, .rtfm-body td{
+    border-bottom:1px solid var(--green-line);
+    padding:.28rem .35rem;
+    text-align:left;
+    vertical-align:top;
+  }
+  .rtfm-body th{color:var(--cyan); font-weight:700;}
+  .rtfm-body kbd{
+    font:inherit;
+    color:var(--cyan);
+    border:1px solid var(--green-line);
+    padding:0 .22rem;
+  }
+  .rtfm-body pre, .rtfm-code{
+    margin:.35rem 0 .65rem;
+    padding:.55rem .65rem;
+    background:rgba(0,0,0,.35);
+    border:1px solid var(--green-line);
+    color:var(--highlight-fg);
+    overflow-x:auto;
+    white-space:pre;
+    font-size:.68rem;
+    line-height:1.45;
+  }
+  .rtfm-code-tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.25rem;
+    margin:.35rem 0 .45rem;
+  }
+  .rtfm-code-tabs button{
+    font:inherit;
+    font-size:.66rem;
+    color:var(--green);
+    background:rgba(15,58,34,.35);
+    border:1px solid var(--green-line);
+    padding:.2rem .45rem;
+    cursor:pointer;
+  }
+  .rtfm-code-tabs button[aria-selected="true"]{
+    color:#041208;
+    background:var(--cyan);
+    border-color:var(--cyan);
+  }
+  .rtfm-code-pane[hidden]{display:none !important;}
+  .rtfm-warn{
+    border:1px solid rgba(255,59,47,.4);
+    background:rgba(255,40,28,.08);
+    color:var(--rtfm-soft);
+    padding:.45rem .55rem;
+    margin:.5rem 0;
+    font-size:.7rem;
+  }
+  .guide-panel{
+    display:none;
+    flex-direction:column;
+    flex:1;
+    min-height:10rem;
+    overflow:hidden;
+  }
+  .guide-panel.is-on{display:flex;}
+  .guide-panel[hidden]{display:none !important;}
+  .guide-scroll{
+    flex:1;
+    overflow-y:auto;
+    font-size:.74rem;
+    line-height:1.55;
+    color:var(--green);
+  }
+  .guide-scroll h3{
+    margin:.1rem 0 .4rem;
+    font-size:.82rem;
+    color:var(--green-bright);
+  }
+  .guide-scroll h4{
+    margin:.75rem 0 .3rem;
+    font-size:.7rem;
+    color:var(--cyan);
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .guide-scroll .lede{color:var(--highlight-fg); margin-bottom:.55rem;}
+  .guide-scroll .muted{color:var(--green-dim);}
+  .guide-scroll details{
+    border:1px solid var(--green-line);
+    margin:.35rem 0;
+    padding:.35rem .5rem;
+    background:rgba(0,20,8,.35);
+  }
+  .guide-scroll details summary{
+    cursor:pointer;
+    color:var(--green-bright);
+    font-weight:700;
+  }
+  .guide-scroll details[open] summary{margin-bottom:.35rem;}
+  .create-form{
+    display:grid;
+    gap:.45rem;
+    margin:.5rem 0 .75rem;
+  }
+  .create-form label{
+    display:grid;
+    gap:.2rem;
+    font-size:.68rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--green-dim);
+  }
+  .create-form input,
+  .create-form textarea,
+  .create-form select{
+    font:inherit;
+    font-size:.78rem;
+    text-transform:none;
+    letter-spacing:0;
+    color:var(--green-bright);
+    background:rgba(0,20,8,.55);
+    border:1px solid var(--green-line);
+    padding:.35rem .45rem;
+    width:100%;
+  }
+  .create-form textarea{min-height:3.2rem; resize:vertical;}
+  .create-form input:focus,
+  .create-form textarea:focus{
+    outline:none;
+    border-color:var(--cyan);
+  }
+  .folder-preview{
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--cyan);
+    border:1px dashed var(--green-line);
+    padding:.4rem .5rem;
+    background:rgba(0,0,0,.25);
+  }
+  .tag-row{display:flex; flex-wrap:wrap; gap:.3rem; align-items:center;}
+  .tag-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:.25rem;
+    font-size:.68rem;
+    color:var(--highlight-fg);
+    border:1px solid rgba(94,240,255,.35);
+    background:rgba(94,240,255,.1);
+    padding:.15rem .4rem;
+  }
+  .tag-chip.is-new{
+    border-color:rgba(255,59,47,.45);
+    background:rgba(255,40,28,.12);
+  }
+  .tag-chip button{
+    font:inherit;
+    font-size:.65rem;
+    color:var(--rtfm-soft);
+    background:transparent;
+    border:0;
+    cursor:pointer;
+    padding:0;
+  }
+  .tag-suggest{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.25rem;
+    margin-top:.25rem;
+  }
+  .tag-suggest button{
+    font:inherit;
+    font-size:.66rem;
+    color:var(--green);
+    background:rgba(15,58,34,.4);
+    border:1px solid var(--green-line);
+    padding:.15rem .4rem;
+    cursor:pointer;
+  }
+  .tag-suggest button:hover{
+    color:#041208;
+    background:var(--green-bright);
+  }
+  .create-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.4rem;
+    margin-top:.25rem;
+  }
+  .create-preview{
+    margin-top:.5rem;
+    padding:.55rem .65rem;
+    background:rgba(0,0,0,.35);
+    border:1px solid var(--green-line);
+    color:var(--highlight-fg);
+    font-size:.68rem;
+    white-space:pre-wrap;
+    overflow-x:auto;
+  }
 
   .auth-form{display:flex; flex-direction:column; gap:.4rem;}
   .auth-form input{
@@ -541,7 +941,8 @@
   @media (prefers-reduced-motion:reduce){
     .screen{animation:none;}
     .power-led{animation:none;}
-    #active-summary, #nav-list li, tbody tr td, .ghost-btn, .prompt-row, .toast{transition:none;}
+    #active-summary, #nav-list li, tbody tr td, .ghost-btn, .prompt-row, .toast, .rtfm-tip{transition:none;}
+    #nav-list li.nav-rtfm:not(.active){animation:none;}
   }
 </style>
 </head>
@@ -612,6 +1013,11 @@
                 <div class="nm-v" id="name-modal-title"></div>
                 <div class="nm-id" id="name-modal-id"></div>
               </div>
+              <div class="rtfm-tip" id="rtfm-tip" role="tooltip" hidden>
+                <span class="rtfm-tip-k">psst</span>
+                <span class="rtfm-tip-v">read the friendly manual</span>
+                <span class="rtfm-tip-soft">about → ease → nav → commands → depth → code → source</span>
+              </div>
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
                 <button type="button" class="ghost-btn" id="btn-inspect" disabled accesskey="i" title="Inspect (i)">Inspect</button>
@@ -621,14 +1027,45 @@
             </div>
             <div class="box output-panel">
               <div class="box-title" id="active-title">WELCOME TO uXu</div>
+              <div class="manual-toolbar" id="manual-toolbar" role="toolbar" aria-label="Manual tools" hidden>
+                <button type="button" class="ghost-btn" id="btn-manual-00" title="Open 0?0 RTFM">0?0 RTFM</button>
+                <button type="button" class="ghost-btn" id="btn-manual-library" title="Manual library index">MANUAL LIBRARY</button>
+                <button type="button" class="ghost-btn rtfm-index" id="btn-archive-manuals" title="Search manuals published by archives">INDEX ARCHIVE MANUALS</button>
+                <input type="search" class="manual-search" id="archive-manual-search" placeholder="search archive manuals…" autocomplete="off" spellcheck="false" hidden />
+              </div>
+              <div class="rtfm-panel" id="rtfm-panel" hidden>
+                <div class="rtfm-tabs" role="tablist" aria-label="0?0 RTFM sections">
+                  <button type="button" role="tab" id="rtfm-tab-about" aria-controls="rtfm-pane-about" aria-selected="true" data-rtfm-tab="about">About</button>
+                  <button type="button" role="tab" id="rtfm-tab-ease" aria-controls="rtfm-pane-ease" aria-selected="false" data-rtfm-tab="ease">Ease</button>
+                  <button type="button" role="tab" id="rtfm-tab-nav" aria-controls="rtfm-pane-nav" aria-selected="false" data-rtfm-tab="nav">Nav</button>
+                  <button type="button" role="tab" id="rtfm-tab-commands" aria-controls="rtfm-pane-commands" aria-selected="false" data-rtfm-tab="commands">Commands</button>
+                  <button type="button" role="tab" id="rtfm-tab-depth" aria-controls="rtfm-pane-depth" aria-selected="false" data-rtfm-tab="depth">Depth</button>
+                  <button type="button" role="tab" id="rtfm-tab-code" aria-controls="rtfm-pane-code" aria-selected="false" data-rtfm-tab="code">Code</button>
+                  <button type="button" role="tab" id="rtfm-tab-source" class="tab-source" aria-controls="rtfm-pane-source" aria-selected="false" data-rtfm-tab="source">Source</button>
+                </div>
+                <div class="rtfm-body" id="rtfm-body">
+                  <div class="rtfm-pane" id="rtfm-pane-about" role="tabpanel" data-rtfm-pane="about"></div>
+                  <div class="rtfm-pane" id="rtfm-pane-ease" role="tabpanel" data-rtfm-pane="ease" hidden></div>
+                  <div class="rtfm-pane" id="rtfm-pane-nav" role="tabpanel" data-rtfm-pane="nav" hidden></div>
+                  <div class="rtfm-pane" id="rtfm-pane-commands" role="tabpanel" data-rtfm-pane="commands" hidden></div>
+                  <div class="rtfm-pane" id="rtfm-pane-depth" role="tabpanel" data-rtfm-pane="depth" hidden></div>
+                  <div class="rtfm-pane" id="rtfm-pane-code" role="tabpanel" data-rtfm-pane="code" hidden></div>
+                  <div class="rtfm-pane" id="rtfm-pane-source" role="tabpanel" data-rtfm-pane="source" hidden></div>
+                </div>
+              </div>
+              <div class="guide-panel" id="create-panel" hidden>
+                <div class="guide-scroll" id="create-scroll"></div>
+              </div>
+              <div class="guide-panel" id="faq-panel" hidden>
+                <div class="guide-scroll" id="faq-scroll"></div>
+              </div>
               <pre id="active-summary" aria-live="polite">A commons for independent archives.
 Preserve. Connect. Discover.
 
 You are in 0?0 — the root of the archive.
 
-Click a registry row, use Quick Nav, or type HELP.
-Keyboard-first: press ? for the map · Tab/←→ zones · ↑↓ move · / command.
-F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
+Quick Nav: ABOUT · CREATE ARCHIVE · FAQ · RTFM
+Keyboard: ? map · / command · ↑↓ registry.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
@@ -640,16 +1077,17 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
             <div class="box" id="nav-box">
               <div class="box-title">QUICK NAV <span class="meta">←→ zone</span></div>
               <ul id="nav-list" role="menu" aria-label="Quick navigation">
+                <li data-cmd="ABOUT" tabindex="0">ABOUT</li>
+                <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
+                <li data-cmd="FAQ" tabindex="0">FAQ</li>
+                <li data-cmd="RTFM" tabindex="0" class="nav-rtfm" aria-describedby="rtfm-tip">RTFM</li>
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
                 <li data-cmd="MANUAL" tabindex="0">MANUAL LIBRARY</li>
-                <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
                 <li data-cmd="INSTALL" tabindex="0">INSTALL uXu</li>
                 <li data-cmd="MAP" tabindex="0">PROVENANCE MAP</li>
                 <li data-cmd="LOGS" tabindex="0">TRANSPARENCY LOGS</li>
                 <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
-                <li data-cmd="AUTH" tabindex="0">ACCOUNT / AUTH</li>
                 <li data-cmd="SETUP MASTER" tabindex="0">SETUP MASTER</li>
-                <li data-cmd="HELP" tabindex="0">HELP</li>
                 <li data-cmd="EXIT" tabindex="0">EXIT TO DOS</li>
               </ul>
             </div>
@@ -687,9 +1125,30 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
   let authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
   let manuals = [];
   let manualSelected = 0;
-  let manualMode = 'list'; // list | read
+  let manualMode = 'list'; // list | read | rtfm | archive-index | archive-read
   let manualOpen = null; // { slug, title, body }
   let manualSections = []; // [{ n, title, start, end }]
+  let archiveManualIndex = []; // [{ archiveId, archiveTitle, title, path, href, description }]
+  let archiveManualSelected = 0;
+  let archiveManualQuery = '';
+  let archiveManualOpen = null;
+  let rtfmTab = 'about';
+  let rtfmCodeTab = 'starter';
+  let rtfmBuilt = false;
+  let createDraftTags = [];
+  let tagCollective = [];
+  const TAG_SEED = [
+    { name: 'audio', slug: 'audio' },
+    { name: 'grateful-dead', slug: 'grateful-dead' },
+    { name: 'live', slug: 'live' },
+    { name: 'photos', slug: 'photos' },
+    { name: 'text', slug: 'text' },
+    { name: 'zine', slug: 'zine' },
+    { name: 'video', slug: 'video' },
+    { name: 'community', slug: 'community' },
+    { name: 'template', slug: 'template' },
+  ];
+  const TAG_STORE_KEY = 'uxu_tag_collective';
 
   const tbody = document.querySelector('#registry-table tbody');
   const activeSummary = document.querySelector('#active-summary');
@@ -703,6 +1162,94 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
   const btnInstall = document.querySelector('#btn-install');
   const LANDING_MANUAL_SLUG = 'user-guide';
   const CREATE_MANUAL_SLUG = 'archive-creation';
+  const manualToolbar = document.getElementById('manual-toolbar');
+  const btnManual00 = document.getElementById('btn-manual-00');
+  const btnManualLibrary = document.getElementById('btn-manual-library');
+  const btnArchiveManuals = document.getElementById('btn-archive-manuals');
+  const archiveManualSearch = document.getElementById('archive-manual-search');
+
+  function setManualToolbar(mode) {
+    if (!manualToolbar) return;
+    const on = mode === 'root-read' || mode === 'root-list' || mode === 'rtfm'
+      || mode === 'archive-index' || mode === 'archive-read';
+    manualToolbar.hidden = !on;
+    manualToolbar.classList.toggle('is-on', on);
+    if (archiveManualSearch) {
+      const showSearch = mode === 'archive-index';
+      archiveManualSearch.hidden = !showSearch;
+      if (showSearch) {
+        archiveManualSearch.value = archiveManualQuery;
+      }
+    }
+  }
+
+  function hideManualToolbar() {
+    setManualToolbar(null);
+  }
+
+  function hideRtfmUi() {
+    const panel = document.getElementById('rtfm-panel');
+    if (panel) {
+      panel.hidden = true;
+      panel.classList.remove('is-on');
+    }
+  }
+
+  function hideCreateUi() {
+    const panel = document.getElementById('create-panel');
+    if (panel) {
+      panel.hidden = true;
+      panel.classList.remove('is-on');
+    }
+  }
+
+  function hideFaqUi() {
+    const panel = document.getElementById('faq-panel');
+    if (panel) {
+      panel.hidden = true;
+      panel.classList.remove('is-on');
+    }
+  }
+
+  function hideGuidePanels() {
+    hideRtfmUi();
+    hideCreateUi();
+    hideFaqUi();
+    if (activeSummary) activeSummary.hidden = false;
+  }
+
+  function showRtfmUi() {
+    hideCreateUi();
+    hideFaqUi();
+    const panel = document.getElementById('rtfm-panel');
+    if (panel) {
+      panel.hidden = false;
+      panel.classList.add('is-on');
+    }
+    if (activeSummary) activeSummary.hidden = true;
+  }
+
+  function showCreateUi() {
+    hideRtfmUi();
+    hideFaqUi();
+    const panel = document.getElementById('create-panel');
+    if (panel) {
+      panel.hidden = false;
+      panel.classList.add('is-on');
+    }
+    if (activeSummary) activeSummary.hidden = true;
+  }
+
+  function showFaqUi() {
+    hideRtfmUi();
+    hideCreateUi();
+    const panel = document.getElementById('faq-panel');
+    if (panel) {
+      panel.hidden = false;
+      panel.classList.add('is-on');
+    }
+    if (activeSummary) activeSummary.hidden = true;
+  }
 
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Nested archives like CyberCat keep their own pages and are unchanged.
@@ -883,6 +1430,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
   }
 
   function showOutput(title, text){
+    hideGuidePanels();
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const apply = () => {
       activeTitle.textContent = title;
@@ -1151,6 +1699,57 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     document.body.appendChild(nameModal);
   }
 
+  const rtfmTip = document.getElementById('rtfm-tip');
+  const rtfmNav = document.querySelector('#nav-list li.nav-rtfm');
+  if (rtfmTip && rtfmTip.parentElement !== document.body) {
+    document.body.appendChild(rtfmTip);
+  }
+
+  function hideRtfmTip() {
+    if (!rtfmTip) return;
+    rtfmTip.classList.remove('show');
+    rtfmTip.hidden = true;
+  }
+
+  function showRtfmTip(anchorEl) {
+    if (!rtfmTip || !anchorEl) return;
+    rtfmTip.hidden = false;
+    rtfmTip.classList.remove('show');
+    rtfmTip.style.left = '0px';
+    rtfmTip.style.top = '0px';
+    rtfmTip.style.visibility = 'hidden';
+    rtfmTip.style.opacity = '0';
+
+    const rect = anchorEl.getBoundingClientRect();
+    const pad = 10;
+    const mw = Math.max(rtfmTip.offsetWidth || 200, 180);
+    const mh = Math.max(rtfmTip.offsetHeight || 70, 60);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    let left = rect.left - mw - pad;
+    let top = rect.top + (rect.height - mh) / 2;
+    if (left < pad) left = rect.right + pad;
+    if (left + mw > vw - pad) left = Math.max(pad, vw - mw - pad);
+    if (top < pad) top = pad;
+    if (top + mh > vh - pad) top = Math.max(pad, vh - mh - pad);
+
+    rtfmTip.style.left = `${Math.round(left)}px`;
+    rtfmTip.style.top = `${Math.round(top)}px`;
+    rtfmTip.style.visibility = '';
+    rtfmTip.style.opacity = '';
+    requestAnimationFrame(() => rtfmTip.classList.add('show'));
+  }
+
+  if (rtfmNav && rtfmTip) {
+    rtfmNav.addEventListener('mouseenter', () => showRtfmTip(rtfmNav));
+    rtfmNav.addEventListener('mouseleave', hideRtfmTip);
+    rtfmNav.addEventListener('focus', () => showRtfmTip(rtfmNav));
+    rtfmNav.addEventListener('blur', hideRtfmTip);
+    window.addEventListener('scroll', hideRtfmTip, true);
+    window.addEventListener('resize', hideRtfmTip);
+  }
+
   function hideNameModal() {
     clearTimeout(nameModalTimer);
     nameModal.classList.remove('show');
@@ -1338,12 +1937,15 @@ validation: ${entry.certainty}${unresolvedBlock}${openHint}`);
 
   function renderManualList() {
     manualMode = 'list';
+    setManualToolbar('root-list');
     if (!manuals.length) {
       showOutput("MANUAL LIBRARY",
 `no manuals ingested yet
 
 Local RTFM lives at /RTFM/ in the repo.
-Try again after the Worker manuals route is live.`);
+Try again after the Worker manuals route is live.
+
+Use INDEX ARCHIVE MANUALS to search creator manuals.`);
       return;
     }
     if (manualSelected < 0) manualSelected = 0;
@@ -1356,11 +1958,186 @@ Try again after the Worker manuals route is live.`);
 `${lines.join('\n\n')}
 
 ↑↓ select · Enter / READ open · BACK returns to list
-Landing: User Guide · CREATE ARCHIVE opens creation manual`);
+RTFM — interactive 0?0 manual (nav · commands · depth · code · source)
+INDEX ARCHIVE MANUALS — search manuals from created archives`);
+  }
+
+  function archiveDirFromEntry(entry) {
+    const href = localArchiveHref(entry);
+    if (!href) return null;
+    try {
+      const u = new URL(href, location.href);
+      if (u.origin !== location.origin) return null;
+      let p = u.pathname;
+      if (/\.html?$/i.test(p)) {
+        p = p.slice(0, p.lastIndexOf('/') + 1);
+      } else if (!p.endsWith('/')) {
+        p += '/';
+      }
+      const base = siteBase();
+      if (p.startsWith(base)) return p.slice(base.length);
+      const parts = p.split('/').filter(Boolean);
+      if (!parts.length) return null;
+      return `${parts[parts.length - 1]}/`;
+    } catch {
+      return null;
+    }
+  }
+
+  function normalizeManualEntries(raw, archiveDir) {
+    const list = Array.isArray(raw) ? raw : [];
+    return list.map((item) => {
+      if (typeof item === 'string') {
+        const path = item.replace(/^\.\//, '');
+        const leaf = path.split('/').pop() || path;
+        return {
+          title: leaf.replace(/\.(md|markdown|html?)$/i, '').replace(/[-_]/g, ' '),
+          path,
+          description: '',
+          href: siteBase() + archiveDir + path,
+        };
+      }
+      if (!item || !item.path) return null;
+      const path = String(item.path).replace(/^\.\//, '');
+      return {
+        title: item.title || path,
+        path,
+        description: item.description || '',
+        href: siteBase() + archiveDir + path,
+      };
+    }).filter(Boolean);
+  }
+
+  function filterArchiveManuals(query) {
+    const q = String(query || '').trim().toLowerCase();
+    if (!q) return archiveManualIndex.slice();
+    return archiveManualIndex.filter((m) => {
+      const hay = [m.title, m.description, m.archiveTitle, m.archiveId, m.path]
+        .join(' ')
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function renderArchiveManualIndex() {
+    manualMode = 'archive-index';
+    setActiveNav('RTFM');
+    setManualToolbar('archive-index');
+    const rows = filterArchiveManuals(archiveManualQuery);
+    if (archiveManualSelected >= rows.length) archiveManualSelected = Math.max(0, rows.length - 1);
+    if (!archiveManualIndex.length) {
+      showOutput("INDEX ARCHIVE MANUALS",
+`No archive manuals discovered yet.
+
+Creators declare them in data.json:
+
+  "uxu": {
+    "manuals": [
+      { "title": "Visitor Guide", "path": "manuals/USER-MANUAL.md" }
+    ]
+  }
+
+Starter: templates/manuals/USER-MANUAL.md
+Then press INDEX ARCHIVE MANUALS again after the archive is on the registry.`);
+      return;
+    }
+    if (!rows.length) {
+      showOutput("INDEX ARCHIVE MANUALS",
+`No matches for “${archiveManualQuery}”.
+
+Clear the search box or try another word.
+${archiveManualIndex.length} manual(s) indexed from the registry.`);
+      return;
+    }
+    const lines = rows.map((m, i) => {
+      const mark = i === archiveManualSelected ? '>' : ' ';
+      const desc = m.description ? `\n     ${m.description}` : '';
+      return `${mark} ${String(i + 1).padStart(2, ' ')}. ${m.title}\n     archive: ${m.archiveTitle} (${m.archiveId})${desc}\n     path: ${m.path}`;
+    });
+    showOutput("INDEX ARCHIVE MANUALS",
+`${archiveManualIndex.length} manual(s) from created archives
+${archiveManualQuery ? `filter: “${archiveManualQuery}” · ` : ''}${rows.length} shown
+
+${lines.join('\n\n')}
+
+↑↓ select · Enter open · type in the search box to filter
+FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
+  }
+
+  async function scanArchiveManuals(opts = {}) {
+    const query = opts.query != null ? opts.query : archiveManualQuery;
+    archiveManualQuery = String(query || '');
+    setActiveNav('RTFM');
+    setManualToolbar('archive-index');
+    showOutput("INDEX ARCHIVE MANUALS", "scanning registry for uxu.manuals…");
+    if (!registry.length) {
+      try { await loadRegistry(); } catch (_) { /* loadRegistry shows errors */ }
+    }
+    const found = [];
+    const candidates = registry.filter((e) => placemarkerInfo(e).openable);
+    await Promise.all(candidates.map(async (entry) => {
+      const dir = archiveDirFromEntry(entry);
+      if (!dir) return;
+      try {
+        const res = await fetch(siteBase() + dir + 'data.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const manualsRaw = (data.uxu && data.uxu.manuals) || data.manuals || [];
+        const normalized = normalizeManualEntries(manualsRaw, dir);
+        normalized.forEach((m) => {
+          found.push({
+            ...m,
+            archiveId: entry.id,
+            archiveTitle: entry.title || data.archiveName || entry.id,
+          });
+        });
+      } catch (_) { /* skip unreachable archives */ }
+    }));
+    found.sort((a, b) =>
+      String(a.archiveTitle).localeCompare(String(b.archiveTitle)) ||
+      String(a.title).localeCompare(String(b.title))
+    );
+    archiveManualIndex = found;
+    archiveManualSelected = 0;
+    renderArchiveManualIndex();
+  }
+
+  async function openArchiveManualAt(idx) {
+    const rows = filterArchiveManuals(archiveManualQuery);
+    const item = rows[idx];
+    if (!item) {
+      showOutput("ERROR", "no archive manual at that selection");
+      return;
+    }
+    archiveManualSelected = idx;
+    showOutput("ARCHIVE MANUAL", `loading ${item.title}…`);
+    try {
+      const res = await fetch(item.href, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const body = await res.text();
+      archiveManualOpen = { ...item, body };
+      manualMode = 'archive-read';
+      setManualToolbar('archive-read');
+      showOutput(item.title,
+`ARCHIVE: ${item.archiveTitle}
+ID:      ${item.archiveId}
+PATH:    ${item.path}
+
+${body}
+
+────────
+BACK · ARCHIVE MANUALS  return to index
+RTFM                    0?0 manual`);
+      toast(`opened ${item.title}`);
+    } catch (err) {
+      showOutput("ERROR", `loading archive manual: ${err.message}\n${item.href}`);
+      setManualToolbar('archive-index');
+    }
   }
 
   async function openCreateArchiveManual() {
     setActiveNav("CREATE");
+    hideManualToolbar();
     const next = nextArchiveSerial();
     const example = formatArchiveIdExample('Your_Archive');
     showOutput("CREATE ARCHIVE",
@@ -1385,11 +2162,14 @@ loading guide...`);
         const toc = manualSections.length
           ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
           : '  (no ## sections)';
+        setManualToolbar('root-read');
         showOutput(manualOpen.title,
 `▸ NEXT ID SLOT
   serial: .${next}
   example: ${example}
   New archives take the next free number in Title.uXu.NNNN
+
+Declare visitor manuals in data.json → uxu.manuals so INDEX ARCHIVE MANUALS can find them.
 
 ${manualOpen.body}
 
@@ -1397,7 +2177,7 @@ ${manualOpen.body}
 TOC (SECTION n)
 ${toc}
 
-BACK · MANUAL  return to library`);
+BACK · MANUAL  return to library · INDEX ARCHIVE MANUALS`);
       }
       setActiveNav("CREATE");
       toast(`next serial .${next}`);
@@ -1406,9 +2186,508 @@ BACK · MANUAL  return to library`);
     }
   }
 
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function rtfmCodeBlocks() {
+    return {
+      starter: {
+        label: 'Tier 1 starter',
+        lang: 'html',
+        body: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Archive · uXu</title>
+</head>
+<body>
+  <a href="../index.html">uXu</a>
+  <h1>Your Archive</h1>
+  <audio id="main-player" controls crossorigin="anonymous"></audio>
+  <div id="archive-list"></div>
+  <script>
+    fetch('data.json').then(r => r.json()).then(data => {
+      document.querySelector('h1').textContent = data.archiveName;
+      // render items from data.shows or data.items
+    });
+  </script>
+</body>
+</html>`,
+      },
+      datajson: {
+        label: 'data.json',
+        lang: 'json',
+        body: `{
+  "archiveName": "Your Archive",
+  "description": "Short description.",
+  "uxu": {
+    "homeLink": { "style": "uXu", "href": "../index.html" },
+    "allowTemplateForks": false,
+    "templateForkDepth": 1,
+    "manuals": [
+      {
+        "title": "Visitor Guide",
+        "path": "manuals/USER-MANUAL.md",
+        "description": "How to use this archive"
+      }
+    ]
+  },
+  "shows": []
+}`,
+      },
+      manuals: {
+        label: 'uxu.manuals',
+        lang: 'json',
+        body: `"uxu": {
+  "manuals": [
+    {
+      "title": "Visitor Guide",
+      "path": "manuals/USER-MANUAL.md",
+      "description": "Listed by 0?0 INDEX ARCHIVE MANUALS"
+    }
+  ]
+}`,
+      },
+      fetch: {
+        label: 'Public registry fetch',
+        lang: 'js',
+        body: `// Public read — no auth headers required
+const API = 'https://uxu-ini-production.chrf-podcast.workers.dev';
+
+const res = await fetch(API + '/api/root/registry');
+const { records } = await res.json();
+console.log(records.map(r => r.id + ' · ' + r.title));
+
+// Manual library (root pamphlets)
+const manuals = await fetch(API + '/api/root/manuals').then(r => r.json());
+// Open one: GET /api/root/manuals/user-guide`,
+      },
+      player: {
+        label: 'Simple play button',
+        lang: 'js',
+        body: `const player = document.getElementById('main-player');
+const list = document.getElementById('archive-list');
+
+(data.shows || data.items || []).forEach((item) => {
+  const row = document.createElement('div');
+  row.textContent = item.date
+    ? item.date + ' — ' + (item.venue || item.title || '')
+    : (item.title || 'item');
+  const src = item.audioSources && item.audioSources[0];
+  const url = src && (src.url || (src.archiveOrgId
+    ? 'https://archive.org/download/' + src.archiveOrgId
+    : null));
+  if (url) {
+    const btn = document.createElement('button');
+    btn.textContent = 'Play';
+    btn.onclick = () => { player.src = url; player.play(); };
+    row.appendChild(btn);
+  }
+  list.appendChild(row);
+});`,
+      },
+      fork: {
+        label: 'Template fork fields',
+        lang: 'json',
+        body: `"uxu": {
+  "allowTemplateForks": true,
+  "templateForkDepth": 2,
+  "templateOf": "Source_Archive.uXu.0007",
+  "templateDepth": 1
+}`,
+      },
+    };
+  }
+
+  function buildRtfmPanes() {
+    if (rtfmBuilt) return;
+    rtfmBuilt = true;
+
+    const about = document.getElementById('rtfm-pane-about');
+    const ease = document.getElementById('rtfm-pane-ease');
+    const nav = document.getElementById('rtfm-pane-nav');
+    const commands = document.getElementById('rtfm-pane-commands');
+    const depth = document.getElementById('rtfm-pane-depth');
+    const code = document.getElementById('rtfm-pane-code');
+    const source = document.getElementById('rtfm-pane-source');
+
+    if (about) about.innerHTML = `
+<p class="lede"><strong>uXu</strong> is a shared archive commons. Independent archives keep their own voice, stack, and curation. Nobody takes your collection away from you.</p>
+
+<h3>What uXu is</h3>
+<p>uXu is the public door and the connective tissue — a place where archives can be found, opened, and related to each other without becoming one company’s product.</p>
+<ul>
+  <li><strong>uXu</strong> (landing / installable app) — the invite into the commons</li>
+  <li><strong>0?0</strong> (<code>0?0.uXu.0000</code>) — the root console once you are inside</li>
+  <li><strong>Child archives</strong> — like CyberCat Sunflower — each its own room</li>
+</ul>
+<p>Registration is not ownership. A link home can look like a public <strong>uXu</strong> chip or a console <strong>← 0?0</strong> back control — creator’s choice.</p>
+
+<h3>How 0?0 works</h3>
+<p><strong>0?0</strong> is the front desk of the commons. It does a few jobs well:</p>
+<ul>
+  <li><strong>Registry</strong> — forever ids (<code>Title.uXu.NNNN</code>). Numbers are history, not rank. If access ends, the row stays as a placemarker so the count stays honest.</li>
+  <li><strong>Open</strong> — jump into an archive that has a real page to visit.</li>
+  <li><strong>Docs</strong> — FAQ for everyday use, RTFM for deeper tabs, MANUAL LIBRARY for pamphlets.</li>
+  <li><strong>Map / logs / system</strong> — light provenance and runtime honesty.</li>
+  <li><strong>Account gate</strong> — optional sign-in for people who need a session; browsing as guest is fine.</li>
+</ul>
+<pre>uXu
+└── 0?0.uXu.0000
+    ├── Registry (forever placemarkers)
+    ├── RTFM / FAQ / MANUAL library
+    ├── Transparency
+    └── Relationships (*:*)</pre>
+<p class="muted"><code>*:*</code> means “these archives are connected.” It is not endorsement, ownership, or control.</p>
+
+<h3>How and why I created it</h3>
+<p>I built uXu because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
+<p>The first non-root room was <strong>CyberCat Sunflower</strong> — a Grateful Dead listening deck — proof that a full personality could live under the commons without being sanded down into a generic template. <strong>0?0</strong> grew as the root so there would always be a center: a place to look things up, open a door, read a manual, and leave a trail.</p>
+<p>Why this shape?</p>
+<ul>
+  <li><strong>Forever ids</strong> — history should not vanish when access does.</li>
+  <li><strong>Simple first</strong> — a folder, a page, a list. Complexity is optional (see Depth).</li>
+  <li><strong>Keyboard-honest UI</strong> — the console should work like a tool, not only a brochure.</li>
+  <li><strong>Public invite ≠ root console</strong> — share <strong>uXu</strong>; work inside <strong>0?0</strong>.</li>
+  <li><strong>Legal &amp; kind</strong> — only share what you have the right to share; keep the commons safe.</li>
+</ul>
+<p>The tagline is half joke, half brief: <em>built to archive. tuned to overachieve.</em> I want the boring durable parts done carefully, and the playful CRT surface done with love.</p>
+<p>Human contact for registration, questions, or problems: <strong>rasip@chloreform.org</strong> — Victor Birkle.</p>
+<p class="muted">Next tabs ramp from everyday controls (Ease) up through navigation, commands, growth tiers, code examples, and a safe Source inventory.</p>`;
+
+    if (ease) ease.innerHTML = `
+<p class="lede">Start here if you just want to <em>use</em> 0?0. No coding required.</p>
+<h3>Do these five things</h3>
+<ol>
+  <li>Look at the <strong>registry</strong> table — that is the commons roster.</li>
+  <li>Move with <kbd>↑</kbd><kbd>↓</kbd>, open with <kbd>Enter</kbd> or <strong>Open Archive</strong>.</li>
+  <li>Read <strong>ABOUT</strong> (this RTFM’s first tab) and <strong>FAQ</strong> for the friendly path.</li>
+  <li>Press <strong>CREATE ARCHIVE</strong> when you want your own shelf — start with a simple folder.</li>
+  <li>Install the public <strong>uXu</strong> app if you want the invite on your home screen.</li>
+</ol>
+<h3>Where to click</h3>
+<table>
+  <tr><th>Control</th><th>Job</th></tr>
+  <tr><td>ABOUT</td><td>What uXu is · how 0?0 works · why it exists</td></tr>
+  <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
+  <tr><td>CREATE ARCHIVE</td><td>Starter path + next serial</td></tr>
+  <tr><td>RTFM tabs</td><td>Deeper: nav → commands → depth → code → source</td></tr>
+  <tr><td>MANUAL LIBRARY</td><td>Long-form pamphlets</td></tr>
+</table>
+<p class="muted">Stuck? Email <strong>rasip@chloreform.org</strong>. Or type <code>HELP</code> for the command cheat sheet.</p>`;
+
+    if (nav) nav.innerHTML = `
+<p class="lede">You are in <strong>0?0</strong> — root console of the uXu commons. This RTFM is the operator-facing 0?0 manual.</p>
+<h3>First moves</h3>
+<ul>
+  <li>Select a registry row · <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect</li>
+  <li><kbd>/</kbd> jump to the command line · type a command · Enter</li>
+  <li><kbd>?</kbd> full keyboard map</li>
+  <li><strong>RTFM</strong> (this panel) · <strong>MANUAL LIBRARY</strong> pamphlet index</li>
+</ul>
+<h3>Zones</h3>
+<table>
+  <tr><th>Zone</th><th>Keys</th><th>Job</th></tr>
+  <tr><td>Registry</td><td><kbd>↑↓</kbd> <kbd>Enter</kbd></td><td>Browse / open archives</td></tr>
+  <tr><td>Actions</td><td><kbd>o</kbd> <kbd>i</kbd> <kbd>n</kbd></td><td>Open · Inspect · Create</td></tr>
+  <tr><td>Quick Nav</td><td><kbd>↑↓</kbd> Enter</td><td>Same as typing the command</td></tr>
+  <tr><td>Account</td><td>Tab fields</td><td>Sign in / up / out</td></tr>
+  <tr><td>Command</td><td><kbd>/</kbd></td><td>Full command vocabulary</td></tr>
+</table>
+<h3>Panel travel</h3>
+<p><kbd>Tab</kbd> / <kbd>←→</kbd> move zones · <kbd>Esc</kbd> back · <kbd>F1</kbd>–<kbd>F6</kbd> HELP INDEX MANUAL MAP LOGS SYSTEM</p>
+<p class="muted">Public invite app brands as <strong>uXu</strong>. Inside the commons, <strong>0?0</strong> is the root console.</p>
+<p>Need a human: <strong>rasip@chloreform.org</strong></p>`;
+
+    if (commands) commands.innerHTML = `
+<p class="lede">Visitor-safe command set. Type at <code>C:\\uXu&gt;</code> or use Quick Nav.</p>
+<h3>Browse &amp; open</h3>
+<table>
+  <tr><th>Command</th><th>What it does</th></tr>
+  <tr><td><code>INDEX</code></td><td>List registry ids + placemarkers</td></tr>
+  <tr><td><code>OPEN CYBERCAT</code></td><td>Open archive by name</td></tr>
+  <tr><td><code>OPEN</code> / <code>LOAD 0001</code></td><td>Open selection or id suffix</td></tr>
+  <tr><td><code>MAP</code></td><td>Provenance trail</td></tr>
+  <tr><td><code>LOGS</code></td><td>Transparency logs</td></tr>
+  <tr><td><code>SYSTEM</code></td><td>Runtime info</td></tr>
+  <tr><td><code>INSTALL</code></td><td>Public uXu PWA / home screen</td></tr>
+  <tr><td><code>EXIT</code></td><td>Stay on root (DOS joke)</td></tr>
+</table>
+<h3>Manuals</h3>
+<table>
+  <tr><th>Command</th><th>What it does</th></tr>
+  <tr><td><code>ABOUT</code></td><td>What uXu is · how 0?0 works · why it exists</td></tr>
+  <tr><td><code>FAQ</code></td><td>Friendly everyday how-to</td></tr>
+  <tr><td><code>RTFM</code></td><td>This 0?0 manual (tabs)</td></tr>
+  <tr><td><code>MANUAL</code></td><td>Manual library index (pamphlets)</td></tr>
+  <tr><td><code>READ &lt;slug|n&gt;</code></td><td>Open a library pamphlet</td></tr>
+  <tr><td><code>SECTION &lt;n&gt;</code></td><td>Jump to ## heading while reading</td></tr>
+  <tr><td><code>ARCHIVE MANUALS</code></td><td>Index creator manuals from data.json</td></tr>
+  <tr><td><code>FIND MANUAL &lt;q&gt;</code></td><td>Filter that index</td></tr>
+  <tr><td><code>CREATE ARCHIVE</code></td><td>Creation manual + next serial</td></tr>
+  <tr><td><code>BACK</code></td><td>Return one step in manuals</td></tr>
+</table>
+<h3>Account (day-to-day)</h3>
+<table>
+  <tr><th>Command</th><th>What it does</th></tr>
+  <tr><td><code>SIGNUP</code> / <code>SIGNIN</code></td><td>Create or enter a session</td></tr>
+  <tr><td><code>SIGNOUT</code> · <code>WHOAMI</code></td><td>Leave / confirm identity</td></tr>
+  <tr><td><code>AUTH</code></td><td>Account gate help</td></tr>
+  <tr><td><code>HELP</code></td><td>Compact command list</td></tr>
+</table>
+<p class="muted">Admin succession commands exist for operators (<code>SETUP MASTER</code>, recovery). They are not required for browsing or creating a normal archive.</p>`;
+
+    if (depth) depth.innerHTML = `
+<p class="lede">Grow only when you want to. Each tier builds on the last.</p>
+<pre>Tier 0  STORY — README + links
+   │
+Tier 1  SIMPLE ARCHIVE ← default
+        index.html + data.json + README
+   │
+   ├── Tier 2  RICH CATALOG (search, setlists, ranked sources)
+   │      │
+   │      └── Tier 3  INTERACTIVE APP (EQ, galleries, keyboard UI)
+   │             │
+   │             └── Tier 4  HARDENED (auth / privacy — talk to admin)
+   │
+   └── Tier 2b / 3b  public access polish · shared cache (coordinate)</pre>
+<h3>Incremental path</h3>
+<ol>
+  <li><strong>Tier 1</strong> — copy <code>templates/</code>, edit name + one item, open locally.</li>
+  <li>Declare <code>uxu.homeLink</code> (<code>uXu</code> chip or <code>← 0?0</code>).</li>
+  <li>Add <code>uxu.manuals</code> so <strong>INDEX ARCHIVE MANUALS</strong> can find you.</li>
+  <li><strong>Tier 2</strong> — search/filter UI; rank audio sources best-first.</li>
+  <li><strong>Tier 3</strong> — custom controls (see Code tab · player notes in MANUAL LIBRARY).</li>
+  <li>Register via PR or email · receive <code>Title.uXu.NNNN</code>.</li>
+</ol>
+<h4>Optional forks</h4>
+<p>Set <code>allowTemplateForks</code> + <code>templateForkDepth</code> if others may start from your archive. Honor the source depth cap when forking.</p>
+<p class="muted">Full prose: MANUAL LIBRARY → Archive Creation Manual · Developers Handbook.</p>`;
+
+    const blocks = rtfmCodeBlocks();
+    if (code) {
+      const tabBtns = Object.entries(blocks).map(([id, b]) =>
+        `<button type="button" role="tab" data-rtfm-code="${id}" aria-selected="${id === 'starter' ? 'true' : 'false'}">${escapeHtml(b.label)}</button>`
+      ).join('');
+      const panes = Object.entries(blocks).map(([id, b]) =>
+        `<div class="rtfm-code-pane" data-rtfm-code-pane="${id}" ${id === 'starter' ? '' : 'hidden'}>
+          <h3>${escapeHtml(b.label)}</h3>
+          <p class="muted">Copy into your archive folder. Safe public patterns only.</p>
+          <pre class="rtfm-code">${escapeHtml(b.body)}</pre>
+        </div>`
+      ).join('');
+      code.innerHTML = `
+<p class="lede">Coding examples by depth. Switch sub-tabs. Nothing here requires secrets.</p>
+<div class="rtfm-code-tabs" role="tablist" aria-label="Code examples">${tabBtns}</div>
+${panes}
+<p class="muted">More: MANUAL LIBRARY → Audio Player notes · Source Code Pamphlet · Developers Handbook.</p>`;
+      code.querySelectorAll('[data-rtfm-code]').forEach((btn) => {
+        btn.addEventListener('click', () => setRtfmCodeTab(btn.getAttribute('data-rtfm-code')));
+      });
+    }
+
+    if (source) {
+      source.innerHTML = `
+<p class="lede">Public inventory — what you can list and learn without security exposure.</p>
+<div class="rtfm-warn">Omitted on purpose: passwords, Neon connection strings, Wrangler secret values, bootstrap / claim secrets, token recipes, recovery email lists, and any how-to that elevates privilege. Those stay in private operator notes.</div>
+<h3>Repo map (safe)</h3>
+<pre>uXu/
+  README.md · LICENSE · CONTRIBUTING.md
+  archives/                 ← GitHub Pages root
+    index.html              0?0 console + uXu PWA hooks
+    manifest.webmanifest · sw.js · icons/
+    CyberCat-Sunflower/     listening deck
+    RTFM/                   pamphlet library (markdown)
+    seed-13/                extra seed archive
+  templates/                starter archive + manuals/
+  apps/ini/                 Cloudflare Worker API
+    src/index.js
+    prisma/schema.prisma
+    wrangler.toml           non-secret deploy config
+  docs/runtime/             layout notes</pre>
+<h3>Public API (read)</h3>
+<pre>GET /api/root
+GET /api/root/registry
+GET /api/root/manuals
+GET /api/root/manuals/:slug
+GET /api/root/logs
+GET /api/root/provenance
+GET /api/root/system
+GET /api/auth/config
+GET /api/auth/setup-status   (checklist flags only)</pre>
+<p class="muted">Host is configured in the console script as <code>API_BASE</code>. Exact hostname may change with deploy.</p>
+<h3>RTFM pamphlets on disk</h3>
+<pre id="rtfm-source-files">loading local RTFM names…</pre>
+<h3>Template surface</h3>
+<pre>templates/index.html
+templates/data.json · data.schema.json
+templates/manuals/USER-MANUAL.md
+templates/snippets/home-link.html</pre>
+<h3>Registry placemarkers (vocabulary)</h3>
+<pre>(live archive) · (planned archive) · (deleted by user)
+(removed by admin) · (locked archive) · (audience only)
+(under investigation)</pre>
+<p>Ids are forever. Removals leave placemarkers so history stays honest.</p>
+<h3>What Source will not print</h3>
+<ul>
+  <li>Secret names used as copy-paste deploy steps</li>
+  <li>Account emails, recovery lists, or session tokens</li>
+  <li>Database URLs or Auth private endpoints beyond the public Auth base the console already uses</li>
+  <li>Exploit / bypass notes</li>
+</ul>
+<p class="muted">Want the pamphlet form: MANUAL LIBRARY → Source Code Pamphlet.</p>`;
+      fillRtfmSourceFiles();
+    }
+  }
+
+  async function fillRtfmSourceFiles() {
+    const el = document.getElementById('rtfm-source-files');
+    if (!el) return;
+    const fallback = `USER-GUIDE.md
+ARCHIVE-CREATION-MANUAL.md
+CYBERCAT-SUNFLOWER-MANUAL.md
+DEVELOPERS-HANDBOOK.md
+SOURCE-CODE-PAMPHLET.md
+MASTER-ADMIN-GUIDE.md
+AUDIO_PLAYER_CODE.md
+SOURCING_LEGAL_AUDIO.md
+README.md`;
+    try {
+      // Prefer live library slugs when Worker is up
+      const res = await fetch(`${API_BASE}/api/root/manuals`);
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.manuals) && data.manuals.length) {
+        el.textContent = data.manuals
+          .map((m) => `${m.slug.padEnd(22, ' ')}  ${m.title}`)
+          .join('\n');
+        return;
+      }
+    } catch (_) { /* use fallback */ }
+    el.textContent = fallback;
+  }
+
+  function setRtfmTab(tab) {
+    rtfmTab = tab || 'nav';
+    document.querySelectorAll('[data-rtfm-tab]').forEach((btn) => {
+      const on = btn.getAttribute('data-rtfm-tab') === rtfmTab;
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-rtfm-pane]').forEach((pane) => {
+      const on = pane.getAttribute('data-rtfm-pane') === rtfmTab;
+      pane.hidden = !on;
+    });
+    if (rtfmTab === 'source') fillRtfmSourceFiles();
+  }
+
+  function setRtfmCodeTab(id) {
+    rtfmCodeTab = id || 'starter';
+    document.querySelectorAll('[data-rtfm-code]').forEach((btn) => {
+      btn.setAttribute('aria-selected', btn.getAttribute('data-rtfm-code') === rtfmCodeTab ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-rtfm-code-pane]').forEach((pane) => {
+      pane.hidden = pane.getAttribute('data-rtfm-code-pane') !== rtfmCodeTab;
+    });
+  }
+
+  function openRtfm(opts = {}) {
+    if (typeof hideRtfmTip === 'function') hideRtfmTip();
+    setActiveNav(opts.nav || 'RTFM');
+    manualMode = 'rtfm';
+    manualOpen = null;
+    buildRtfmPanes();
+    setRtfmTab(opts.tab || rtfmTab || 'about');
+    showRtfmUi();
+    setManualToolbar('rtfm');
+    activeTitle.textContent = opts.title || '0?0 · RTFM';
+    toast(opts.toast || 'RTFM — 0?0 manual');
+  }
+
+  function openAbout() {
+    openRtfm({ tab: 'about', nav: 'ABOUT', title: '0?0 · ABOUT', toast: 'About uXu / 0?0' });
+  }
+
+  function openFaq() {
+    hideManualToolbar();
+    setActiveNav('FAQ');
+    manualMode = 'faq';
+    const root = document.getElementById('faq-scroll');
+    if (root) {
+      root.innerHTML = `
+<p class="lede">Friendly FAQ — the necessary functional experience of uXu, without the deep dive.</p>
+
+<details open>
+  <summary>What is uXu?</summary>
+  <p>A shared archive commons. Independent archives keep their own voice. uXu helps people find and open them.</p>
+</details>
+<details>
+  <summary>What is 0?0?</summary>
+  <p>The root console inside the commons (<code>0?0.uXu.0000</code>). Registry, docs, map, logs. The public invite app brands as <strong>uXu</strong>, not 0?0.</p>
+</details>
+<details>
+  <summary>How do I browse?</summary>
+  <p>Use the registry table. Arrow keys move · Enter opens · <kbd>i</kbd> inspects · <kbd>/</kbd> focuses the command line. Or click Quick Nav.</p>
+</details>
+<details>
+  <summary>How do I create an archive?</summary>
+  <p>Start simple: a folder with <code>index.html</code> + <code>data.json</code> (+ a short README). Copy <code>templates/</code>. Then use <strong>CREATE ARCHIVE</strong> for the next serial and guide. Register via PR or email <strong>rasip@chloreform.org</strong>.</p>
+</details>
+<details>
+  <summary>Do I need an account?</summary>
+  <p>No for browsing. Sign up if you want a session with the commons. Admin powers are only for operators.</p>
+</details>
+<details>
+  <summary>What are forever placemarkers?</summary>
+  <p>Ids are never reused. If something is deleted, locked, or investigated, the row stays with a marker so history stays honest.</p>
+</details>
+<details>
+  <summary>RTFM vs FAQ vs MANUAL LIBRARY?</summary>
+  <p><strong>FAQ</strong> = everyday answers. <strong>ABOUT / RTFM</strong> = story + deeper tabs (ease → source). <strong>MANUAL LIBRARY</strong> = long pamphlets.</p>
+</details>
+<details>
+  <summary>How do I install the app?</summary>
+  <p><strong>INSTALL uXu</strong> or your browser’s Add to Home Screen. Icon wordmark: <strong>uXu</strong>.</p>
+</details>
+<details>
+  <summary>Who do I email?</summary>
+  <p><strong>rasip@chloreform.org</strong> — registration, problems, questions. Include what you tried and which archive.</p>
+</details>
+<p class="muted">Want the origin story? Open <strong>ABOUT</strong>. Want the deep manual? Open <strong>RTFM</strong>.</p>`;
+    }
+    showFaqUi();
+    activeTitle.textContent = 'FAQ';
+    toast('FAQ');
+  }
+
+  async function openRootManual(slug, opts = {}) {
+    // Legacy pamphlet open (User Guide etc.) — not the interactive RTFM
+    hideRtfmUi();
+    const landSlug = slug || LANDING_MANUAL_SLUG;
+    setActiveNav(opts.nav || 'MANUAL');
+    showOutput(opts.loadingTitle || 'MANUAL', `loading ${landSlug}...`);
+    try {
+      if (!manuals.length) {
+        const res = await fetch(`${API_BASE}/api/root/manuals`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || res.statusText);
+        manuals = data.manuals || [];
+      }
+      const landIdx = manuals.findIndex((m) => m.slug === landSlug);
+      manualSelected = landIdx >= 0 ? landIdx : 0;
+      await fetchManualSlug(landSlug, { rootLabel: false });
+    } catch (err) {
+      showOutput("ERROR", `loading manual: ${err.message}`);
+    }
+  }
+
   async function loadManualList(opts = {}) {
-    const land = opts.land !== false;
+    hideRtfmUi();
+    // Always show the library index (no auto-land on User Guide)
     showOutput("MANUAL LIBRARY", "loading...");
+    setManualToolbar('root-list');
     try {
       const res = await fetch(`${API_BASE}/api/root/manuals`);
       const data = await res.json();
@@ -1418,11 +2697,6 @@ BACK · MANUAL  return to library`);
       manualSections = [];
       const landIdx = manuals.findIndex((m) => m.slug === LANDING_MANUAL_SLUG);
       manualSelected = landIdx >= 0 ? landIdx : 0;
-      if (land && landIdx >= 0) {
-        // 0?0 User Guide is the MANUAL landing source
-        await fetchManualSlug(LANDING_MANUAL_SLUG);
-        return;
-      }
       renderManualList();
     } catch (err) {
       showOutput("ERROR", `loading manuals: ${err.message}`);
@@ -1463,7 +2737,7 @@ BACK · MANUAL  return to library`);
     fetchManualSlug(m.slug);
   }
 
-  async function fetchManualSlug(slug) {
+  async function fetchManualSlug(slug, opts = {}) {
     showOutput("MANUAL", `loading ${slug}...`);
     try {
       const res = await fetch(`${API_BASE}/api/root/manuals/${encodeURIComponent(slug)}`);
@@ -1475,14 +2749,18 @@ BACK · MANUAL  return to library`);
       const toc = manualSections.length
         ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
         : '  (no ## sections)';
-      showOutput(manualOpen.title,
+      setManualToolbar('root-read');
+      const title = manualOpen.title;
+      showOutput(title,
 `${manualOpen.body}
 
 ────────
 TOC (SECTION n)
 ${toc}
 
-BACK · MANUAL  return to library`);
+INDEX ARCHIVE MANUALS  find creator manuals
+BACK · MANUAL          library index
+RTFM                   interactive 0?0 manual`);
       toast(`opened ${manualOpen.slug}`);
     } catch (err) {
       showOutput("ERROR", `loading manual: ${err.message}`);
@@ -1495,6 +2773,7 @@ BACK · MANUAL  return to library`);
     const lines = String(manualOpen.body).split('\n');
     const chunk = lines.slice(sec.start, sec.end).join('\n');
     const toc = manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n');
+    setManualToolbar('root-read');
     showOutput(`${manualOpen.title} :: §${n}`,
 `${chunk}
 
@@ -1502,7 +2781,7 @@ BACK · MANUAL  return to library`);
 TOC (SECTION n)
 ${toc}
 
-BACK · MANUAL  return to library`);
+INDEX ARCHIVE MANUALS · BACK · MANUAL · RTFM`);
   }
 
   function handleCommand(cmdRaw) {
@@ -1511,6 +2790,7 @@ BACK · MANUAL  return to library`);
     document.getElementById('mode-label').textContent = 'COMMAND';
 
     if (cmd === "INDEX") {
+      hideManualToolbar();
       setActiveNav("INDEX");
       const s = registryStats();
       showOutput("ARCHIVE INDEX", registry.length
@@ -1523,6 +2803,7 @@ BACK · MANUAL  return to library`);
       return;
     }
     if (cmd === "HELP") {
+      hideManualToolbar();
       setActiveNav("HELP");
       showOutput("HELP",
 `OPEN CYBERCAT     open archive by name (navigates)
@@ -1532,14 +2813,19 @@ GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
 MAP               show root provenance
 LOGS              show transparency logs
-MANUAL            open manuals (lands on User Guide)
+RTFM              interactive 0?0 manual (about → ease → … → source)
+ABOUT             what uXu is · how 0?0 works · why it exists
+FAQ               friendly functional how-to
+MANUAL            manual library index (pamphlets)
+ARCHIVE MANUALS   index / search manuals from created archives
+FIND MANUAL <q>   filter that index
 CREATE ARCHIVE    open the Archive Creation Manual
 INSTALL           install the public uXu app (invite / home screen)
 SETUP MASTER      interactive guide: claim → lock → recovery → 2FA
 RECOVERY …        ADD / LIST / REMOVE / 2FA (admin + SUDO)
 ASSUME MASTER     recovery account takes the crown (emergency)
-READ <slug|n>     open a manual (or Enter on selection)
-BACK              return to manual list
+READ <slug|n>     open a library pamphlet (or Enter on selection)
+BACK              return to previous manual list
 SECTION <n>       jump to ## heading while reading
 SYSTEM            show system info
 AUTH              account status + gate help
@@ -1594,6 +2880,7 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       return;
     }
     if (cmd === "LOGS") {
+      hideManualToolbar();
       setActiveNav("LOGS");
       showOutput("TRANSPARENCY LOGS", "loading...");
       fetch(`${API_BASE}/api/root/logs`).then(r => r.json()).then(data => {
@@ -1604,15 +2891,58 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       }).catch(err => showOutput("ERROR", `loading logs: ${err.message}`));
       return;
     }
+    if (cmd === "ABOUT") {
+      openAbout();
+      return;
+    }
+    if (cmd === "FAQ") {
+      openFaq();
+      return;
+    }
+    if (cmd === "RTFM") {
+      openRtfm({ tab: 'ease', nav: 'RTFM', title: '0?0 · RTFM', toast: 'RTFM — ease → source' });
+      return;
+    }
     if (cmd === "MANUAL") {
       setActiveNav("MANUAL");
-      loadManualList({ land: true });
+      loadManualList();
+      return;
+    }
+    if (cmd === "ARCHIVE MANUALS" || cmd === "INDEX ARCHIVE MANUALS" || cmd === "ARCHIVE MANUAL") {
+      scanArchiveManuals({ query: archiveManualQuery });
+      return;
+    }
+    if (cmd === "FIND MANUAL" || cmd.startsWith("FIND MANUAL ")) {
+      const q = cmdRaw.trim().slice(11).trim();
+      scanArchiveManuals({ query: q });
       return;
     }
     if (cmd === "BACK") {
+      if (manualMode === 'archive-read') {
+        renderArchiveManualIndex();
+        return;
+      }
+      if (manualMode === 'archive-index') {
+        openAbout();
+        return;
+      }
+      if (manualMode === 'faq') {
+        hideGuidePanels();
+        hideManualToolbar();
+        setActiveNav('INDEX');
+        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, or RTFM when you need docs.');
+        return;
+      }
+      if (manualMode === 'rtfm') {
+        hideGuidePanels();
+        hideManualToolbar();
+        setActiveNav('INDEX');
+        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, or RTFM when you need docs.');
+        return;
+      }
       setActiveNav("MANUAL");
       if (manuals.length) renderManualList();
-      else loadManualList({ land: false });
+      else loadManualList();
       return;
     }
     if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd.startsWith("CREATE ")) {
@@ -2033,7 +3363,10 @@ Then attest here so SETUP MASTER can check it off.`);
 
   navList.addEventListener('click', (e) => {
     const li = e.target.closest('li[data-cmd]');
-    if (li) handleCommand(li.dataset.cmd);
+    if (li) {
+      if (li.classList.contains('nav-rtfm')) hideRtfmTip();
+      handleCommand(li.dataset.cmd);
+    }
   });
   navList.addEventListener('keydown', (e) => {
     const items = [...navList.querySelectorAll('li[data-cmd]')];
@@ -2047,6 +3380,49 @@ Then attest here so SETUP MASTER can check it off.`);
     if (e.key === 'End') { e.preventDefault(); items[items.length - 1]?.focus(); }
   });
 
+  if (btnManual00) {
+    btnManual00.addEventListener('click', () => openRtfm());
+  }
+  if (btnManualLibrary) {
+    btnManualLibrary.addEventListener('click', () => {
+      setActiveNav('MANUAL');
+      loadManualList();
+    });
+  }
+  if (btnArchiveManuals) {
+    btnArchiveManuals.addEventListener('click', () => {
+      scanArchiveManuals({ query: archiveManualSearch?.value || archiveManualQuery });
+    });
+  }
+  if (archiveManualSearch) {
+    let searchTimer = null;
+    archiveManualSearch.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        archiveManualQuery = archiveManualSearch.value.trim();
+        archiveManualSelected = 0;
+        if (manualMode === 'archive-index' && archiveManualIndex.length) {
+          renderArchiveManualIndex();
+        } else {
+          scanArchiveManuals({ query: archiveManualQuery });
+        }
+      }, 180);
+    });
+    archiveManualSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const rows = filterArchiveManuals(archiveManualQuery);
+        if (rows.length) openArchiveManualAt(archiveManualSelected);
+      }
+    });
+  }
+  document.querySelectorAll('[data-rtfm-tab]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (manualMode !== 'rtfm') openRtfm({ tab: btn.getAttribute('data-rtfm-tab') });
+      else setRtfmTab(btn.getAttribute('data-rtfm-tab'));
+    });
+  });
+
   // —— Keyboard-first console (mouse optional) ——
   const FOCUS_ZONES = ['registry', 'actions', 'nav', 'auth', 'command'];
   let focusZone = 'registry';
@@ -2054,6 +3430,7 @@ Then attest here so SETUP MASTER can check it off.`);
   function isTypingTarget(el) {
     if (!el || el === document.body) return false;
     if (el === commandInput) return true;
+    if (el === archiveManualSearch) return true;
     if (el.closest && el.closest('#auth-form')) {
       const tag = el.tagName;
       return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
@@ -2208,10 +3585,37 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
         focusRegistrySelectedOrFirst();
         return;
       }
-      const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active');
+      const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active')
+        || document.querySelector('#nav-list li[data-cmd="RTFM"]')?.classList.contains('active')
+        || document.querySelector('#nav-list li[data-cmd="ABOUT"]')?.classList.contains('active')
+        || document.querySelector('#nav-list li[data-cmd="FAQ"]')?.classList.contains('active');
       if (manualNavOn && manualMode === 'read') {
         e.preventDefault();
         renderManualList();
+        return;
+      }
+      if (manualNavOn && manualMode === 'archive-read') {
+        e.preventDefault();
+        renderArchiveManualIndex();
+        return;
+      }
+      if (manualNavOn && manualMode === 'archive-index') {
+        e.preventDefault();
+        openRtfm({ tab: 'about' });
+        return;
+      }
+      if (manualNavOn && manualMode === 'faq') {
+        e.preventDefault();
+        hideGuidePanels();
+        hideManualToolbar();
+        focusRegistrySelectedOrFirst();
+        return;
+      }
+      if (manualNavOn && manualMode === 'rtfm') {
+        e.preventDefault();
+        hideGuidePanels();
+        hideManualToolbar();
+        focusRegistrySelectedOrFirst();
         return;
       }
       focusRegistrySelectedOrFirst();
@@ -2235,6 +3639,7 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
     if (e.key === 'Tab') {
       const inGroup = e.target.closest?.('#auth-form')
         || e.target.closest?.('#registry-actions')
+        || e.target.closest?.('#manual-toolbar')
         || e.target.closest?.('#nav-list')
         || e.target.closest?.('#registry-table');
       if (inGroup) return; // native tab within the group
@@ -2289,8 +3694,29 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
       return;
     }
 
+    // RTFM tab arrows when panel is open
+    if (manualMode === 'rtfm' && (document.querySelector('#nav-list li[data-cmd="RTFM"]')?.classList.contains('active'))) {
+      const order = ['about', 'ease', 'nav', 'commands', 'depth', 'code', 'source'];
+      const idx = order.indexOf(rtfmTab);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        if (document.activeElement?.closest?.('.rtfm-tabs, .rtfm-code-tabs, .rtfm-panel')) {
+          e.preventDefault();
+          setRtfmTab(order[Math.min(order.length - 1, idx + 1)]);
+          return;
+        }
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        if (document.activeElement?.closest?.('.rtfm-tabs, .rtfm-code-tabs, .rtfm-panel')) {
+          e.preventDefault();
+          setRtfmTab(order[Math.max(0, idx - 1)]);
+          return;
+        }
+      }
+    }
+
     // Manual list mode
-    const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active');
+    const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active')
+      || document.querySelector('#nav-list li[data-cmd="RTFM"]')?.classList.contains('active');
     if (manualNavOn && manualMode === 'list' && manuals.length) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -2310,9 +3736,34 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
         return;
       }
     }
+    if (manualNavOn && manualMode === 'archive-index') {
+      const rows = filterArchiveManuals(archiveManualQuery);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        archiveManualSelected = Math.min(rows.length - 1, archiveManualSelected + 1);
+        renderArchiveManualIndex();
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        archiveManualSelected = Math.max(0, archiveManualSelected - 1);
+        renderArchiveManualIndex();
+        return;
+      }
+      if (e.key === 'Enter' && rows.length) {
+        e.preventDefault();
+        openArchiveManualAt(archiveManualSelected);
+        return;
+      }
+    }
     if (manualNavOn && manualMode === 'read' && e.key === 'Backspace') {
       e.preventDefault();
       renderManualList();
+      return;
+    }
+    if (manualNavOn && manualMode === 'archive-read' && e.key === 'Backspace') {
+      e.preventDefault();
+      renderArchiveManualIndex();
       return;
     }
 

@@ -111,6 +111,57 @@ async function logAuthEvent(sql, { userId, email, eventType, detail }) {
   `;
 }
 
+async function handleTags(sql, request) {
+  try {
+    const rows = await sql`
+      select id, name, slug from tags order by name asc
+    `;
+    return json(request, { tags: rows });
+  } catch (err) {
+    // Table may be empty / missing in older DBs — fail soft for the console.
+    return json(request, { tags: [], warning: String(err?.message || err) });
+  }
+}
+
+async function handleTagUpsert(sql, request) {
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    return json(request, { error: 'invalid json' }, 400);
+  }
+  const rawName = String(body.name || body.tag || '').trim();
+  if (!rawName || rawName.length > 64) {
+    return json(request, { error: 'tag name required (max 64 chars)' }, 400);
+  }
+  const slug = String(body.slug || rawName)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-_]/g, '')
+    .slice(0, 64);
+  if (!slug) return json(request, { error: 'invalid tag slug' }, 400);
+
+  try {
+    const existing = await sql`
+      select id, name, slug from tags
+      where slug = ${slug} or lower(name) = ${rawName.toLowerCase()}
+      limit 1
+    `;
+    if (existing.length) {
+      return json(request, { tag: existing[0], linked: true, created: false });
+    }
+    const inserted = await sql`
+      insert into tags (name, slug)
+      values (${rawName}, ${slug})
+      returning id, name, slug
+    `;
+    return json(request, { tag: inserted[0], linked: true, created: true });
+  } catch (err) {
+    return json(request, { error: 'tag upsert failed', detail: String(err) }, 500);
+  }
+}
+
 async function handleRoot(sql, request) {
   const root = await sql`select * from archive_records where id = ${ROOT_ID} limit 1`;
   const children = await sql`
@@ -640,6 +691,7 @@ const GET_ROUTES = {
   '/api/root/logs': handleLogs,
   '/api/root/manuals': handleManuals,
   '/api/root/system': handleSystem,
+  '/api/root/tags': handleTags,
   '/api/auth/me': handleAuthMe,
   '/api/auth/config': (sql, request, env) => handleAuthConfig(request, env),
   '/api/auth/events': handleAuthEvents,
@@ -658,6 +710,7 @@ const POST_ROUTES = {
   '/api/auth/recovery/remove': handleRecoveryRemove,
   '/api/auth/recovery/attest-2fa': handleRecoveryAttest2fa,
   '/api/auth/assume-master': handleAssumeMaster,
+  '/api/root/tags': handleTagUpsert,
 };
 
 export default {

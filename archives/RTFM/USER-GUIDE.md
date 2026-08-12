@@ -17,7 +17,7 @@ This guide is for everyone. No coding required.
 
 1. **Browse the registry** — the table lists archives that belong to this commons.
 2. **Open an archive** — select a row and press Enter, or click Open Archive.
-3. **Read manuals** — press F3 or choose MANUAL LIBRARY for guides like this one.
+3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** for pamphlets.
 4. **Try CyberCat Sunflower** — a Grateful Dead listening deck. Type OPEN CYBERCAT.
 5. **Create your own archive** — use CREATE ARCHIVE (Quick Nav) when you are ready.
    Start simple; grow later.
@@ -34,7 +34,9 @@ Useful commands:
 ```text
 HELP
 INDEX
+RTFM
 MANUAL
+ARCHIVE MANUALS
 OPEN CYBERCAT
 CREATE ARCHIVE
 ```
@@ -45,11 +47,16 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 
 | Guide | Who it is for |
 |-------|----------------|
-| User Guide (this page) | Everyday visitors and new members |
-| Archive Creation Manual | Anyone ready to add an archive (next id serial shown on CREATE) |
+| **RTFM** (0?0 console tabs) | Navigation, commands, depth, code examples, safe source list |
+| User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
+| Archive Creation Manual | Anyone ready to add an archive |
 | CyberCat Sunflower Manual | Listening / using that deck |
 | Developers Handbook | Builders and coders |
 | Source Code Pamphlet | Curious readers who want a map of the repo |
+
+On 0?0: **RTFM** opens the interactive 0?0 manual. **MANUAL LIBRARY** opens
+the pamphlet index. While docs are open, **INDEX ARCHIVE MANUALS** finds
+creator manuals declared in `data.json` → `uxu.manuals`.
 
 The registry lists **ARCHIVE ID** (`Title.uXu.NNNN`) and **NAME**.
 Hover the name for the full title when the column is clipped.

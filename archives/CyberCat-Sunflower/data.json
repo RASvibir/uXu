@@ -10,5 +10,28 @@
     "defaultSourcePolicy": "best-waveform",
     "scoring": ["soundboard", "remaster", "avg_rating", "num_reviews", "track_count"],
     "alternates": "other-transfers-button"
+  },
+  "uxu": {
+    "homeLink": {
+      "style": "uXu",
+      "href": "../index.html"
+    },
+    "manuals": [
+      {
+        "title": "CyberCat Curator Guide",
+        "path": "docs/CURATOR_GUIDE.md",
+        "description": "How the deck is curated and maintained"
+      },
+      {
+        "title": "Contributing to CyberCat",
+        "path": "docs/CONTRIBUTING.md",
+        "description": "Notes for contributors"
+      },
+      {
+        "title": "Sourcing Audio",
+        "path": "SOURCING_AUDIO.md",
+        "description": "Legal / sourcing notes for tapes"
+      }
+    ]
   }
 }

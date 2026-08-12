@@ -52,6 +52,46 @@
           "minimum": 0,
           "default": 0,
           "description": "Depth of this archive in a fork chain (0 = original)"
+        },
+        "manuals": {
+          "type": "array",
+          "description": "User-facing manuals for this archive. 0?0 discovers these via INDEX ARCHIVE MANUALS / ARCHIVE MANUALS search.",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Relative path to a markdown/html manual (title derived from filename)"
+              },
+              {
+                "type": "object",
+                "required": ["path"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "path": {
+                    "type": "string",
+                    "description": "Path relative to the archive folder (e.g. manuals/USER-MANUAL.md)"
+                  },
+                  "description": { "type": "string" }
+                }
+              }
+            ]
+          }
+        },
+        "tags": {
+          "type": "array",
+          "description": "Collective tags. Prefer existing commons tags (same slug links); only create when needed.",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "slug": { "type": "string" }
+                }
+              }
+            ]
+          }
         }
       }
     },
