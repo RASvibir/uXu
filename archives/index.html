@@ -5941,6 +5941,27 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     setTimeout(bootFocusQuickNav, 450);
   });
 
+  function consumeCreateDeepLink() {
+    const raw = String(location.hash || '').replace(/^#/, '').trim().toUpperCase();
+    if (!raw) return false;
+    const key = raw.split(/[/?&]/)[0];
+    if (key === 'CREATE' || key === 'CREATE-ARCHIVE' || key === 'NEW' || key === 'NEW-ARCHIVE') {
+      userChoseZone = true;
+      focusZone = 'actions';
+      paintFocusZone();
+      openCreateArchiveWizard();
+      try {
+        history.replaceState(null, '', location.pathname + location.search);
+      } catch (_) { /* ignore */ }
+      return true;
+    }
+    return false;
+  }
+
+  window.addEventListener('hashchange', () => {
+    consumeCreateDeepLink();
+  });
+
   paintAuth();
   refreshAuth();
   setUserOptionsOpen(false);
@@ -5949,6 +5970,8 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     if (!userChoseZone && (!bootNavReady || document.activeElement?.closest?.('#auth-form'))) {
       bootFocusQuickNav();
     }
+    // After registry settles, honor ? / #CREATE deep links from iNi / Soloist
+    setTimeout(() => { consumeCreateDeepLink(); }, 120);
   });
 </script>
 </body>
