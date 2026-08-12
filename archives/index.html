@@ -505,6 +505,7 @@
               <div class="action-row">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled>Open Archive</button>
                 <button type="button" class="ghost-btn" id="btn-inspect" disabled>Inspect</button>
+                <button type="button" class="ghost-btn" id="btn-create">Create Archive</button>
               </div>
             </div>
             <div class="box output-panel">
@@ -514,11 +515,12 @@ Preserve. Connect. Discover.
 
 You are in 0?0 — the root of the archive.
 
-Click a registry row, use Quick Nav, or type HELP.</pre>
+Click a registry row, use Quick Nav, or type HELP.
+F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
-              <input id="command-input" type="text" placeholder="OPEN CYBERCAT · LOAD 0001 · HELP" spellcheck="false" />
+              <input id="command-input" type="text" placeholder="OPEN CYBERCAT · CREATE ARCHIVE · MANUAL · HELP" spellcheck="false" />
             </form>
           </section>
 
@@ -528,6 +530,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
               <ul id="nav-list">
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
                 <li data-cmd="MANUAL" tabindex="0">MANUAL LIBRARY</li>
+                <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
                 <li data-cmd="MAP" tabindex="0">PROVENANCE MAP</li>
                 <li data-cmd="LOGS" tabindex="0">TRANSPARENCY LOGS</li>
                 <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
@@ -582,6 +585,9 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
   const navList = document.querySelector('#nav-list');
   const btnOpen = document.querySelector('#btn-open');
   const btnInspect = document.querySelector('#btn-inspect');
+  const btnCreate = document.querySelector('#btn-create');
+  const LANDING_MANUAL_SLUG = 'user-guide';
+  const CREATE_MANUAL_SLUG = 'archive-creation';
   const toastEl = document.querySelector('#toast');
   const authForm = document.querySelector('#auth-form');
   const authEmail = document.querySelector('#auth-email');
@@ -1013,11 +1019,31 @@ Try again after the Worker manuals route is live.`);
     showOutput("MANUAL LIBRARY",
 `${lines.join('\n\n')}
 
-↑↓ select · Enter / READ open · BACK returns here
-Also: READ cybercat-sunflower · READ developers-handbook`);
+↑↓ select · Enter / READ open · BACK returns to list
+Landing: User Guide · CREATE ARCHIVE opens creation manual`);
   }
 
-  async function loadManualList() {
+  async function openCreateArchiveManual() {
+    setActiveNav("CREATE");
+    showOutput("CREATE ARCHIVE", "loading guide...");
+    try {
+      if (!manuals.length) {
+        const res = await fetch(`${API_BASE}/api/root/manuals`);
+        const data = await res.json();
+        if (res.ok) manuals = data.manuals || [];
+      }
+      const idx = manuals.findIndex((m) => m.slug === CREATE_MANUAL_SLUG);
+      if (idx >= 0) manualSelected = idx;
+      await fetchManualSlug(CREATE_MANUAL_SLUG);
+      setActiveNav("CREATE");
+      toast('create archive guide');
+    } catch (err) {
+      showOutput("ERROR", `loading create guide: ${err.message}`);
+    }
+  }
+
+  async function loadManualList(opts = {}) {
+    const land = opts.land !== false;
     showOutput("MANUAL LIBRARY", "loading...");
     try {
       const res = await fetch(`${API_BASE}/api/root/manuals`);
@@ -1026,6 +1052,13 @@ Also: READ cybercat-sunflower · READ developers-handbook`);
       manuals = data.manuals || [];
       manualOpen = null;
       manualSections = [];
+      const landIdx = manuals.findIndex((m) => m.slug === LANDING_MANUAL_SLUG);
+      manualSelected = landIdx >= 0 ? landIdx : 0;
+      if (land && landIdx >= 0) {
+        // 0?0 User Guide is the MANUAL landing source
+        await fetchManualSlug(LANDING_MANUAL_SLUG);
+        return;
+      }
       renderManualList();
     } catch (err) {
       showOutput("ERROR", `loading manuals: ${err.message}`);
@@ -1130,7 +1163,8 @@ GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
 MAP               show root provenance
 LOGS              show transparency logs
-MANUAL            browse manual library
+MANUAL            open manuals (lands on User Guide)
+CREATE ARCHIVE    open the Archive Creation Manual
 READ <slug|n>     open a manual (or Enter on selection)
 BACK              return to manual list
 SECTION <n>       jump to ## heading while reading
@@ -1144,6 +1178,9 @@ SUDO              elevate ADMIN session
 UNSUDO            drop elevation
 CLAIM MASTER <secret>
 EXIT              root stays loaded
+
+Need help from a human?
+  email rasip@chloreform.org
 
 Roles
   GUEST  public browse
@@ -1191,9 +1228,19 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       }).catch(err => showOutput("ERROR", `loading logs: ${err.message}`));
       return;
     }
-    if (cmd === "MANUAL" || cmd === "BACK") {
+    if (cmd === "MANUAL") {
       setActiveNav("MANUAL");
-      loadManualList();
+      loadManualList({ land: true });
+      return;
+    }
+    if (cmd === "BACK") {
+      setActiveNav("MANUAL");
+      if (manuals.length) renderManualList();
+      else loadManualList({ land: false });
+      return;
+    }
+    if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd.startsWith("CREATE ")) {
+      openCreateArchiveManual();
       return;
     }
     if (cmd === "READ" || cmd.startsWith("READ ")) {
@@ -1386,6 +1433,7 @@ id:     ${s.user?.id || '—'}`);
 
   btnOpen.addEventListener('click', () => { if (selected && canOpen(selected)) openEntry(selected); });
   btnInspect.addEventListener('click', () => { if (selected) activateEntry(selected, { inspect: true }); });
+  btnCreate.addEventListener('click', () => openCreateArchiveManual());
 
   authForm.addEventListener('submit', (e) => {
     e.preventDefault();

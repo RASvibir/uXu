@@ -7,9 +7,13 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 ## What's in RTFM?
 
 ### Interactive manuals (also in 0?0 MANUAL)
+- **User Guide** — non-tech landing for 0?0 (how to browse, reach admin)
+- **Archive Creation Manual** — simple start + complexity tree (CREATE ARCHIVE)
 - **CyberCat Sunflower Manual** — visitor / curator deck guide
-- **Developers Handbook** — ideas and patterns for building archives
+- **Developers Handbook** — builder / coder patterns
 - **Source Code Pamphlet** — repo map without secrets or operator internals
+
+Admin contact for humans: rasip@chloreform.org
 
 ### Code Examples
 - **Audio players** — Interactive HTML/CSS/JS for streaming audio with controls

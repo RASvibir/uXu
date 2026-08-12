@@ -1,72 +1,70 @@
 # Developers Handbook
 
-Tags: developers, handbook, archives, ideas, templates, rtfm, contributing
+Tags: developers, handbook, architecture-patterns, data-json, rtfm, contributing
 Source: uXu RTFM library
 
-## Why This Exists
+## Audience
 
-uXu is a shared archive commons. It does not own your content.
-You keep your voice, stack, and curation rules. The commons registers,
-connects, and helps people find independent archives.
+Builders and coders. For non-technical orientation use the **User Guide**.
+For a from-scratch archive path use the **Archive Creation Manual**.
 
-This handbook is for builders who want ideas — not a rule book for operating
-the root console.
+## Commons Stance
 
-## Ideas You Can Steal
+uXu registers and connects independent archives. It does not own your content.
+Keep your stack, curation rules, and voice. Prefer durable, boring formats unless
+you have a reason to go further.
 
-- One archive, one job. A Dead deck, a zine shelf, a photo run — pick a focus.
-- Make the first screen feel like a place, not a dashboard.
-- Ship keyboard paths early (index, open, help). Power users will thank you.
-- Put provenance in the open: where audio/images came from, and why they are legal.
-- Prefer boring, durable formats (HTML + JSON + plain CSS/JS) unless you need more.
-- Document the weird parts. Future-you is a stranger.
+## Patterns Worth Reusing
 
-## Archive Shape (Common Pattern)
+- One archive, one job.
+- First viewport = place, not dashboard.
+- Keyboard paths early (index / open / help).
+- Provenance in the open (source + why it is legal).
+- HTML + JSON + CSS/JS until complexity truly demands more.
+- Document the weird parts for future-you.
 
-Many uXu archives look like:
+## Reference Layout
 
 ```text
 archives/Your-Archive/
-  index.html      interactive surface
-  data.json       catalog / metadata
-  README.md       human story
-  docs/           curator notes (optional)
+  index.html
+  data.json
+  README.md
+  docs/            optional curator notes
 ```
 
-`templates/` and existing entries (CyberCat Sunflower, RTFM) are optional references.
-Use them if they help; ignore them if they do not.
+`templates/` and CyberCat Sunflower are optional references — not requirements.
 
-## data.json Thinking
+## data.json Craft
 
-Keep a clear top-level identity (name, curator, description) and a list of items
-with stable fields: date, venue/place, notes, and media sources ranked best-first.
-Validate against the shared schema when one applies (see templates/data.schema.json).
+Stable identity fields (name, curator, description) plus an items array with
+consistent keys: date, place/venue, notes, media sources ranked best-first.
+Validate against `templates/data.schema.json` when it applies.
 
 ## Relationships
-
-`*:*` is the uXu declared relationship marker.
 
 ```text
 Archive_A.uXu*:*Archive_B.uXu
 ```
 
-means A declares a connection with B. It is not ownership, endorsement, or control.
+Declares a connection. Not ownership, endorsement, or control.
 
-## RTFM
+## Climbing The Complexity Tree
 
-RTFM (Read The Friendly Manual) is a library of working examples:
-audio players, sourcing guides, contribution patterns.
-Browse it in the repo under archives/RTFM/, or from 0?0 MANUAL when manuals are ingested.
+See Archive Creation Manual for the full tier tree. Quick map for builders:
 
-Share what works: add a tagged markdown file, credit the source archive, keep licenses clear.
+- Tier 1–2: static catalog + polish
+- Tier 3: interactive app surfaces (EQ, galleries, custom state)
+- Tier 3b: shared/account-linked cache features (coordinate with admin)
+- Tier 4: hardened access — design with threat model; do not invent secrets in-repo
 
-## Contributing Without Gatekeeping
+## RTFM Contributions
 
-Fork, build, open a PR. Respect legality and safety.
-Your archive remains independent even when it is registered in the commons.
+Add tagged markdown under `archives/RTFM/`, credit the source archive, keep
+licenses clear. Optional inspiration — never a rule book.
 
-## What This Handbook Skips On Purpose
+## Out Of Scope Here
 
-Inner workings of the root control plane, credentials, elevation flows, and deploy
-secrets are out of scope here. Curious about structure? Read the Source Code Pamphlet.
-Want to listen? Open CyberCat Sunflower and its Manual.
+Visitor onboarding, admin contact scripts for non-tech users, and control-plane
+secrets. Those live in the User Guide, Archive Creation Manual, or private
+admin channels — not this handbook.

@@ -147,8 +147,21 @@ async function handleManuals(sql, request) {
   const manuals = await sql`
     select slug, title, updated_at
     from manual_pages
-    order by title
   `;
+  // Stable library order: User Guide lands first (0?0 orientation).
+  const rank = {
+    'user-guide': 0,
+    'archive-creation': 1,
+    'cybercat-sunflower': 2,
+    'developers-handbook': 3,
+    'source-code-pamphlet': 4,
+  };
+  manuals.sort((a, b) => {
+    const ra = rank[a.slug] ?? 50;
+    const rb = rank[b.slug] ?? 50;
+    if (ra !== rb) return ra - rb;
+    return String(a.title).localeCompare(String(b.title));
+  });
   return json(request, { manuals });
 }
 
