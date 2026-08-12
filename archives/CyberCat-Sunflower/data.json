@@ -4,11 +4,11 @@
   "curator": "Victor Birkle III",
   "featured": true,
   "collectionMode": "full-catalog",
-  "description": "Full Grateful Dead live catalog indexed live from Relisten (Internet Archive transfers). Every available show — soundboards, audience tapes, matrices, remasters. The deck auto-loads the best waveform score for each date; Other Sources opens every alternate transfer.",
+  "description": "Full Grateful Dead live catalog on the CyberCat deck. Every available show — soundboards, audience tapes, matrices, remasters. Best waveform loads by default; Other Transfers opens alternates. Date + venue on the deck is enough to research any tape elsewhere.",
   "playback": {
     "index": "https://api.relisten.net/api/v2/artists/grateful-dead",
     "defaultSourcePolicy": "best-waveform",
     "scoring": ["soundboard", "remaster", "avg_rating", "num_reviews", "track_count"],
-    "alternates": "other-sources-button"
+    "alternates": "other-transfers-button"
   }
 }

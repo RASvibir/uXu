@@ -174,12 +174,24 @@
       scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a;
     }
     .song {
-      display: flex; gap: .6rem; width: 100%; text-align: left;
+      display: flex; gap: .55rem; align-items: center; width: 100%; text-align: left;
       background: transparent; border: 0; border-bottom: 1px dotted rgba(255,255,255,.08);
-      color: inherit; font: inherit; padding: .28rem 0; cursor: pointer;
+      color: inherit; font: inherit; padding: .35rem .3rem; cursor: pointer;
+      transition: background .15s var(--ease), color .15s var(--ease);
+    }
+    .song:hover, .song:focus-visible {
+      background: rgba(77,232,255,.1); color: var(--cyan); outline: none;
     }
     .song .n { color: var(--phosphor-dim); min-width: 2ch; }
+    .song .cue {
+      font-size: .58rem; letter-spacing: .08em; color: var(--amber);
+      border: 1px solid rgba(255,210,74,.35); padding: .05rem .28rem;
+      opacity: 0; transition: opacity .15s var(--ease);
+    }
+    .song:hover .cue, .song:focus-visible .cue, .song.playing .cue { opacity: 1; }
+    .song .title { flex: 1; min-width: 0; }
     .song.playing { color: var(--cyan); background: rgba(77,232,255,.08); }
+    .song.playing .cue { color: var(--cyan); border-color: rgba(77,232,255,.45); }
     .empty { color: var(--muted); padding: .4rem 0; }
 
     .hub-panel {
@@ -233,6 +245,7 @@
 
     .tape-list { display: flex; flex-direction: column; gap: .35rem; }
     .tape {
+      display: grid; grid-template-columns: 1fr auto; gap: .45rem .75rem; align-items: center;
       text-align: left; width: 100%; background: rgba(255,255,255,.02);
       border: 1px solid rgba(255,255,255,.08); color: inherit; font-family: inherit;
       padding: .55rem .65rem; cursor: pointer;
@@ -240,16 +253,26 @@
     }
     .tape:hover { border-color: rgba(77,232,255,.45); background: rgba(77,232,255,.05); transform: translateX(2px); }
     .tape.active { border-color: var(--phosphor); background: rgba(93,255,138,.08); }
+    .tape .tape-body { min-width: 0; }
     .tape .date { font-family: var(--display); font-size: .68rem; color: var(--amber); letter-spacing: .06em; }
     .tape .venue { font-size: .82rem; color: var(--text); margin: .15rem 0; }
     .tape .meta { font-size: .68rem; color: var(--muted); }
+    .tape .engage {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .1em;
+      color: var(--cyan); border: 1px solid rgba(77,232,255,.45);
+      padding: .35rem .55rem; white-space: nowrap;
+      transition: background .2s var(--ease), color .2s var(--ease);
+    }
+    .tape:hover .engage, .tape:focus-visible .engage { background: var(--cyan); color: #031018; }
+    .tape.active .engage {
+      color: #04120a; background: var(--phosphor); border-color: var(--phosphor);
+    }
     .tape .badges { margin-top: .3rem; display: flex; gap: .3rem; flex-wrap: wrap; }
     .badge {
       font-size: .58rem; letter-spacing: .06em; padding: .1rem .35rem;
       border: 1px solid rgba(93,255,138,.3); color: var(--phosphor-dim);
     }
     .badge.sbd { color: var(--amber); border-color: rgba(255,210,74,.4); }
-    .badge.flac { color: var(--cyan); border-color: rgba(77,232,255,.4); }
 
     .manifesto, .specs {
       font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
@@ -314,7 +337,7 @@
       <header class="topbar">
         <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
         <span class="brand">CYBERCAT SUNFLOWER</span>
-        <span class="path">FULL CATALOG · RELISTEN / IA</span>
+        <span class="path">FULL CATALOG · LIVE DECK</span>
         <span class="clock" id="live-clock">00:00:00</span>
       </header>
 
@@ -331,7 +354,7 @@
             <audio id="main-player" controls crossorigin="anonymous"></audio>
             <div class="source-bar">
               <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
-              <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Sources</button>
+              <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Transfers</button>
               <span class="source-meta" id="source-meta">No tape loaded</span>
             </div>
             <div class="panel-h" style="margin-top:.15rem; border:none; padding:0;"><span>5-BAND ANALOG EQ</span></div>
@@ -364,15 +387,15 @@
             </div>
             <div class="viewport">
               <div id="pane-tapes" class="tab-pane active" role="tabpanel">
-                <div class="hint">Every available GD show · best waveform loads by default · Other Sources for alternates</div>
-                <div class="index-status" id="index-status">Connecting to Relisten…</div>
+                <div class="hint">Pick a show → ENGAGE · setlist songs cue that track · Other Transfers for alternates</div>
+                <div class="index-status" id="index-status">Indexing catalog…</div>
                 <div class="filter-row">
                   <input type="search" id="tape-filter" placeholder="Filter date / venue / city…" autocomplete="off" />
                   <select id="sort-mode" aria-label="Sort">
                     <option value="date-asc">Date ↑</option>
                     <option value="date-desc" selected>Date ↓</option>
                     <option value="rating">Rating</option>
-                    <option value="sources">Most sources</option>
+                    <option value="sources">Most transfers</option>
                   </select>
                 </div>
                 <div class="year-chips" id="year-chips"></div>
@@ -390,15 +413,15 @@
       </div>
 
       <footer class="statusbar">
-        <span><kbd>F1</kbd>–<kbd>F3</kbd> · <kbd>↑↓</kbd> · <kbd>Enter</kbd> · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> other sources · Relisten → IA</span>
+        <span><kbd>F1</kbd>–<kbd>F3</kbd> · <kbd>Enter</kbd> engage · song click · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
         <span id="catalog-foot">Grateful Dead full catalog</span>
       </footer>
       <div class="toast" id="toast" role="status"></div>
 
       <div class="modal-backdrop" id="alts-modal" role="dialog" aria-modal="true" aria-labelledby="alts-title">
         <div class="modal">
-          <h2 id="alts-title">OTHER SOURCES</h2>
-          <p class="hint" id="alts-sub">Pick an alternate transfer. Best waveform is marked.</p>
+          <h2 id="alts-title">OTHER TRANSFERS</h2>
+          <p class="hint" id="alts-sub">Pick an alternate tape. Best waveform is marked.</p>
           <div id="alts-list"></div>
           <div style="margin-top:.6rem;">
             <button type="button" class="ghost-btn" id="alts-close">Close</button>
@@ -444,13 +467,14 @@
 `===================================================================
 uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 ===================================================================
-[+] INDEX       : Relisten years → every available GD show
+[+] INDEX       : live years → every available GD show
 [+] DEFAULT     : best waveform (SBD/remaster/rating weighted)
-[+] ALTERNATES  : Other Sources button / key O
-[+] AUDIO       : Internet Archive MP3 via Relisten
+[+] ALTERNATES  : Other Transfers button / key O
+[+] DECK        : engage a show, cue songs from the setlist
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0001
 
-Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
+Lookup tip: date + venue on the deck is enough to research any tape.
+Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
 
   setInterval(() => {
     document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
@@ -465,7 +489,7 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
 
   async function api(path) {
     const res = await fetch(`${RELISTEN}${path}`);
-    if (!res.ok) throw new Error(`Relisten ${res.status} ${path}`);
+    if (!res.ok) throw new Error(`Catalog ${res.status}`);
     return res.json();
   }
 
@@ -521,19 +545,32 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
   }
 
   function describeSource(source, isBest) {
-    const kind = source.is_soundboard ? 'SBD' : 'AUD/OTHER';
+    const kind = source.is_soundboard ? 'SBD' : 'AUD';
     const rating = source.avg_rating != null ? Number(source.avg_rating).toFixed(2) : '—';
-    const reviews = source.num_reviews || 0;
-    const id = source.upstream_identifier || ('src#' + source.id);
+    const taper = (source.taper || source.source || '').trim();
     const bits = [
       isBest ? 'BEST WAVE' : null,
       kind,
       source.is_remaster ? 'REMASTER' : null,
+      taper ? taper.slice(0, 42) : null,
       `★${rating}`,
-      `${reviews} reviews`,
-      id,
     ].filter(Boolean);
     return bits.join(' · ');
+  }
+
+  function transferLabel(source, idx) {
+    const kind = source.is_soundboard ? 'SBD' : 'AUD';
+    const name = (source.taper || source.source || '').trim();
+    if (name) return `${idx === 0 ? '★ ' : ''}${kind} · ${name}`;
+    return `${idx === 0 ? '★ ' : ''}${kind} · Transfer ${idx + 1}`;
+  }
+
+  function lookupHint(show, source) {
+    const date = (show && (show.display_date || show.date)) || '';
+    const venue = show ? venueName(show) : '';
+    const place = show ? venuePlace(show) : '';
+    const id = source && source.upstream_identifier;
+    return [date, venue, place, id].filter(Boolean).join(' · ');
   }
 
   function initEq() {
@@ -598,7 +635,7 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
   function renderSetlist() {
     setlistOut.innerHTML = '';
     if (!playlist.length) {
-      setlistOut.innerHTML = '<div class="empty">No playable MP3 tracks on this source.</div>';
+      setlistOut.innerHTML = '<div class="empty">No playable tracks on this transfer.</div>';
       setlistCount.textContent = '0 TRACKS';
       return;
     }
@@ -607,12 +644,17 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       const row = document.createElement('button');
       row.type = 'button';
       row.className = 'song' + (idx === trackIndex ? ' playing' : '');
+      row.setAttribute('aria-label', `Cue track ${idx + 1}: ${track.title}`);
       const n = document.createElement('span');
       n.className = 'n';
       n.textContent = String(idx + 1).padStart(2, '0');
       const t = document.createElement('span');
+      t.className = 'title';
       t.textContent = String(track.title).toUpperCase();
-      row.append(n, t);
+      const cue = document.createElement('span');
+      cue.className = 'cue';
+      cue.textContent = idx === trackIndex ? 'NOW' : 'CUE';
+      row.append(n, t, cue);
       row.addEventListener('click', () => playTrack(idx));
       setlistOut.appendChild(row);
     });
@@ -644,11 +686,12 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
     currentSource = rankedItem.source;
     playlist = rankedItem.tracks;
     const isBest = currentSource.id === bestSourceId;
-    sourceTag.textContent = currentSource.is_soundboard ? 'SBD' : 'ALT';
+    sourceTag.textContent = currentSource.is_soundboard ? 'SBD' : 'AUD';
     sourceMeta.textContent = describeSource(currentSource, isBest);
+    sourceMeta.title = lookupHint(activeShow, currentSource);
     btnBest.disabled = isBest;
     btnAlts.disabled = activeSources.length < 2;
-    if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate source loaded');
+    if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate transfer loaded');
     playTrack(0);
   }
 
@@ -657,9 +700,12 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
     activeShowKey = showKey(show);
     document.querySelectorAll('.tape').forEach((el) => {
       el.classList.toggle('active', el.dataset.key === activeShowKey);
+      const eng = el.querySelector('.engage');
+      if (eng) eng.textContent = el.dataset.key === activeShowKey ? 'LIVE' : 'ENGAGE';
     });
-    nowPlaying.innerHTML = `<span class="idle">Resolving best waveform for ${show.display_date || show.date}…</span>`;
-    sourceMeta.textContent = 'Fetching Relisten sources…';
+    nowPlaying.innerHTML = `<span class="idle">Engaging ${show.display_date || show.date}…</span>`;
+    sourceMeta.textContent = 'Loading transfer…';
+    sourceMeta.removeAttribute('title');
     btnAlts.disabled = true;
     btnBest.disabled = true;
 
@@ -667,8 +713,8 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       const detail = await api(`/shows/${show.date}`);
       const ranked = rankSources(detail.sources || []);
       if (!ranked.length) {
-        toast('No streamable sources for this show');
-        nowPlaying.innerHTML = '<span class="idle">No playable MP3 sources found.</span>';
+        toast('No streamable transfer for this show');
+        nowPlaying.innerHTML = '<span class="idle">No playable transfer found.</span>';
         return;
       }
       activeSources = ranked;
@@ -677,7 +723,7 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       applySource(ranked[0]);
     } catch (err) {
       toast(err.message);
-      nowPlaying.innerHTML = `<span class="idle">Failed to load sources: ${err.message}</span>`;
+      nowPlaying.innerHTML = `<span class="idle">Engage failed: ${err.message}</span>`;
     }
   }
 
@@ -689,9 +735,10 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'alt-row' + (currentSource && s.id === currentSource.id ? ' active' : '');
+      btn.title = lookupHint(activeShow, s);
       const title = document.createElement('div');
       title.className = 't';
-      title.textContent = `${idx === 0 ? '★ ' : ''}${s.is_soundboard ? 'SBD' : 'AUD'} · ${s.source || s.taper || s.upstream_identifier || ('Source ' + s.id)}`;
+      title.textContent = transferLabel(s, idx);
       const sub = document.createElement('div');
       sub.className = 's';
       sub.textContent = describeSource(s, idx === 0) + ` · ${item.tracks.length} tracks`;
@@ -703,7 +750,7 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       altsList.appendChild(btn);
     });
     document.getElementById('alts-sub').textContent =
-      `${activeSources.length} transfers for ${activeShow.display_date || activeShow.date} · ${venueName(activeShow)}`;
+      `${activeSources.length} transfers · ${activeShow.display_date || activeShow.date} · ${venueName(activeShow)}`;
     altsModal.classList.add('open');
   }
 
@@ -766,15 +813,20 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       tapesZone.textContent = 'No shows match that filter.';
       return;
     }
-    // Cap DOM for very large ALL views: render first 400 + note
+    // Cap DOM for very large ALL views: render first 500 + note
     const MAX = 500;
     const slice = list.slice(0, MAX);
     const frag = document.createDocumentFragment();
     slice.forEach((show) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'tape' + (showKey(show) === activeShowKey ? ' active' : '');
+      const isActive = showKey(show) === activeShowKey;
+      btn.className = 'tape' + (isActive ? ' active' : '');
       btn.dataset.key = showKey(show);
+      btn.setAttribute('aria-label', `Engage ${show.display_date || show.date} ${venueName(show)}`);
+
+      const body = document.createElement('div');
+      body.className = 'tape-body';
 
       const date = document.createElement('div');
       date.className = 'date';
@@ -787,24 +839,25 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
       const meta = document.createElement('div');
       meta.className = 'meta';
       const rating = show.avg_rating != null ? Number(show.avg_rating).toFixed(2) : '—';
-      meta.textContent = `${venuePlace(show)} · ${show.source_count || 0} sources · ★${rating}`;
+      const xfers = show.source_count || 0;
+      meta.textContent = `${venuePlace(show)}${xfers ? ` · ${xfers} transfers` : ''} · ★${rating}`;
 
       const badges = document.createElement('div');
       badges.className = 'badges';
       if (show.has_soundboard_source) {
         const b = document.createElement('span');
         b.className = 'badge sbd';
-        b.textContent = 'SBD AVAIL';
-        badges.appendChild(b);
-      }
-      if (show.has_streamable_flac_source) {
-        const b = document.createElement('span');
-        b.className = 'badge flac';
-        b.textContent = 'FLAC SRC';
+        b.textContent = 'SBD';
         badges.appendChild(b);
       }
 
-      btn.append(date, venue, meta, badges);
+      body.append(date, venue, meta, badges);
+
+      const engage = document.createElement('span');
+      engage.className = 'engage';
+      engage.textContent = isActive ? 'LIVE' : 'ENGAGE';
+
+      btn.append(body, engage);
       btn.addEventListener('click', () => engageShow(show));
       frag.appendChild(btn);
     });
@@ -828,6 +881,10 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
     if (e.key === 'o' && !e.target.matches('input,select,textarea')) { e.preventDefault(); openAlts(); }
     if (e.key === '/' && !e.target.matches('input,select,textarea')) {
       e.preventDefault(); filterInput.focus(); filterInput.select();
+    }
+    if (e.key === 'Enter' && !e.target.matches('input,select,textarea') && filtered.length) {
+      const next = filtered.find((s) => showKey(s) === activeShowKey) || filtered[0];
+      if (next) { e.preventDefault(); engageShow(next); }
     }
     if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
     if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
@@ -858,7 +915,7 @@ Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
     }
     shows = all;
     document.getElementById('catalog-foot').textContent =
-      `${shows.length} Grateful Dead shows · Relisten catalog`;
+      `${shows.length} Grateful Dead shows indexed`;
     indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
     toast(`${shows.length} shows indexed`);
     applyFilters();
@@ -874,18 +931,18 @@ ARTIST: ${(data.artist || 'GRATEFUL DEAD').toUpperCase()}
 CURATOR: ${(data.curator || '').toUpperCase()}
 MODE: FULL-CATALOG LIVE INDEX
 DEFAULT: BEST WAVEFORM (SBD → REMASTER → RATING)
-ALTERNATES: OTHER SOURCES BUTTON
+ALTERNATES: OTHER TRANSFERS BUTTON
 
-Sources streamed from Internet Archive via Relisten.
-No re-hosting. Bootlegs and boards alike — if it exists in the commons, it can load here.`;
+Engage a date from the tapes index. Cue any song from the setlist.
+Date + venue on the deck is enough to look a tape up elsewhere.`;
   }).catch(() => {
     document.getElementById('manifesto-text-block').textContent =
-      'CyberCat Sunflower full Grateful Dead catalog via Relisten / Internet Archive.';
+      'CyberCat Sunflower full Grateful Dead catalog.';
   });
 
   loadCatalog().catch((err) => {
     indexStatus.textContent = 'Catalog index failed: ' + err.message;
-    tapesZone.textContent = '[ERROR] Could not reach Relisten API';
+    tapesZone.textContent = '[ERROR] Could not reach catalog index';
   });
 </script>
 </body>
