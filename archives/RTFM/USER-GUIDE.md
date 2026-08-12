@@ -112,6 +112,11 @@ You can browse as a guest.
 Signing up is optional and lets you keep an account with the commons.
 Day-to-day visitors do not need admin powers.
 
+**Privacy:** your login email stays private (you and the admin). It is not shown on archives.
+
+- Change login email: `CHANGE EMAIL new@… yourpassword`, then `CHANGE EMAIL CONFIRM <otp>` (code goes to your **current** inbox).
+- Archive steward contact (optional): `ARCHIVE CONTACT <archiveId> you@…` — private by default. Add `public` only if you want it shown; that needs admin approval.
+
 ## License & rights (plain language)
 
 - **Code and original docs** in the uXu repo are **MIT** (Copyright 2026 Victor Birkle). See the repo `LICENSE`.

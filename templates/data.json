@@ -20,6 +20,8 @@
       }
     ],
     "tags": [],
+    "contactEmail": null,
+    "contactEmailPublic": false,
     "ini": {
       "optIn": false,
       "tag": "iNi",

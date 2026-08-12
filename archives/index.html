@@ -1420,7 +1420,7 @@
                   <button type="button" class="ghost-btn" id="btn-signout" disabled>Sign Out</button>
                 </div>
               </form>
-              <p class="auth-hint">Or command: SIGNUP · SIGNIN · SIGNOUT · WHOAMI · SUDO · CLAIM MASTER</p>
+              <p class="auth-hint">Or command: SIGNUP · SIGNIN · CHANGE EMAIL · WHOAMI · ACCOUNTS · ARCHIVE CONTACT</p>
             </div>
           </section>
 
@@ -1785,7 +1785,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v12';
+    const SW_BUST = 'uxu_sw_bust_v13';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -1945,6 +1945,16 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     return data;
   }
 
+  async function auditAuthEvent(eventType, detail){
+    try {
+      await fetch(`${API_BASE}/api/auth/audit`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ eventType, detail: detail || null }),
+      });
+    } catch {/* best-effort admin audit */}
+  }
+
   async function signUp(email, password, name){
     const data = await neonAuthPost('/sign-up/email', {
       email,
@@ -1955,6 +1965,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     setSessionToken(data.token);
     setSudo(false);
     await refreshAuth();
+    await auditAuthEvent('signup');
     toast(`signed up as ${data.user?.name || email}`);
     return data;
   }
@@ -1965,7 +1976,31 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     setSessionToken(data.token);
     setSudo(false);
     await refreshAuth();
+    await auditAuthEvent('signin');
     toast(`signed in as ${data.user?.name || email}`);
+    return data;
+  }
+
+  async function changeEmailRequest(newEmail, password){
+    const res = await fetch(`${API_BASE}/api/auth/change-email/request`, {
+      method: 'POST',
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ newEmail, password }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || data.message || `request failed (${res.status})`);
+    return data;
+  }
+
+  async function changeEmailConfirm(otp){
+    const res = await fetch(`${API_BASE}/api/auth/change-email/confirm`, {
+      method: 'POST',
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ otp }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || data.message || `confirm failed (${res.status})`);
+    await refreshAuth();
     return data;
   }
 
@@ -3574,10 +3609,12 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
 <table>
   <tr><th>Command</th><th>What it does</th></tr>
   <tr><td><code>SIGNUP</code> / <code>SIGNIN</code></td><td>Create or enter a session</td></tr>
-  <tr><td><code>SIGNOUT</code> · <code>WHOAMI</code></td><td>Leave / confirm identity</td></tr>
+  <tr><td><code>SIGNOUT</code> · <code>WHOAMI</code></td><td>Leave / confirm identity (login email is private)</td></tr>
+  <tr><td><code>CHANGE EMAIL</code></td><td>Change login email — OTP sent to current inbox</td></tr>
+  <tr><td><code>ARCHIVE CONTACT</code></td><td>Steward email for an archive (private by default; public needs admin)</td></tr>
   <tr><td><code>AUTH</code></td><td>Account gate help</td></tr>
 </table>
-<p class="muted">Admin succession commands exist for operators (<code>SETUP MASTER</code>, recovery). They are not required for browsing or creating a normal archive. USER OPTIONS folds several of the above into one menu.</p>`;
+<p class="muted">Admin: <code>ACCOUNTS</code> lists login emails (SUDO). Admin succession commands exist for operators (<code>SETUP MASTER</code>, recovery). They are not required for browsing or creating a normal archive. USER OPTIONS folds several of the above into one menu.</p>`;
 
     if (depth) depth.innerHTML = `
 <p class="lede">Grow only when you want to. Each tier builds on the last.</p>
@@ -4069,8 +4106,11 @@ SYSTEM            show system info
 AUTH              account status + gate help
 SIGNUP email pass [name]
 SIGNIN email pass
+CHANGE EMAIL …    change login email (OTP to current inbox)
 SIGNOUT
 WHOAMI
+ACCOUNTS          admin+SUDO: list login emails (private)
+ARCHIVE CONTACT … set / approve archive holder emails
 SUDO              elevate ADMIN session
 UNSUDO            drop elevation
 CLAIM MASTER      founding rite (sealed once an admin exists)
@@ -4078,6 +4118,10 @@ EXIT              root stays loaded
 
 Need help from a human?
   email rasip@chloreform.org
+
+Privacy
+  Login emails stay private (you + admin only).
+  Archive contact emails are opt-in public; publishing needs admin approval.
 
 Roles
   GUEST  public browse
@@ -4271,7 +4315,7 @@ ${lines.length ? lines.join('\n') : '  (no child records found)'}`);
 `role:     ${authState.role}
 sudo:     ${authState.sudo ? 'ON' : 'OFF'}
 name:     ${authState.user?.name || '—'}
-email:    ${authState.user?.email || '—'}
+email:    ${authState.user?.email || '—'}   (private — not shown on archives)
 
 Create account
   SIGNUP you@email.com yourpassword YourName
@@ -4279,6 +4323,21 @@ Create account
 Sign in / out
   SIGNIN you@email.com yourpassword
   SIGNOUT
+
+Change login email (OTP to your CURRENT inbox)
+  CHANGE EMAIL new@email.com yourpassword
+  CHANGE EMAIL CONFIRM 123456
+
+Archive contact (private by default; public needs admin)
+  ARCHIVE CONTACT <archiveId> steward@email.com
+  ARCHIVE CONTACT <archiveId> steward@email.com public
+  ARCHIVE CONTACT SHOW <archiveId>
+
+Admin (ADMIN + SUDO)
+  ACCOUNTS
+  ARCHIVE CONTACT PENDING
+  ARCHIVE CONTACT APPROVE <id>
+  ARCHIVE CONTACT DENY <id>
 
 Master administrator
   1) SIGNUP or SIGNIN with your operator email
@@ -4328,9 +4387,189 @@ Or use the ACCOUNT GATE form on the left.`);
 role:   ${s.role}
 sudo:   ${s.sudo ? 'ON' : 'OFF'}
 mode:   ${s.mode}
-email:  ${s.user?.email || '—'}
+email:  ${s.user?.email || '—'}   (private to you / admin)
 id:     ${s.user?.id || '—'}`);
       });
+      return;
+    }
+    if (cmd === "ACCOUNTS" || cmd === "USERS" || cmd === "USERS LIST") {
+      if (authState.role !== 'ADMIN' || !authState.sudo) {
+        showOutput("ERROR", "ACCOUNTS requires ADMIN + SUDO");
+        return;
+      }
+      showOutput("ACCOUNTS", "loading...");
+      fetch(`${API_BASE}/api/auth/accounts`, { headers: authHeaders() })
+        .then(async (res) => {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+          const users = data.users || [];
+          showOutput("ACCOUNTS", users.length
+            ? `Login emails (admin-only · never public)\n\n` + users.map((u) =>
+                `${u.email}\n  name: ${u.name || '—'} · role: ${u.role || 'user'}${u.banned ? ' · BANNED' : ''}\n  since: ${u.created_at || '—'}`
+              ).join('\n\n')
+            : "no accounts found");
+        })
+        .catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "CHANGE EMAIL" || cmd.startsWith("CHANGE EMAIL ")) {
+      const rest = cmdRaw.trim().slice("CHANGE EMAIL".length).trim();
+      const up = rest.toUpperCase();
+      if (!rest || up === "HELP") {
+        showOutput("CHANGE EMAIL",
+`Change your LOGIN email (private). Neon Auth does not do this natively —
+0?0 verifies with a code sent to your CURRENT inbox.
+
+  CHANGE EMAIL new@email.com yourpassword
+  CHANGE EMAIL CONFIRM <otp>
+  CHANGE EMAIL STATUS
+
+Archive holder / public contact emails use ARCHIVE CONTACT (admin approval when public).
+Deeper custody identity lives with iNi later.`);
+        return;
+      }
+      if (up === "STATUS") {
+        showOutput("CHANGE EMAIL", "checking...");
+        fetch(`${API_BASE}/api/auth/change-email/status`, { headers: authHeaders() })
+          .then(async (res) => {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+            const p = data.pending;
+            showOutput("CHANGE EMAIL STATUS", p
+              ? `pending → ${p.new_email}\nfrom:    ${p.current_email}\nexpires: ${p.expires_at}\n\nCONFIRM with the OTP from your current inbox.`
+              : `no pending change\ncurrent: ${data.email || '—'}`);
+          })
+          .catch((err) => showOutput("ERROR", err.message));
+        return;
+      }
+      if (up.startsWith("CONFIRM ")) {
+        const otp = rest.slice("CONFIRM ".length).trim();
+        if (!otp) {
+          showOutput("ERROR", "usage: CHANGE EMAIL CONFIRM <otp>");
+          return;
+        }
+        showOutput("CHANGE EMAIL", "confirming...");
+        changeEmailConfirm(otp)
+          .then((data) => showOutput("CHANGE EMAIL", data.message || `updated to ${data.email}`))
+          .catch((err) => showOutput("ERROR", err.message));
+        return;
+      }
+      const parts = rest.split(/\s+/);
+      const newEmail = parts[0];
+      const password = parts[1];
+      if (!newEmail || !password) {
+        showOutput("ERROR", "usage: CHANGE EMAIL new@email.com yourpassword");
+        return;
+      }
+      showOutput("CHANGE EMAIL", "requesting code to current inbox...");
+      changeEmailRequest(newEmail, password)
+        .then((data) => showOutput("CHANGE EMAIL", data.message || "check your current inbox for the OTP"))
+        .catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "ARCHIVE CONTACT" || cmd.startsWith("ARCHIVE CONTACT ")) {
+      const rest = cmdRaw.trim().slice("ARCHIVE CONTACT".length).trim();
+      const up = rest.toUpperCase();
+      if (!rest || up === "HELP") {
+        showOutput("ARCHIVE CONTACT",
+`Steward / holder email for an archive (separate from login email).
+
+Private (applied immediately, not shown publicly):
+  ARCHIVE CONTACT CyberCat.uXu.0001 you@email.com
+
+Request public (or change an already-public contact) — admin must approve:
+  ARCHIVE CONTACT CyberCat.uXu.0001 you@email.com public
+
+  ARCHIVE CONTACT SHOW <archiveId>
+  ARCHIVE CONTACT PENDING              (admin + SUDO)
+  ARCHIVE CONTACT APPROVE <id>
+  ARCHIVE CONTACT DENY <id> [note]`);
+        return;
+      }
+      if (up === "PENDING") {
+        showOutput("ARCHIVE CONTACT", "loading pending...");
+        fetch(`${API_BASE}/api/auth/archive-contact/pending`, { headers: authHeaders() })
+          .then(async (res) => {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+            const rows = data.pending || [];
+            showOutput("ARCHIVE CONTACT PENDING", rows.length
+              ? rows.map((r) =>
+                  `#${r.id}  ${r.archive_id}\n  → ${r.requested_email}${r.make_public ? ' · public' : ''}\n  by ${r.requester_email || r.requested_by}\n  since ${r.created_at || '—'}`
+                ).join('\n\n')
+              : "no pending requests");
+          })
+          .catch((err) => showOutput("ERROR", err.message));
+        return;
+      }
+      if (up.startsWith("APPROVE ")) {
+        const id = rest.split(/\s+/)[1];
+        showOutput("ARCHIVE CONTACT", `approving #${id}...`);
+        fetch(`${API_BASE}/api/auth/archive-contact/approve`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ id: Number(id) }),
+        }).then(async (res) => {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+          showOutput("ARCHIVE CONTACT", data.message);
+        }).catch((err) => showOutput("ERROR", err.message));
+        return;
+      }
+      if (up.startsWith("DENY ")) {
+        const parts = rest.split(/\s+/);
+        const id = parts[1];
+        const note = parts.slice(2).join(' ') || null;
+        showOutput("ARCHIVE CONTACT", `denying #${id}...`);
+        fetch(`${API_BASE}/api/auth/archive-contact/deny`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ id: Number(id), note }),
+        }).then(async (res) => {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+          showOutput("ARCHIVE CONTACT", data.message);
+        }).catch((err) => showOutput("ERROR", err.message));
+        return;
+      }
+      if (up.startsWith("SHOW ")) {
+        const archiveId = rest.slice("SHOW ".length).trim();
+        if (!archiveId) {
+          showOutput("ERROR", "usage: ARCHIVE CONTACT SHOW <archiveId>");
+          return;
+        }
+        showOutput("ARCHIVE CONTACT", "loading...");
+        fetch(`${API_BASE}/api/archives/${encodeURIComponent(archiveId)}/contact`, { headers: authHeaders() })
+          .then(async (res) => {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+            showOutput("ARCHIVE CONTACT",
+`archive:  ${data.archiveId || archiveId}
+email:    ${data.contactEmail || (data.hasContact ? '(private)' : '—')}
+public:   ${data.contactPublic ? 'yes' : 'no'}
+${data.visibility ? `visibility: ${data.visibility}` : ''}`);
+          })
+          .catch((err) => showOutput("ERROR", err.message));
+        return;
+      }
+      const parts = rest.split(/\s+/);
+      const archiveId = parts[0];
+      const email = parts[1];
+      const makePublic = String(parts[2] || '').toLowerCase() === 'public';
+      if (!archiveId || !email) {
+        showOutput("ERROR", "usage: ARCHIVE CONTACT <archiveId> email@x [public]");
+        return;
+      }
+      showOutput("ARCHIVE CONTACT", "submitting...");
+      fetch(`${API_BASE}/api/auth/archive-contact/request`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ archiveId, email, makePublic }),
+      }).then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+        showOutput("ARCHIVE CONTACT", data.message);
+      }).catch((err) => showOutput("ERROR", err.message));
       return;
     }
     if (cmd === "SUDO") {

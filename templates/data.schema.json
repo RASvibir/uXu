@@ -93,6 +93,15 @@
             ]
           }
         },
+        "contactEmail": {
+          "type": ["string", "null"],
+          "description": "Optional steward contact. Prefer setting via 0?0 ARCHIVE CONTACT (DB). If present in data.json, treat as a hint — public display still follows contactEmailPublic + admin approval for public holder changes."
+        },
+        "contactEmailPublic": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, steward contact may be shown publicly after admin approval via ARCHIVE CONTACT."
+        },
         "ini": {
           "type": "object",
           "description": "Optional iNi provenance opt-in. Community: https://soloist.ai/uxu — see archives/RTFM/INI-PROVENANCE.md",

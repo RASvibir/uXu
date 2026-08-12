@@ -109,6 +109,15 @@ If the master account is lost:
 | `SUDO` / `UNSUDO` | Admin |
 | `RECOVERY ADD\|LIST\|REMOVE\|2FA` | Admin + SUDO |
 | `ASSUME MASTER` | Active recovery account |
+| `ACCOUNTS` | Admin + SUDO — private login email list |
+| `ARCHIVE CONTACT PENDING` / `APPROVE` / `DENY` | Admin + SUDO |
+
+## Accounts & email privacy
+
+Login emails are **never public**. `ACCOUNTS` lists who signed up. Sign-up / sign-in are audited.
+
+Users change login email with OTP to the **current** inbox (`CHANGE EMAIL`).  
+Publishing or changing a **public** archive holder contact needs your approval via `ARCHIVE CONTACT PENDING`.
 
 ## Legacy
 

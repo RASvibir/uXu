@@ -111,6 +111,93 @@ async function logAuthEvent(sql, { userId, email, eventType, detail }) {
   `;
 }
 
+function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+}
+
+async function readJson(request) {
+  try {
+    return await request.json();
+  } catch {
+    return null;
+  }
+}
+
+async function neonAuthPost(env, path, body) {
+  const base = String(env.NEON_AUTH_BASE_URL || '').replace(/\/$/, '');
+  if (!base) return { ok: false, status: 500, data: { error: 'NEON_AUTH_BASE_URL missing' } };
+  const res = await fetch(`${base}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+async function ensureEmailTables(sql) {
+  await sql`
+    create table if not exists uxu_email_change_requests (
+      id bigserial primary key,
+      user_id uuid not null,
+      current_email text not null,
+      new_email text not null,
+      created_at timestamptz not null default now(),
+      expires_at timestamptz not null,
+      confirmed_at timestamptz,
+      cancelled_at timestamptz
+    )
+  `;
+  await sql`
+    create table if not exists uxu_archive_contacts (
+      archive_id text primary key,
+      contact_email text,
+      contact_public boolean not null default false,
+      holder_user_id uuid,
+      updated_at timestamptz not null default now(),
+      updated_by uuid
+    )
+  `;
+  await sql`
+    create table if not exists uxu_archive_contact_requests (
+      id bigserial primary key,
+      archive_id text not null,
+      requested_by uuid not null,
+      requested_email text not null,
+      make_public boolean not null default false,
+      status text not null default 'pending',
+      created_at timestamptz not null default now(),
+      decided_at timestamptz,
+      decided_by uuid,
+      note text
+    )
+  `;
+}
+
+async function verifyCurrentPassword(sql, env, email, password) {
+  const result = await neonAuthPost(env, '/sign-in/email', { email, password });
+  if (!result.ok) {
+    return { ok: false, error: result.data?.message || result.data?.error || 'password check failed' };
+  }
+  // Sign-in creates a throwaway session — revoke it so the caller's bearer token stays current.
+  if (result.data?.token) {
+    await sql`delete from neon_auth.session where token = ${result.data.token}`;
+  }
+  return { ok: true };
+}
+
+async function hasCredentialPassword(sql, userId) {
+  const rows = await sql`
+    select 1 as ok
+    from neon_auth.account
+    where "userId" = ${userId}
+      and "providerId" = 'credential'
+      and password is not null
+    limit 1
+  `;
+  return rows.length > 0;
+}
+
 async function handleTags(sql, request) {
   try {
     const rows = await sql`
@@ -304,6 +391,10 @@ async function handleAuthConfig(request, env) {
     authBaseUrl: env.NEON_AUTH_BASE_URL || null,
     signupEnabled: true,
     roles: ['GUEST', 'USER', 'ADMIN', 'RECOVERY'],
+    privacy: {
+      loginEmailPublic: false,
+      note: 'Login emails are private. Admins (SUDO) can list accounts. Archive contact emails are opt-in public and changes to public holder emails need admin approval.',
+    },
     claim: {
       method: 'CLAIM MASTER <bootstrap-secret>',
       note: 'Founding rite. Sealed once any admin exists. Empty-throne break-glass only.',
@@ -318,6 +409,17 @@ async function handleAuthConfig(request, env) {
         docs: 'https://neon.com/docs/manage/accounts#two-factor-authentication',
         note: 'Attest 2FA after enabling it on the Neon account that protects the project, and use a strong unique password on the recovery uXu login.',
       },
+    },
+    account: {
+      commands: [
+        'CHANGE EMAIL <new> <password>',
+        'CHANGE EMAIL CONFIRM <otp>',
+        'ACCOUNTS',
+        'ARCHIVE CONTACT <archiveId> <email> [public]',
+        'ARCHIVE CONTACT PENDING',
+        'ARCHIVE CONTACT APPROVE <id>',
+        'ARCHIVE CONTACT DENY <id>',
+      ],
     },
     setupGuide: 'SETUP MASTER',
   });
@@ -654,6 +756,423 @@ async function handleUnsudo(sql, request) {
   });
 }
 
+async function handleAuthAudit(sql, request) {
+  const { ctx, error } = await requireUser(sql, request);
+  if (error) return error;
+  const body = await readJson(request);
+  if (!body) return json(request, { error: 'invalid json' }, 400);
+  const eventType = String(body.eventType || '').trim().toLowerCase();
+  if (!['signup', 'signin'].includes(eventType)) {
+    return json(request, { error: 'eventType must be signup or signin' }, 400);
+  }
+  await logAuthEvent(sql, {
+    userId: ctx.user.id,
+    email: ctx.user.email,
+    eventType,
+    detail: body.detail || null,
+  });
+  return json(request, { ok: true });
+}
+
+async function handleAccountsList(sql, request) {
+  const { error } = await requireAdminSudo(sql, request);
+  if (error) return error;
+  const users = await sql`
+    select
+      id,
+      email,
+      name,
+      role,
+      banned,
+      "emailVerified" as email_verified,
+      "createdAt" as created_at,
+      "updatedAt" as updated_at
+    from neon_auth."user"
+    order by "createdAt" desc
+    limit 200
+  `;
+  return json(request, {
+    users,
+    privacy: 'Login emails are admin-only. Not shown on public archive pages.',
+    count: users.length,
+  });
+}
+
+async function handleChangeEmailRequest(sql, request, env) {
+  const { ctx, error } = await requireUser(sql, request);
+  if (error) return error;
+  const body = await readJson(request);
+  if (!body) return json(request, { error: 'invalid json' }, 400);
+
+  const newEmail = String(body.newEmail || '').trim().toLowerCase();
+  const password = String(body.password || '');
+  if (!isValidEmail(newEmail)) {
+    return json(request, { error: 'valid newEmail required' }, 400);
+  }
+  if (newEmail === String(ctx.user.email || '').toLowerCase()) {
+    return json(request, { error: 'new email is the same as current' }, 400);
+  }
+
+  const taken = await sql`
+    select id from neon_auth."user" where lower(email) = ${newEmail} limit 1
+  `;
+  if (taken.length) {
+    return json(request, { error: 'that email already has an account' }, 409);
+  }
+
+  const needsPassword = await hasCredentialPassword(sql, ctx.user.id);
+  if (needsPassword) {
+    if (!password) {
+      return json(request, { error: 'password required — CHANGE EMAIL <new> <password>' }, 400);
+    }
+    const check = await verifyCurrentPassword(sql, env, ctx.user.email, password);
+    if (!check.ok) {
+      return json(request, { error: 'current password incorrect' }, 403);
+    }
+  }
+
+  await ensureEmailTables(sql);
+  await sql`
+    update uxu_email_change_requests
+    set cancelled_at = now()
+    where user_id = ${ctx.user.id}
+      and confirmed_at is null
+      and cancelled_at is null
+  `;
+
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+  await sql`
+    insert into uxu_email_change_requests (user_id, current_email, new_email, expires_at)
+    values (${ctx.user.id}, ${ctx.user.email}, ${newEmail}, ${expiresAt})
+  `;
+
+  const otp = await neonAuthPost(env, '/email-otp/send-verification-otp', {
+    email: ctx.user.email,
+    type: 'email-verification',
+  });
+  if (!otp.ok) {
+    return json(request, {
+      error: 'could not send verification code to current email',
+      detail: otp.data?.message || otp.data?.error || null,
+    }, 502);
+  }
+
+  await logAuthEvent(sql, {
+    userId: ctx.user.id,
+    email: ctx.user.email,
+    eventType: 'email_change_requested',
+    detail: `pending → ${newEmail}`,
+  });
+
+  return json(request, {
+    ok: true,
+    message: `Verification code sent to ${ctx.user.email}. Confirm with: CHANGE EMAIL CONFIRM <otp>`,
+    currentEmail: ctx.user.email,
+    newEmail,
+    expiresAt,
+  });
+}
+
+async function handleChangeEmailConfirm(sql, request, env) {
+  const { ctx, error } = await requireUser(sql, request);
+  if (error) return error;
+  const body = await readJson(request);
+  if (!body) return json(request, { error: 'invalid json' }, 400);
+  const otp = String(body.otp || '').trim();
+  if (!otp) return json(request, { error: 'otp required' }, 400);
+
+  await ensureEmailTables(sql);
+  const pending = await sql`
+    select id, current_email, new_email, expires_at
+    from uxu_email_change_requests
+    where user_id = ${ctx.user.id}
+      and confirmed_at is null
+      and cancelled_at is null
+    order by created_at desc
+    limit 1
+  `;
+  if (!pending.length) {
+    return json(request, { error: 'no pending email change — run CHANGE EMAIL <new> <password> first' }, 404);
+  }
+  const row = pending[0];
+  if (new Date(row.expires_at).getTime() < Date.now()) {
+    await sql`update uxu_email_change_requests set cancelled_at = now() where id = ${row.id}`;
+    return json(request, { error: 'pending change expired — request again' }, 410);
+  }
+  if (String(row.current_email).toLowerCase() !== String(ctx.user.email || '').toLowerCase()) {
+    return json(request, { error: 'session email no longer matches pending request' }, 409);
+  }
+
+  const check = await neonAuthPost(env, '/email-otp/check-verification-otp', {
+    email: row.current_email,
+    otp,
+    type: 'email-verification',
+  });
+  if (!check.ok) {
+    return json(request, {
+      error: 'invalid or expired verification code',
+      detail: check.data?.message || check.data?.error || null,
+    }, 403);
+  }
+
+  const taken = await sql`
+    select id from neon_auth."user"
+    where lower(email) = ${row.new_email} and id <> ${ctx.user.id}
+    limit 1
+  `;
+  if (taken.length) {
+    return json(request, { error: 'that email was claimed while you were confirming' }, 409);
+  }
+
+  await sql`
+    update neon_auth."user"
+    set email = ${row.new_email},
+        "emailVerified" = false,
+        "updatedAt" = now()
+    where id = ${ctx.user.id}
+  `;
+  await sql`
+    update uxu_recovery_accounts
+    set email = ${row.new_email}
+    where user_id = ${String(ctx.user.id)}
+      and revoked_at is null
+      and lower(email) = ${String(row.current_email).toLowerCase()}
+  `;
+  await sql`
+    update uxu_email_change_requests
+    set confirmed_at = now()
+    where id = ${row.id}
+  `;
+
+  await logAuthEvent(sql, {
+    userId: ctx.user.id,
+    email: row.new_email,
+    eventType: 'email_change_confirmed',
+    detail: `${row.current_email} → ${row.new_email}`,
+  });
+
+  return json(request, {
+    ok: true,
+    message: `Login email updated to ${row.new_email}. Sign in with the new address next time.`,
+    email: row.new_email,
+  });
+}
+
+async function handleChangeEmailStatus(sql, request) {
+  const { ctx, error } = await requireUser(sql, request);
+  if (error) return error;
+  await ensureEmailTables(sql);
+  const rows = await sql`
+    select id, current_email, new_email, created_at, expires_at, confirmed_at, cancelled_at
+    from uxu_email_change_requests
+    where user_id = ${ctx.user.id}
+    order by created_at desc
+    limit 5
+  `;
+  const pending = rows.find((r) => !r.confirmed_at && !r.cancelled_at && new Date(r.expires_at) > new Date()) || null;
+  return json(request, { email: ctx.user.email, pending, recent: rows });
+}
+
+function publicContactView(row) {
+  if (!row) return null;
+  return {
+    archiveId: row.archive_id,
+    contactEmail: row.contact_public ? row.contact_email : null,
+    contactPublic: !!row.contact_public,
+    hasContact: !!row.contact_email,
+  };
+}
+
+async function handleArchiveContactGet(sql, request, archiveId) {
+  await ensureEmailTables(sql);
+  const rows = await sql`
+    select archive_id, contact_email, contact_public, holder_user_id, updated_at
+    from uxu_archive_contacts
+    where archive_id = ${archiveId}
+    limit 1
+  `;
+  const session = await resolveSession(sql, request);
+  const row = rows[0] || null;
+  const isHolder = row && session.user && String(row.holder_user_id) === String(session.user.id);
+  const isAdmin = session.role === 'ADMIN' && session.sudo;
+
+  if (!row) {
+    return json(request, { archiveId, contactEmail: null, contactPublic: false, hasContact: false });
+  }
+  if (row.contact_public || isHolder || isAdmin) {
+    return json(request, {
+      archiveId: row.archive_id,
+      contactEmail: row.contact_email,
+      contactPublic: !!row.contact_public,
+      hasContact: !!row.contact_email,
+      holder: isHolder || isAdmin ? { userId: row.holder_user_id } : undefined,
+      updatedAt: row.updated_at,
+      visibility: row.contact_public ? 'public' : 'private',
+    });
+  }
+  return json(request, publicContactView(row));
+}
+
+async function handleArchiveContactRequest(sql, request) {
+  const { ctx, error } = await requireUser(sql, request);
+  if (error) return error;
+  const body = await readJson(request);
+  if (!body) return json(request, { error: 'invalid json' }, 400);
+
+  const archiveId = String(body.archiveId || '').trim();
+  const email = String(body.email || '').trim().toLowerCase();
+  const makePublic = !!body.makePublic;
+  if (!archiveId) return json(request, { error: 'archiveId required' }, 400);
+  if (!isValidEmail(email)) return json(request, { error: 'valid email required' }, 400);
+
+  const archives = await sql`
+    select id from archive_records where id = ${archiveId} limit 1
+  `;
+  if (!archives.length) {
+    return json(request, { error: 'archive not found in registry' }, 404);
+  }
+
+  await ensureEmailTables(sql);
+  const existing = await sql`
+    select archive_id, contact_email, contact_public, holder_user_id
+    from uxu_archive_contacts
+    where archive_id = ${archiveId}
+    limit 1
+  `;
+  const row = existing[0] || null;
+  if (row?.holder_user_id && String(row.holder_user_id) !== String(ctx.user.id)) {
+    return json(request, { error: 'this archive contact is held by another account' }, 403);
+  }
+
+  const needsApproval = makePublic || !!(row && row.contact_public);
+
+  // Private steward contact (not public): apply immediately — never shown on public pages.
+  if (!needsApproval) {
+    await sql`
+      insert into uxu_archive_contacts (archive_id, contact_email, contact_public, holder_user_id, updated_at, updated_by)
+      values (${archiveId}, ${email}, false, ${ctx.user.id}, now(), ${ctx.user.id})
+      on conflict (archive_id) do update set
+        contact_email = excluded.contact_email,
+        contact_public = false,
+        holder_user_id = coalesce(uxu_archive_contacts.holder_user_id, excluded.holder_user_id),
+        updated_at = now(),
+        updated_by = excluded.updated_by
+    `;
+    await logAuthEvent(sql, {
+      userId: ctx.user.id,
+      email: ctx.user.email,
+      eventType: 'archive_contact_set_private',
+      detail: `${archiveId} → ${email} (private)`,
+    });
+    return json(request, {
+      ok: true,
+      applied: true,
+      pending: false,
+      message: `Private contact email set for ${archiveId}. Not shown publicly. Publishing or changing a public holder email needs admin approval.`,
+      contact: { archiveId, contactEmail: email, contactPublic: false },
+    });
+  }
+
+  await sql`
+    update uxu_archive_contact_requests
+    set status = 'cancelled', decided_at = now(), note = 'superseded'
+    where archive_id = ${archiveId}
+      and requested_by = ${ctx.user.id}
+      and status = 'pending'
+  `;
+  const inserted = await sql`
+    insert into uxu_archive_contact_requests
+      (archive_id, requested_by, requested_email, make_public, status)
+    values (${archiveId}, ${ctx.user.id}, ${email}, ${makePublic}, 'pending')
+    returning id, archive_id, requested_email, make_public, status, created_at
+  `;
+  await logAuthEvent(sql, {
+    userId: ctx.user.id,
+    email: ctx.user.email,
+    eventType: 'archive_contact_requested',
+    detail: `${archiveId} → ${email} public=${makePublic}`,
+  });
+  return json(request, {
+    ok: true,
+    applied: false,
+    pending: true,
+    request: inserted[0],
+    message: `Request #${inserted[0].id} queued for admin approval.`,
+  });
+}
+
+async function handleArchiveContactPending(sql, request) {
+  const { error } = await requireAdminSudo(sql, request);
+  if (error) return error;
+  await ensureEmailTables(sql);
+  const rows = await sql`
+    select r.id, r.archive_id, r.requested_by, r.requested_email, r.make_public,
+           r.status, r.created_at, u.email as requester_email, u.name as requester_name
+    from uxu_archive_contact_requests r
+    left join neon_auth."user" u on u.id = r.requested_by
+    where r.status = 'pending'
+    order by r.created_at asc
+    limit 100
+  `;
+  return json(request, { pending: rows });
+}
+
+async function handleArchiveContactDecide(sql, request, approve) {
+  const { ctx, error } = await requireAdminSudo(sql, request);
+  if (error) return error;
+  const body = await readJson(request);
+  if (!body) return json(request, { error: 'invalid json' }, 400);
+  const id = Number(body.id);
+  if (!Number.isFinite(id)) return json(request, { error: 'id required' }, 400);
+  const note = body.note ? String(body.note).slice(0, 500) : null;
+
+  await ensureEmailTables(sql);
+  const rows = await sql`
+    select * from uxu_archive_contact_requests
+    where id = ${id} and status = 'pending'
+    limit 1
+  `;
+  if (!rows.length) return json(request, { error: 'pending request not found' }, 404);
+  const req = rows[0];
+
+  if (approve) {
+    await sql`
+      insert into uxu_archive_contacts (archive_id, contact_email, contact_public, holder_user_id, updated_at, updated_by)
+      values (${req.archive_id}, ${req.requested_email}, ${req.make_public}, ${req.requested_by}, now(), ${ctx.user.id})
+      on conflict (archive_id) do update set
+        contact_email = excluded.contact_email,
+        contact_public = excluded.contact_public,
+        holder_user_id = coalesce(uxu_archive_contacts.holder_user_id, excluded.holder_user_id),
+        updated_at = now(),
+        updated_by = excluded.updated_by
+    `;
+  }
+
+  await sql`
+    update uxu_archive_contact_requests
+    set status = ${approve ? 'approved' : 'denied'},
+        decided_at = now(),
+        decided_by = ${ctx.user.id},
+        note = ${note}
+    where id = ${id}
+  `;
+
+  await logAuthEvent(sql, {
+    userId: ctx.user.id,
+    email: ctx.user.email,
+    eventType: approve ? 'archive_contact_approved' : 'archive_contact_denied',
+    detail: `#${id} ${req.archive_id} → ${req.requested_email}`,
+  });
+
+  return json(request, {
+    ok: true,
+    status: approve ? 'approved' : 'denied',
+    message: approve
+      ? `Approved contact for ${req.archive_id}: ${req.requested_email}${req.make_public ? ' (public)' : ' (private)'}`
+      : `Denied request #${id}`,
+  });
+}
+
 async function handleAuthEvents(sql, request) {
   const { error } = await requireAdminSudo(sql, request);
   if (error) return error;
@@ -698,9 +1217,13 @@ const GET_ROUTES = {
   '/api/auth/events': handleAuthEvents,
   '/api/auth/setup-status': handleSetupStatus,
   '/api/auth/recovery': handleRecoveryList,
+  '/api/auth/accounts': handleAccountsList,
+  '/api/auth/change-email/status': handleChangeEmailStatus,
+  '/api/auth/archive-contact/pending': handleArchiveContactPending,
 };
 
 const MANUAL_SLUG_RE = /^\/api\/root\/manuals\/([a-z0-9][a-z0-9_-]*)$/i;
+const ARCHIVE_CONTACT_RE = /^\/api\/archives\/([^/]+)\/contact$/i;
 
 const POST_ROUTES = {
   '/api/auth/claim-master': handleClaimMaster,
@@ -711,6 +1234,12 @@ const POST_ROUTES = {
   '/api/auth/recovery/remove': handleRecoveryRemove,
   '/api/auth/recovery/attest-2fa': handleRecoveryAttest2fa,
   '/api/auth/assume-master': handleAssumeMaster,
+  '/api/auth/audit': handleAuthAudit,
+  '/api/auth/change-email/request': handleChangeEmailRequest,
+  '/api/auth/change-email/confirm': handleChangeEmailConfirm,
+  '/api/auth/archive-contact/request': handleArchiveContactRequest,
+  '/api/auth/archive-contact/approve': (sql, request) => handleArchiveContactDecide(sql, request, true),
+  '/api/auth/archive-contact/deny': (sql, request) => handleArchiveContactDecide(sql, request, false),
   '/api/root/tags': handleTagUpsert,
 };
 
@@ -733,6 +1262,10 @@ export default {
         const manualMatch = url.pathname.match(MANUAL_SLUG_RE);
         if (manualMatch) {
           return await handleManualBySlug(sql, request, decodeURIComponent(manualMatch[1]));
+        }
+        const contactMatch = url.pathname.match(ARCHIVE_CONTACT_RE);
+        if (contactMatch) {
+          return await handleArchiveContactGet(sql, request, decodeURIComponent(contactMatch[1]));
         }
         const handler = GET_ROUTES[url.pathname];
         if (!handler) return json(request, { error: 'not found' }, 404);
