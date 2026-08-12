@@ -74,6 +74,28 @@ and you accept the community’s expectations around authenticity and transparen
 
 This is **self-attestation**, not a legal chain-of-custody certificate.
 
+### iNi stamp → optional I page link
+
+When opted in, you may showcase a small corner **iNi** stamp as a provenance
+verification mark (`showBadge: true`, default). Lettering is green **i** /
+yellow **N** / green **i**. An I page is **not** required for the stamp.
+
+To also send visitors to your I page, set a second opt-in — the stamp becomes
+a button/link:
+
+- `badgeLinksToIPage: true`
+- `iPage`: your slug (or full URL) → `https://rasvibir.github.io/iNi/#/i/{slug}`
+
+Rules:
+
+- Stamp eligible only when `optIn: true`  
+- Set `showBadge: false` to opt in without displaying the mark  
+- Linking is optional and separate from verification  
+- Snippet: `templates/snippets/ini-badge.html`  
+- On 0?0 registry, the iNi cue is a link only when `badgeLinksToIPage` + `iPage`  
+
+Create an I page via PR under https://github.com/RASvibir/iNi (`content/i/`).
+
 ## Inner-circle / organization layer
 
 iNi also names the **inner-circle** boundary for collaborators with deeper

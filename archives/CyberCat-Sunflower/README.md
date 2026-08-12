@@ -90,8 +90,10 @@ Want to add more shows? Fork the repo, add shows to `data.json`, and submit a PR
 
 Optional provenance fields for the commons (`uxu.ini` / iNi) are self-attestation notes, not a rights certificate.
 
-**iNi status:** opted in (`uxu.ini.optIn: true`, attested 2026-08-12). Paper trail:
-[CyberCat Sunflower provenance writeup](https://github.com/RASvibir/iNi/blob/main/content/articles/2026-08-12-cybercat-sunflower-provenance.md).
+**iNi status:** opted in (`uxu.ini.optIn: true`, attested 2026-08-12).  
+**Badge:** shown (`showBadge: true`); links to I page (`badgeLinksToIPage: true`).  
+**I page:** `victor-birkle` → https://rasvibir.github.io/iNi/#/i/victor-birkle  
+Paper trail: [CyberCat Sunflower provenance writeup](https://github.com/RASvibir/iNi/blob/main/content/articles/2026-08-12-cybercat-sunflower-provenance.md).
 
 ---
 

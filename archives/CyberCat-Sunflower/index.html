@@ -73,6 +73,11 @@
       opacity: .7;
     }
     .tube > * { position: relative; z-index: 1; }
+    .tube > .ini-stamp {
+      position: absolute;
+      z-index: 30;
+      pointer-events: auto;
+    }
 
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
@@ -92,7 +97,52 @@
       color: var(--amber); text-shadow: 0 0 12px rgba(255,210,74,.35);
     }
     .path { color: var(--muted); }
-    .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; }
+    .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; margin-right: 2.75rem; }
+
+    /* iNi provenance stamp — top-right corner; optional link = stamp-as-button */
+    .ini-stamp {
+      position: absolute;
+      top: 0.45rem;
+      right: 0.55rem;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 0.22rem 0.42rem 0.18rem;
+      border: 1.5px solid rgba(93, 255, 138, 0.65);
+      border-radius: 2px;
+      background: rgba(5, 3, 10, 0.72);
+      box-shadow:
+        0 0 0 1px rgba(255, 210, 74, 0.2),
+        inset 0 0 10px rgba(93, 255, 138, 0.08);
+      font-family: var(--display);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      text-decoration: none;
+      cursor: default;
+      transform: rotate(-6deg);
+      user-select: none;
+    }
+    .ini-stamp[hidden] { display: none !important; }
+    .ini-stamp.is-link {
+      cursor: pointer;
+      transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease);
+    }
+    .ini-stamp.is-link:hover,
+    .ini-stamp.is-link:focus-visible {
+      transform: rotate(-6deg) scale(1.06);
+      filter: brightness(1.12);
+      box-shadow:
+        0 0 0 1px rgba(255, 210, 74, 0.45),
+        0 0 14px rgba(93, 255, 138, 0.25),
+        inset 0 0 10px rgba(93, 255, 138, 0.12);
+      outline: none;
+    }
+    .ini-stamp .ini-i { color: #5dff8a; text-shadow: 0 0 8px rgba(93, 255, 138, 0.55); }
+    .ini-stamp .ini-n { color: #ffe14a; text-shadow: 0 0 8px rgba(255, 210, 74, 0.55); }
 
     .workspace {
       flex: 1; min-height: 0;
@@ -305,7 +355,6 @@
       font-size: .58rem; letter-spacing: .06em; padding: .1rem .35rem;
       border: 1px solid rgba(93,255,138,.3); color: var(--phosphor-dim);
     }
-    .badge.sbd { color: var(--amber); border-color: rgba(255,210,74,.4); }
     .badge.run { color: var(--magenta); border-color: rgba(255,61,206,.4); }
     .day-row {
       display: flex; flex-wrap: wrap; gap: .3rem;
@@ -392,6 +441,7 @@
 <body>
   <div class="chassis">
     <div class="tube" role="application" aria-label="CyberCat Sunflower Grateful Dead full catalog">
+      <span id="ini-badge" class="ini-stamp" hidden title="iNi provenance (self-attested)" aria-label="iNi provenance"><span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span></span>
       <header class="topbar">
         <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
         <span class="brand">CYBERCAT SUNFLOWER</span>
@@ -1441,6 +1491,57 @@ ALTERNATES: OTHER TRANSFERS BUTTON
 
 Engage a date from the tapes index. Cue any song from the setlist.
 Date + venue on the deck is enough to look a tape up elsewhere.`;
+
+    const ini = data.uxu && data.uxu.ini;
+    const badge = document.getElementById('ini-badge');
+    const stampHtml = '<span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span>';
+    if (badge) {
+      if (!ini || ini.optIn !== true || ini.showBadge === false) {
+        badge.hidden = true;
+      } else {
+        let url = null;
+        if (ini.badgeLinksToIPage === true && ini.iPage) {
+          const raw = String(ini.iPage).trim();
+          url = /^https?:\/\//i.test(raw)
+            ? raw
+            : ('https://rasvibir.github.io/iNi/#/i/' + encodeURIComponent(raw.replace(/^#?\/?i\//i, '')));
+        }
+        let node = badge;
+        if (url) {
+          if (badge.tagName !== 'A') {
+            const a = document.createElement('a');
+            a.id = badge.id;
+            a.className = 'ini-stamp is-link';
+            badge.replaceWith(a);
+            node = a;
+          } else {
+            node.className = 'ini-stamp is-link';
+          }
+          node.href = url;
+          node.target = '_blank';
+          node.rel = 'noopener';
+          node.title = 'iNi provenance · open I page';
+          node.setAttribute('aria-label', 'iNi provenance — open I page');
+        } else {
+          if (badge.tagName === 'A') {
+            const span = document.createElement('span');
+            span.id = badge.id;
+            span.className = 'ini-stamp';
+            badge.replaceWith(span);
+            node = span;
+          } else {
+            node.className = 'ini-stamp';
+          }
+          node.title = 'iNi provenance (self-attested)';
+          node.setAttribute('aria-label', 'iNi provenance');
+          node.removeAttribute('href');
+          node.removeAttribute('target');
+          node.removeAttribute('rel');
+        }
+        node.innerHTML = stampHtml;
+        node.hidden = false;
+      }
+    }
   }).catch(() => {
     document.getElementById('manifesto-text-block').textContent =
       'CyberCat Sunflower full Grateful Dead catalog.';

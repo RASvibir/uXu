@@ -116,6 +116,20 @@
               "default": "iNi",
               "description": "Display tag when opted in"
             },
+            "iPage": {
+              "type": ["string", "null"],
+              "description": "I page slug (e.g. victor-birkle) or full URL. Used only when badgeLinksToIPage is true."
+            },
+            "showBadge": {
+              "type": "boolean",
+              "default": true,
+              "description": "If true (and optIn), archives may showcase the iNi provenance verification badge. Set false to opt in without displaying the badge."
+            },
+            "badgeLinksToIPage": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true (and optIn + iPage), the iNi badge links to the steward's I page. Independent of showing a non-linking badge."
+            },
             "provenance": {
               "type": "object",
               "properties": {

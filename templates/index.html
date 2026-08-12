@@ -32,6 +32,22 @@
       border: 1px solid var(--accent); padding: .2rem .65rem; letter-spacing: .06em;
     }
     .home-link.badge:hover { filter: brightness(1.08); }
+    .ini-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-decoration: none;
+      color: #0d5c63;
+      background: #d4e8ea;
+      border: 1px solid #0d5c63;
+      padding: .2rem .55rem;
+      margin-left: .45rem;
+      vertical-align: middle;
+    }
+    .ini-badge:hover { filter: brightness(0.97); }
+    .ini-badge[hidden] { display: none !important; }
     h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .35rem; }
     .tag { color: var(--muted); font-size: .8rem; margin-bottom: 1.25rem; }
     #archive-list { display: grid; gap: .5rem; }
@@ -49,6 +65,8 @@
 <body>
   <!-- Home link: choose in data.json uxu.homeLink.style → "0?0" (back) or "uXu" (site badge) -->
   <a class="home-link badge" id="uxu-home" href="../index.html" data-uxu-home="uXu">uXu</a>
+  <!-- iNi badge: showcase when optIn (+ showBadge); link only if badgeLinksToIPage + iPage -->
+  <span id="ini-badge" class="ini-badge" hidden title="iNi provenance (self-attested)">iNi</span>
 
   <h1 id="archive-title">Your Archive</h1>
   <p class="tag" id="archive-tag">uXu independent archive</p>
@@ -60,6 +78,52 @@
   <div id="archive-list"></div>
 
   <script>
+    function resolveIniPageUrl(ini) {
+      if (!ini || ini.optIn !== true || ini.badgeLinksToIPage !== true) return null;
+      const raw = String(ini.iPage || '').trim();
+      if (!raw) return null;
+      if (/^https?:\/\//i.test(raw)) return raw;
+      const slug = raw.replace(/^#?\/?i\//i, '').replace(/^\//, '');
+      if (!slug) return null;
+      return 'https://rasvibir.github.io/iNi/#/i/' + encodeURIComponent(slug);
+    }
+
+    function applyIniBadge(el, ini) {
+      if (!el) return;
+      if (!ini || ini.optIn !== true || ini.showBadge === false) {
+        el.hidden = true;
+        return;
+      }
+      const label = (ini.tag && String(ini.tag)) || 'iNi';
+      const url = resolveIniPageUrl(ini);
+      let node = el;
+      if (url) {
+        if (el.tagName !== 'A') {
+          const a = document.createElement('a');
+          a.id = el.id;
+          a.className = el.className;
+          el.replaceWith(a);
+          node = a;
+        }
+        node.href = url;
+        node.target = '_blank';
+        node.rel = 'noopener';
+        node.title = 'iNi provenance · open I page';
+      } else {
+        if (el.tagName === 'A') {
+          const span = document.createElement('span');
+          span.id = el.id;
+          span.className = el.className;
+          el.replaceWith(span);
+          node = span;
+        }
+        node.title = 'iNi provenance (self-attested)';
+        node.removeAttribute?.('href');
+      }
+      node.textContent = label;
+      node.hidden = false;
+    }
+
     // Apply home-link label from data.json uxu.homeLink when present
     fetch('data.json').then((r) => r.json()).then((data) => {
       const title = data.archiveName || data.title || 'Your Archive';
@@ -82,6 +146,8 @@
         home.className = 'home-link badge';
         home.dataset.uxuHome = 'uXu';
       }
+
+      applyIniBadge(document.getElementById('ini-badge'), data.uxu && data.uxu.ini);
 
       const manualsEl = document.getElementById('archive-manuals');
       const manuals = (data.uxu && data.uxu.manuals) || [];

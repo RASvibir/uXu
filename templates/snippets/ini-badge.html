@@ -1,0 +1,57 @@
+<!--
+  iNi provenance stamp — small corner mark (not membership chrome).
+  Show when uxu.ini.optIn is true and showBadge is not false.
+  Optional: badgeLinksToIPage + iPage → stamp becomes a link/button to the I page.
+
+  Lettering: bright green i · bright yellow N · bright green i
+
+  data.json:
+  "uxu": {
+    "ini": {
+      "optIn": true,
+      "showBadge": true,
+      "badgeLinksToIPage": false,
+      "iPage": null
+    }
+  }
+-->
+
+<span id="ini-badge" class="ini-stamp" hidden title="iNi provenance (self-attested)" aria-label="iNi provenance"><span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span></span>
+
+<!--
+  Parent of the stamp should be position: relative (archive root / frame).
+
+  CSS:
+
+  .ini-stamp {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.55rem;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.22rem 0.42rem 0.18rem;
+    border: 1.5px solid rgba(93, 255, 138, 0.65);
+    border-radius: 2px;
+    background: rgba(5, 3, 10, 0.72);
+    box-shadow: 0 0 0 1px rgba(255, 210, 74, 0.2);
+    font-family: ui-monospace, monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-decoration: none;
+    cursor: default;
+    transform: rotate(-6deg);
+    user-select: none;
+  }
+  .ini-stamp[hidden] { display: none !important; }
+  .ini-stamp.is-link { cursor: pointer; }
+  .ini-stamp.is-link:hover { filter: brightness(1.12); }
+  .ini-stamp .ini-i { color: #5dff8a; }
+  .ini-stamp .ini-n { color: #ffe14a; }
+
+  JS: reuse applyIniBadge pattern from templates/index.html — keep colored
+  letter spans in innerHTML; add class is-link when badgeLinksToIPage is on.
+-->

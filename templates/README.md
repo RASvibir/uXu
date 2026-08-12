@@ -86,6 +86,9 @@ iNi is an optional authenticity protocol beside uXu — not required to publish.
   "ini": {
     "optIn": true,
     "tag": "iNi",
+    "showBadge": true,
+    "badgeLinksToIPage": false,
+    "iPage": null,
     "provenance": {
       "origin": "…",
       "authors": ["…"],
@@ -100,6 +103,17 @@ iNi is an optional authenticity protocol beside uXu — not required to publish.
 
 Setting `optIn: true` means you filled provenance seriously and accept iNi
 expectations. Starter fields ship in `templates/data.json` with `optIn: false`.
+
+**iNi stamp (optional showcase):** when `optIn` is true and `showBadge` is not
+`false`, archives may display a small corner **iNi** provenance stamp
+(green–yellow–green lettering). It does **not** require an I page.
+
+**Stamp as button / link (separate opt-in):** set `badgeLinksToIPage: true` and
+`iPage` to your slug (or full URL). Then the stamp opens
+`https://rasvibir.github.io/iNi/#/i/{slug}` (**I am {name}**).
+
+Snippet: `templates/snippets/ini-badge.html`. CyberCat places the stamp top-right.
+
 On 0?0: **INI**. Optional public notes: https://soloist.ai/uxu (`INI SITE`).
 Pamphlet: `archives/RTFM/INI-PROVENANCE.md`.
 

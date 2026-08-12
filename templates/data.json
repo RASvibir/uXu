@@ -25,6 +25,9 @@
     "ini": {
       "optIn": false,
       "tag": "iNi",
+      "showBadge": true,
+      "badgeLinksToIPage": false,
+      "iPage": null,
       "provenance": {
         "origin": "",
         "authors": [],

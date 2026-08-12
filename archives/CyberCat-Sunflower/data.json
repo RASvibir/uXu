@@ -36,6 +36,9 @@
     "ini": {
       "optIn": true,
       "tag": "iNi",
+      "showBadge": true,
+      "badgeLinksToIPage": true,
+      "iPage": "victor-birkle",
       "provenance": {
         "origin": "First non-root uXu archive room: a Grateful Dead live catalog deck. Performances come from the public taping tradition; streams are resolved via ReListen / Internet Archive catalog APIs. Deck UI and curation live in the uXu repo under archives/CyberCat-Sunflower.",
         "authors": [

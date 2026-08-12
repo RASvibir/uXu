@@ -322,6 +322,13 @@
     color:var(--cyan);
     opacity:.9;
     vertical-align:baseline;
+    text-decoration:none;
+  }
+  td.col-name a.ini-cue:hover,
+  td.col-name a.ini-cue:focus-visible{
+    opacity:1;
+    text-decoration:underline;
+    outline:none;
   }
   tbody tr{cursor:pointer;}
   tbody tr:hover td{background:rgba(15,58,34,.45);}
@@ -1667,6 +1674,17 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
   const CREATE_MANUAL_SLUG = 'archive-creation';
   const INI_COMMUNITY_URL = 'https://soloist.ai/uxu';
   const INI_PAPER_TRAIL_URL = 'https://github.com/RASvibir/iNi';
+  const INI_PAGES_BASE = 'https://rasvibir.github.io/iNi/#/i/';
+
+  function resolveIniPageUrl(ini) {
+    if (!ini || ini.optIn !== true || ini.badgeLinksToIPage !== true) return null;
+    const raw = String(ini.iPage || '').trim();
+    if (!raw) return null;
+    if (/^https?:\/\//i.test(raw)) return raw;
+    const slug = raw.replace(/^#?\/?i\//i, '').replace(/^\//, '');
+    if (!slug) return null;
+    return INI_PAGES_BASE + encodeURIComponent(slug);
+  }
   const manualToolbar = document.getElementById('manual-toolbar');
   const btnManual00 = document.getElementById('btn-manual-00');
   const btnManualLibrary = document.getElementById('btn-manual-library');
@@ -2372,6 +2390,8 @@ Guests cannot open this room.`);
         parent: r.parent || null,
         iniOptIn: false,
         iniTag: 'iNi',
+        iniShowBadge: false,
+        iniPageUrl: null,
         publicMetaLoaded: false,
         description: '',
         artist: '',
@@ -2920,11 +2940,20 @@ Guests cannot open this room.`);
       });
       hit.addEventListener('blur', () => scheduleHideNameModal(160));
       tdName.appendChild(hit);
-      if (entry.iniOptIn) {
-        const cue = document.createElement('span');
+      if (entry.iniOptIn && entry.iniShowBadge !== false) {
+        const iUrl = entry.iniPageUrl || null;
+        const cue = document.createElement(iUrl ? 'a' : 'span');
         cue.className = 'ini-cue';
         cue.textContent = entry.iniTag || 'iNi';
-        cue.title = 'iNi provenance opted in (self-attested)';
+        if (iUrl) {
+          cue.href = iUrl;
+          cue.target = '_blank';
+          cue.rel = 'noopener';
+          cue.title = 'iNi provenance · open I page';
+          cue.addEventListener('click', (e) => e.stopPropagation());
+        } else {
+          cue.title = 'iNi provenance opted in (self-attested)';
+        }
         tdName.appendChild(cue);
       }
 
@@ -3247,8 +3276,10 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     await Promise.all(candidates.map(async (entry) => {
       const beforeOpt = entry.iniOptIn;
       const beforeTag = entry.iniTag;
+      const beforePage = entry.iniPageUrl;
+      const beforeShow = entry.iniShowBadge;
       await enrichOneArchive(entry);
-      if (entry.iniOptIn !== beforeOpt || entry.iniTag !== beforeTag) changed = true;
+      if (entry.iniOptIn !== beforeOpt || entry.iniTag !== beforeTag || entry.iniPageUrl !== beforePage || entry.iniShowBadge !== beforeShow) changed = true;
     }));
     if (changed) renderRegistry();
     // Refresh open name modal if enrichment finished while it was visible
@@ -3295,6 +3326,8 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     const tag = (ini && ini.tag) ? String(ini.tag) : 'iNi';
     entry.iniOptIn = optIn;
     entry.iniTag = tag;
+    entry.iniShowBadge = optIn && !(ini && ini.showBadge === false);
+    entry.iniPageUrl = resolveIniPageUrl(ini);
     entry.archiveName = String(data.archiveName || '').trim();
     entry.artist = String(data.artist || '').trim();
     entry.curator = String(data.curator || '').trim();
@@ -3350,7 +3383,9 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     else line += ' — public archive';
     if (bits.length) line += `. ${bits.join('; ')}.`;
     else line += '.';
-    if (entry.iniOptIn) line += ` iNi provenance opted in.`;
+    if (entry.iniOptIn) line += entry.iniPageUrl
+      ? ` iNi provenance opted in (I page linked).`
+      : ` iNi provenance opted in.`;
     return line.replace(/\s+/g, ' ').trim();
   }
 
@@ -4166,12 +4201,15 @@ README.md`;
            └── optional: iNi tag + provenance fields</pre>
 
 <h3>Opt in (beta)</h3>
-<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Registry rows may show a light <strong>iNi</strong> cue when opted in — honesty badge, not enforcement. You do not need the Soloist page to opt in.</p>
+<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Optional showcase: <code>showBadge</code> (default true) displays an <strong>iNi</strong> verification mark — no I page required. Optional second opt-in: <code>badgeLinksToIPage: true</code> + <code>iPage</code> slug makes the badge open your I page. Registry cue is clickable only when that link opt-in is set — honesty mark, not enforcement. You do not need the Soloist page to opt in.</p>
 <pre>{
   "uxu": {
     "ini": {
       "optIn": true,
       "tag": "iNi",
+      "showBadge": true,
+      "badgeLinksToIPage": false,
+      "iPage": null,
       "provenance": {
         "origin": "…",
         "authors": ["…"],
