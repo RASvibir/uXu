@@ -169,6 +169,31 @@
       border: 1px solid rgba(77,232,255,.35); background: #030208; padding: .55rem .65rem;
     }
     .setlist-box .panel-h { border-color: rgba(77,232,255,.3); color: var(--cyan); }
+    .set-jumps {
+      display: flex; flex-wrap: wrap; gap: .3rem;
+      margin: .15rem 0 .4rem; min-height: 0;
+    }
+    .set-jumps:empty { display: none; }
+    .set-jump {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .08em;
+      text-transform: uppercase; background: transparent; color: var(--amber);
+      border: 1px solid rgba(255,210,74,.4); padding: .22rem .45rem; cursor: pointer;
+      transition: background .15s var(--ease), color .15s var(--ease);
+    }
+    .set-jump:hover, .set-jump:focus-visible {
+      background: var(--amber); color: #1a1200; outline: none;
+    }
+    .set-jump.active {
+      background: rgba(255,210,74,.2); color: var(--amber); border-color: var(--amber);
+    }
+    .set-mark {
+      display: flex; align-items: center; gap: .45rem;
+      margin: .45rem 0 .2rem; padding: .2rem 0;
+      font-size: .62rem; letter-spacing: .14em; color: var(--amber);
+      border-bottom: 1px solid rgba(255,210,74,.35); cursor: pointer;
+      font-family: var(--display);
+    }
+    .set-mark:hover { color: var(--cyan); border-color: rgba(77,232,255,.45); }
     .setlist-scroller {
       flex: 1; overflow-y: auto; font-size: .78rem; color: var(--text); line-height: 1.55;
       scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a;
@@ -192,6 +217,12 @@
     .song .title { flex: 1; min-width: 0; }
     .song.playing { color: var(--cyan); background: rgba(77,232,255,.08); }
     .song.playing .cue { color: var(--cyan); border-color: rgba(77,232,255,.45); }
+    .song.set-marker {
+      color: var(--amber);
+      background: rgba(255,210,74,.07);
+      border-bottom-color: rgba(255,210,74,.25);
+    }
+    .song.set-marker .title { letter-spacing: .04em; }
     .empty { color: var(--muted); padding: .4rem 0; }
 
     .hub-panel {
@@ -395,6 +426,7 @@
               <span>SETLIST MONITOR</span>
               <span class="tag" id="setlist-count">0 TRACKS</span>
             </div>
+            <div class="set-jumps" id="set-jumps" aria-label="Jump to set"></div>
             <div id="live-setlist-output" class="setlist-scroller" aria-live="polite">
               <div class="empty">Awaiting tape engage…</div>
             </div>
@@ -473,6 +505,7 @@
   const altsModal = document.getElementById('alts-modal');
   const altsList = document.getElementById('alts-list');
 
+  const setJumps = document.getElementById('set-jumps');
   let shows = [];
   let filtered = [];
   let residencies = [];
@@ -483,6 +516,7 @@
   let bestSourceId = null;
   let currentSource = null;
   let playlist = [];
+  let setDestinations = [];
   let trackIndex = -1;
   let audioCtx = null, filters = [], eqReady = false;
   let toastTimer = null;
@@ -644,10 +678,160 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
           duration: t.duration,
           position: t.track_position,
           set: setName,
+          isEncoreSet: !!set.is_encore,
         });
       }
     }
-    return tracks;
+    return annotateSetMarkers(tracks);
+  }
+
+  function classifyMarker(title) {
+    const raw = String(title || '').trim();
+    if (!raw) return null;
+    const t = raw.toLowerCase().replace(/\s+/g, ' ');
+
+    // Explicit set placement titles: set1, set 1, set I, Set II, etc.
+    let m = t.match(/^set\s*(1|2|3|i{1,3}|one|two|three)\b/);
+    if (m) {
+      const token = String(m[1]).toLowerCase();
+      const map = { 1: 'SET I', i: 'SET I', one: 'SET I', 2: 'SET II', ii: 'SET II', two: 'SET II', 3: 'SET III', iii: 'SET III', three: 'SET III' };
+      return { kind: 'set', label: map[token] || ('SET ' + token.toUpperCase()), explicit: true };
+    }
+
+    if (/^set\s*break\b|^encore\s*break\b/.test(t)) {
+      return { kind: 'break', label: 'SET BREAK', explicit: true };
+    }
+    if (/^announcement\b|^announce\b|^stage\s*announce/.test(t)) {
+      return { kind: 'announce', label: 'ANNOUNCEMENT', explicit: true };
+    }
+    if (/^encore\b|^e:\s*/.test(t)) {
+      return { kind: 'encore', label: 'ENCORE', explicit: true };
+    }
+    // Soft mid-tape pads — only used as inferred set breaks
+    if (/^(tuning|crowd|dead air|intro|introduction)\b/.test(t) && t.length < 48) {
+      return { kind: 'soft', label: 'BREAK', explicit: false };
+    }
+    return null;
+  }
+
+  function isFillerTitle(title) {
+    return /^filler\b/i.test(String(title || '').trim());
+  }
+
+  function nextPlayableIndex(tracks, fromIdx) {
+    for (let i = fromIdx; i < tracks.length; i++) {
+      const mark = classifyMarker(tracks[i].title);
+      if (mark && (mark.kind === 'soft' || mark.kind === 'break')) continue;
+      if (isFillerTitle(tracks[i].title)) continue;
+      return i;
+    }
+    return fromIdx;
+  }
+
+  function romanSetLabel(n) {
+    return ['SET I', 'SET II', 'SET III', 'SET IV'][n - 1] || ('SET ' + n);
+  }
+
+  function annotateSetMarkers(tracks) {
+    return tracks.map((t) => {
+      const mark = classifyMarker(t.title);
+      return Object.assign({}, t, { marker: mark });
+    });
+  }
+
+  function buildSetDestinations(tracks) {
+    if (!tracks.length) return [];
+    const dests = [];
+    const seen = new Set();
+
+    function pushDest(idx, label, opts = {}) {
+      const i = Math.max(0, Math.min(idx, tracks.length - 1));
+      const key = i + '::' + label;
+      if (seen.has(i) && !opts.force) return;
+      seen.add(i);
+      dests.push({
+        idx: i,
+        label,
+        marker: !!opts.marker,
+        explicit: !!opts.explicit,
+      });
+    }
+
+    // Prefer real multi-set containers from the transfer when present
+    const setOrder = [];
+    tracks.forEach((t, idx) => {
+      const name = (t.isEncoreSet ? 'Encore' : (t.set || 'Set')).trim();
+      if (!setOrder.includes(name)) setOrder.push(name);
+      t._setOrd = setOrder.indexOf(name);
+    });
+    const multiSets = setOrder.length > 1 || setOrder.some((n) => /encore/i.test(n));
+    if (multiSets && setOrder.some((n) => !/^set$/i.test(n))) {
+      setOrder.forEach((name, si) => {
+        const idx = tracks.findIndex((t) => t._setOrd === si);
+        if (idx < 0) return;
+        const label = /encore/i.test(name) ? 'ENCORE' : (/^set$/i.test(name) ? romanSetLabel(si + 1) : name.toUpperCase());
+        pushDest(idx, label, { marker: idx > 0, explicit: true });
+      });
+      return dests;
+    }
+
+    pushDest(0, 'SET I', { marker: false, explicit: true });
+
+    let inferredSets = 1;
+    let usedSoft = false;
+    tracks.forEach((track, idx) => {
+      if (idx === 0) return;
+      const mark = track.marker || classifyMarker(track.title);
+      if (!mark) {
+        // Encore glued onto a song title: "E: Foo" / "Encore: Foo"
+        if (/^(?:e:|encore:)\s+\S/i.test(track.title)) {
+          pushDest(idx, 'ENCORE', { marker: true, explicit: true });
+        }
+        return;
+      }
+
+      if (mark.kind === 'set') {
+        pushDest(idx, mark.label, { marker: true, explicit: true });
+        const n = mark.label === 'SET II' ? 2 : mark.label === 'SET III' ? 3 : mark.label === 'SET I' ? 1 : inferredSets;
+        inferredSets = Math.max(inferredSets, n);
+        return;
+      }
+      if (mark.kind === 'encore') {
+        pushDest(idx, 'ENCORE', { marker: true, explicit: true });
+        return;
+      }
+      if (mark.kind === 'announce') {
+        pushDest(idx, 'ANNOUNCEMENT', { marker: true, explicit: true });
+        return;
+      }
+      if (mark.kind === 'break') {
+        inferredSets += 1;
+        const destIdx = nextPlayableIndex(tracks, idx + 1);
+        pushDest(destIdx, romanSetLabel(Math.min(inferredSets, 4)), { marker: true, explicit: true });
+        return;
+      }
+      if (mark.kind === 'soft' && !usedSoft) {
+        // One inferred mid-show break from tuning/crowd when no explicit set2 yet
+        const ratio = idx / tracks.length;
+        if (ratio >= 0.28 && ratio <= 0.72 && inferredSets === 1) {
+          usedSoft = true;
+          inferredSets = 2;
+          const destIdx = nextPlayableIndex(tracks, idx + 1);
+          pushDest(destIdx, 'SET II', { marker: true, explicit: false });
+        }
+      }
+    });
+
+    // Stable order by index; keep first label if collision
+    dests.sort((a, b) => a.idx - b.idx);
+    const unique = [];
+    const usedIdx = new Set();
+    for (const d of dests) {
+      if (usedIdx.has(d.idx)) continue;
+      usedIdx.add(d.idx);
+      unique.push(d);
+    }
+    return unique;
   }
 
   function scoreSource(source) {
@@ -759,18 +943,60 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
+  function renderSetJumps() {
+    setJumps.innerHTML = '';
+    if (setDestinations.length < 2) return;
+    setDestinations.forEach((dest) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'set-jump' + (trackIndex >= dest.idx && isCurrentInDest(dest) ? ' active' : '');
+      btn.textContent = dest.label;
+      btn.title = `Jump to ${dest.label} · track ${dest.idx + 1}`;
+      btn.addEventListener('click', () => {
+        playTrack(dest.idx);
+        toast(`${dest.label} · track ${String(dest.idx + 1).padStart(2, '0')}`);
+      });
+      setJumps.appendChild(btn);
+    });
+  }
+
+  function isCurrentInDest(dest) {
+    const next = setDestinations.find((d) => d.idx > dest.idx);
+    const end = next ? next.idx : playlist.length;
+    return trackIndex >= dest.idx && trackIndex < end;
+  }
+
   function renderSetlist() {
     setlistOut.innerHTML = '';
+    setDestinations = buildSetDestinations(playlist);
+    renderSetJumps();
     if (!playlist.length) {
       setlistOut.innerHTML = '<div class="empty">No playable tracks on this transfer.</div>';
       setlistCount.textContent = '0 TRACKS';
       return;
     }
     setlistCount.textContent = `${playlist.length} TRACKS`;
+    const destByIdx = new Map(setDestinations.filter((d) => d.marker || d.idx === 0).map((d) => [d.idx, d]));
+
     playlist.forEach((track, idx) => {
+      const dest = destByIdx.get(idx);
+      if (dest && (dest.marker || (idx === 0 && setDestinations.length > 1))) {
+        const mark = document.createElement('button');
+        mark.type = 'button';
+        mark.className = 'set-mark';
+        mark.textContent = `▸ ${dest.label}`;
+        mark.setAttribute('aria-label', `Jump to ${dest.label}`);
+        mark.addEventListener('click', () => playTrack(idx));
+        setlistOut.appendChild(mark);
+      }
+
       const row = document.createElement('button');
       row.type = 'button';
-      row.className = 'song' + (idx === trackIndex ? ' playing' : '');
+      const isMarker = !!(track.marker && track.marker.explicit);
+      row.className = 'song'
+        + (idx === trackIndex ? ' playing' : '')
+        + (isMarker ? ' set-marker' : '');
+      row.dataset.idx = String(idx);
       row.setAttribute('aria-label', `Cue track ${idx + 1}: ${track.title}`);
       const n = document.createElement('span');
       n.className = 'n';
@@ -790,10 +1016,14 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   function updateNowPlaying(track) {
     if (!activeShow) return;
     const place = venuePlace(activeShow);
+    const dest = setDestinations.slice().reverse().find((d) => trackIndex >= d.idx);
+    const destBit = dest && setDestinations.length > 1
+      ? `<span style="color:var(--amber)">${dest.label}</span> · `
+      : '';
     nowPlaying.innerHTML =
       `<strong>${showDate(activeShow)}</strong> · ${venueName(activeShow)}<br>` +
       `<span style="color:var(--muted)">${place}</span><br>` +
-      `<span style="color:var(--cyan)">▶ ${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
+      `<span style="color:var(--cyan)">▶ ${destBit}${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
   }
 
   function playTrack(idx) {
@@ -805,13 +1035,14 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     player.play().catch(() => toast('Press play on the deck'));
     updateNowPlaying(track);
     renderSetlist();
-    const row = setlistOut.children[idx];
+    const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
     if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   function applySource(rankedItem, { announce } = { announce: true }) {
     currentSource = rankedItem.source;
     playlist = rankedItem.tracks;
+    setDestinations = buildSetDestinations(playlist);
     const isBest = currentSource.id === bestSourceId;
     sourceTag.textContent = currentSource.is_soundboard ? 'SBD' : 'AUD';
     sourceMeta.textContent = describeSource(currentSource, isBest);
