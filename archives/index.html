@@ -37,7 +37,10 @@
     --ease:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;}
-  html,body{height:100%;}
+  html,body{
+    height:100%;
+    overflow-anchor:none;
+  }
   body{
     margin:0;
     min-height:100vh;
@@ -50,6 +53,7 @@
       radial-gradient(ellipse at center, #2a261e 0%, #0e0c0a 70%);
     font-family:var(--mono);
     color:var(--green);
+    overflow-x:hidden;
   }
 
   .bezel{
@@ -118,7 +122,10 @@
     border-radius:6px;
     padding:1rem 1.15rem .9rem;
     overflow:hidden;
-    min-height:min(72vh,640px);
+    /* Fixed CRT height so docs scroll inside — not the window to the bottom */
+    height:min(78vh, 720px);
+    max-height:calc(100dvh - 5.5rem);
+    min-height:0;
     display:flex;
     flex-direction:column;
     box-shadow:
@@ -183,7 +190,12 @@
   }
   @media (max-width:900px){
     .grid{grid-template-columns:1fr;}
-    .screen{min-height:auto;}
+    .screen{
+      height:auto;
+      max-height:none;
+      min-height:min(70vh, 640px);
+    }
+    body{align-items:flex-start;}
   }
   .col{display:flex; flex-direction:column; gap:.75rem; min-width:0; min-height:0;}
 
@@ -957,30 +969,40 @@
   .rtfm-body{
     flex:1;
     min-height:0;
-    overflow-y:auto;
-    overflow-anchor:none;
-    scroll-behavior:auto;
-    overscroll-behavior:contain;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
     font-size:.74rem;
     line-height:1.55;
     color:var(--green);
+  }
+  .rtfm-pane{
+    flex:1;
+    min-height:0;
+    overflow-y:auto;
+    overflow-anchor:none;
+    overscroll-behavior:contain;
     padding-right:.25rem;
     padding-bottom:1.25rem;
     scrollbar-width:thin;
     scrollbar-color:var(--green-dim) transparent;
   }
+  .rtfm-pane[hidden]{display:none !important;}
   .rtfm-body::-webkit-scrollbar,
+  .rtfm-pane::-webkit-scrollbar,
   .guide-scroll::-webkit-scrollbar,
   #active-summary::-webkit-scrollbar{
     width:8px;
   }
   .rtfm-body::-webkit-scrollbar-thumb,
+  .rtfm-pane::-webkit-scrollbar-thumb,
   .guide-scroll::-webkit-scrollbar-thumb,
   #active-summary::-webkit-scrollbar-thumb{
     background:var(--green-dim);
     border-radius:4px;
   }
   .rtfm-body::-webkit-scrollbar-track,
+  .rtfm-pane::-webkit-scrollbar-track,
   .guide-scroll::-webkit-scrollbar-track,
   #active-summary::-webkit-scrollbar-track{
     background:transparent;
@@ -1602,18 +1624,33 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
   }
 
   function resetDocScroll() {
+    try { window.scrollTo(0, 0); } catch (_) { /* ignore */ }
     const nodes = [
       document.getElementById('rtfm-body'),
+      document.querySelector('.rtfm-pane:not([hidden])'),
       document.getElementById('faq-scroll'),
       document.getElementById('ini-scroll'),
       document.getElementById('create-scroll'),
       document.getElementById('active-summary'),
+      document.querySelector('.output-panel'),
+      document.querySelector('.screen'),
     ];
     nodes.forEach((el) => {
       if (!el) return;
       el.scrollTop = 0;
       el.scrollLeft = 0;
     });
+  }
+
+  function scheduleDocScrollReset() {
+    resetDocScroll();
+    requestAnimationFrame(() => {
+      resetDocScroll();
+      requestAnimationFrame(resetDocScroll);
+    });
+    setTimeout(resetDocScroll, 0);
+    setTimeout(resetDocScroll, 50);
+    setTimeout(resetDocScroll, 120);
   }
 
   function showRtfmUi() {
@@ -1626,7 +1663,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
-    requestAnimationFrame(() => resetDocScroll());
+    scheduleDocScrollReset();
   }
 
   function showCreateUi() {
@@ -1639,7 +1676,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
-    requestAnimationFrame(() => resetDocScroll());
+    scheduleDocScrollReset();
   }
 
   function showFaqUi() {
@@ -1652,7 +1689,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
-    requestAnimationFrame(() => resetDocScroll());
+    scheduleDocScrollReset();
   }
 
   function showIniUi() {
@@ -1665,7 +1702,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
-    requestAnimationFrame(() => resetDocScroll());
+    scheduleDocScrollReset();
   }
 
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
@@ -3421,10 +3458,12 @@ README.md`;
         el.textContent = data.manuals
           .map((m) => `${m.slug.padEnd(22, ' ')}  ${m.title}`)
           .join('\n');
+        scheduleDocScrollReset();
         return;
       }
     } catch (_) { /* use fallback */ }
     el.textContent = fallback;
+    scheduleDocScrollReset();
   }
 
   function setRtfmTab(tab) {
@@ -3438,7 +3477,7 @@ README.md`;
       pane.hidden = !on;
     });
     if (rtfmTab === 'source') fillRtfmSourceFiles();
-    requestAnimationFrame(() => resetDocScroll());
+    scheduleDocScrollReset();
   }
 
   function setRtfmCodeTab(id) {
@@ -3449,7 +3488,7 @@ README.md`;
     document.querySelectorAll('[data-rtfm-code-pane]').forEach((pane) => {
       pane.hidden = pane.getAttribute('data-rtfm-code-pane') !== rtfmCodeTab;
     });
-    requestAnimationFrame(() => resetDocScroll());
+    scheduleDocScrollReset();
   }
 
   function openRtfm(opts = {}) {
@@ -3464,10 +3503,7 @@ README.md`;
     setManualToolbar('rtfm');
     activeTitle.textContent = opts.title || '0?0 · RTFM';
     toast(opts.toast || 'RTFM — 0?0 manual');
-    requestAnimationFrame(() => {
-      resetDocScroll();
-      requestAnimationFrame(resetDocScroll);
-    });
+    scheduleDocScrollReset();
   }
 
   function openAbout() {
@@ -4357,10 +4393,18 @@ Then attest here so SETUP MASTER can check it off.`);
       document.getElementById('nav-user-toggle')?.focus();
       return;
     }
-    if (e.key === 'ArrowDown' && items[idx + 1]) { e.preventDefault(); items[idx + 1].focus(); items[idx + 1].scrollIntoView({ block: 'nearest' }); }
-    if (e.key === 'ArrowUp' && items[idx - 1]) { e.preventDefault(); items[idx - 1].focus(); items[idx - 1].scrollIntoView({ block: 'nearest' }); }
-    if (e.key === 'Home') { e.preventDefault(); items[0]?.focus(); }
-    if (e.key === 'End') { e.preventDefault(); items[items.length - 1]?.focus(); }
+    if (e.key === 'ArrowDown' && items[idx + 1]) {
+      e.preventDefault();
+      items[idx + 1].focus({ preventScroll: true });
+      try { items[idx + 1].scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (_) { /* ignore */ }
+    }
+    if (e.key === 'ArrowUp' && items[idx - 1]) {
+      e.preventDefault();
+      items[idx - 1].focus({ preventScroll: true });
+      try { items[idx - 1].scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (_) { /* ignore */ }
+    }
+    if (e.key === 'Home') { e.preventDefault(); items[0]?.focus({ preventScroll: true }); }
+    if (e.key === 'End') { e.preventDefault(); items[items.length - 1]?.focus({ preventScroll: true }); }
   });
 
   if (btnManual00) {
@@ -4487,8 +4531,10 @@ Then attest here so SETUP MASTER can check it off.`);
     }
     if (idx < 0) idx = 0;
     idx = Math.max(0, Math.min(items.length - 1, idx + delta));
-    items[idx].focus({ preventScroll: false });
-    items[idx].scrollIntoView({ block: 'nearest' });
+    items[idx].focus({ preventScroll: true });
+    try {
+      items[idx].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    } catch (_) { /* ignore */ }
   }
 
   function focusActionButtons(delta = 0) {
