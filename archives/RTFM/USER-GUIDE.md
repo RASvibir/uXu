@@ -23,7 +23,7 @@ This guide is for everyone. No coding required.
 3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
 4. **Try CyberCat Sunflower** — a Grateful Dead listening deck. Type `OPEN CYBERCAT`.
 5. **Create your own archive** — use CREATE ARCHIVE when you are ready. Start simple; grow later.
-6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer.
+6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer. Community face: https://soloist.ai/uxu (`INI SITE` / **see website** on the INI panel).
 
 ## Finding Your Way (0?0)
 
@@ -45,6 +45,7 @@ INDEX
 ABOUT
 FAQ
 INI
+INI SITE
 RTFM
 MANUAL
 ARCHIVE MANUALS
@@ -59,7 +60,7 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | Guide | Who it is for |
 |-------|----------------|
 | **ABOUT / RTFM** | **ABOUT** = what uXu is (site · repo · app); RTFM = using the 0?0 archive interface |
-| **iNi Provenance** | Opt-in authenticity protocol |
+| **iNi Provenance** | Opt-in authenticity protocol · community site https://soloist.ai/uxu |
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |
 | CyberCat Sunflower Manual | Listening / using that deck |
@@ -143,6 +144,6 @@ You will get a human reply. There is no automated ticket maze.
 
 - Curious listener → `OPEN CYBERCAT`, then read its Manual (F4 on that deck).
 - Ready to contribute → CREATE ARCHIVE or READ archive-creation.
-- Want provenance practice → **iNi Provenance** / `INI`.
+- Want provenance practice → **iNi Provenance** / `INI` · community site `INI SITE` → https://soloist.ai/uxu.
 - Builder / coder → READ developers-handbook.
 - Want the big picture of files → READ source-code-pamphlet.

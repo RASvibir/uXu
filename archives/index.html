@@ -1152,6 +1152,29 @@
   }
   .guide-scroll .lede{color:var(--highlight-fg); margin-bottom:.55rem;}
   .guide-scroll .muted{color:var(--green-dim);}
+  .guide-scroll .ini-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.45rem;
+    margin:.55rem 0 .9rem;
+  }
+  .guide-scroll a.ini-site{
+    display:inline-block;
+    padding:.28rem .7rem;
+    border:1px solid rgba(94,240,255,.65);
+    background:rgba(94,240,255,.12);
+    color:var(--cyan);
+    text-decoration:none;
+    font-weight:800;
+    letter-spacing:.04em;
+    font-size:.72rem;
+  }
+  .guide-scroll a.ini-site:hover,
+  .guide-scroll a.ini-site:focus-visible{
+    background:rgba(94,240,255,.28);
+    color:#e8ffff;
+    outline:1px solid var(--cyan);
+  }
   .guide-scroll details{
     border:1px solid var(--green-line);
     margin:.35rem 0;
@@ -1418,7 +1441,7 @@
               <div class="ini-tip" id="ini-tip" role="tooltip" hidden>
                 <span class="ini-tip-k">iNi</span>
                 <span class="ini-tip-v">join our community</span>
-                <span class="ini-tip-soft">opt-in provenance · I and I</span>
+                <span class="ini-tip-soft">see website · soloist.ai/uxu</span>
               </div>
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
@@ -1588,6 +1611,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
   const btnInstall = document.querySelector('#btn-install');
   const LANDING_MANUAL_SLUG = 'user-guide';
   const CREATE_MANUAL_SLUG = 'archive-creation';
+  const INI_COMMUNITY_URL = 'https://soloist.ai/uxu';
   const manualToolbar = document.getElementById('manual-toolbar');
   const btnManual00 = document.getElementById('btn-manual-00');
   const btnManualLibrary = document.getElementById('btn-manual-library');
@@ -1738,7 +1762,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v4';
+    const SW_BUST = 'uxu_sw_bust_v5';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -3398,7 +3422,7 @@ const list = document.getElementById('archive-list');
 
 <h3>iNi (opt-in provenance)</h3>
 <p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space for origin, authorship, lineage, and custody. Not required to publish on uXu.</p>
-<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Hover tip: <em>join our community</em>. Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
+<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Option: <strong>see website</strong> → <a href="https://soloist.ai/uxu" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a>. Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
 
 <h3>How and why I created it</h3>
 <p>I built <strong>uXu</strong> because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
@@ -3492,6 +3516,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><td><code>ABOUT</code></td><td>What uXu is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td><code>FAQ</code></td><td>Friendly everyday how-to</td></tr>
   <tr><td><code>INI</code></td><td>iNi Provenance guide (Quick Nav flair)</td></tr>
+  <tr><td><code>INI SITE</code></td><td>Open iNi community website (soloist.ai/uxu)</td></tr>
   <tr><td><code>RTFM</code></td><td>This 0?0 manual (tabs)</td></tr>
   <tr><td><code>MANUAL</code></td><td>Manual library index (pamphlets)</td></tr>
   <tr><td><code>READ &lt;slug|n&gt;</code></td><td>Open a library pamphlet</td></tr>
@@ -3707,7 +3732,7 @@ README.md`;
 </details>
 <details>
   <summary>What is iNi?</summary>
-  <p>An optional provenance protocol. Creators who opt in document origin, authorship, custody, and lineage. Type <strong>INI</strong> for the guide. Not required to publish on uXu.</p>
+  <p>An optional provenance protocol and community practice. Creators who opt in document origin, authorship, custody, and lineage. Type <strong>INI</strong> for the guide, or open the community face at <a href="https://soloist.ai/uxu" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a>. Not required to publish on uXu.</p>
 </details>
 <details>
   <summary>How do I browse?</summary>
@@ -3762,6 +3787,10 @@ README.md`;
     if (root) {
       root.innerHTML = `
 <p class="lede"><strong>iNi</strong> — opt-in provenance beside uXu. An “I and I” practice for origin, authorship, lineage, and custody.</p>
+<p class="ini-actions">
+  <a class="ini-site" href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener">see website</a>
+</p>
+<p class="muted">Community face: <a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a> · or type <code>INI SITE</code></p>
 
 <h3>What it is</h3>
 <p>A name, a protocol, and a community boundary defined by practice — not a company label. uXu does not require iNi. Creators who want explicit authenticity documentation may opt in.</p>
@@ -3773,7 +3802,7 @@ README.md`;
            └── optional: iNi tag + provenance fields</pre>
 
 <h3>Opt in (beta)</h3>
-<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Registry rows may show a light <strong>iNi</strong> cue when opted in — honesty badge, not enforcement.</p>
+<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Registry rows may show a light <strong>iNi</strong> cue when opted in — honesty badge, not enforcement. You do not need the Soloist page to opt in.</p>
 <pre>{
   "uxu": {
     "ini": {
@@ -3800,12 +3829,26 @@ README.md`;
 <p class="muted">Self-attestation — not a legal chain-of-custody certificate.</p>
 
 <h3>Read more</h3>
+<p>Community site: <a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a></p>
 <p>Full pamphlet: <code>archives/RTFM/INI-PROVENANCE.md</code> · also via <strong>USER OPTIONS → MANUAL LIBRARY</strong> when ingested · templates ship with <code>optIn: false</code>.</p>
 <p>Questions: <strong>rasip@chloreform.org</strong></p>`;
     }
     showIniUi();
     activeTitle.textContent = 'iNi · PROVENANCE';
     toast('INI — provenance protocol');
+  }
+
+  function openIniSite() {
+    try {
+      window.open(INI_COMMUNITY_URL, '_blank', 'noopener');
+    } catch (_) { /* ignore */ }
+    toast('INI SITE — soloist.ai/uxu');
+    showOutput('INI SITE',
+`iNi community face (Soloist)
+
+${INI_COMMUNITY_URL}
+
+Back on 0?0: type INI for the provenance guide, or continue browsing the commons.`);
   }
 
   async function openRootManual(slug, opts = {}) {
@@ -3963,6 +4006,7 @@ RTFM              interactive 0?0 manual (about → ease → … → source)
 ABOUT             what uXu is (site · repo · app) · 0?0 archive interface
 FAQ               friendly functional how-to
 INI               iNi provenance protocol (opt-in)
+INI SITE          open iNi community website (soloist.ai/uxu)
 MANUAL            manual library index (pamphlets)
 ARCHIVE MANUALS   index / search manuals from created archives
 FIND MANUAL <q>   filter that index
@@ -4044,6 +4088,10 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
     }
     if (cmd === "FAQ") {
       openFaq();
+      return;
+    }
+    if (cmd === "INI SITE" || cmd === "INI WEBSITE" || cmd === "SEE WEBSITE" || cmd === "INI SEE WEBSITE") {
+      openIniSite();
       return;
     }
     if (cmd === "INI" || cmd === "INI PROVENANCE" || cmd === "PROVENANCE") {

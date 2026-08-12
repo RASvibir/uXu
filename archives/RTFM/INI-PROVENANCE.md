@@ -34,6 +34,16 @@ uXu  (public collection)
            └── optional: iNi tag + provenance fields
 ```
 
+## Community face
+
+Public community site (practice / FAQ / contact):
+
+**https://soloist.ai/uxu**
+
+On 0?0: Quick Nav **iNi Provenance** → **see website**, or type **`INI SITE`**.
+Opt-in itself still happens in your archive / on the console — you do not need
+the Soloist page to practice iNi.
+
 ## The provenance protocol
 
 In archive practice, provenance is the recorded origin, ownership history, and
@@ -76,8 +86,9 @@ Joining iNi is not a newsletter signup. It means adopting the protocol:
 3. Share norms about how origin, authorship, and custody are described  
 
 The community is defined by **practice**, not membership badges alone.
-0?0 is the beta front door into that idea — Quick Nav **iNi Provenance**
-(or type `INI`). Hover tip: *join our community*.
+0?0 is a front door into that idea — Quick Nav **iNi Provenance**
+(or type `INI`). Hover tip: *join our community*. Community website:
+https://soloist.ai/uxu (`INI SITE` / **see website**).
 
 ## Conceptual pillars
 
@@ -87,6 +98,12 @@ The community is defined by **practice**, not membership badges alone.
 4. **Opt-in authenticity** — the tag is optional but meaningful  
 
 ## How to opt in (beta)
+
+You do not need the Soloist site to opt in.
+
+**Path for new visitors:** start at the uXu commons
+(https://rasvibir.github.io/uXu/) → that opens **0?0** → Quick Nav
+**iNi Provenance** (or type `INI`) → follow the guide.
 
 In your archive `data.json`:
 
@@ -112,14 +129,17 @@ cue when `optIn` is true (honesty badge — not enforcement).
 
 ## What iNi is not (beta)
 
-- Not a separate membership website (yet)  
+- Not membership theater or a signup badge  
 - Not required to publish on uXu  
 - Not a company or org brand label  
+- Not a legal chain-of-custody certificate  
 - Not a claim that uXu owns your archive  
 
 ## Contact
 
 Questions about iNi practice or registration: **rasip@chloreform.org**
+
+Community site: **https://soloist.ai/uxu**
 
 uXu software & original docs: **MIT** (`LICENSE`). Provenance fields document
 honesty; they do not rewrite media copyright.

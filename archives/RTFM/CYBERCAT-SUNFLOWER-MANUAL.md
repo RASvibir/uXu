@@ -75,5 +75,6 @@ that explain why a night matters. Schema and curator tips live under
 ## Finding Center
 
 Lost in the catalog? Return to **0?0** — the root of uXu.
-On the root console: **ABOUT** / **RTFM**, **iNi Provenance**, and
+On the root console: **ABOUT** / **RTFM**, **iNi Provenance** (community site:
+https://soloist.ai/uxu), and
 **USER OPTIONS → MANUAL LIBRARY** for the shared pamphlet set.
