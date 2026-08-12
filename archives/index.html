@@ -231,7 +231,7 @@
   .kv dt{color:var(--green-dim); white-space:nowrap;}
   .kv dd{margin:0; color:var(--green-bright); text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
-  .registry-wrap{overflow:auto; max-height:11.5rem;}
+  .registry-wrap{overflow:auto; max-height:11.5rem; position:relative;}
   table{width:100%; border-collapse:collapse; font-size:.72rem; table-layout:fixed;}
   th{
     text-align:left;
@@ -242,6 +242,10 @@
     position:sticky; top:0;
     background:rgba(3,8,5,.95);
   }
+  th:nth-child(1), td:nth-child(1){width:42%;}
+  th:nth-child(2), td:nth-child(2){width:28%;}
+  th:nth-child(3), td:nth-child(3){width:15%;}
+  th:nth-child(4), td:nth-child(4){width:15%;}
   td{
     padding:.32rem .3rem;
     overflow:hidden;
@@ -250,6 +254,22 @@
     border-bottom:1px solid var(--green-line);
     transition:background .15s var(--ease), color .15s var(--ease);
   }
+  td.col-id{
+    font-family:var(--mono);
+    color:var(--cyan);
+    letter-spacing:.02em;
+  }
+  td.col-name{
+    color:var(--green-bright);
+  }
+  td.col-name .name-hit{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    cursor:help;
+    border-bottom:1px dotted rgba(61,232,114,.35);
+  }
   tbody tr{cursor:pointer;}
   tbody tr:hover td{background:rgba(15,58,34,.45);}
   tbody tr:focus-visible, tbody tr.active{
@@ -257,7 +277,50 @@
     outline:none;
   }
   tbody tr.active td{color:var(--highlight-fg);}
-  tbody tr.active td:first-child{color:var(--cyan);}
+  tbody tr.active td.col-id{color:var(--cyan);}
+
+  .name-modal{
+    position:fixed;
+    z-index:40;
+    min-width:12rem;
+    max-width:min(28rem, 92vw);
+    padding:.55rem .7rem;
+    background:rgba(4,12,8,.96);
+    border:1px solid var(--green-dim);
+    box-shadow:0 0 24px rgba(0,0,0,.55), 0 0 18px rgba(61,232,114,.12);
+    color:var(--green-bright);
+    font-family:var(--mono);
+    font-size:.78rem;
+    line-height:1.45;
+    pointer-events:none;
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity .15s var(--ease), transform .15s var(--ease);
+  }
+  .name-modal.show{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .name-modal .nm-k{
+    display:block;
+    color:var(--green-dim);
+    font-size:.62rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-bottom:.2rem;
+  }
+  .name-modal .nm-v{
+    white-space:normal;
+    word-break:break-word;
+  }
+  .name-modal .nm-id{
+    margin-top:.35rem;
+    padding-top:.35rem;
+    border-top:1px dashed var(--green-line);
+    color:var(--cyan);
+    font-size:.68rem;
+    word-break:break-all;
+  }
 
   .output-panel{flex:1; display:flex; flex-direction:column; min-height:10rem;}
   #active-summary{
@@ -497,10 +560,15 @@
               <div class="registry-wrap">
                 <table id="registry-table">
                   <thead>
-                    <tr><th>ID</th><th>TITLE</th><th>STATUS</th><th>TYPE</th></tr>
+                    <tr><th>ARCHIVE ID</th><th>NAME</th><th>STATUS</th><th>TYPE</th></tr>
                   </thead>
                   <tbody></tbody>
                 </table>
+              </div>
+              <div class="name-modal" id="name-modal" role="tooltip" hidden>
+                <span class="nm-k">Archive name</span>
+                <div class="nm-v" id="name-modal-title"></div>
+                <div class="nm-id" id="name-modal-id"></div>
               </div>
               <div class="action-row">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled>Open Archive</button>
@@ -915,14 +983,94 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
     }
   }
 
+  function nextArchiveSerial() {
+    let max = -1;
+    registry.forEach((e) => {
+      const m = String(e.id || '').match(/\.(\d{4})$/);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    return String(max + 1).padStart(4, '0');
+  }
+
+  function formatArchiveIdExample(titleHint) {
+    const safe = String(titleHint || 'Your_Archive')
+      .trim()
+      .replace(/\s+/g, '_')
+      .replace(/[^A-Za-z0-9_?-]/g, '') || 'Your_Archive';
+    return `${safe}.uXu.${nextArchiveSerial()}`;
+  }
+
+  const nameModal = document.getElementById('name-modal');
+  const nameModalTitle = document.getElementById('name-modal-title');
+  const nameModalId = document.getElementById('name-modal-id');
+  let nameModalTimer = null;
+
+  function hideNameModal() {
+    clearTimeout(nameModalTimer);
+    nameModal.classList.remove('show');
+    nameModal.hidden = true;
+  }
+
+  function showNameModal(entry, anchorEl) {
+    clearTimeout(nameModalTimer);
+    nameModalTitle.textContent = entry.title || '(unnamed)';
+    nameModalId.textContent = entry.id || '';
+    nameModal.hidden = false;
+    // measure then place near the name cell
+    const rect = anchorEl.getBoundingClientRect();
+    const pad = 8;
+    nameModal.style.left = '0px';
+    nameModal.style.top = '0px';
+    const mw = nameModal.offsetWidth || 220;
+    const mh = nameModal.offsetHeight || 80;
+    let left = rect.left;
+    let top = rect.bottom + pad;
+    if (left + mw > window.innerWidth - pad) left = Math.max(pad, window.innerWidth - mw - pad);
+    if (top + mh > window.innerHeight - pad) top = Math.max(pad, rect.top - mh - pad);
+    nameModal.style.left = `${Math.round(left)}px`;
+    nameModal.style.top = `${Math.round(top)}px`;
+    requestAnimationFrame(() => nameModal.classList.add('show'));
+  }
+
   function renderRegistry() {
     tbody.innerHTML = "";
+    hideNameModal();
     registry.forEach((entry, idx) => {
       const tr = document.createElement('tr');
       tr.tabIndex = 0;
       tr.dataset.id = entry.id;
       tr.dataset.idx = String(idx);
-      tr.innerHTML = `<td>${entry.id}</td><td>${entry.title}</td><td>${entry.status}</td><td>${entry.type}</td>`;
+
+      const tdId = document.createElement('td');
+      tdId.className = 'col-id';
+      tdId.textContent = entry.id;
+      tdId.title = entry.id;
+
+      const tdName = document.createElement('td');
+      tdName.className = 'col-name';
+      const hit = document.createElement('span');
+      hit.className = 'name-hit';
+      hit.textContent = entry.title || '—';
+      hit.tabIndex = 0;
+      hit.setAttribute('aria-label', `Full archive name: ${entry.title || 'unnamed'}`);
+      hit.addEventListener('mouseenter', (e) => {
+        e.stopPropagation();
+        showNameModal(entry, hit);
+      });
+      hit.addEventListener('mouseleave', () => {
+        nameModalTimer = setTimeout(hideNameModal, 120);
+      });
+      hit.addEventListener('focus', () => showNameModal(entry, hit));
+      hit.addEventListener('blur', hideNameModal);
+      tdName.appendChild(hit);
+
+      const tdStatus = document.createElement('td');
+      tdStatus.textContent = entry.status;
+      const tdType = document.createElement('td');
+      tdType.textContent = entry.type;
+
+      tr.append(tdId, tdName, tdStatus, tdType);
+
       tr.addEventListener('click', () => activateEntry(entry, { inspect: true }));
       tr.addEventListener('dblclick', () => {
         if (canOpen(entry)) openEntry(entry);
@@ -964,12 +1112,13 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
       ? `\n\n[Enter / Open Archive / OPEN] launch ${localArchiveHref(entry)}`
       : '\n\n[Inspect only — no local player path]';
     showOutput(entry.id,
-`title:     ${entry.title}
-status:    ${entry.status}
-type:      ${entry.type}
-path:      ${entry.path}
-updated:   ${entry.updatedAt}
-certainty: ${entry.certainty}
+`archive id: ${entry.id}
+name:       ${entry.title}
+status:     ${entry.status}
+type:       ${entry.type}
+path:       ${entry.path}
+updated:    ${entry.updatedAt}
+certainty:  ${entry.certainty}
 
 summary:
 ${entry.summary}
@@ -1025,7 +1174,16 @@ Landing: User Guide · CREATE ARCHIVE opens creation manual`);
 
   async function openCreateArchiveManual() {
     setActiveNav("CREATE");
-    showOutput("CREATE ARCHIVE", "loading guide...");
+    const next = nextArchiveSerial();
+    const example = formatArchiveIdExample('Your_Archive');
+    showOutput("CREATE ARCHIVE",
+`Next available serial: .${next}
+Example id: ${example}
+
+Format: Title.uXu.NNNN
+New archives receive the next free NNNN in the registry.
+
+loading guide...`);
     try {
       if (!manuals.length) {
         const res = await fetch(`${API_BASE}/api/root/manuals`);
@@ -1035,8 +1193,27 @@ Landing: User Guide · CREATE ARCHIVE opens creation manual`);
       const idx = manuals.findIndex((m) => m.slug === CREATE_MANUAL_SLUG);
       if (idx >= 0) manualSelected = idx;
       await fetchManualSlug(CREATE_MANUAL_SLUG);
+      // Prefixed banner so creators see the next id while reading
+      if (manualOpen?.body) {
+        const toc = manualSections.length
+          ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
+          : '  (no ## sections)';
+        showOutput(manualOpen.title,
+`▸ NEXT ID SLOT
+  serial: .${next}
+  example: ${example}
+  New archives take the next free number in Title.uXu.NNNN
+
+${manualOpen.body}
+
+────────
+TOC (SECTION n)
+${toc}
+
+BACK · MANUAL  return to library`);
+      }
       setActiveNav("CREATE");
-      toast('create archive guide');
+      toast(`next serial .${next}`);
     } catch (err) {
       showOutput("ERROR", `loading create guide: ${err.message}`);
     }
@@ -1149,7 +1326,7 @@ BACK · MANUAL  return to library`);
     if (cmd === "INDEX") {
       setActiveNav("INDEX");
       showOutput("ARCHIVE INDEX", registry.length
-        ? registry.map(e => `${e.id.padEnd(32)} ${e.status}`).join('\n')
+        ? registry.map(e => `${e.id}\n  name: ${e.title}\n  ${e.status} · ${e.type}`).join('\n\n')
         : "no records loaded");
       return;
     }

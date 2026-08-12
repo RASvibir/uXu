@@ -99,10 +99,25 @@ Only when you truly need it — email rasip@chloreform.org first.
 Archive ids in the commons look like:
 
 ```text
-Title.uXu.Registry.Archive-Serial
+Title.uXu.NNNN
 ```
 
-Numbers are registration history — not rank or ownership.
+Examples already in the registry:
+
+```text
+0?0.uXu.0000
+CyberCat_Sunflower.uXu.0001
+```
+
+**New archives receive whatever number is next.**  
+If `0001` is taken, yours becomes `0002`, then `0003`, and so on.
+The number is a historical registration serial — not rank, ownership, or quality.
+
+On 0?0, **CREATE ARCHIVE** shows the next free serial before the guide body.
+
+Use a clear human **name** (shown in the NAME column) plus the full **archive id**.
+In the registry table, hover (or focus) the name to see the full title if it is truncated.
+
 Relationships between archives can be declared with `*:*` (a link, not control).
 
 ## Legal Quick Rules

@@ -46,10 +46,13 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | Guide | Who it is for |
 |-------|----------------|
 | User Guide (this page) | Everyday visitors and new members |
-| Archive Creation Manual | Anyone ready to add an archive |
+| Archive Creation Manual | Anyone ready to add an archive (next id serial shown on CREATE) |
 | CyberCat Sunflower Manual | Listening / using that deck |
 | Developers Handbook | Builders and coders |
 | Source Code Pamphlet | Curious readers who want a map of the repo |
+
+The registry lists **ARCHIVE ID** (Title.uXu.NNNN) and **NAME**.
+Hover the name for the full title when the column is clipped.
 
 ## Accounts (Simple View)
 
