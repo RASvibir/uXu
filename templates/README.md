@@ -6,16 +6,32 @@ Optional starters for new uXu archives. Nothing here is required.
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Starter page with **← 0?0** / **← uXu** home door wired from `data.json` |
+| `index.html` | Starter page with configurable commons link |
 | `data.json` | Example metadata + `uxu` automations block |
 | `data.schema.json` | Shape reference (including template-fork fields) |
-| `snippets/home-link.html` | Copy-paste home-door markup |
+| `snippets/home-link.html` | Copy-paste home-link markup |
 
-## Automations included by default
+## Commons link (creator chooses)
 
-1. **Home door** — link back to the uXu landing (0?0). Label `0?0` or `uXu`.
-2. **No nested PWA** — do not attach the landing `manifest.webmanifest` to child archives. The installable app is landing-only.
-3. **Template forks (opt-in)** — set in `data.json`:
+Point people to the public commons without forcing 0?0 branding.
+
+| `uxu.homeLink.style` | Looks like | Good for |
+|----------------------|------------|----------|
+| `"uXu"` (default) | Site chip / ad-style **uXu** | Public pages, sharing, new visitors |
+| `"0?0"` | **← 0?0** back control | People already navigating the console |
+
+```json
+"uxu": {
+  "homeLink": { "style": "uXu", "href": "../index.html" }
+}
+```
+
+Optional `"label"` overrides the visible text.
+
+The installable **uXu** app (PWA) is the public invite surface — it does not present as 0?0.
+0?0 remains the root console *inside* the commons. Child archives should not attach the landing PWA manifest.
+
+## Template forks (opt-in)
 
 ```json
 "uxu": {
@@ -26,24 +42,24 @@ Optional starters for new uXu archives. Nothing here is required.
 
 | `templateForkDepth` | Meaning |
 |---------------------|---------|
-| `0` | Forks disallowed (even if allow is true) |
+| `0` | Forks disallowed |
 | `1` | Direct forks only |
 | `2` | Forks of forks (depth ≤ 2) |
 | `3+` | Deeper chains, capped at your number |
 
-When you fork someone else's archive as a template, set:
+When forking:
 
 ```json
 "templateOf": "Their_Archive.uXu.0007",
 "templateDepth": 1
 ```
 
-Honor their `templateForkDepth`: if your new depth would exceed theirs, do not publish the fork as a further template (or ask them / admin).
+Honor the source's depth cap.
 
 ## Create flow (simple)
 
 1. Copy `templates/` → `archives/Your-Archive-Name/`.
-2. Edit `data.json` (name, homeLink style, fork policy).
+2. Edit `data.json` (name, `homeLink.style`, fork policy).
 3. Build out `index.html` or keep the starter.
 4. Register via PR or email rasip@chloreform.org — next `Title.uXu.NNNN` is assigned.
 

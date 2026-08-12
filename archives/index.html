@@ -685,7 +685,8 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
   const LANDING_MANUAL_SLUG = 'user-guide';
   const CREATE_MANUAL_SLUG = 'archive-creation';
 
-  // Landing-only PWA (0?0). Nested archives like CyberCat are unchanged.
+  // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
+  // Nested archives like CyberCat keep their own pages and are unchanged.
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
   }
@@ -704,13 +705,16 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
     btnInstall.addEventListener('click', async () => {
       if (!deferredInstall) {
         showOutput('INSTALL uXu',
-`Add the uXu landing (0?0) to your home screen / apps.
+`Share / install the uXu app — the public door to the commons.
 
 Mobile: browser menu → Add to Home Screen / Install App
 Desktop Chrome/Edge: install icon in the address bar
 
-Icon is the wordmark: uXu
-This install is for the landing console only — CyberCat and other archives keep their own pages.`);
+Icon: uXu wordmark
+Link: https://rasvibir.github.io/uXu/
+
+This invite app does not brand itself as 0?0.
+Inside the commons, 0?0 is still the root console — archives choose their own home-link style.`);
         return;
       }
       deferredInstall.prompt();
@@ -1475,7 +1479,7 @@ MAP               show root provenance
 LOGS              show transparency logs
 MANUAL            open manuals (lands on User Guide)
 CREATE ARCHIVE    open the Archive Creation Manual
-INSTALL           install landing PWA (uXu wordmark icon)
+INSTALL           install the public uXu app (invite / home screen)
 READ <slug|n>     open a manual (or Enter on selection)
 BACK              return to manual list
 SECTION <n>       jump to ## heading while reading

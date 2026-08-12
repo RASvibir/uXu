@@ -22,25 +22,31 @@ That is enough.
    existing archive that allows template forks.
 2. Put your folder under `archives/`.
 3. Write a clear name, a short description, and at least one item in `data.json`.
-4. Keep a **← 0?0** or **← uXu** link home (templates do this by default).
+4. Pick a **commons link** style: public **uXu** chip (default) or **← 0?0** back control.
 5. Open `index.html` in a browser and confirm it loads.
 6. Open a pull request, or email **rasip@chloreform.org** and ask to be registered.
 7. Stay legal and safe (see CONTRIBUTING.md).
 
 You do not need a custom app, a database, or special security on day one.
-Do **not** attach the landing PWA manifest to child archives — Install uXu is for 0?0 only.
+Do **not** attach the public uXu PWA manifest to child archives — that install is the invite app only.
 
-## Home door (← 0?0 / ← uXu)
+## Commons link (← 0?0 vs uXu chip)
 
-Paste from `templates/snippets/home-link.html`, or configure:
+Creators decide how the link home looks:
+
+| `homeLink.style` | Looks like | Feels like |
+|------------------|------------|------------|
+| `"uXu"` | **uXu** badge | Website / ad chip for outsiders |
+| `"0?0"` | **← 0?0** | Back to the root console |
 
 ```json
 "uxu": {
-  "homeLink": { "style": "0?0", "href": "../index.html" }
+  "homeLink": { "style": "uXu", "href": "../index.html" }
 }
 ```
 
-`"style": "uXu"` shows **← uXu** instead. Same destination: the commons landing.
+Same destination either way. Optional `"label"` overrides the text.
+Snippet: `templates/snippets/home-link.html`.
 
 ## Template forks (creator's choice)
 

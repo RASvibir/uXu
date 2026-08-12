@@ -5,7 +5,7 @@
   "description": "Short description of this independent archive.",
   "uxu": {
     "homeLink": {
-      "style": "0?0",
+      "style": "uXu",
       "href": "../index.html"
     },
     "allowTemplateForks": false,

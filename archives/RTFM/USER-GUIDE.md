@@ -58,32 +58,33 @@ Ids are forever. If access ends you still see a placemarker such as
 **(deleted by user)**, **(removed by admin)**, **(locked archive)**, or
 **(under investigation)** — so the count of created archives stays honest.
 
-## Install uXu (landing app)
+## Install uXu (public invite app)
 
-Outside a specific archive, the door is always **0?0**.
+Share **uXu** — not 0?0 — when inviting people from outside.
 
-On the root console, use **Install uXu** when your browser offers it
-(or browser menu → Add to Home Screen). The icon is the wordmark **uXu**.
-That install opens the landing only — CyberCat and other archives keep
-their own pages and are not part of the landing PWA package.
+On the root console: **Install uXu** (or type `INSTALL`).
+Or use the browser’s Add to Home Screen / Install App.
 
-Canonical link anytime: https://rasvibir.github.io/uXu/
+- Icon: **uXu** wordmark  
+- Link: https://rasvibir.github.io/uXu/  
+- This app is the public door into the commons. It does not brand itself as 0?0.
 
-## Add ← 0?0 or ← uXu on your archive
+Inside the commons, **0?0** is still the root console. Archives pick how they link home.
 
-Every archive should offer a way home. In manuals / templates this is the
-**home door**:
+## Commons link on your archive
 
-- Label **← 0?0** or **← uXu** (your choice)
-- Link to `../index.html` (from `archives/Your-Archive/`)
+Creation users choose the look:
 
-Copy from `templates/snippets/home-link.html`, or set in `data.json`:
+| Style | Appearance | When to use |
+|-------|------------|-------------|
+| `uXu` | Site chip **uXu** (ad / website style) | Public visitors, sharing |
+| `0?0` | **← 0?0** | People already in the console |
 
 ```json
-"uxu": { "homeLink": { "style": "0?0", "href": "../index.html" } }
+"uxu": { "homeLink": { "style": "uXu", "href": "../index.html" } }
 ```
 
-Use `"style": "uXu"` if you prefer that label.
+Use `"style": "0?0"` for the console back-link. Snippet: `templates/snippets/home-link.html`.
 
 ## Accounts (Simple View)
 

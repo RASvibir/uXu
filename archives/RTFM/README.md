@@ -15,8 +15,8 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 Admin contact for humans: rasip@chloreform.org
 
-Templates live in `/templates/` (home-link snippet + fork policy fields).
-Landing PWA (Install uXu) is 0?0 only — icon wordmark **uXu**.
+Templates live in `/templates/` (commons-link snippet + fork policy fields).
+Public invite PWA is **uXu** only (wordmark icon) — it does not present as 0?0.
 
 ### Code Examples
 - **Audio players** — Interactive HTML/CSS/JS for streaming audio with controls

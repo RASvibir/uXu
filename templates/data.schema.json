@@ -17,13 +17,17 @@
           "properties": {
             "style": {
               "type": "string",
-              "enum": ["0?0", "uXu"],
-              "description": "Label on the back-home control"
+              "enum": ["uXu", "0?0"],
+              "description": "uXu = public site chip (invite/ad style). 0?0 = console back-link for people already inside."
+            },
+            "label": {
+              "type": "string",
+              "description": "Optional override text (defaults: 'uXu' or '← 0?0')"
             },
             "href": {
               "type": "string",
               "default": "../index.html",
-              "description": "Relative path back to the uXu landing (0?0)"
+              "description": "Relative path to the uXu landing page"
             }
           }
         },

@@ -1,7 +1,7 @@
 {
   "name": "uXu",
   "short_name": "uXu",
-  "description": "uXu archive commons — open 0?0, the root landing console.",
+  "description": "Shared archive commons. Discover independent archives.",
   "id": "/uXu/",
   "start_url": "./index.html",
   "scope": "./",

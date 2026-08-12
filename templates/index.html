@@ -20,11 +20,18 @@
     }
     .home-link {
       display: inline-block; margin-bottom: 1rem;
-      color: var(--accent); text-decoration: none;
-      border: 1px solid rgba(61,232,114,.35); padding: .25rem .55rem;
-      font-size: .85rem;
+      font-family: var(--mono); font-size: .85rem; text-decoration: none;
     }
-    .home-link:hover { background: var(--accent); color: #041208; }
+    .home-link.back {
+      color: var(--accent);
+      border: 1px solid rgba(61,232,114,.35); padding: .25rem .55rem;
+    }
+    .home-link.back:hover { background: var(--accent); color: #041208; }
+    .home-link.badge {
+      color: #041208; background: var(--accent); font-weight: 700;
+      border: 1px solid var(--accent); padding: .2rem .65rem; letter-spacing: .06em;
+    }
+    .home-link.badge:hover { filter: brightness(1.08); }
     h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .35rem; }
     .tag { color: var(--muted); font-size: .8rem; margin-bottom: 1.25rem; }
     #archive-list { display: grid; gap: .5rem; }
@@ -40,9 +47,8 @@
   </style>
 </head>
 <body>
-  <!-- Automation: home door back to uXu / 0?0. Pick one label. -->
-  <a class="home-link" id="uxu-home" href="../index.html" data-uxu-home="0?0">← 0?0</a>
-  <!-- Alternate label (swap href text): ← uXu -->
+  <!-- Home link: choose in data.json uxu.homeLink.style → "0?0" (back) or "uXu" (site badge) -->
+  <a class="home-link badge" id="uxu-home" href="../index.html" data-uxu-home="uXu">uXu</a>
 
   <h1 id="archive-title">Your Archive</h1>
   <p class="tag" id="archive-tag">uXu independent archive</p>
@@ -63,10 +69,18 @@
 
       const home = document.getElementById('uxu-home');
       const hl = (data.uxu && data.uxu.homeLink) || {};
-      const style = (hl.style || '0?0').toLowerCase();
+      const style = String(hl.style || 'uXu').toLowerCase();
       home.href = hl.href || '../index.html';
-      home.textContent = style === 'uxu' ? '← uXu' : '← 0?0';
-      home.dataset.uxuHome = style === 'uxu' ? 'uXu' : '0?0';
+      if (style === '0?0' || style === '0q0' || style === 'back') {
+        home.textContent = hl.label || '← 0?0';
+        home.className = 'home-link back';
+        home.dataset.uxuHome = '0?0';
+      } else {
+        // Public / invite style — reads like a site chip, not "back to 0?0"
+        home.textContent = hl.label || 'uXu';
+        home.className = 'home-link badge';
+        home.dataset.uxuHome = 'uXu';
+      }
 
       const list = document.getElementById('archive-list');
       const player = document.getElementById('main-player');
