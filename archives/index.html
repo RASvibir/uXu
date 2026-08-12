@@ -257,10 +257,10 @@
     position:sticky; top:0;
     background:rgba(3,8,5,.95);
   }
-  th:nth-child(1), td:nth-child(1){width:36%;}
-  th:nth-child(2), td:nth-child(2){width:26%;}
-  th:nth-child(3), td:nth-child(3){width:24%;}
-  th:nth-child(4), td:nth-child(4){width:14%;}
+  th:nth-child(1), td:nth-child(1){width:34%;}
+  th:nth-child(2), td:nth-child(2){width:22%;}
+  th:nth-child(3), td:nth-child(3){width:28%;}
+  th:nth-child(4), td:nth-child(4){width:16%;}
   td{
     padding:.32rem .3rem;
     overflow:hidden;
@@ -268,11 +268,6 @@
     white-space:nowrap;
     border-bottom:1px solid var(--green-line);
     transition:background .15s var(--ease), color .15s var(--ease);
-  }
-  td.col-id{
-    font-family:var(--mono);
-    color:var(--cyan);
-    letter-spacing:.02em;
   }
   td.col-name{
     color:var(--green-bright);
@@ -284,6 +279,12 @@
     white-space:nowrap;
     cursor:help;
     border-bottom:1px dotted rgba(61,232,114,.35);
+  }
+  td.col-id{
+    font-family:var(--mono);
+    color:var(--cyan);
+    letter-spacing:.04em;
+    font-size:.7rem;
   }
   td.col-status .mark{
     font-size:.66rem;
@@ -312,27 +313,32 @@
     border-bottom-color:rgba(255,138,92,.45);
   }
 
+  /* Portaled to document.body — must stay outside overflow/clip of the index box */
   .name-modal{
     position:fixed;
-    z-index:40;
-    min-width:12rem;
-    max-width:min(28rem, 92vw);
-    padding:.55rem .7rem;
-    background:rgba(4,12,8,.96);
-    border:1px solid var(--green-dim);
-    box-shadow:0 0 24px rgba(0,0,0,.55), 0 0 18px rgba(61,232,114,.12);
+    z-index:10000;
+    min-width:14rem;
+    max-width:min(32rem, calc(100vw - 1.5rem));
+    padding:.65rem .8rem;
+    background:rgba(4,12,8,.98);
+    border:1px solid var(--cyan);
+    box-shadow:
+      0 0 0 1px rgba(3,8,5,.9),
+      0 12px 40px rgba(0,0,0,.75),
+      0 0 24px rgba(94,240,255,.15);
     color:var(--green-bright);
     font-family:var(--mono);
-    font-size:.78rem;
-    line-height:1.45;
+    font-size:.82rem;
+    line-height:1.5;
     pointer-events:none;
     opacity:0;
-    transform:translateY(4px);
-    transition:opacity .15s var(--ease), transform .15s var(--ease);
+    visibility:hidden;
+    transform:none;
+    transition:opacity .12s var(--ease);
   }
   .name-modal.show{
     opacity:1;
-    transform:translateY(0);
+    visibility:visible;
   }
   .name-modal .nm-k{
     display:block;
@@ -340,18 +346,21 @@
     font-size:.62rem;
     letter-spacing:.08em;
     text-transform:uppercase;
-    margin-bottom:.2rem;
+    margin-bottom:.25rem;
   }
   .name-modal .nm-v{
     white-space:normal;
+    overflow-wrap:anywhere;
     word-break:break-word;
+    font-size:.9rem;
+    color:var(--highlight-fg);
   }
   .name-modal .nm-id{
-    margin-top:.35rem;
-    padding-top:.35rem;
+    margin-top:.4rem;
+    padding-top:.4rem;
     border-top:1px dashed var(--green-line);
     color:var(--cyan);
-    font-size:.68rem;
+    font-size:.72rem;
     word-break:break-all;
   }
 
@@ -593,7 +602,7 @@
               <div class="registry-wrap">
                 <table id="registry-table">
                   <thead>
-                    <tr><th>ARCHIVE ID</th><th>NAME</th><th>MARKER</th><th>TYPE</th></tr>
+                    <tr><th>NAME</th><th>uXu.No</th><th>MARKER</th><th>TYPE</th></tr>
                   </thead>
                   <tbody></tbody>
                 </table>
@@ -1126,10 +1135,21 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     return `${safe}.uXu.${nextArchiveSerial()}`;
   }
 
+  function archiveSerialLabel(id) {
+    const m = String(id || '').match(/\.?(uXu\.\d{4})$/i);
+    if (m) return m[1];
+    const n = String(id || '').match(/(\d{4})$/);
+    return n ? `uXu.${n[1]}` : (id || '—');
+  }
+
   const nameModal = document.getElementById('name-modal');
   const nameModalTitle = document.getElementById('name-modal-title');
   const nameModalId = document.getElementById('name-modal-id');
   let nameModalTimer = null;
+  // Keep tooltip outside CRT overflow/transform ancestors so it never clips into the index box
+  if (nameModal && nameModal.parentElement !== document.body) {
+    document.body.appendChild(nameModal);
+  }
 
   function hideNameModal() {
     clearTimeout(nameModalTimer);
@@ -1139,23 +1159,47 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
 
   function showNameModal(entry, anchorEl) {
     clearTimeout(nameModalTimer);
-    nameModalTitle.textContent = entry.title || '(unnamed)';
     const mark = placemarkerInfo(entry);
-    nameModalId.textContent = `${entry.id || ''}\n${mark.label}`;
+    nameModalTitle.textContent = entry.title || '(unnamed)';
+    nameModalId.textContent = `${entry.id || ''}\n${archiveSerialLabel(entry.id)} · ${mark.label}`;
     nameModal.hidden = false;
-    // measure then place near the name cell
-    const rect = anchorEl.getBoundingClientRect();
-    const pad = 8;
+    nameModal.classList.remove('show');
     nameModal.style.left = '0px';
     nameModal.style.top = '0px';
-    const mw = nameModal.offsetWidth || 220;
-    const mh = nameModal.offsetHeight || 80;
+    nameModal.style.visibility = 'hidden';
+    nameModal.style.opacity = '0';
+
+    // Measure at final content, then place in the viewport (prefer beside/below cell, never clipped)
+    const rect = anchorEl.getBoundingClientRect();
+    const pad = 12;
+    const mw = Math.max(nameModal.offsetWidth || 240, 200);
+    const mh = Math.max(nameModal.offsetHeight || 90, 70);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
     let left = rect.left;
     let top = rect.bottom + pad;
-    if (left + mw > window.innerWidth - pad) left = Math.max(pad, window.innerWidth - mw - pad);
-    if (top + mh > window.innerHeight - pad) top = Math.max(pad, rect.top - mh - pad);
+
+    // Prefer right of the cell if it fits better on small heights
+    const belowFits = top + mh <= vh - pad;
+    const aboveFits = rect.top - pad - mh >= pad;
+    if (!belowFits && aboveFits) {
+      top = rect.top - mh - pad;
+    } else if (!belowFits) {
+      // Park beside the registry column so it stays on-screen
+      left = Math.min(rect.right + pad, vw - mw - pad);
+      top = Math.min(Math.max(pad, rect.top), vh - mh - pad);
+    }
+
+    if (left + mw > vw - pad) left = Math.max(pad, vw - mw - pad);
+    if (left < pad) left = pad;
+    if (top + mh > vh - pad) top = Math.max(pad, vh - mh - pad);
+    if (top < pad) top = pad;
+
     nameModal.style.left = `${Math.round(left)}px`;
     nameModal.style.top = `${Math.round(top)}px`;
+    nameModal.style.visibility = '';
+    nameModal.style.opacity = '';
     requestAnimationFrame(() => nameModal.classList.add('show'));
   }
 
@@ -1173,11 +1217,6 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       if (mark.kind === 'admin-removed') tr.classList.add('is-admin-removed');
       if (mark.kind === 'investigate') tr.classList.add('is-investigate');
 
-      const tdId = document.createElement('td');
-      tdId.className = 'col-id';
-      tdId.textContent = entry.id;
-      tdId.title = entry.id;
-
       const tdName = document.createElement('td');
       tdName.className = 'col-name';
       const hit = document.createElement('span');
@@ -1190,11 +1229,17 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         showNameModal(entry, hit);
       });
       hit.addEventListener('mouseleave', () => {
-        nameModalTimer = setTimeout(hideNameModal, 120);
+        nameModalTimer = setTimeout(hideNameModal, 160);
       });
       hit.addEventListener('focus', () => showNameModal(entry, hit));
       hit.addEventListener('blur', hideNameModal);
       tdName.appendChild(hit);
+
+      const tdId = document.createElement('td');
+      tdId.className = 'col-id';
+      const serial = archiveSerialLabel(entry.id);
+      tdId.textContent = serial;
+      tdId.title = entry.id;
 
       const tdStatus = document.createElement('td');
       tdStatus.className = 'col-status';
@@ -1207,7 +1252,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       const tdType = document.createElement('td');
       tdType.textContent = entry.type;
 
-      tr.append(tdId, tdName, tdStatus, tdType);
+      tr.append(tdName, tdId, tdStatus, tdType);
 
       tr.addEventListener('click', () => activateEntry(entry, { inspect: true }));
       tr.addEventListener('dblclick', () => {
