@@ -468,7 +468,7 @@
                 <div><dt>Uptime</dt><dd id="uptime">00:00:00</dd></div>
                 <div><dt>Mode</dt><dd id="mode-label">COMMAND</dd></div>
                 <div><dt>User</dt><dd id="user-label">GUEST</dd></div>
-                <div><dt>Account</dt><dd id="account-label">—</dd></div>
+                <div><dt>Name</dt><dd id="account-label">—</dd></div>
                 <div><dt>Sudo</dt><dd id="sudo-label">OFF</dd></div>
               </dl>
             </div>
@@ -608,7 +608,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
     const role = authState.role || 'GUEST';
     const sudo = !!authState.sudo;
     document.getElementById('user-label').textContent = role;
-    document.getElementById('account-label').textContent = authState.user?.email || '—';
+    document.getElementById('account-label').textContent = authState.user?.name || authState.user?.email || '—';
     document.getElementById('sudo-label').textContent = sudo ? 'ON' : 'OFF';
     document.getElementById('mode-label').textContent = authState.mode || (sudo ? 'ADMIN' : (role === 'GUEST' ? 'COMMAND' : 'USER'));
     btnSignOut.disabled = role === 'GUEST';
@@ -672,7 +672,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
     setSessionToken(data.token);
     setSudo(false);
     await refreshAuth();
-    toast(`signed up as ${email}`);
+    toast(`signed up as ${data.user?.name || email}`);
     return data;
   }
 
@@ -682,7 +682,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
     setSessionToken(data.token);
     setSudo(false);
     await refreshAuth();
-    toast(`signed in as ${email}`);
+    toast(`signed in as ${data.user?.name || email}`);
     return data;
   }
 
@@ -1097,8 +1097,8 @@ ${lines.length ? lines.join('\n') : '  (no child records found)'}`);
       showOutput("ACCOUNT / AUTH",
 `role:     ${authState.role}
 sudo:     ${authState.sudo ? 'ON' : 'OFF'}
-email:    ${authState.user?.email || '—'}
 name:     ${authState.user?.name || '—'}
+email:    ${authState.user?.email || '—'}
 
 Create account
   SIGNUP you@email.com yourpassword YourName
@@ -1126,7 +1126,7 @@ Or use the ACCOUNT GATE form on the left.`);
       }
       showOutput("SIGNUP", "creating account...");
       signUp(email, password, name)
-        .then(() => showOutput("SIGNUP", `Account created.\nrole: ${authState.role}\nemail: ${authState.user?.email || email}`))
+        .then(() => showOutput("SIGNUP", `Account created.\nrole: ${authState.role}\nname:  ${authState.user?.name || '—'}\nemail: ${authState.user?.email || email}`))
         .catch((err) => showOutput("ERROR", err.message));
       return;
     }
@@ -1140,7 +1140,7 @@ Or use the ACCOUNT GATE form on the left.`);
       }
       showOutput("SIGNIN", "authenticating...");
       signIn(email, password)
-        .then(() => showOutput("SIGNIN", `Signed in.\nrole: ${authState.role}\nemail: ${authState.user?.email || email}`))
+        .then(() => showOutput("SIGNIN", `Signed in.\nrole: ${authState.role}\nname:  ${authState.user?.name || '—'}\nemail: ${authState.user?.email || email}`))
         .catch((err) => showOutput("ERROR", err.message));
       return;
     }
@@ -1151,11 +1151,11 @@ Or use the ACCOUNT GATE form on the left.`);
     if (cmd === "WHOAMI") {
       refreshAuth().then((s) => {
         showOutput("WHOAMI",
-`role:   ${s.role}
+`name:   ${s.user?.name || '—'}
+role:   ${s.role}
 sudo:   ${s.sudo ? 'ON' : 'OFF'}
 mode:   ${s.mode}
 email:  ${s.user?.email || '—'}
-name:   ${s.user?.name || '—'}
 id:     ${s.user?.id || '—'}`);
       });
       return;
@@ -1238,7 +1238,7 @@ id:     ${s.user?.id || '—'}`);
     const password = authPassword.value;
     if (!email || !password) return;
     signIn(email, password)
-      .then(() => showOutput("SIGNIN", `Signed in as ${authState.user?.email || email}\nrole: ${authState.role}`))
+      .then(() => showOutput("SIGNIN", `Signed in as ${authState.user?.name || authState.user?.email || email}\nrole: ${authState.role}`))
       .catch((err) => showOutput("ERROR", err.message));
   });
   document.getElementById('btn-signup').addEventListener('click', () => {
@@ -1250,7 +1250,7 @@ id:     ${s.user?.id || '—'}`);
       return;
     }
     signUp(email, password, name)
-      .then(() => showOutput("SIGNUP", `Account created for ${authState.user?.email || email}\nrole: ${authState.role}`))
+      .then(() => showOutput("SIGNUP", `Account created for ${authState.user?.name || authState.user?.email || email}\nrole: ${authState.role}`))
       .catch((err) => showOutput("ERROR", err.message));
   });
   btnSignOut.addEventListener('click', () => {
