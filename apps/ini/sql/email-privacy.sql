@@ -40,6 +40,9 @@ create table if not exists uxu_archive_contact_requests (
     check (status in ('pending', 'approved', 'denied', 'cancelled'))
 );
 
-create index if not exists uxu_archive_contact_req_pending_idx
-  on uxu_archive_contact_requests (status, created_at desc)
-  where status = 'pending';
+create table if not exists uxu_archive_access (
+  archive_id text not null,
+  email text not null,
+  created_at timestamptz not null default now(),
+  primary key (archive_id, email)
+);

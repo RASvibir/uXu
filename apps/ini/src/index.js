@@ -973,6 +973,28 @@ async function handleChangeEmailStatus(sql, request) {
   return json(request, { email: ctx.user.email, pending, recent: rows });
 }
 
+async function handleArchiveAccess(sql, request, archiveId) {
+  const session = await resolveSession(sql, request);
+  if (!session.user) {
+    return json(request, { allowed: false, reason: 'sign in on 0?0 first' }, 401);
+  }
+  const email = String(session.user.email || '').trim().toLowerCase();
+  const rows = await sql`
+    select email from uxu_archive_access
+    where archive_id = ${archiveId} and lower(email) = ${email}
+    limit 1
+  `;
+  const isAdmin = session.role === 'ADMIN';
+  const allowed = rows.length > 0 || isAdmin;
+  return json(request, {
+    allowed,
+    archiveId,
+    reason: allowed
+      ? (isAdmin && !rows.length ? 'admin' : 'steward')
+      : 'not on the access list for this archive',
+  });
+}
+
 function publicContactView(row) {
   if (!row) return null;
   return {
@@ -1224,6 +1246,7 @@ const GET_ROUTES = {
 
 const MANUAL_SLUG_RE = /^\/api\/root\/manuals\/([a-z0-9][a-z0-9_-]*)$/i;
 const ARCHIVE_CONTACT_RE = /^\/api\/archives\/([^/]+)\/contact$/i;
+const ARCHIVE_ACCESS_RE = /^\/api\/archives\/([^/]+)\/access$/i;
 
 const POST_ROUTES = {
   '/api/auth/claim-master': handleClaimMaster,
@@ -1266,6 +1289,10 @@ export default {
         const contactMatch = url.pathname.match(ARCHIVE_CONTACT_RE);
         if (contactMatch) {
           return await handleArchiveContactGet(sql, request, decodeURIComponent(contactMatch[1]));
+        }
+        const accessMatch = url.pathname.match(ARCHIVE_ACCESS_RE);
+        if (accessMatch) {
+          return await handleArchiveAccess(sql, request, decodeURIComponent(accessMatch[1]));
         }
         const handler = GET_ROUTES[url.pathname];
         if (!handler) return json(request, { error: 'not found' }, 404);

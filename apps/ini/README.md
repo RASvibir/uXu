@@ -63,6 +63,7 @@ See `archives/RTFM/MASTER-ADMIN-GUIDE.md`.
 - `GET /api/auth/accounts` (ADMIN + SUDO) — login emails, private
 - `GET /api/auth/change-email/status`
 - `GET /api/auth/archive-contact/pending` (ADMIN + SUDO)
+- `GET /api/archives/:id/access` — steward check for private archives (session bearer)
 - `GET /api/archives/:id/contact` — public email only if opted-in + approved
 - `POST /api/auth/audit` — signup/signin audit from console
 - `POST /api/auth/change-email/request` — password + OTP to current inbox

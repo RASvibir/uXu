@@ -26,7 +26,7 @@ self.addEventListener('message', (event) => {
 });
 
 function isLandingNavigate(url) {
-  if (/\/(CyberCat-Sunflower|RTFM|seed-13|icons)\b/i.test(url.pathname)) return false;
+  if (/\/(CyberCat-Sunflower|Ledger|Starter|RTFM|seed-13|icons)\b/i.test(url.pathname)) return false;
   const leaf = url.pathname.replace(/\/+$/, '').split('/').filter(Boolean).pop() || '';
   return leaf === 'uXu' || leaf === 'index.html' || leaf === '';
 }
@@ -36,7 +36,7 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-  if (/\/(CyberCat-Sunflower|RTFM|seed-13)\//i.test(url.pathname)) return;
+  if (/\/(CyberCat-Sunflower|Ledger|Starter|RTFM|seed-13)\//i.test(url.pathname)) return;
 
   // Never cache the console HTML — Quick Nav / docs must stay fresh
   if (req.mode === 'navigate' && isLandingNavigate(url)) {

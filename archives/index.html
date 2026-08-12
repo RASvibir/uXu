@@ -1595,6 +1595,8 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
     toast("hint hidden — tap i anytime for display");
   }
   let authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
+  /** Private/locked archive ids the signed-in steward may open */
+  let stewardAccess = new Set();
   let manuals = [];
   let manualSelected = 0;
   let manualMode = 'list'; // list | read | rtfm | archive-index | archive-read
@@ -1785,7 +1787,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v13';
+    const SW_BUST = 'uxu_sw_bust_v16';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -1902,6 +1904,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     if (!token) {
       authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
       setSudo(false);
+      stewardAccess = new Set();
       paintAuth();
       return authState;
     }
@@ -1923,6 +1926,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       };
       if (!authState.sudo) setSudo(false);
       paintAuth();
+      await refreshStewardAccess();
       return authState;
     } catch (err) {
       toast(`auth check failed: ${err.message}`);
@@ -2054,6 +2058,12 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     'CyberCat_Sunflower.uXu.0001': 'CyberCat-Sunflower/index.html',
     'cybercat-sunflower': 'CyberCat-Sunflower/index.html',
     'CyberCat Sunflower': 'CyberCat-Sunflower/index.html',
+    'Ledger.uXu.0002': 'Ledger/index.html',
+    'ledger': 'Ledger/index.html',
+    'Ledger': 'Ledger/index.html',
+    'Starter.uXu.0003': 'Starter/index.html',
+    'starter': 'Starter/index.html',
+    'Starter': 'Starter/index.html',
   };
 
   function siteBase(){
@@ -2111,7 +2121,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         return false;
       }
     }
-    return /\.html?$/i.test(href) || href.includes('CyberCat-Sunflower');
+    return /\.html?$/i.test(href) || href.includes('CyberCat-Sunflower') || href.includes('/Ledger/') || href.includes('/Starter/');
   }
 
   function isSelfHref(href){
@@ -2125,11 +2135,30 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     }
   }
 
+  async function refreshStewardAccess(){
+    stewardAccess = new Set();
+    if (!getSessionToken() || !registry.length) return;
+    const locked = registry.filter((e) => {
+      if (!e || e.id === '0?0.uXu.0000') return false;
+      const kind = placemarkerInfo(e).kind;
+      return kind === 'locked' || kind === 'audience';
+    });
+    await Promise.all(locked.map(async (e) => {
+      try {
+        const res = await fetch(`${API_BASE}/api/archives/${encodeURIComponent(e.id)}/access`, {
+          headers: authHeaders(),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.allowed) stewardAccess.add(e.id);
+      } catch {/* ignore */}
+    }));
+  }
+
   function canOpen(entry){
     if (!entry) return false;
     if (entry.type === 'ROOT-CONSOLE' || entry.id === '0?0.uXu.0000') return false;
-    // Forever placemarkers may remain listed but not publicly openable
-    if (!isPubliclyOpenable(entry)) return false;
+    // Forever placemarkers stay listed; stewards may open private rooms when granted.
+    if (!isPubliclyOpenable(entry) && !stewardAccess.has(entry.id)) return false;
     const href = localArchiveHref(entry);
     if (!href) return false;
     if (isSelfHref(href)) return false;
@@ -2195,6 +2224,15 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
   function openEntry(entry){
     if (!entry) {
       toast('No archive selected');
+      return;
+    }
+    if (!isPubliclyOpenable(entry) && !stewardAccess.has(entry.id)) {
+      showOutput('PRIVATE ARCHIVE',
+`${entry.title || entry.id} is private.
+
+Sign in on 0?0 with the steward account, then try OPEN again.
+Guests cannot open this room.`);
+      toast('private — sign in as steward');
       return;
     }
     const href = localArchiveHref(entry);
@@ -2279,6 +2317,8 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       refreshRegistryCount();
       renderRegistry();
       toast('Registry linked to Neon');
+      await refreshStewardAccess();
+      renderRegistry();
       enrichOpenableArchives();
     } catch (err) {
       showOutput("ERROR", `Could not load registry from\n${API_BASE}/api/root/registry\n\n${err.message}`);
@@ -3290,50 +3330,25 @@ RTFM                    0?0 manual`);
     const next = nextArchiveSerial();
     const example = formatArchiveIdExample('Your_Archive');
     showOutput("CREATE ARCHIVE",
-`Next available serial: .${next}
-Example id: ${example}
+`Public practice room (stays this way for future users):
 
-Format: Title.uXu.NNNN
-New archives receive the next free NNNN in the registry.
+  1. OPEN STARTER         see the working Tier 1 example
+  2. Copy archives/Starter/  →  archives/Your-Name/
+     (or copy repo /templates/ for a blank twin)
+  3. Edit data.json       name · description · shows
+  4. Open index.html locally, then register
+     PR or email rasip@chloreform.org
 
-loading guide...`);
-    try {
-      if (!manuals.length) {
-        const res = await fetch(`${API_BASE}/api/root/manuals`);
-        const data = await res.json();
-        if (res.ok) manuals = data.manuals || [];
-      }
-      const idx = manuals.findIndex((m) => m.slug === CREATE_MANUAL_SLUG);
-      if (idx >= 0) manualSelected = idx;
-      await fetchManualSlug(CREATE_MANUAL_SLUG);
-      // Prefixed banner so creators see the next id while reading
-      if (manualOpen?.body) {
-        const toc = manualSections.length
-          ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
-          : '  (no ## sections)';
-        setManualToolbar('root-read');
-        showOutput(manualOpen.title,
-`▸ NEXT ID SLOT
-  serial: .${next}
-  example: ${example}
-  New archives take the next free number in Title.uXu.NNNN
+Next free serial: .${next}
+Example id:       ${example}
+Format:           Title.uXu.NNNN
 
-Declare visitor manuals in data.json → uxu.manuals so INDEX ARCHIVE MANUALS can find them.
-Write data.json description — it appears when visitors hover the registry title.
+Personal rooms (like Ledger) are separate — copy Starter; don’t empty it.
 
-${manualOpen.body}
-
-────────
-TOC (SECTION n)
-${toc}
-
-BACK · MANUAL  return to library · INDEX ARCHIVE MANUALS`);
-      }
-      setActiveNav("CREATE");
-      toast(`next serial .${next}`);
-    } catch (err) {
-      showOutput("ERROR", `loading create guide: ${err.message}`);
-    }
+More depth (optional):
+  READ archive-creation   full manual + complexity tree
+  ARCHIVE MANUALS         Starter’s “How to make an archive”`);
+    toast(`starter: OPEN STARTER · next .${next}`);
   }
 
   function escapeHtml(s) {
@@ -3601,7 +3616,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><td><code>SECTION &lt;n&gt;</code></td><td>Jump to ## heading while reading</td></tr>
   <tr><td><code>ARCHIVE MANUALS</code></td><td>Index creator manuals from data.json</td></tr>
   <tr><td><code>FIND MANUAL &lt;q&gt;</code></td><td>Filter that index</td></tr>
-  <tr><td><code>CREATE ARCHIVE</code></td><td>Creation manual + next serial</td></tr>
+  <tr><td><code>CREATE ARCHIVE</code></td><td>Short recipe + next serial (live example: OPEN STARTER)</td></tr>
   <tr><td><code>BACK</code></td><td>Return one step in manuals</td></tr>
   <tr><td><code>HELP</code></td><td>Compact command list</td></tr>
 </table>
@@ -3824,7 +3839,7 @@ README.md`;
 </details>
 <details>
   <summary>How do I create an archive?</summary>
-  <p>Start simple: a folder with <code>index.html</code> + <code>data.json</code> (+ a short README). Copy <code>templates/</code>. Then use <strong>CREATE ARCHIVE</strong> for the next serial and guide. Register via PR or email <strong>rasip@chloreform.org</strong>.</p>
+  <p>Start simple: open <strong>Starter</strong> (<code>OPEN STARTER</code>) — the public how-to room. Copy that folder (or repo <code>templates/</code>), edit <code>data.json</code>, open <code>index.html</code> locally. Register via PR or email <strong>rasip@chloreform.org</strong>. <code>CREATE ARCHIVE</code> shows the short recipe + next serial. Personal rooms (like Ledger) are separate.</p>
 </details>
 <details>
   <summary>Do I need an account?</summary>
@@ -4094,7 +4109,7 @@ INI SITE          open optional iNi public notes (soloist.ai/uxu)
 MANUAL            manual library index (pamphlets)
 ARCHIVE MANUALS   index / search manuals from created archives
 FIND MANUAL <q>   filter that index
-CREATE ARCHIVE    open the Archive Creation Manual
+CREATE ARCHIVE    short recipe + next serial (see also OPEN STARTER)
 INSTALL           install the public uXu app (invite / home screen)
 SETUP MASTER      interactive guide: claim → lock → recovery → 2FA
 RECOVERY …        ADD / LIST / REMOVE / 2FA (admin + SUDO)

@@ -5,6 +5,8 @@ Source: uXu RTFM library · 0?0 CREATE ARCHIVE
 
 ## Start Here (The Simple Path)
 
+**Live example:** open **Starter** on 0?0 (`OPEN STARTER`) — a public Tier 1 room you can copy. It stays a teaching copy for future users.
+
 You can make a real archive with three small pieces:
 
 ```text
@@ -18,8 +20,7 @@ That is enough.
 
 ### Tiny checklist
 
-1. Copy `/templates/` (includes home door + fork policy fields) or fork an
-   existing archive that allows template forks.
+1. Copy `archives/Starter/` (or `/templates/`) — Starter is the public practice room on 0?0.
 2. Put your folder under `archives/`.
 3. Write a clear name, a short **description**, and at least one item in `data.json`.
    That description is what visitors see in the 0?0 registry when they hover (or

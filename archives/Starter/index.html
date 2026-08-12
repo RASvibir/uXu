@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Starter · make an archive</title>
+  <!-- Do NOT add the public uXu PWA manifest here — that belongs only on 0?0. -->
+  <style>
+    :root {
+      --bg: #0a0c0a;
+      --text: #d8ffe6;
+      --accent: #3de872;
+      --muted: #7a8f84;
+      --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: var(--mono);
+      background: var(--bg); color: var(--text); padding: 1rem 1.25rem 2.5rem;
+      max-width: 42rem;
+    }
+    .home-link {
+      display: inline-block; margin-bottom: 1rem;
+      font-size: .85rem; text-decoration: none;
+    }
+    .home-link.back {
+      color: var(--accent);
+      border: 1px solid rgba(61,232,114,.35); padding: .25rem .55rem;
+    }
+    .home-link.back:hover { background: var(--accent); color: #041208; }
+    .home-link.badge {
+      color: #041208; background: var(--accent); font-weight: 700;
+      border: 1px solid var(--accent); padding: .2rem .65rem; letter-spacing: .06em;
+    }
+    .home-link.badge:hover { filter: brightness(1.08); }
+    h1 { font-size: 1.4rem; font-weight: 600; margin: 0 0 .35rem; }
+    h2 { font-size: 1rem; font-weight: 600; margin: 1.4rem 0 .55rem; color: var(--accent); }
+    .tag { color: var(--muted); font-size: .8rem; margin-bottom: .85rem; line-height: 1.4; }
+    .how {
+      border: 1px solid rgba(61,232,114,.3);
+      background: rgba(61,232,114,.06);
+      padding: .85rem .9rem;
+      margin: 0 0 1.25rem;
+      font-size: .82rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .how strong { color: var(--text); }
+    .how ol { margin: .45rem 0 0; padding-left: 1.2rem; }
+    .how li { margin: .25rem 0; }
+    .how code { color: var(--accent); font-size: .78rem; }
+    .note {
+      font-size: .75rem; color: var(--muted); margin: 0 0 1.25rem; line-height: 1.4;
+    }
+    #archive-list { display: grid; gap: .5rem; }
+    .card {
+      border: 1px solid rgba(61,232,114,.25); padding: .7rem .8rem;
+      background: rgba(61,232,114,.04);
+    }
+    .card .meta { color: var(--muted); font-size: .75rem; margin-top: .3rem; }
+    .card ul { margin: .45rem 0 0; padding-left: 1.1rem; color: var(--muted); font-size: .78rem; }
+    .card button {
+      font: inherit; color: var(--accent); background: transparent;
+      border: 1px solid rgba(61,232,114,.4); padding: .2rem .5rem; cursor: pointer;
+      margin-top: .5rem;
+    }
+    audio { width: 100%; margin-top: .75rem; }
+  </style>
+</head>
+<body>
+  <a class="home-link badge" id="uxu-home" href="../index.html" data-uxu-home="uXu">uXu</a>
+
+  <h1 id="archive-title">Starter</h1>
+  <p class="tag" id="archive-tag">public template · Starter.uXu.0003 · make your own room</p>
+  <p id="archive-manuals" class="tag" hidden></p>
+
+  <div class="how">
+    <strong>How to make an archive</strong>
+    <ol>
+      <li>Copy this folder → <code>archives/Your-Name/</code></li>
+      <li>Edit <code>data.json</code> (name, description, items)</li>
+      <li>Open your <code>index.html</code> in a browser</li>
+      <li>Register: PR or email <code>rasip@chloreform.org</code></li>
+    </ol>
+  </div>
+  <p class="note">
+    This page stays a teaching copy for future users. Personal archives are separate —
+    copy Starter; don’t empty it.
+  </p>
+
+  <h2>Practice item</h2>
+  <div id="player-container">
+    <audio id="main-player" controls crossorigin="anonymous"></audio>
+  </div>
+  <div id="archive-list"></div>
+
+  <script>
+    fetch('data.json').then((r) => r.json()).then((data) => {
+      const title = data.archiveName || data.title || 'Starter';
+      document.getElementById('archive-title').textContent = title;
+      document.title = title + ' · make an archive';
+      const desc = data.description || '';
+      const tagBits = [data.artist, data.curator].filter(Boolean);
+      document.getElementById('archive-tag').textContent = tagBits.length
+        ? tagBits.join(' · ')
+        : (desc || 'uXu starter archive');
+
+      const home = document.getElementById('uxu-home');
+      const hl = (data.uxu && data.uxu.homeLink) || {};
+      const style = String(hl.style || 'uXu').toLowerCase();
+      home.href = hl.href || '../index.html';
+      if (style === '0?0' || style === '0q0' || style === 'back') {
+        home.textContent = hl.label || '← 0?0';
+        home.className = 'home-link back';
+      } else {
+        home.textContent = hl.label || 'uXu';
+        home.className = 'home-link badge';
+      }
+
+      const manualsEl = document.getElementById('archive-manuals');
+      const manuals = (data.uxu && data.uxu.manuals) || [];
+      if (manualsEl && manuals.length) {
+        manualsEl.hidden = false;
+        manualsEl.innerHTML = 'Guide: ' + manuals.map((m) => {
+          const path = typeof m === 'string' ? m : (m && m.path);
+          const label = (typeof m === 'object' && m && m.title) || path || 'Manual';
+          if (!path) return '';
+          return '<a href="' + path + '" style="color:var(--accent)">' + label + '</a>';
+        }).join(' · ');
+      }
+
+      const list = document.getElementById('archive-list');
+      const player = document.getElementById('main-player');
+      const items = data.shows || data.items || [];
+      if (!items.length) {
+        list.innerHTML = '<p class="tag">No items yet — add entries under <code>shows</code> in data.json.</p>';
+        return;
+      }
+      items.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const label = item.date
+          ? item.date + ' — ' + (item.venue || item.title || 'item')
+          : (item.title || ('Item ' + (i + 1)));
+        let html = '<div>' + label + '</div>';
+        if (item.venue && item.date && item.title) {
+          html += '<div class="meta">' + item.title + '</div>';
+        }
+        if (Array.isArray(item.setlist) && item.setlist.length) {
+          html += '<ul>' + item.setlist.map((s) => '<li>' + s + '</li>').join('') + '</ul>';
+        }
+        card.innerHTML = html;
+        const src = item.audioSources && item.audioSources[0];
+        const url = src && (src.url || (src.archiveOrgId
+          ? 'https://archive.org/download/' + src.archiveOrgId
+          : null));
+        if (url) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = 'Play';
+          btn.addEventListener('click', () => { player.src = url; player.play(); });
+          card.appendChild(btn);
+        }
+        list.appendChild(card);
+      });
+    }).catch((err) => {
+      document.getElementById('archive-tag').textContent = 'Add a data.json beside this file. ' + err.message;
+    });
+  </script>
+</body>
+</html>
