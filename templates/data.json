@@ -19,7 +19,19 @@
         "description": "How to use this archive — listed in 0?0 INDEX ARCHIVE MANUALS"
       }
     ],
-    "tags": []
+    "tags": [],
+    "ini": {
+      "optIn": false,
+      "tag": "iNi",
+      "provenance": {
+        "origin": "",
+        "authors": [],
+        "custody": "",
+        "lineage": "",
+        "conditions": "",
+        "attestedAt": null
+      }
+    }
   },
   "shows": []
 }

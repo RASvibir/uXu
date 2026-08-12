@@ -8,16 +8,18 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 ### Interactive manuals
 - **ABOUT** — what uXu is, how 0?0 works, why it exists (RTFM → About tab)
+- **INI** — iNi provenance protocol (opt-in authenticity / inner-circle ethic)
 - **RTFM (0?0 console)** — tabbed 0?0 manual: About · Ease · Nav · Commands · Depth · Code · Source
 - **FAQ** — friendly functional how-to
 - **MANUAL LIBRARY** — pamphlet index on 0?0 (F3)
 - **User Guide** — browse, install public **uXu** app, commons links, reach admin
 - **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
+- **iNi Provenance** — name, protocol fields, opt-in tag (`INI-PROVENANCE.md`)
 - **Master Admin Guide** — claim, seal, recovery email, optional 2FA (`SETUP MASTER`)
 - **CyberCat Sunflower Manual** — visitor / curator deck guide
 - **Developers Handbook** — builder / coder patterns
 - **Source Code Pamphlet** — repo map without secrets or operator internals
-- **00-RTFM.md** / **ABOUT.md** — markdown twins of the interactive panels
+- **00-RTFM.md** / **ABOUT.md** / **INI-PROVENANCE.md** — markdown twins of interactive panels
 
 Admin contact for humans: rasip@chloreform.org
 

@@ -36,6 +36,14 @@ uXu
 
 `*:*` means connected — not endorsement, ownership, or control.
 
+## iNi (opt-in provenance)
+
+**iNi** is the inner-circle provenance ethic beside uXu — an “I and I” space
+where creators who choose it treat origin, authorship, lineage, and custody as
+first-class data. It is not required to publish on uXu.
+
+On 0?0: type **INI**. Full pamphlet: `INI-PROVENANCE.md` / MANUAL LIBRARY.
+
 ## How and why it was created
 
 uXu exists so archives can stay **independent** and still be **findable**.

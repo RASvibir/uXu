@@ -13,9 +13,10 @@ Admin (humans): **rasip@chloreform.org**
 |---------|------|
 | **uXu** (landing / PWA) | Public door into the commons |
 | **0?0** (`0?0.uXu.0000`) | Root console inside the commons — registry, manuals, map, logs |
+| **iNi** | Opt-in provenance protocol + inner-circle ethic (see RTFM / `INI`) |
 | **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
 | **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
-| **templates/** | Optional starters (commons link + template-fork fields) |
+| **templates/** | Optional starters (commons link + template-fork + iNi fields) |
 
 ## Canonical hierarchy
 

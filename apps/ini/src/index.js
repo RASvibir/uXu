@@ -207,6 +207,7 @@ async function handleManuals(sql, request) {
     'master-admin-guide': 3,
     'developers-handbook': 4,
     'source-code-pamphlet': 5,
+    'ini-provenance': 6,
   };
   manuals.sort((a, b) => {
     const ra = rank[a.slug] ?? 50;

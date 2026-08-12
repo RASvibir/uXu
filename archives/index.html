@@ -299,6 +299,14 @@
   td.col-status .mark.is-admin-removed{ color:#c97b7b; }
   td.col-status .mark.is-investigate{ color:#ff8a5c; }
   td.col-status .mark.is-audience{ color:var(--cyan); }
+  td.col-name .ini-cue{
+    margin-left:.45em;
+    font-size:.62rem;
+    letter-spacing:.06em;
+    color:var(--cyan);
+    opacity:.9;
+    vertical-align:baseline;
+  }
   tbody tr{cursor:pointer;}
   tbody tr:hover td{background:rgba(15,58,34,.45);}
   tbody tr:focus-visible, tbody tr.active{
@@ -1219,12 +1227,15 @@
               <div class="guide-panel" id="faq-panel" hidden>
                 <div class="guide-scroll" id="faq-scroll"></div>
               </div>
+              <div class="guide-panel" id="ini-panel" hidden>
+                <div class="guide-scroll" id="ini-scroll"></div>
+              </div>
               <pre id="active-summary" aria-live="polite">A commons for independent archives.
 Preserve. Connect. Discover.
 
 You are in 0?0 — the root of the archive.
 
-Quick Nav: ABOUT · CREATE ARCHIVE · FAQ · RTFM
+Quick Nav: ABOUT · FAQ · INDEX · … · iNi Provenance · RTFM
 Keyboard: ? map · / command · ↑↓ registry.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
@@ -1240,7 +1251,6 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
                 <li data-cmd="ABOUT" tabindex="0">ABOUT</li>
                 <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
                 <li data-cmd="FAQ" tabindex="0">FAQ</li>
-                <li data-cmd="RTFM" tabindex="0" class="nav-rtfm" aria-describedby="rtfm-tip">RTFM</li>
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
                 <li data-cmd="MANUAL" tabindex="0">MANUAL LIBRARY</li>
                 <li data-cmd="INSTALL" tabindex="0">INSTALL uXu</li>
@@ -1249,6 +1259,8 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
                 <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
                 <li data-cmd="SETUP MASTER" tabindex="0">SETUP MASTER</li>
                 <li data-cmd="EXIT" tabindex="0">EXIT TO DOS</li>
+                <li data-cmd="INI" tabindex="0" class="nav-ini">iNi Provenance</li>
+                <li data-cmd="RTFM" tabindex="0" class="nav-rtfm" aria-describedby="rtfm-tip">RTFM</li>
               </ul>
             </div>
             <div class="box">
@@ -1390,16 +1402,26 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
     }
   }
 
+  function hideIniUi() {
+    const panel = document.getElementById('ini-panel');
+    if (panel) {
+      panel.hidden = true;
+      panel.classList.remove('is-on');
+    }
+  }
+
   function hideGuidePanels() {
     hideRtfmUi();
     hideCreateUi();
     hideFaqUi();
+    hideIniUi();
     if (activeSummary) activeSummary.hidden = false;
   }
 
   function showRtfmUi() {
     hideCreateUi();
     hideFaqUi();
+    hideIniUi();
     const panel = document.getElementById('rtfm-panel');
     if (panel) {
       panel.hidden = false;
@@ -1411,6 +1433,7 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
   function showCreateUi() {
     hideRtfmUi();
     hideFaqUi();
+    hideIniUi();
     const panel = document.getElementById('create-panel');
     if (panel) {
       panel.hidden = false;
@@ -1422,7 +1445,20 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
   function showFaqUi() {
     hideRtfmUi();
     hideCreateUi();
+    hideIniUi();
     const panel = document.getElementById('faq-panel');
+    if (panel) {
+      panel.hidden = false;
+      panel.classList.add('is-on');
+    }
+    if (activeSummary) activeSummary.hidden = true;
+  }
+
+  function showIniUi() {
+    hideRtfmUi();
+    hideCreateUi();
+    hideFaqUi();
+    const panel = document.getElementById('ini-panel');
     if (panel) {
       panel.hidden = false;
       panel.classList.add('is-on');
@@ -1836,10 +1872,13 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         certainty: r.certainty || "unknown",
         unresolved: r.unresolved || [],
         parent: r.parent || null,
+        iniOptIn: false,
+        iniTag: 'iNi',
       }));
       refreshRegistryCount();
       renderRegistry();
       toast('Registry linked to Neon');
+      scanIniOptIns();
     } catch (err) {
       showOutput("ERROR", `Could not load registry from\n${API_BASE}/api/root/registry\n\n${err.message}`);
     }
@@ -2293,6 +2332,13 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       });
       hit.addEventListener('blur', () => scheduleHideNameModal(160));
       tdName.appendChild(hit);
+      if (entry.iniOptIn) {
+        const cue = document.createElement('span');
+        cue.className = 'ini-cue';
+        cue.textContent = entry.iniTag || 'iNi';
+        cue.title = 'iNi provenance opted in (self-attested)';
+        tdName.appendChild(cue);
+      }
 
       const tdStatus = document.createElement('td');
       tdStatus.className = 'col-status';
@@ -2571,6 +2617,29 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     renderArchiveManualIndex();
   }
 
+  async function scanIniOptIns() {
+    const candidates = registry.filter((e) => placemarkerInfo(e).openable);
+    let changed = false;
+    await Promise.all(candidates.map(async (entry) => {
+      const dir = archiveDirFromEntry(entry);
+      if (!dir) return;
+      try {
+        const res = await fetch(siteBase() + dir + 'data.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const ini = data.uxu && data.uxu.ini;
+        const optIn = !!(ini && ini.optIn === true);
+        const tag = (ini && ini.tag) ? String(ini.tag) : 'iNi';
+        if (entry.iniOptIn !== optIn || entry.iniTag !== tag) {
+          entry.iniOptIn = optIn;
+          entry.iniTag = tag;
+          changed = true;
+        }
+      } catch (_) { /* skip unreachable archives */ }
+    }));
+    if (changed) renderRegistry();
+  }
+
   async function openArchiveManualAt(idx) {
     const rows = filterArchiveManuals(archiveManualQuery);
     const item = rows[idx];
@@ -2813,6 +2882,10 @@ const list = document.getElementById('archive-list');
     └── Relationships (*:*)</pre>
 <p class="muted"><code>*:*</code> means “these archives are connected.” It is not endorsement, ownership, or control.</p>
 
+<h3>iNi (opt-in provenance)</h3>
+<p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space where creators who choose it treat origin, authorship, lineage, and custody as first-class data. Not required to publish.</p>
+<p>On 0?0: type <strong>INI</strong> or use Quick Nav. Full pamphlet: <code>INI-PROVENANCE.md</code> in MANUAL LIBRARY.</p>
+
 <h3>How and why I created it</h3>
 <p>I built uXu because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
 <p>The first non-root room was <strong>CyberCat Sunflower</strong> — a Grateful Dead listening deck — proof that a full personality could live under the commons without being sanded down into a generic template. <strong>0?0</strong> grew as the root so there would always be a center: a place to look things up, open a door, read a manual, and leave a trail.</p>
@@ -2844,6 +2917,7 @@ const list = document.getElementById('archive-list');
   <tr><td>ABOUT</td><td>What uXu is · how 0?0 works · why it exists</td></tr>
   <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
   <tr><td>CREATE ARCHIVE</td><td>Starter path + next serial</td></tr>
+  <tr><td>INI</td><td>Opt-in provenance protocol (iNi)</td></tr>
   <tr><td>RTFM tabs</td><td>Deeper: nav → commands → depth → code → source</td></tr>
   <tr><td>MANUAL LIBRARY</td><td>Long-form pamphlets</td></tr>
 </table>
@@ -2898,6 +2972,7 @@ const list = document.getElementById('archive-list');
   <tr><td><code>ARCHIVE MANUALS</code></td><td>Index creator manuals from data.json</td></tr>
   <tr><td><code>FIND MANUAL &lt;q&gt;</code></td><td>Filter that index</td></tr>
   <tr><td><code>CREATE ARCHIVE</code></td><td>Creation manual + next serial</td></tr>
+  <tr><td><code>INI</code></td><td>iNi provenance protocol (opt-in)</td></tr>
   <tr><td><code>BACK</code></td><td>Return one step in manuals</td></tr>
 </table>
 <h3>Account (day-to-day)</h3>
@@ -3097,6 +3172,10 @@ README.md`;
   <p>The root console inside the commons (<code>0?0.uXu.0000</code>). Registry, docs, map, logs. The public invite app brands as <strong>uXu</strong>, not 0?0.</p>
 </details>
 <details>
+  <summary>What is iNi?</summary>
+  <p>An optional provenance protocol. Creators who opt in document origin, authorship, custody, and lineage. Type <strong>INI</strong> for the guide. Not required to publish on uXu.</p>
+</details>
+<details>
   <summary>How do I browse?</summary>
   <p>Use the registry table. Arrow keys move · Enter opens · <kbd>i</kbd> inspects · <kbd>/</kbd> focuses the command line. Or click Quick Nav.</p>
 </details>
@@ -3114,7 +3193,7 @@ README.md`;
 </details>
 <details>
   <summary>RTFM vs FAQ vs MANUAL LIBRARY?</summary>
-  <p><strong>FAQ</strong> = everyday answers. <strong>ABOUT / RTFM</strong> = story + deeper tabs (ease → source). <strong>MANUAL LIBRARY</strong> = long pamphlets.</p>
+  <p><strong>FAQ</strong> = everyday answers. <strong>ABOUT / RTFM</strong> = story + deeper tabs (ease → source). <strong>MANUAL LIBRARY</strong> = long pamphlets. <strong>INI</strong> = provenance opt-in guide.</p>
 </details>
 <details>
   <summary>How do I install the app?</summary>
@@ -3129,6 +3208,59 @@ README.md`;
     showFaqUi();
     activeTitle.textContent = 'FAQ';
     toast('FAQ');
+  }
+
+  function openIni() {
+    hideManualToolbar();
+    setActiveNav('INI');
+    manualMode = 'ini';
+    const root = document.getElementById('ini-scroll');
+    if (root) {
+      root.innerHTML = `
+<p class="lede"><strong>iNi</strong> — opt-in provenance beside uXu. An “I and I” practice for origin, authorship, lineage, and custody.</p>
+
+<h3>What it is</h3>
+<p>A name, a protocol, and a community boundary defined by practice — not a company label. uXu does not require iNi. Creators who want explicit authenticity documentation may opt in.</p>
+
+<pre>uXu  (public collection)
+ └── 0?0  (console)
+      └── archives…
+           └── optional: iNi tag + provenance fields</pre>
+
+<h3>Opt in (beta)</h3>
+<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Registry rows may show a light <strong>iNi</strong> cue when opted in — honesty badge, not enforcement.</p>
+<pre>{
+  "uxu": {
+    "ini": {
+      "optIn": true,
+      "tag": "iNi",
+      "provenance": {
+        "origin": "…",
+        "authors": ["…"],
+        "custody": "…",
+        "lineage": "…",
+        "conditions": "…",
+        "attestedAt": "2026-08-12"
+      }
+    }
+  }
+}</pre>
+
+<h3>What opt-in means</h3>
+<ul>
+  <li>You filled provenance seriously</li>
+  <li>You keep authenticity metadata honest and current</li>
+  <li>You accept community expectations around transparency</li>
+</ul>
+<p class="muted">Self-attestation — not a legal chain-of-custody certificate.</p>
+
+<h3>Read more</h3>
+<p>Full pamphlet: <code>archives/RTFM/INI-PROVENANCE.md</code> · MANUAL LIBRARY when ingested · templates ship with <code>optIn: false</code>.</p>
+<p>Questions: <strong>rasip@chloreform.org</strong></p>`;
+    }
+    showIniUi();
+    activeTitle.textContent = 'iNi · PROVENANCE';
+    toast('INI — provenance protocol');
   }
 
   async function openRootManual(slug, opts = {}) {
@@ -3285,6 +3417,7 @@ LOGS              show transparency logs
 RTFM              interactive 0?0 manual (about → ease → … → source)
 ABOUT             what uXu is · how 0?0 works · why it exists
 FAQ               friendly functional how-to
+INI               iNi provenance protocol (opt-in)
 MANUAL            manual library index (pamphlets)
 ARCHIVE MANUALS   index / search manuals from created archives
 FIND MANUAL <q>   filter that index
@@ -3368,6 +3501,10 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       openFaq();
       return;
     }
+    if (cmd === "INI" || cmd === "INI PROVENANCE" || cmd === "PROVENANCE") {
+      openIni();
+      return;
+    }
     if (cmd === "RTFM") {
       openRtfm({ tab: 'ease', nav: 'RTFM', title: '0?0 · RTFM', toast: 'RTFM — ease → source' });
       return;
@@ -3399,14 +3536,21 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
         hideGuidePanels();
         hideManualToolbar();
         setActiveNav('INDEX');
-        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, or RTFM when you need docs.');
+        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, INI, or RTFM when you need docs.');
+        return;
+      }
+      if (manualMode === 'ini') {
+        hideGuidePanels();
+        hideManualToolbar();
+        setActiveNav('INDEX');
+        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, INI, or RTFM when you need docs.');
         return;
       }
       if (manualMode === 'rtfm') {
         hideGuidePanels();
         hideManualToolbar();
         setActiveNav('INDEX');
-        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, or RTFM when you need docs.');
+        showOutput('WELCOME TO uXu', 'Back at the root. Type ABOUT, FAQ, INI, or RTFM when you need docs.');
         return;
       }
       setActiveNav("MANUAL");
@@ -4057,7 +4201,8 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
       const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active')
         || document.querySelector('#nav-list li[data-cmd="RTFM"]')?.classList.contains('active')
         || document.querySelector('#nav-list li[data-cmd="ABOUT"]')?.classList.contains('active')
-        || document.querySelector('#nav-list li[data-cmd="FAQ"]')?.classList.contains('active');
+        || document.querySelector('#nav-list li[data-cmd="FAQ"]')?.classList.contains('active')
+        || document.querySelector('#nav-list li[data-cmd="INI"]')?.classList.contains('active');
       if (manualNavOn && manualMode === 'read') {
         e.preventDefault();
         renderManualList();
@@ -4074,6 +4219,13 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
         return;
       }
       if (manualNavOn && manualMode === 'faq') {
+        e.preventDefault();
+        hideGuidePanels();
+        hideManualToolbar();
+        focusRegistrySelectedOrFirst();
+        return;
+      }
+      if (manualNavOn && manualMode === 'ini') {
         e.preventDefault();
         hideGuidePanels();
         hideManualToolbar();

@@ -72,6 +72,29 @@ Paths are relative to your archive folder. Starter file:
 On 0?0: **RTFM** → interactive 0?0 manual → **INDEX ARCHIVE MANUALS**, or type `ARCHIVE MANUALS` /
 `FIND MANUAL cybercat`.
 
+## iNi provenance (opt-in)
+
+Optional authenticity protocol. Leave `optIn: false` unless you fill provenance seriously.
+
+```json
+"uxu": {
+  "ini": {
+    "optIn": true,
+    "tag": "iNi",
+    "provenance": {
+      "origin": "…",
+      "authors": ["…"],
+      "custody": "…",
+      "lineage": "…",
+      "conditions": "…",
+      "attestedAt": "2026-08-12"
+    }
+  }
+}
+```
+
+On 0?0: **INI**. Full pamphlet: `INI-PROVENANCE.md`.
+
 ## Template forks (creator's choice)
 
 You may allow others to start from your archive as a template:

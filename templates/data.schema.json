@@ -92,6 +92,39 @@
               }
             ]
           }
+        },
+        "ini": {
+          "type": "object",
+          "description": "Optional iNi provenance opt-in. See archives/RTFM/INI-PROVENANCE.md",
+          "properties": {
+            "optIn": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, creator attests provenance fields and accepts iNi community expectations"
+            },
+            "tag": {
+              "type": "string",
+              "default": "iNi",
+              "description": "Display tag when opted in"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "origin": { "type": "string" },
+                "authors": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "custody": { "type": "string" },
+                "lineage": { "type": "string" },
+                "conditions": { "type": "string" },
+                "attestedAt": {
+                  "type": ["string", "null"],
+                  "description": "ISO date or null when not yet attested"
+                }
+              }
+            }
+          }
         }
       }
     },

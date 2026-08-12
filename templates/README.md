@@ -75,12 +75,37 @@ List visitor manuals in `data.json` so **0?0 → RTFM → INDEX ARCHIVE MANUALS*
 
 Starter file: `templates/manuals/USER-MANUAL.md`. Paths are relative to your archive folder.
 
-On 0?0: open **RTFM** (0?0 User Guide), then the **INDEX ARCHIVE MANUALS** button (or type `ARCHIVE MANUALS` / `FIND MANUAL <words>`).
+On 0?0: open **RTFM**, then the **INDEX ARCHIVE MANUALS** button (or type `ARCHIVE MANUALS` / `FIND MANUAL <words>`).
+
+## iNi provenance (opt-in)
+
+iNi is an optional authenticity protocol beside uXu — not required to publish.
+
+```json
+"uxu": {
+  "ini": {
+    "optIn": true,
+    "tag": "iNi",
+    "provenance": {
+      "origin": "…",
+      "authors": ["…"],
+      "custody": "…",
+      "lineage": "…",
+      "conditions": "…",
+      "attestedAt": "2026-08-12"
+    }
+  }
+}
+```
+
+Setting `optIn: true` means you filled provenance seriously and accept iNi
+expectations. Starter fields ship in `templates/data.json` with `optIn: false`.
+On 0?0: **INI**. Pamphlet: `archives/RTFM/INI-PROVENANCE.md`.
 
 ## Create flow (simple)
 
 1. Copy `templates/` → `archives/Your-Archive-Name/`.
-2. Edit `data.json` (name, `homeLink.style`, fork policy, `uxu.manuals`).
+2. Edit `data.json` (name, `homeLink.style`, fork policy, `uxu.manuals`, optional `uxu.ini`).
 3. Build out `index.html` or keep the starter; edit `manuals/USER-MANUAL.md`.
 4. Register via PR or email rasip@chloreform.org — next `Title.uXu.NNNN` is assigned.
 
