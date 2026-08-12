@@ -46,10 +46,10 @@ RTFM
 
 ```text
 Boot          ↑↓ on Quick Nav (ARCHIVE INDEX)
-Zones         nav → registry → actions → command → account
-← →           one zone, no wrap (→ from Quick Nav = registry)
-              also leaves Account Gate / command line
-Tab           cycle zones (wraps)
+Zones (Tab)   nav → registry → command → account
+← →           menus / sub-zones only
+              USER OPTIONS open/close
+              registry table ↔ actions toolbar
 Click         mouse adopts that zone as keyboard highlight
 Jump          q nav · r registry · c|/ command · a account
 ```
