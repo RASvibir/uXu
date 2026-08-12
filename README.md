@@ -14,7 +14,7 @@ Admin (humans): **rasip@chloreform.org**
 |---------|------|
 | **uXu** (landing / PWA) | Public door into the commons |
 | **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
-| **iNi** | Opt-in provenance protocol (self-attestation). Optional public notes: [soloist.ai/uxu](https://soloist.ai/uxu) via **iNi Provenance** / `INI` / `INI SITE` |
+| **iNi** | Opt-in provenance protocol (self-attestation). Public notes: [soloist.ai/uxu](https://soloist.ai/uxu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
 | **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
 | **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
@@ -64,7 +64,7 @@ Archive_A.uXu*:*Archive_B.uXu
 On the live console:
 
 - **ABOUT** / **RTFM** — 0?0 story and operator manual  
-- **iNi Provenance** — opt-in authenticity protocol · optional notes https://soloist.ai/uxu (`INI SITE` on the INI panel)  
+- **iNi Provenance** — opt-in authenticity protocol · notes https://soloist.ai/uxu (`INI SITE`) · paper trail https://github.com/RASvibir/iNi  
 - **USER OPTIONS** — Manual Library, Install, Map, Logs, System, …  
 - **CREATE ARCHIVE** — next serial + creation guide  
 

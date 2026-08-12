@@ -23,7 +23,7 @@ This guide is for everyone. No coding required.
 3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
 4. **Create your own archive** — `CREATE ARCHIVE` (or Create Archive). Name + description, save, confirm. Expand options only if you want them.
 5. **Try CyberCat Sunflower** — a full Grateful Dead listening deck (`OPEN CYBERCAT`).
-6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer. Optional notes page: https://soloist.ai/uxu (`INI SITE` on the INI panel).
+6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer. Notes: https://soloist.ai/uxu (`INI SITE`). Paper trail: https://github.com/RASvibir/iNi.
 
 ## Finding Your Way (0?0)
 
@@ -61,7 +61,7 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | Guide | Who it is for |
 |-------|----------------|
 | **ABOUT / RTFM** | **ABOUT** = what uXu is (site · repo · app); RTFM = using the 0?0 archive interface |
-| **iNi Provenance** | Opt-in authenticity protocol · optional notes https://soloist.ai/uxu |
+| **iNi Provenance** | Opt-in authenticity protocol · notes https://soloist.ai/uxu · paper trail https://github.com/RASvibir/iNi |
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |
 | CyberCat Sunflower Manual | Listening / using that deck |
@@ -150,6 +150,6 @@ You will get a human reply. There is no automated ticket maze.
 
 - Curious listener → `OPEN CYBERCAT`, then read its Manual (F4 on that deck).
 - Ready to contribute → CREATE ARCHIVE or READ archive-creation.
-- Want provenance practice → **iNi Provenance** / `INI` · optional notes `INI SITE` → https://soloist.ai/uxu.
+- Want provenance practice → **iNi Provenance** / `INI` · notes `INI SITE` → https://soloist.ai/uxu · paper trail https://github.com/RASvibir/iNi.
 - Builder / coder → READ developers-handbook.
 - Want the big picture of files → READ source-code-pamphlet.

@@ -57,6 +57,7 @@ first-class data. It is not required to publish on uXu.
 
 In the archive interface: Quick Nav **iNi Provenance** (or type `INI`).
 Optional public notes: https://soloist.ai/uxu (panel link or `INI SITE`).
+Paper trail: https://github.com/RASvibir/iNi (charter / PR articles — not a gate).
 Hover tip: *opt-in provenance · I and I*. Pamphlet: `INI-PROVENANCE.md` /
 MANUAL LIBRARY.
 

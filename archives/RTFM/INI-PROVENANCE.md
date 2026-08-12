@@ -40,6 +40,10 @@ Separate public page for iNi practice notes, FAQ, and contact:
 
 **https://soloist.ai/uxu**
 
+Community paper trail (charter, articles, authorizations via PR — not a membership gate):
+
+**https://github.com/RASvibir/iNi**
+
 On 0?0: open Quick Nav **iNi Provenance**, then the panel link, or type
 **`INI SITE`**. Opt-in itself still happens in your archive / on the console —
 you do not need that page to practice iNi. The console stays a protocol tool;
@@ -89,7 +93,8 @@ Joining iNi is not a newsletter signup. It means adopting the protocol:
 The community is defined by **practice**, not membership badges alone.
 0?0 is a front door into that idea — Quick Nav **iNi Provenance**
 (or type `INI`). Hover tip: *opt-in provenance · I and I*. Optional public
-notes: https://soloist.ai/uxu (panel link / `INI SITE`).
+notes: https://soloist.ai/uxu (panel link / `INI SITE`). Paper trail:
+https://github.com/RASvibir/iNi.
 
 ## Conceptual pillars
 
@@ -140,7 +145,8 @@ cue when `optIn` is true (honesty badge — not enforcement).
 
 Questions about iNi practice or registration: **rasip@chloreform.org**
 
-Optional public notes: **https://soloist.ai/uxu**
+Optional public notes: **https://soloist.ai/uxu**  
+Paper trail: **https://github.com/RASvibir/iNi**
 
 uXu software & original docs: **MIT** (`LICENSE`). Provenance fields document
 honesty; they do not rewrite media copyright.

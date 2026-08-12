@@ -8,7 +8,7 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 ### Interactive manuals
 - **ABOUT** — what **uXu** is (site · repo · app); 0?0 as the archive interface
-- **iNi Provenance** — Quick Nav flair + `INI` guide · optional notes → https://soloist.ai/uxu (`INI SITE`) · pamphlet `INI-PROVENANCE.md`
+- **iNi Provenance** — Quick Nav flair + `INI` guide · notes → https://soloist.ai/uxu (`INI SITE`) · paper trail → https://github.com/RASvibir/iNi · pamphlet `INI-PROVENANCE.md`
 - **RTFM (0?0 console)** — tabbed 0?0 manual: About · Ease · Nav · Commands · Depth · Code · Source
 - **FAQ** — friendly functional how-to
 - **USER OPTIONS** — Manual Library, Install, Map, Logs, System, Setup Master, Exit
