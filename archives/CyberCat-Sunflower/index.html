@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberCat Sunflower · Grateful Dead Archive</title>
+  <title>CyberCat Sunflower · Grateful Dead Full Catalog</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
       --void: #05030a;
-      --panel: #0a0714;
-      --panel-edge: #1a1230;
       --phosphor: #5dff8a;
       --phosphor-dim: #2a9a55;
       --cyan: #4de8ff;
@@ -25,7 +23,6 @@
       --mono: 'Share Tech Mono', ui-monospace, monospace;
       --display: 'Orbitron', var(--mono);
     }
-
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
@@ -39,51 +36,27 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0;
     }
-
-    /* CRT chassis */
     .chassis {
-      flex: 1;
-      min-height: 0;
-      margin: 10px;
-      display: flex;
-      flex-direction: column;
+      flex: 1; min-height: 0; margin: 10px;
+      display: flex; flex-direction: column;
       border-radius: 18px;
       background: linear-gradient(145deg, var(--bezel-hi), var(--bezel));
       border: 1px solid #0a0612;
-      box-shadow:
-        0 24px 60px rgba(0,0,0,.65),
-        inset 0 1px 0 rgba(255,255,255,.08);
-      padding: 12px;
-      position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08);
+      padding: 12px; position: relative;
     }
     .chassis::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: 5px;
-      width: 42px;
-      height: 6px;
-      transform: translateX(-50%);
-      border-radius: 3px;
-      background: #0d0a14;
+      content: ""; position: absolute; left: 50%; bottom: 5px;
+      width: 42px; height: 6px; transform: translateX(-50%);
+      border-radius: 3px; background: #0d0a14;
       box-shadow: 0 0 8px rgba(77,232,255,.25);
     }
-
     .tube {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      background: var(--void);
-      border-radius: 8px;
-      border: 2px solid #000;
-      overflow: hidden;
-      box-shadow:
-        inset 0 0 80px rgba(93,255,138,.05),
-        inset 0 0 140px rgba(0,0,0,.9);
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      position: relative; background: var(--void); border-radius: 8px;
+      border: 2px solid #000; overflow: hidden;
+      box-shadow: inset 0 0 80px rgba(93,255,138,.05), inset 0 0 140px rgba(0,0,0,.9);
       animation: tube-boot .8s var(--ease) both;
     }
     @keyframes tube-boot {
@@ -91,68 +64,39 @@
       to { opacity: 1; filter: none; }
     }
     .tube::before {
-      content: "";
-      position: absolute; inset: 0;
-      pointer-events: none;
-      z-index: 20;
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20;
       background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.5) 100%);
     }
     .tube::after {
-      content: "";
-      position: absolute; inset: 0;
-      pointer-events: none;
-      z-index: 21;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(0,0,0,0) 0px,
-        rgba(0,0,0,0) 2px,
-        rgba(0,0,0,.14) 3px
-      );
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 21;
+      background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.14) 3px);
       opacity: .7;
     }
     .tube > * { position: relative; z-index: 1; }
 
     .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-      padding: .55rem .9rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap; padding: .55rem .9rem;
       background: linear-gradient(90deg, rgba(255,61,206,.18), rgba(77,232,255,.1));
       border-bottom: 1px solid rgba(93,255,138,.25);
-      font-size: .72rem;
-      letter-spacing: .06em;
+      font-size: .72rem; letter-spacing: .06em;
     }
     .topbar a {
-      color: var(--cyan);
-      text-decoration: none;
-      border: 1px solid rgba(77,232,255,.35);
-      padding: .2rem .5rem;
-      transition: background .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease);
+      color: var(--cyan); text-decoration: none;
+      border: 1px solid rgba(77,232,255,.35); padding: .2rem .5rem;
+      transition: background .2s var(--ease), color .2s var(--ease);
     }
-    .topbar a:hover, .topbar a:focus-visible {
-      background: var(--cyan);
-      color: #041018;
-      outline: none;
-      box-shadow: 0 0 14px rgba(77,232,255,.4);
-    }
+    .topbar a:hover { background: var(--cyan); color: #041018; }
     .brand {
-      font-family: var(--display);
-      font-size: .78rem;
-      font-weight: 700;
-      color: var(--amber);
-      text-shadow: 0 0 12px rgba(255,210,74,.35);
+      font-family: var(--display); font-size: .78rem; font-weight: 700;
+      color: var(--amber); text-shadow: 0 0 12px rgba(255,210,74,.35);
     }
     .path { color: var(--muted); }
     .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; }
 
     .workspace {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: minmax(280px, 420px) 1fr;
-      gap: 0;
+      flex: 1; min-height: 0;
+      display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 0;
     }
     @media (max-width: 860px) {
       body { overflow: auto; height: auto; }
@@ -162,11 +106,8 @@
     }
 
     .deck-col, .hub-col {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      padding: .75rem;
-      gap: .65rem;
+      display: flex; flex-direction: column; min-height: 0;
+      padding: .75rem; gap: .65rem;
     }
     .deck-col {
       border-right: 1px solid rgba(93,255,138,.15);
@@ -177,341 +118,203 @@
       background: rgba(10,7,20,.85);
       border: 1px solid rgba(93,255,138,.28);
       padding: .7rem .75rem;
-      display: flex;
-      flex-direction: column;
-      gap: .55rem;
-      box-shadow: inset 0 0 24px rgba(93,255,138,.04);
+      display: flex; flex-direction: column; gap: .55rem;
     }
     .panel-h {
-      font-family: var(--display);
-      font-size: .62rem;
-      letter-spacing: .14em;
+      font-family: var(--display); font-size: .62rem; letter-spacing: .14em;
       color: var(--amber);
       border-bottom: 1px dashed rgba(255,210,74,.35);
       padding-bottom: .35rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center; gap: .5rem;
     }
-    .panel-h .tag {
-      color: var(--cyan);
-      letter-spacing: .08em;
-      font-family: var(--mono);
-      font-size: .65rem;
-    }
+    .panel-h .tag { color: var(--cyan); letter-spacing: .08em; font-family: var(--mono); font-size: .65rem; }
 
-    .now-playing {
-      font-size: .72rem;
-      color: var(--text);
-      line-height: 1.4;
-      min-height: 2.6em;
-    }
+    .now-playing { font-size: .72rem; color: var(--text); line-height: 1.4; min-height: 3.2em; }
     .now-playing .idle { color: var(--muted); }
-    .now-playing strong { color: var(--cyan); font-weight: 400; }
-
     audio {
-      width: 100%;
-      height: 36px;
+      width: 100%; height: 36px;
       filter: invert(1) hue-rotate(90deg) saturate(2.2) brightness(1.05);
     }
 
+    .source-bar { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+    .ghost-btn {
+      font-family: var(--mono); font-size: .65rem; letter-spacing: .06em;
+      text-transform: uppercase; background: transparent; color: var(--cyan);
+      border: 1px solid rgba(77,232,255,.4); padding: .28rem .55rem; cursor: pointer;
+      transition: background .2s var(--ease), color .2s var(--ease);
+    }
+    .ghost-btn:hover, .ghost-btn:focus-visible { background: var(--cyan); color: #031018; outline: none; }
+    .ghost-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .ghost-btn.best {
+      color: var(--amber); border-color: rgba(255,210,74,.45);
+    }
+    .ghost-btn.best:hover { background: var(--amber); color: #1a1200; }
+    .source-meta { font-size: .62rem; color: var(--muted); flex: 1; min-width: 12ch; }
+
     .eq-grid {
-      display: flex;
-      justify-content: space-between;
-      gap: .35rem;
-      padding: .55rem .4rem;
-      border: 1px solid rgba(255,61,206,.3);
+      display: flex; justify-content: space-between; gap: .35rem;
+      padding: .55rem .4rem; border: 1px solid rgba(255,61,206,.3);
       background: rgba(255,61,206,.04);
     }
-    .eq-cell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 18%;
-      gap: .25rem;
-    }
-    .eq-cell label {
-      font-size: .62rem;
-      color: var(--magenta);
-      letter-spacing: .04em;
-    }
-    .eq-cell span {
-      font-size: .62rem;
-      color: var(--cyan);
-    }
+    .eq-cell { display: flex; flex-direction: column; align-items: center; width: 18%; gap: .25rem; }
+    .eq-cell label { font-size: .62rem; color: var(--magenta); }
+    .eq-cell span { font-size: .62rem; color: var(--cyan); }
     .eq-cell input[type=range] {
-      writing-mode: vertical-lr;
-      direction: rtl;
-      width: 18px;
-      height: 88px;
-      accent-color: var(--phosphor);
-      cursor: pointer;
+      writing-mode: vertical-lr; direction: rtl; width: 18px; height: 72px;
+      accent-color: var(--phosphor); cursor: pointer;
     }
 
     .setlist-box {
-      flex: 1;
-      min-height: 8rem;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(77,232,255,.35);
-      background: #030208;
-      padding: .55rem .65rem;
+      flex: 1; min-height: 8rem; display: flex; flex-direction: column;
+      border: 1px solid rgba(77,232,255,.35); background: #030208; padding: .55rem .65rem;
     }
     .setlist-box .panel-h { border-color: rgba(77,232,255,.3); color: var(--cyan); }
     .setlist-scroller {
-      flex: 1;
-      overflow-y: auto;
-      font-size: .78rem;
-      color: var(--text);
-      line-height: 1.55;
-      scrollbar-width: thin;
-      scrollbar-color: var(--magenta) #05030a;
+      flex: 1; overflow-y: auto; font-size: .78rem; color: var(--text); line-height: 1.55;
+      scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a;
     }
-    .setlist-scroller .song {
-      padding: .28rem 0;
-      border-bottom: 1px dotted rgba(255,255,255,.08);
-      display: flex;
-      gap: .6rem;
-      transition: background .15s var(--ease), color .15s var(--ease);
+    .song {
+      display: flex; gap: .6rem; width: 100%; text-align: left;
+      background: transparent; border: 0; border-bottom: 1px dotted rgba(255,255,255,.08);
+      color: inherit; font: inherit; padding: .28rem 0; cursor: pointer;
     }
-    .setlist-scroller .song .n { color: var(--phosphor-dim); min-width: 2ch; }
-    .setlist-scroller .empty { color: var(--muted); padding: .4rem 0; }
+    .song .n { color: var(--phosphor-dim); min-width: 2ch; }
+    .song.playing { color: var(--cyan); background: rgba(77,232,255,.08); }
+    .empty { color: var(--muted); padding: .4rem 0; }
 
-    /* Hub / tabs */
-    .hub-col { min-height: 0; }
     .hub-panel {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      background: rgba(10,7,20,.85);
-      border: 1px solid rgba(93,255,138,.28);
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      background: rgba(10,7,20,.85); border: 1px solid rgba(93,255,138,.28);
       padding: .65rem .7rem;
     }
-
     .tab-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .35rem;
-      margin-bottom: .65rem;
-      padding-bottom: .55rem;
-      border-bottom: 1px solid rgba(93,255,138,.2);
+      display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .55rem;
+      padding-bottom: .55rem; border-bottom: 1px solid rgba(93,255,138,.2);
     }
     .tab-btn {
-      font-family: var(--mono);
-      font-size: .7rem;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--phosphor-dim);
-      border: 1px solid rgba(93,255,138,.3);
-      padding: .4rem .7rem;
-      cursor: pointer;
-      transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
-    }
-    .tab-btn:hover {
-      color: var(--phosphor);
-      border-color: var(--phosphor);
-      transform: translateY(-1px);
+      font-family: var(--mono); font-size: .7rem; letter-spacing: .06em;
+      text-transform: uppercase; background: transparent; color: var(--phosphor-dim);
+      border: 1px solid rgba(93,255,138,.3); padding: .4rem .7rem; cursor: pointer;
     }
     .tab-btn.active {
-      background: var(--phosphor);
-      color: #04120a;
-      border-color: var(--phosphor);
-      font-weight: 700;
+      background: var(--phosphor); color: #04120a; font-weight: 700;
       box-shadow: 0 0 16px rgba(93,255,138,.35);
     }
-    .tab-btn:focus-visible {
-      outline: 1px solid var(--cyan);
-      outline-offset: 2px;
-    }
-    .tab-btn kbd {
-      font: inherit;
-      opacity: .65;
-      margin-right: .25rem;
-    }
+    .tab-btn kbd { font: inherit; opacity: .65; margin-right: .25rem; }
 
-    .filter-row {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: .55rem;
+    .filter-row { display: flex; gap: .5rem; margin-bottom: .45rem; flex-wrap: wrap; }
+    .filter-row input, .filter-row select {
+      flex: 1; min-width: 140px; background: #030208;
+      border: 1px solid rgba(77,232,255,.3); color: var(--text);
+      font-family: var(--mono); font-size: .78rem; padding: .4rem .55rem; outline: none;
     }
-    .filter-row input {
-      flex: 1;
-      background: #030208;
-      border: 1px solid rgba(77,232,255,.3);
-      color: var(--text);
-      font-family: var(--mono);
-      font-size: .78rem;
-      padding: .4rem .55rem;
-      outline: none;
-      transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    .filter-row input:focus, .filter-row select:focus {
+      border-color: var(--cyan); box-shadow: 0 0 12px rgba(77,232,255,.15);
     }
-    .filter-row input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 12px rgba(77,232,255,.15);
+    .year-chips {
+      display: flex; flex-wrap: wrap; gap: .25rem; margin-bottom: .5rem; max-height: 4.8rem; overflow: auto;
     }
-    .filter-row input::placeholder { color: var(--muted); }
+    .chip {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .04em;
+      background: transparent; color: var(--phosphor-dim);
+      border: 1px solid rgba(93,255,138,.25); padding: .15rem .4rem; cursor: pointer;
+    }
+    .chip.active { background: rgba(93,255,138,.15); color: var(--phosphor); border-color: var(--phosphor); }
+    .hint { font-size: .7rem; color: var(--magenta); margin-bottom: .4rem; }
+    .index-status { font-size: .68rem; color: var(--cyan); margin-bottom: .4rem; }
 
-    .viewport {
-      flex: 1;
-      min-height: 0;
-      overflow: auto;
-      position: relative;
-      scrollbar-width: thin;
-      scrollbar-color: var(--magenta) #05030a;
-    }
-    .tab-pane {
-      display: none;
-      opacity: 0;
-      transform: translateY(6px);
-    }
-    .tab-pane.active {
-      display: block;
-      animation: pane-in .28s var(--ease) both;
-    }
+    .viewport { flex: 1; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: pane-in .28s var(--ease) both; }
     @keyframes pane-in {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: none; }
     }
 
-    .hint {
-      font-size: .7rem;
-      color: var(--magenta);
-      margin-bottom: .55rem;
-      letter-spacing: .04em;
-    }
-
-    .tape-list { display: flex; flex-direction: column; gap: .45rem; }
+    .tape-list { display: flex; flex-direction: column; gap: .35rem; }
     .tape {
-      text-align: left;
-      width: 100%;
-      background: rgba(255,255,255,.02);
-      border: 1px solid rgba(255,255,255,.08);
-      color: inherit;
-      font-family: inherit;
-      padding: .7rem .75rem;
-      cursor: pointer;
-      transition: border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+      text-align: left; width: 100%; background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.08); color: inherit; font-family: inherit;
+      padding: .55rem .65rem; cursor: pointer;
+      transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
     }
-    .tape:hover {
-      border-color: rgba(77,232,255,.45);
-      background: rgba(77,232,255,.05);
-      transform: translateX(2px);
+    .tape:hover { border-color: rgba(77,232,255,.45); background: rgba(77,232,255,.05); transform: translateX(2px); }
+    .tape.active { border-color: var(--phosphor); background: rgba(93,255,138,.08); }
+    .tape .date { font-family: var(--display); font-size: .68rem; color: var(--amber); letter-spacing: .06em; }
+    .tape .venue { font-size: .82rem; color: var(--text); margin: .15rem 0; }
+    .tape .meta { font-size: .68rem; color: var(--muted); }
+    .tape .badges { margin-top: .3rem; display: flex; gap: .3rem; flex-wrap: wrap; }
+    .badge {
+      font-size: .58rem; letter-spacing: .06em; padding: .1rem .35rem;
+      border: 1px solid rgba(93,255,138,.3); color: var(--phosphor-dim);
     }
-    .tape:focus-visible {
-      outline: 1px solid var(--cyan);
-      outline-offset: 1px;
-    }
-    .tape.active {
-      border-color: var(--phosphor);
-      background: rgba(93,255,138,.08);
-      box-shadow: 0 0 18px rgba(93,255,138,.12);
-    }
-    .tape .date {
-      font-family: var(--display);
-      font-size: .72rem;
-      color: var(--amber);
-      letter-spacing: .06em;
-      margin-bottom: .2rem;
-    }
-    .tape .venue {
-      font-size: .85rem;
-      color: var(--text);
-      margin-bottom: .25rem;
-    }
-    .tape .meta {
-      font-size: .7rem;
-      color: var(--muted);
-    }
-    .tape .notes {
-      font-size: .72rem;
-      color: var(--phosphor-dim);
-      margin-top: .4rem;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .tape .engage {
-      margin-top: .5rem;
-      display: inline-block;
-      font-size: .65rem;
-      letter-spacing: .1em;
-      color: var(--cyan);
-      border: 1px solid rgba(77,232,255,.4);
-      padding: .22rem .45rem;
-      transition: background .2s var(--ease), color .2s var(--ease);
-    }
-    .tape.active .engage,
-    .tape:hover .engage {
-      background: var(--cyan);
-      color: #031018;
-    }
+    .badge.sbd { color: var(--amber); border-color: rgba(255,210,74,.4); }
+    .badge.flac { color: var(--cyan); border-color: rgba(77,232,255,.4); }
 
-    .manifesto {
-      font-size: .8rem;
-      line-height: 1.65;
-      color: var(--cyan);
-      white-space: pre-wrap;
+    .manifesto, .specs {
+      font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
     }
-    .specs {
-      font-size: .78rem;
-      line-height: 1.6;
-      color: var(--phosphor-dim);
-      white-space: pre-wrap;
-    }
+    .specs { color: var(--phosphor-dim); }
 
     .statusbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: .4rem 1rem;
-      padding: .4rem .9rem;
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      gap: .4rem 1rem; padding: .4rem .9rem;
       border-top: 1px solid rgba(93,255,138,.2);
-      font-size: .62rem;
-      color: var(--muted);
-      background: rgba(0,0,0,.35);
+      font-size: .62rem; color: var(--muted); background: rgba(0,0,0,.35);
     }
     .statusbar kbd {
-      font: inherit;
-      color: var(--cyan);
-      border: 1px solid rgba(77,232,255,.25);
-      padding: 0 .22rem;
-      margin: 0 .08rem;
+      font: inherit; color: var(--cyan);
+      border: 1px solid rgba(77,232,255,.25); padding: 0 .22rem; margin: 0 .08rem;
     }
 
     .toast {
-      position: absolute;
-      right: .9rem;
-      bottom: 2.2rem;
-      z-index: 30;
-      font-size: .72rem;
-      padding: .4rem .65rem;
-      background: rgba(10,40,24,.95);
-      border: 1px solid var(--phosphor);
-      color: var(--text);
-      opacity: 0;
-      transform: translateY(8px);
-      pointer-events: none;
+      position: absolute; right: .9rem; bottom: 2.2rem; z-index: 40;
+      font-size: .72rem; padding: .4rem .65rem;
+      background: rgba(10,40,24,.95); border: 1px solid var(--phosphor); color: var(--text);
+      opacity: 0; transform: translateY(8px); pointer-events: none;
       transition: opacity .25s var(--ease), transform .25s var(--ease);
     }
     .toast.show { opacity: 1; transform: none; }
 
+    .modal-backdrop {
+      position: absolute; inset: 0; z-index: 35;
+      background: rgba(0,0,0,.72); display: none;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(560px, 100%); max-height: min(70vh, 520px);
+      overflow: auto; background: #07040f;
+      border: 1px solid var(--cyan); padding: .85rem;
+      box-shadow: 0 0 40px rgba(77,232,255,.15);
+    }
+    .modal h2 {
+      margin: 0 0 .55rem; font-family: var(--display); font-size: .8rem;
+      letter-spacing: .12em; color: var(--amber); font-weight: 700;
+    }
+    .alt-row {
+      width: 100%; text-align: left; background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.1); color: inherit; font: inherit;
+      padding: .55rem .6rem; margin-bottom: .4rem; cursor: pointer;
+    }
+    .alt-row:hover { border-color: var(--cyan); }
+    .alt-row.active { border-color: var(--phosphor); background: rgba(93,255,138,.08); }
+    .alt-row .t { color: var(--text); font-size: .78rem; }
+    .alt-row .s { color: var(--muted); font-size: .66rem; margin-top: .2rem; }
+
     @media (prefers-reduced-motion: reduce) {
       .tube, .tab-pane.active { animation: none; }
-      .tape, .tab-btn, .topbar a, .toast { transition: none; }
+      .tape, .toast { transition: none; }
     }
   </style>
 </head>
 <body>
   <div class="chassis">
-    <div class="tube" role="application" aria-label="CyberCat Sunflower Grateful Dead archive">
+    <div class="tube" role="application" aria-label="CyberCat Sunflower Grateful Dead full catalog">
       <header class="topbar">
         <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
         <span class="brand">CYBERCAT SUNFLOWER</span>
-        <span class="path">A:\ARCHIVES\CYBERCAT-SUNFLOWER</span>
+        <span class="path">FULL CATALOG · RELISTEN / IA</span>
         <span class="clock" id="live-clock">00:00:00</span>
       </header>
 
@@ -523,38 +326,21 @@
               <span class="tag" id="source-tag">IDLE</span>
             </div>
             <div class="now-playing" id="now-playing">
-              <span class="idle">No tape loaded. Pick a show from TAPES INDEX.</span>
+              <span class="idle">Indexing Grateful Dead catalog…</span>
             </div>
             <audio id="main-player" controls crossorigin="anonymous"></audio>
-            <div class="panel-h" style="margin-top:.2rem; border:none; padding:0;">
-              <span>5-BAND ANALOG EQ</span>
+            <div class="source-bar">
+              <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
+              <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Sources</button>
+              <span class="source-meta" id="source-meta">No tape loaded</span>
             </div>
+            <div class="panel-h" style="margin-top:.15rem; border:none; padding:0;"><span>5-BAND ANALOG EQ</span></div>
             <div class="eq-grid" aria-label="Equalizer">
-              <div class="eq-cell">
-                <label for="eq-60">60Hz</label>
-                <input type="range" id="eq-60" min="-12" max="12" value="0" step="1">
-                <span id="v-60">0dB</span>
-              </div>
-              <div class="eq-cell">
-                <label for="eq-230">230Hz</label>
-                <input type="range" id="eq-230" min="-12" max="12" value="0" step="1">
-                <span id="v-230">0dB</span>
-              </div>
-              <div class="eq-cell">
-                <label for="eq-910">910Hz</label>
-                <input type="range" id="eq-910" min="-12" max="12" value="0" step="1">
-                <span id="v-910">0dB</span>
-              </div>
-              <div class="eq-cell">
-                <label for="eq-4k">4kHz</label>
-                <input type="range" id="eq-4k" min="-12" max="12" value="0" step="1">
-                <span id="v-4k">0dB</span>
-              </div>
-              <div class="eq-cell">
-                <label for="eq-14k">14kHz</label>
-                <input type="range" id="eq-14k" min="-12" max="12" value="0" step="1">
-                <span id="v-14k">0dB</span>
-              </div>
+              <div class="eq-cell"><label for="eq-60">60Hz</label><input type="range" id="eq-60" min="-12" max="12" value="0" step="1"><span id="v-60">0dB</span></div>
+              <div class="eq-cell"><label for="eq-230">230Hz</label><input type="range" id="eq-230" min="-12" max="12" value="0" step="1"><span id="v-230">0dB</span></div>
+              <div class="eq-cell"><label for="eq-910">910Hz</label><input type="range" id="eq-910" min="-12" max="12" value="0" step="1"><span id="v-910">0dB</span></div>
+              <div class="eq-cell"><label for="eq-4k">4kHz</label><input type="range" id="eq-4k" min="-12" max="12" value="0" step="1"><span id="v-4k">0dB</span></div>
+              <div class="eq-cell"><label for="eq-14k">14kHz</label><input type="range" id="eq-14k" min="-12" max="12" value="0" step="1"><span id="v-14k">0dB</span></div>
             </div>
           </div>
 
@@ -571,31 +357,30 @@
 
         <section class="hub-col">
           <div class="hub-panel">
-            <div class="tab-nav" role="tablist" aria-label="Collection views">
-              <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="tapes" id="tab-tapes">
-                <kbd>F1</kbd>Tapes Index
-              </button>
-              <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="manifest" id="tab-manifest">
-                <kbd>F2</kbd>Archive Log
-              </button>
-              <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="specs" id="tab-specs">
-                <kbd>F3</kbd>Sys Config
-              </button>
+            <div class="tab-nav" role="tablist">
+              <button type="button" class="tab-btn active" data-tab="tapes"><kbd>F1</kbd>Tapes Index</button>
+              <button type="button" class="tab-btn" data-tab="manifest"><kbd>F2</kbd>Archive Log</button>
+              <button type="button" class="tab-btn" data-tab="specs"><kbd>F3</kbd>Sys Config</button>
             </div>
-
             <div class="viewport">
               <div id="pane-tapes" class="tab-pane active" role="tabpanel">
-                <div class="hint">↑↓ select · Enter engage · / search</div>
+                <div class="hint">Every available GD show · best waveform loads by default · Other Sources for alternates</div>
+                <div class="index-status" id="index-status">Connecting to Relisten…</div>
                 <div class="filter-row">
-                  <input type="search" id="tape-filter" placeholder="Filter by date, venue, city, song…" autocomplete="off" />
+                  <input type="search" id="tape-filter" placeholder="Filter date / venue / city…" autocomplete="off" />
+                  <select id="sort-mode" aria-label="Sort">
+                    <option value="date-asc">Date ↑</option>
+                    <option value="date-desc" selected>Date ↓</option>
+                    <option value="rating">Rating</option>
+                    <option value="sources">Most sources</option>
+                  </select>
                 </div>
-                <div id="tapes-injection-zone" class="tape-list">Reading directory sectors…</div>
+                <div class="year-chips" id="year-chips"></div>
+                <div id="tapes-injection-zone" class="tape-list">Booting catalog index…</div>
               </div>
-
               <div id="pane-manifest" class="tab-pane" role="tabpanel" hidden>
-                <div class="manifesto" id="manifesto-text-block">Loading description…</div>
+                <div class="manifesto" id="manifesto-text-block">Loading…</div>
               </div>
-
               <div id="pane-specs" class="tab-pane" role="tabpanel" hidden>
                 <div class="specs" id="specs-block"></div>
               </div>
@@ -605,327 +390,503 @@
       </div>
 
       <footer class="statusbar">
-        <span><kbd>F1</kbd>–<kbd>F3</kbd> tabs · <kbd>↑↓</kbd> tapes · <kbd>Enter</kbd> play · <kbd>/</kbd> filter · stream via archive.org</span>
-        <span>Grateful Dead · legal IA sources · uXu child archive</span>
+        <span><kbd>F1</kbd>–<kbd>F3</kbd> · <kbd>↑↓</kbd> · <kbd>Enter</kbd> · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> other sources · Relisten → IA</span>
+        <span id="catalog-foot">Grateful Dead full catalog</span>
       </footer>
       <div class="toast" id="toast" role="status"></div>
+
+      <div class="modal-backdrop" id="alts-modal" role="dialog" aria-modal="true" aria-labelledby="alts-title">
+        <div class="modal">
+          <h2 id="alts-title">OTHER SOURCES</h2>
+          <p class="hint" id="alts-sub">Pick an alternate transfer. Best waveform is marked.</p>
+          <div id="alts-list"></div>
+          <div style="margin-top:.6rem;">
+            <button type="button" class="ghost-btn" id="alts-close">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script>
-    const player = document.getElementById('main-player');
-    const nowPlaying = document.getElementById('now-playing');
-    const sourceTag = document.getElementById('source-tag');
-    const setlistOut = document.getElementById('live-setlist-output');
-    const setlistCount = document.getElementById('setlist-count');
-    const tapesZone = document.getElementById('tapes-injection-zone');
-    const filterInput = document.getElementById('tape-filter');
-    const toastEl = document.getElementById('toast');
+<script>
+  const RELISTEN = 'https://api.relisten.net/api/v2/artists/grateful-dead';
+  const player = document.getElementById('main-player');
+  const nowPlaying = document.getElementById('now-playing');
+  const sourceTag = document.getElementById('source-tag');
+  const sourceMeta = document.getElementById('source-meta');
+  const setlistOut = document.getElementById('live-setlist-output');
+  const setlistCount = document.getElementById('setlist-count');
+  const tapesZone = document.getElementById('tapes-injection-zone');
+  const filterInput = document.getElementById('tape-filter');
+  const sortMode = document.getElementById('sort-mode');
+  const yearChips = document.getElementById('year-chips');
+  const indexStatus = document.getElementById('index-status');
+  const toastEl = document.getElementById('toast');
+  const btnBest = document.getElementById('btn-best');
+  const btnAlts = document.getElementById('btn-alts');
+  const altsModal = document.getElementById('alts-modal');
+  const altsList = document.getElementById('alts-list');
 
-    let audioCtx = null, filters = [], initialized = false;
-    let shows = [];
-    let filtered = [];
-    let selectedIdx = -1;
-    let activeShowKey = null;
-    let activeShow = null;
-    let playlist = [];
-    let trackIndex = -1;
-    let toastTimer = null;
+  let shows = [];
+  let filtered = [];
+  let yearFilter = 'ALL';
+  let activeShowKey = null;
+  let activeShow = null;
+  let activeSources = [];
+  let bestSourceId = null;
+  let currentSource = null;
+  let playlist = [];
+  let trackIndex = -1;
+  let audioCtx = null, filters = [], eqReady = false;
+  let toastTimer = null;
 
-    document.getElementById('specs-block').textContent =
+  document.getElementById('specs-block').textContent =
 `===================================================================
-uXu TUBE PLAYER · CYBERCAT SUNFLOWER
+uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 ===================================================================
-[+] COLLECTION  : timeline-pilot (10 shows, early→final)
-[+] AUDIO       : Relisten → Internet Archive MP3 streams
-[+] PIPELINE    : HTML5 audio + optional 5-band Web Audio EQ
-[+] NAV         : F-keys · arrow select · filter · Enter engage
+[+] INDEX       : Relisten years → every available GD show
+[+] DEFAULT     : best waveform (SBD/remaster/rating weighted)
+[+] ALTERNATES  : Other Sources button / key O
+[+] AUDIO       : Internet Archive MP3 via Relisten
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0001
 
-Pilot mode. Prove playback, then expand the catalog.`;
+Bootlegs, SBDs, AUDs, matrices — if Relisten has it, it's here.`;
 
-    setInterval(() => {
-      document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
-    }, 1000);
+  setInterval(() => {
+    document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
+  }, 1000);
 
-    function toast(msg) {
-      toastEl.textContent = msg;
-      toastEl.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
-    }
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+  }
 
-    function initAudioEngine() {
-      if (initialized) return;
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaElementSource(player);
-        const freqs = [60, 230, 910, 4000, 14000];
-        filters = freqs.map((freq, idx) => {
-          const filter = audioCtx.createBiquadFilter();
-          filter.type = idx === 0 ? 'lowshelf' : idx === freqs.length - 1 ? 'highshelf' : 'peaking';
-          filter.frequency.value = freq;
-          filter.gain.value = 0;
-          return filter;
+  async function api(path) {
+    const res = await fetch(`${RELISTEN}${path}`);
+    if (!res.ok) throw new Error(`Relisten ${res.status} ${path}`);
+    return res.json();
+  }
+
+  function showKey(s) {
+    return `${s.date}::${(s.venue && s.venue.name) || s.venueName || ''}`;
+  }
+
+  function venueName(s) {
+    return (s.venue && s.venue.name) || s.venueName || 'Unknown Venue';
+  }
+
+  function venuePlace(s) {
+    return (s.venue && s.venue.location) || s.location || '';
+  }
+
+  function sourceTracks(source) {
+    const tracks = [];
+    for (const set of (source.sets || [])) {
+      const setName = set.name || (set.is_encore ? 'Encore' : 'Set');
+      for (const t of (set.tracks || [])) {
+        if (!t.mp3_url) continue;
+        tracks.push({
+          title: t.title || 'Track',
+          url: t.mp3_url,
+          duration: t.duration,
+          position: t.track_position,
+          set: setName,
         });
-        source.connect(filters[0]);
-        for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
-        filters[filters.length - 1].connect(audioCtx.destination);
-        bindSlider('eq-60', filters[0], 'v-60');
-        bindSlider('eq-230', filters[1], 'v-230');
-        bindSlider('eq-910', filters[2], 'v-910');
-        bindSlider('eq-4k', filters[3], 'v-4k');
-        bindSlider('eq-14k', filters[4], 'v-14k');
-        initialized = true;
-      } catch (err) {
-        console.warn('EQ unavailable; native playback still works', err);
       }
     }
+    return tracks;
+  }
 
-    function bindSlider(id, node, labelId) {
-      const slider = document.getElementById(id);
-      const label = document.getElementById(labelId);
-      slider.addEventListener('input', (e) => {
-        if (!audioCtx) return;
-        node.gain.setValueAtTime(Number(e.target.value), audioCtx.currentTime);
-        const v = Number(e.target.value);
-        label.textContent = `${v > 0 ? '+' : ''}${v}dB`;
+  function scoreSource(source) {
+    const tracks = sourceTracks(source);
+    if (!tracks.length) return -1;
+    let score = 0;
+    if (source.is_soundboard) score += 100000;
+    if (source.is_remaster) score += 5000;
+    score += Math.round((Number(source.avg_rating) || 0) * 1000);
+    score += Math.min(Number(source.num_reviews) || 0, 500) * 10;
+    score += Math.min(tracks.length, 80);
+    // slight preference for known IA upstream ids
+    if (source.upstream_identifier) score += 25;
+    return score;
+  }
+
+  function rankSources(sources) {
+    return (sources || [])
+      .map((s) => ({ source: s, score: scoreSource(s), tracks: sourceTracks(s) }))
+      .filter((x) => x.score >= 0 && x.tracks.length)
+      .sort((a, b) => b.score - a.score || (b.source.avg_rating || 0) - (a.source.avg_rating || 0));
+  }
+
+  function describeSource(source, isBest) {
+    const kind = source.is_soundboard ? 'SBD' : 'AUD/OTHER';
+    const rating = source.avg_rating != null ? Number(source.avg_rating).toFixed(2) : '—';
+    const reviews = source.num_reviews || 0;
+    const id = source.upstream_identifier || ('src#' + source.id);
+    const bits = [
+      isBest ? 'BEST WAVE' : null,
+      kind,
+      source.is_remaster ? 'REMASTER' : null,
+      `★${rating}`,
+      `${reviews} reviews`,
+      id,
+    ].filter(Boolean);
+    return bits.join(' · ');
+  }
+
+  function initEq() {
+    if (eqReady) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaElementSource(player);
+      const freqs = [60, 230, 910, 4000, 14000];
+      filters = freqs.map((freq, idx) => {
+        const f = audioCtx.createBiquadFilter();
+        f.type = idx === 0 ? 'lowshelf' : idx === freqs.length - 1 ? 'highshelf' : 'peaking';
+        f.frequency.value = freq;
+        f.gain.value = 0;
+        return f;
       });
+      source.connect(filters[0]);
+      for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
+      filters[filters.length - 1].connect(audioCtx.destination);
+      ['60','230','910','4k','14k'].forEach((id, i) => {
+        const slider = document.getElementById('eq-' + id);
+        const label = document.getElementById('v-' + id);
+        slider.addEventListener('input', (e) => {
+          const v = Number(e.target.value);
+          filters[i].gain.setValueAtTime(v, audioCtx.currentTime);
+          label.textContent = `${v > 0 ? '+' : ''}${v}dB`;
+        });
+      });
+      eqReady = true;
+    } catch (err) {
+      console.warn('EQ offline', err);
     }
+  }
 
-    player.addEventListener('play', () => {
-      initAudioEngine();
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    });
+  player.addEventListener('play', () => {
+    initEq();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  });
+  player.addEventListener('ended', () => {
+    if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
+    else toast('End of tape');
+  });
+  player.addEventListener('error', () => {
+    toast('Stream error — skipping');
+    if (trackIndex >= 0 && trackIndex < playlist.length - 1) setTimeout(() => playTrack(trackIndex + 1), 350);
+  });
 
-    player.addEventListener('ended', () => {
-      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
-        playTrack(trackIndex + 1);
-      } else {
-        toast('End of tape');
-      }
-    });
-
-    player.addEventListener('error', () => {
-      const mediaErr = player.error;
-      toast(`Stream error${mediaErr ? ' (' + mediaErr.code + ')' : ''} — trying next track`);
-      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
-        setTimeout(() => playTrack(trackIndex + 1), 400);
-      }
-    });
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach((btn) => {
-        const on = btn.dataset.tab === tabId;
-        btn.classList.toggle('active', on);
-        btn.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-      document.querySelectorAll('.tab-pane').forEach((pane) => {
-        const on = pane.id === `pane-${tabId}`;
-        pane.classList.toggle('active', on);
-        pane.hidden = !on;
-      });
-      if (tabId === 'tapes') filterInput.focus({ preventScroll: true });
-    }
-
+  function switchTab(tabId) {
     document.querySelectorAll('.tab-btn').forEach((btn) => {
-      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      const on = btn.dataset.tab === tabId;
+      btn.classList.toggle('active', on);
     });
+    document.querySelectorAll('.tab-pane').forEach((pane) => {
+      const on = pane.id === `pane-${tabId}`;
+      pane.classList.toggle('active', on);
+      pane.hidden = !on;
+    });
+  }
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
 
-    function showKey(show) {
-      return `${show.date}::${show.venue}`;
+  function renderSetlist() {
+    setlistOut.innerHTML = '';
+    if (!playlist.length) {
+      setlistOut.innerHTML = '<div class="empty">No playable MP3 tracks on this source.</div>';
+      setlistCount.textContent = '0 TRACKS';
+      return;
     }
+    setlistCount.textContent = `${playlist.length} TRACKS`;
+    playlist.forEach((track, idx) => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'song' + (idx === trackIndex ? ' playing' : '');
+      const n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = String(idx + 1).padStart(2, '0');
+      const t = document.createElement('span');
+      t.textContent = String(track.title).toUpperCase();
+      row.append(n, t);
+      row.addEventListener('click', () => playTrack(idx));
+      setlistOut.appendChild(row);
+    });
+  }
 
-    function buildPlaylist(show) {
-      if (Array.isArray(show.tracks) && show.tracks.length) {
-        return show.tracks.filter((t) => t && t.url);
-      }
-      const src = show.audioSources && show.audioSources[0];
-      if (src && src.url) {
-        return [{ title: (show.setlist && show.setlist[0]) || 'Track 1', url: src.url, set: 'Set' }];
-      }
-      return [];
-    }
+  function updateNowPlaying(track) {
+    if (!activeShow) return;
+    const place = venuePlace(activeShow);
+    nowPlaying.innerHTML =
+      `<strong>${activeShow.display_date || activeShow.date}</strong> · ${venueName(activeShow)}<br>` +
+      `<span style="color:var(--muted)">${place}</span><br>` +
+      `<span style="color:var(--cyan)">▶ ${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
+  }
 
-    function renderSetlist() {
-      setlistOut.innerHTML = '';
-      if (!playlist.length) {
-        setlistOut.innerHTML = '<div class="empty">No tracks on this tape.</div>';
-        setlistCount.textContent = '0 TRACKS';
+  function playTrack(idx) {
+    if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+    trackIndex = idx;
+    const track = playlist[idx];
+    player.src = track.url;
+    player.load();
+    player.play().catch(() => toast('Press play on the deck'));
+    updateNowPlaying(track);
+    renderSetlist();
+    const row = setlistOut.children[idx];
+    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function applySource(rankedItem, { announce } = { announce: true }) {
+    currentSource = rankedItem.source;
+    playlist = rankedItem.tracks;
+    const isBest = currentSource.id === bestSourceId;
+    sourceTag.textContent = currentSource.is_soundboard ? 'SBD' : 'ALT';
+    sourceMeta.textContent = describeSource(currentSource, isBest);
+    btnBest.disabled = isBest;
+    btnAlts.disabled = activeSources.length < 2;
+    if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate source loaded');
+    playTrack(0);
+  }
+
+  async function engageShow(show) {
+    activeShow = show;
+    activeShowKey = showKey(show);
+    document.querySelectorAll('.tape').forEach((el) => {
+      el.classList.toggle('active', el.dataset.key === activeShowKey);
+    });
+    nowPlaying.innerHTML = `<span class="idle">Resolving best waveform for ${show.display_date || show.date}…</span>`;
+    sourceMeta.textContent = 'Fetching Relisten sources…';
+    btnAlts.disabled = true;
+    btnBest.disabled = true;
+
+    try {
+      const detail = await api(`/shows/${show.date}`);
+      const ranked = rankSources(detail.sources || []);
+      if (!ranked.length) {
+        toast('No streamable sources for this show');
+        nowPlaying.innerHTML = '<span class="idle">No playable MP3 sources found.</span>';
         return;
       }
-      setlistCount.textContent = `${playlist.length} TRACKS`;
-      playlist.forEach((track, idx) => {
-        const row = document.createElement('button');
-        row.type = 'button';
-        row.className = 'song' + (idx === trackIndex ? ' playing' : '');
-        row.style.cssText = 'display:flex;gap:.6rem;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px dotted rgba(255,255,255,.08);color:inherit;font:inherit;padding:.28rem 0;cursor:pointer;';
-        if (idx === trackIndex) {
-          row.style.color = 'var(--cyan)';
-          row.style.background = 'rgba(77,232,255,.08)';
-        }
-        const n = document.createElement('span');
-        n.className = 'n';
-        n.textContent = String(idx + 1).padStart(2, '0');
-        const t = document.createElement('span');
-        t.textContent = String(track.title || 'TRACK').toUpperCase();
-        row.append(n, t);
-        row.addEventListener('click', () => playTrack(idx));
-        setlistOut.appendChild(row);
+      activeSources = ranked;
+      bestSourceId = ranked[0].source.id;
+      activeShow = Object.assign({}, show, detail);
+      applySource(ranked[0]);
+    } catch (err) {
+      toast(err.message);
+      nowPlaying.innerHTML = `<span class="idle">Failed to load sources: ${err.message}</span>`;
+    }
+  }
+
+  function openAlts() {
+    if (!activeSources.length) return;
+    altsList.innerHTML = '';
+    activeSources.forEach((item, idx) => {
+      const s = item.source;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'alt-row' + (currentSource && s.id === currentSource.id ? ' active' : '');
+      const title = document.createElement('div');
+      title.className = 't';
+      title.textContent = `${idx === 0 ? '★ ' : ''}${s.is_soundboard ? 'SBD' : 'AUD'} · ${s.source || s.taper || s.upstream_identifier || ('Source ' + s.id)}`;
+      const sub = document.createElement('div');
+      sub.className = 's';
+      sub.textContent = describeSource(s, idx === 0) + ` · ${item.tracks.length} tracks`;
+      btn.append(title, sub);
+      btn.addEventListener('click', () => {
+        applySource(item);
+        closeAlts();
       });
-    }
+      altsList.appendChild(btn);
+    });
+    document.getElementById('alts-sub').textContent =
+      `${activeSources.length} transfers for ${activeShow.display_date || activeShow.date} · ${venueName(activeShow)}`;
+    altsModal.classList.add('open');
+  }
 
-    function updateNowPlaying(track) {
-      if (!activeShow) return;
-      const place = [activeShow.city, activeShow.state, activeShow.country].filter(Boolean).join(', ');
-      const src = activeShow.audioSources && activeShow.audioSources[0];
-      nowPlaying.innerHTML =
-        `<strong>${activeShow.date}</strong> · ${activeShow.venue}<br>` +
-        `<span style="color:var(--muted)">${place}</span><br>` +
-        `<span style="color:var(--cyan)">▶ ${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
-      sourceTag.textContent = ((src && src.sourceType) || 'SRC').toUpperCase();
-    }
+  function closeAlts() { altsModal.classList.remove('open'); }
 
-    function playTrack(idx) {
-      if (!playlist.length || idx < 0 || idx >= playlist.length) return;
-      trackIndex = idx;
-      const track = playlist[idx];
-      player.src = track.url;
-      player.load();
-      const playPromise = player.play();
-      if (playPromise && playPromise.catch) {
-        playPromise.catch(() => toast('Press play on the deck to start'));
-      }
-      updateNowPlaying(track);
-      renderSetlist();
-      const activeRow = setlistOut.children[idx];
-      if (activeRow && activeRow.scrollIntoView) {
-        activeRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      }
-    }
+  btnAlts.addEventListener('click', openAlts);
+  btnBest.addEventListener('click', () => {
+    const best = activeSources.find((x) => x.source.id === bestSourceId);
+    if (best) applySource(best);
+  });
+  document.getElementById('alts-close').addEventListener('click', closeAlts);
+  altsModal.addEventListener('click', (e) => { if (e.target === altsModal) closeAlts(); });
 
-    function engageShow(show) {
-      playlist = buildPlaylist(show);
-      if (!playlist.length) {
-        toast('No audio source on this tape');
-        return;
-      }
-      activeShow = show;
-      activeShowKey = showKey(show);
-      document.querySelectorAll('.tape').forEach((el) => {
-        el.classList.toggle('active', el.dataset.key === activeShowKey);
-      });
-      toast(`Engaged ${show.date} · ${playlist.length} tracks`);
-      playTrack(0);
-    }
-
-    function renderTapes(list) {
-      tapesZone.innerHTML = '';
-      if (!list.length) {
-        tapesZone.textContent = 'No shows match that filter.';
-        return;
-      }
-      list.forEach((show, idx) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'tape' + (showKey(show) === activeShowKey ? ' active' : '');
-        btn.dataset.key = showKey(show);
-        btn.dataset.idx = String(idx);
-        btn.setAttribute('aria-label', `Play ${show.date} ${show.venue}`);
-
-        const date = document.createElement('div');
-        date.className = 'date';
-        date.textContent = show.date;
-
-        const venue = document.createElement('div');
-        venue.className = 'venue';
-        venue.textContent = show.venue;
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const place = [show.city, show.state, show.country].filter(Boolean).join(', ');
-        const src = show.audioSources && show.audioSources[0];
-        const nTracks = (show.tracks && show.tracks.length) || (show.setlist && show.setlist.length) || 0;
-        meta.textContent = `${place} · ${nTracks} tracks${src ? ' · ' + (src.sourceType || '').toUpperCase() : ''}`;
-
-        const notes = document.createElement('div');
-        notes.className = 'notes';
-        notes.textContent = show.notes || '';
-
-        const engage = document.createElement('span');
-        engage.className = 'engage';
-        engage.textContent = 'ENGAGE TAPE';
-
-        btn.append(date, venue, meta, notes, engage);
-        btn.addEventListener('click', () => {
-          selectedIdx = idx;
-          engageShow(show);
-        });
-        btn.addEventListener('focus', () => { selectedIdx = idx; });
-        tapesZone.appendChild(btn);
-      });
-    }
-
-    function applyFilter() {
-      const q = filterInput.value.trim().toLowerCase();
-      filtered = !q ? shows.slice() : shows.filter((s) => {
-        const blob = [
-          s.date, s.venue, s.city, s.state, s.country, s.notes,
-          ...(s.setlist || [])
-        ].join(' ').toLowerCase();
+  function applyFilters() {
+    const q = filterInput.value.trim().toLowerCase();
+    let list = shows.slice();
+    if (yearFilter !== 'ALL') list = list.filter((s) => String(s.year || (s.date || '').slice(0, 4)) === String(yearFilter));
+    if (q) {
+      list = list.filter((s) => {
+        const blob = [s.date, s.display_date, venueName(s), venuePlace(s)].join(' ').toLowerCase();
         return blob.includes(q);
       });
-      selectedIdx = filtered.length ? 0 : -1;
-      renderTapes(filtered);
     }
-
-    filterInput.addEventListener('input', applyFilter);
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'F1') { e.preventDefault(); switchTab('tapes'); }
-      if (e.key === 'F2') { e.preventDefault(); switchTab('manifest'); }
-      if (e.key === 'F3') { e.preventDefault(); switchTab('specs'); }
-
-      if (e.key === '/' && document.activeElement !== filterInput && document.activeElement.tagName !== 'INPUT') {
-        e.preventDefault();
-        switchTab('tapes');
-        filterInput.focus();
-        filterInput.select();
-      }
-
-      if (document.activeElement === filterInput && e.key === 'ArrowDown') {
-        e.preventDefault();
-        const first = tapesZone.querySelector('.tape');
-        if (first) first.focus();
-        return;
-      }
-
-      if (document.activeElement && document.activeElement.classList.contains('tape')) {
-        const tapes = [...tapesZone.querySelectorAll('.tape')];
-        const idx = tapes.indexOf(document.activeElement);
-        if (e.key === 'ArrowDown' && tapes[idx + 1]) { e.preventDefault(); tapes[idx + 1].focus(); }
-        if (e.key === 'ArrowUp' && tapes[idx - 1]) { e.preventDefault(); tapes[idx - 1].focus(); }
-        if (e.key === 'ArrowUp' && idx === 0) { e.preventDefault(); filterInput.focus(); }
-        if (e.key === 'Enter') { e.preventDefault(); tapes[idx].click(); }
-      }
-
-      if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
-      if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
+    const mode = sortMode.value;
+    list.sort((a, b) => {
+      if (mode === 'date-asc') return String(a.date).localeCompare(String(b.date));
+      if (mode === 'date-desc') return String(b.date).localeCompare(String(a.date));
+      if (mode === 'rating') return (Number(b.avg_rating) || 0) - (Number(a.avg_rating) || 0);
+      if (mode === 'sources') return (Number(b.source_count) || 0) - (Number(a.source_count) || 0);
+      return 0;
     });
+    filtered = list;
+    renderTapes(filtered);
+    indexStatus.textContent = `${filtered.length} shown · ${shows.length} indexed · year ${yearFilter}`;
+  }
 
-    fetch('data.json')
-      .then((res) => res.json())
-      .then((data) => {
-        shows = data.shows || [];
-        const mode = data.collectionMode || 'archive';
-        document.getElementById('manifesto-text-block').textContent =
-          `--- ARCHIVE COLLECTION MANIFESTO ---\n\n${(data.description || '').toUpperCase()}\n\nARTIST: ${(data.artist || '').toUpperCase()}\nCURATOR: ${(data.curator || '').toUpperCase()}\nMODE: ${String(mode).toUpperCase()}\nSHOWS: ${shows.length}`;
-        applyFilter();
-        toast(`${shows.length} timeline tapes indexed`);
-      })
-      .catch(() => {
-        tapesZone.textContent = '[ERROR: Failed to load data.json]';
-      });
-  </script>
+  function renderYearChips(years) {
+    yearChips.innerHTML = '';
+    const all = document.createElement('button');
+    all.type = 'button';
+    all.className = 'chip' + (yearFilter === 'ALL' ? ' active' : '');
+    all.textContent = 'ALL';
+    all.addEventListener('click', () => { yearFilter = 'ALL'; renderYearChips(years); applyFilters(); });
+    yearChips.appendChild(all);
+    years.forEach((y) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const yr = String(y.year);
+      btn.className = 'chip' + (yearFilter === yr ? ' active' : '');
+      btn.textContent = yr;
+      btn.title = `${y.show_count || 0} shows`;
+      btn.addEventListener('click', () => { yearFilter = yr; renderYearChips(years); applyFilters(); });
+      yearChips.appendChild(btn);
+    });
+  }
+
+  function renderTapes(list) {
+    tapesZone.innerHTML = '';
+    if (!list.length) {
+      tapesZone.textContent = 'No shows match that filter.';
+      return;
+    }
+    // Cap DOM for very large ALL views: render first 400 + note
+    const MAX = 500;
+    const slice = list.slice(0, MAX);
+    const frag = document.createDocumentFragment();
+    slice.forEach((show) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tape' + (showKey(show) === activeShowKey ? ' active' : '');
+      btn.dataset.key = showKey(show);
+
+      const date = document.createElement('div');
+      date.className = 'date';
+      date.textContent = show.display_date || show.date;
+
+      const venue = document.createElement('div');
+      venue.className = 'venue';
+      venue.textContent = venueName(show);
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const rating = show.avg_rating != null ? Number(show.avg_rating).toFixed(2) : '—';
+      meta.textContent = `${venuePlace(show)} · ${show.source_count || 0} sources · ★${rating}`;
+
+      const badges = document.createElement('div');
+      badges.className = 'badges';
+      if (show.has_soundboard_source) {
+        const b = document.createElement('span');
+        b.className = 'badge sbd';
+        b.textContent = 'SBD AVAIL';
+        badges.appendChild(b);
+      }
+      if (show.has_streamable_flac_source) {
+        const b = document.createElement('span');
+        b.className = 'badge flac';
+        b.textContent = 'FLAC SRC';
+        badges.appendChild(b);
+      }
+
+      btn.append(date, venue, meta, badges);
+      btn.addEventListener('click', () => engageShow(show));
+      frag.appendChild(btn);
+    });
+    tapesZone.appendChild(frag);
+    if (list.length > MAX) {
+      const note = document.createElement('div');
+      note.className = 'empty';
+      note.textContent = `Showing ${MAX} of ${list.length} — refine year/search to narrow.`;
+      tapesZone.appendChild(note);
+    }
+  }
+
+  filterInput.addEventListener('input', applyFilters);
+  sortMode.addEventListener('change', applyFilters);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAlts();
+    if (e.key === 'F1') { e.preventDefault(); switchTab('tapes'); }
+    if (e.key === 'F2') { e.preventDefault(); switchTab('manifest'); }
+    if (e.key === 'F3') { e.preventDefault(); switchTab('specs'); }
+    if (e.key === 'o' && !e.target.matches('input,select,textarea')) { e.preventDefault(); openAlts(); }
+    if (e.key === '/' && !e.target.matches('input,select,textarea')) {
+      e.preventDefault(); filterInput.focus(); filterInput.select();
+    }
+    if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
+    if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
+  });
+
+  async function loadCatalog() {
+    const years = await api('/years');
+    years.sort((a, b) => Number(a.year) - Number(b.year));
+    renderYearChips(years);
+
+    const all = [];
+    for (let i = 0; i < years.length; i++) {
+      const y = years[i];
+      indexStatus.textContent = `Indexing ${y.year} (${i + 1}/${years.length})…`;
+      try {
+        const detail = await api(`/years/${y.year}`);
+        for (const s of (detail.shows || [])) {
+          all.push({
+            ...s,
+            year: y.year,
+            venueName: venueName(s),
+            location: venuePlace(s),
+          });
+        }
+      } catch (err) {
+        console.warn('year failed', y.year, err);
+      }
+    }
+    shows = all;
+    document.getElementById('catalog-foot').textContent =
+      `${shows.length} Grateful Dead shows · Relisten catalog`;
+    indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
+    toast(`${shows.length} shows indexed`);
+    applyFilters();
+  }
+
+  fetch('data.json').then((r) => r.json()).then((data) => {
+    document.getElementById('manifesto-text-block').textContent =
+`--- CYBERCAT SUNFLOWER · FULL CATALOG ---
+
+${(data.description || '').toUpperCase()}
+
+ARTIST: ${(data.artist || 'GRATEFUL DEAD').toUpperCase()}
+CURATOR: ${(data.curator || '').toUpperCase()}
+MODE: FULL-CATALOG LIVE INDEX
+DEFAULT: BEST WAVEFORM (SBD → REMASTER → RATING)
+ALTERNATES: OTHER SOURCES BUTTON
+
+Sources streamed from Internet Archive via Relisten.
+No re-hosting. Bootlegs and boards alike — if it exists in the commons, it can load here.`;
+  }).catch(() => {
+    document.getElementById('manifesto-text-block').textContent =
+      'CyberCat Sunflower full Grateful Dead catalog via Relisten / Internet Archive.';
+  });
+
+  loadCatalog().catch((err) => {
+    indexStatus.textContent = 'Catalog index failed: ' + err.message;
+    tapesZone.textContent = '[ERROR] Could not reach Relisten API';
+  });
+</script>
 </body>
 </html>
