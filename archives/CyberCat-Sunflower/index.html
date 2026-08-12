@@ -493,8 +493,14 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     return res.json();
   }
 
+  function showDate(s) {
+    const raw = String((s && (s.display_date || s.date)) || '');
+    const m = raw.match(/(\d{4}-\d{2}-\d{2})/);
+    return m ? m[1] : raw.slice(0, 10);
+  }
+
   function showKey(s) {
-    return `${s.date}::${(s.venue && s.venue.name) || s.venueName || ''}`;
+    return `${showDate(s)}::${(s.venue && s.venue.name) || s.venueName || ''}`;
   }
 
   function venueName(s) {
@@ -710,7 +716,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     btnBest.disabled = true;
 
     try {
-      const detail = await api(`/shows/${show.date}`);
+      const detail = await api(`/shows/${showDate(show)}`);
       const ranked = rankSources(detail.sources || []);
       if (!ranked.length) {
         toast('No streamable transfer for this show');
