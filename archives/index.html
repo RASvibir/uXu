@@ -375,6 +375,29 @@
     border-color:var(--cyan);
   }
 
+  .auth-form{display:flex; flex-direction:column; gap:.4rem;}
+  .auth-form input{
+    width:100%;
+    background:rgba(0,20,8,.55);
+    border:1px solid var(--green-line);
+    color:var(--green-bright);
+    font-family:var(--mono);
+    font-size:.72rem;
+    padding:.35rem .45rem;
+    outline:none;
+  }
+  .auth-form input:focus{
+    border-color:var(--cyan);
+    box-shadow:0 0 10px rgba(94,240,255,.12);
+  }
+  .auth-form input::placeholder{color:var(--green-dim);}
+  .auth-hint{
+    margin:.45rem 0 0;
+    font-size:.62rem;
+    color:var(--green-dim);
+    line-height:1.4;
+  }
+
   .statusbar{
     display:flex;
     flex-wrap:wrap;
@@ -444,8 +467,24 @@
                 <div><dt>Version</dt><dd>0.1</dd></div>
                 <div><dt>Uptime</dt><dd id="uptime">00:00:00</dd></div>
                 <div><dt>Mode</dt><dd id="mode-label">COMMAND</dd></div>
-                <div><dt>User</dt><dd>GUEST</dd></div>
+                <div><dt>User</dt><dd id="user-label">GUEST</dd></div>
+                <div><dt>Account</dt><dd id="account-label">—</dd></div>
+                <div><dt>Sudo</dt><dd id="sudo-label">OFF</dd></div>
               </dl>
+            </div>
+            <div class="box">
+              <div class="box-title">ACCOUNT GATE</div>
+              <form id="auth-form" class="auth-form" autocomplete="on">
+                <input id="auth-email" type="email" placeholder="email" required />
+                <input id="auth-password" type="password" placeholder="password (8+)" minlength="8" required />
+                <input id="auth-name" type="text" placeholder="display name (signup)" />
+                <div class="action-row">
+                  <button type="submit" class="ghost-btn accent" id="btn-signin" data-mode="signin">Sign In</button>
+                  <button type="button" class="ghost-btn" id="btn-signup">Sign Up</button>
+                  <button type="button" class="ghost-btn" id="btn-signout" disabled>Sign Out</button>
+                </div>
+              </form>
+              <p class="auth-hint">Or command: SIGNUP · SIGNIN · SIGNOUT · WHOAMI · SUDO · CLAIM MASTER</p>
             </div>
           </section>
 
@@ -492,6 +531,7 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
                 <li data-cmd="MAP" tabindex="0">PROVENANCE MAP</li>
                 <li data-cmd="LOGS" tabindex="0">TRANSPARENCY LOGS</li>
                 <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
+                <li data-cmd="AUTH" tabindex="0">ACCOUNT / AUTH</li>
                 <li data-cmd="HELP" tabindex="0">HELP</li>
                 <li data-cmd="EXIT" tabindex="0">EXIT TO DOS</li>
               </ul>
@@ -521,9 +561,14 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
 
 <script>
   const API_BASE = "https://uxu-ini-production.chrf-podcast.workers.dev";
+  const AUTH_BASE = "https://ep-crimson-firefly-ad77brka.neonauth.c-2.us-east-1.aws.neon.tech/uXu/auth";
+  const SESSION_KEY = "uxu_session_token";
+  const SUDO_KEY = "uxu_sudo";
 
   let registry = [];
   let selected = null;
+  let authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
+
   const tbody = document.querySelector('#registry-table tbody');
   const activeSummary = document.querySelector('#active-summary');
   const activeTitle = document.querySelector('#active-title');
@@ -533,7 +578,127 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
   const btnOpen = document.querySelector('#btn-open');
   const btnInspect = document.querySelector('#btn-inspect');
   const toastEl = document.querySelector('#toast');
+  const authForm = document.querySelector('#auth-form');
+  const authEmail = document.querySelector('#auth-email');
+  const authPassword = document.querySelector('#auth-password');
+  const authName = document.querySelector('#auth-name');
+  const btnSignOut = document.querySelector('#btn-signout');
   let toastTimer = null;
+
+  function getSessionToken(){ return sessionStorage.getItem(SESSION_KEY) || ''; }
+  function setSessionToken(token){
+    if (token) sessionStorage.setItem(SESSION_KEY, token);
+    else sessionStorage.removeItem(SESSION_KEY);
+  }
+  function getSudo(){ return sessionStorage.getItem(SUDO_KEY) === '1'; }
+  function setSudo(on){
+    if (on) sessionStorage.setItem(SUDO_KEY, '1');
+    else sessionStorage.removeItem(SUDO_KEY);
+  }
+
+  function authHeaders(extra = {}){
+    const headers = { ...extra };
+    const token = getSessionToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+    if (getSudo()) headers['X-Sudo'] = '1';
+    return headers;
+  }
+
+  function paintAuth(){
+    const role = authState.role || 'GUEST';
+    const sudo = !!authState.sudo;
+    document.getElementById('user-label').textContent = role;
+    document.getElementById('account-label').textContent = authState.user?.email || '—';
+    document.getElementById('sudo-label').textContent = sudo ? 'ON' : 'OFF';
+    document.getElementById('mode-label').textContent = authState.mode || (sudo ? 'ADMIN' : (role === 'GUEST' ? 'COMMAND' : 'USER'));
+    btnSignOut.disabled = role === 'GUEST';
+  }
+
+  async function refreshAuth(){
+    const token = getSessionToken();
+    if (!token) {
+      authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
+      setSudo(false);
+      paintAuth();
+      return authState;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/me`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!res.ok) {
+        setSessionToken('');
+        setSudo(false);
+        authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
+        paintAuth();
+        return authState;
+      }
+      authState = {
+        role: data.role || 'GUEST',
+        sudo: !!data.sudo,
+        user: data.user || null,
+        mode: data.mode || data.role || 'GUEST',
+      };
+      if (!authState.sudo) setSudo(false);
+      paintAuth();
+      return authState;
+    } catch (err) {
+      toast(`auth check failed: ${err.message}`);
+      return authState;
+    }
+  }
+
+  async function neonAuthPost(path, body){
+    const res = await fetch(`${AUTH_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = data.message || data.error || `auth failed (${res.status})`;
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+    return data;
+  }
+
+  async function signUp(email, password, name){
+    const data = await neonAuthPost('/sign-up/email', {
+      email,
+      password,
+      name: name || email.split('@')[0] || 'uXu user',
+    });
+    if (!data.token) throw new Error('sign-up succeeded but no session token returned');
+    setSessionToken(data.token);
+    setSudo(false);
+    await refreshAuth();
+    toast(`signed up as ${email}`);
+    return data;
+  }
+
+  async function signIn(email, password){
+    const data = await neonAuthPost('/sign-in/email', { email, password });
+    if (!data.token) throw new Error('sign-in succeeded but no session token returned');
+    setSessionToken(data.token);
+    setSudo(false);
+    await refreshAuth();
+    toast(`signed in as ${email}`);
+    return data;
+  }
+
+  async function signOut(){
+    try {
+      await fetch(`${API_BASE}/api/auth/sign-out`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+      });
+    } catch {/* ignore */}
+    setSessionToken('');
+    setSudo(false);
+    authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
+    paintAuth();
+    toast('signed out');
+  }
 
   const bootTime = Date.now();
   function pad(n){ return String(n).padStart(2, '0'); }
@@ -826,14 +991,28 @@ validation: ${entry.certainty}${unresolvedBlock}${openHint}`);
       showOutput("HELP",
 `OPEN CYBERCAT     open archive by name (navigates)
 OPEN              open currently selected archive
-LOAD 0001         load/open by id suffix (opens parent if needed)
+LOAD 0001         load/open by id suffix
 GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
 MAP               show root provenance
 LOGS              show transparency logs
 MANUAL            show manual library
 SYSTEM            show system info
+AUTH              account status + gate help
+SIGNUP email pass [name]
+SIGNIN email pass
+SIGNOUT
+WHOAMI
+SUDO              elevate ADMIN session
+UNSUDO            drop elevation
+CLAIM MASTER <secret>
 EXIT              root stays loaded
+
+Roles
+  GUEST  public browse
+  USER   signed-in account
+  ADMIN  master operator (after CLAIM MASTER)
+  SUDO   temporary ADMIN elevation
 
 Keyboard
   ↑↓              move registry / quick nav
@@ -913,6 +1092,129 @@ system_state endpoint empty — console still operational.`);
 ${lines.length ? lines.join('\n') : '  (no child records found)'}`);
       return;
     }
+    if (cmd === "AUTH" || cmd === "ACCOUNT") {
+      setActiveNav("AUTH");
+      showOutput("ACCOUNT / AUTH",
+`role:     ${authState.role}
+sudo:     ${authState.sudo ? 'ON' : 'OFF'}
+email:    ${authState.user?.email || '—'}
+name:     ${authState.user?.name || '—'}
+
+Create account
+  SIGNUP you@email.com yourpassword YourName
+
+Sign in / out
+  SIGNIN you@email.com yourpassword
+  SIGNOUT
+
+Master administrator
+  1) SIGNUP or SIGNIN with your operator email
+  2) CLAIM MASTER <bootstrap-secret>
+  3) SUDO
+
+Or use the ACCOUNT GATE form on the left.`);
+      return;
+    }
+    if (cmd.startsWith("SIGNUP ")) {
+      const parts = cmdRaw.trim().split(/\s+/);
+      const email = parts[1];
+      const password = parts[2];
+      const name = parts.slice(3).join(' ');
+      if (!email || !password) {
+        showOutput("ERROR", "usage: SIGNUP email password [name]");
+        return;
+      }
+      showOutput("SIGNUP", "creating account...");
+      signUp(email, password, name)
+        .then(() => showOutput("SIGNUP", `Account created.\nrole: ${authState.role}\nemail: ${authState.user?.email || email}`))
+        .catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd.startsWith("SIGNIN ") || cmd.startsWith("LOGIN ")) {
+      const parts = cmdRaw.trim().split(/\s+/);
+      const email = parts[1];
+      const password = parts[2];
+      if (!email || !password) {
+        showOutput("ERROR", "usage: SIGNIN email password");
+        return;
+      }
+      showOutput("SIGNIN", "authenticating...");
+      signIn(email, password)
+        .then(() => showOutput("SIGNIN", `Signed in.\nrole: ${authState.role}\nemail: ${authState.user?.email || email}`))
+        .catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "SIGNOUT" || cmd === "LOGOUT") {
+      signOut().then(() => showOutput("SIGNOUT", "Session cleared. You are GUEST."));
+      return;
+    }
+    if (cmd === "WHOAMI") {
+      refreshAuth().then((s) => {
+        showOutput("WHOAMI",
+`role:   ${s.role}
+sudo:   ${s.sudo ? 'ON' : 'OFF'}
+mode:   ${s.mode}
+email:  ${s.user?.email || '—'}
+name:   ${s.user?.name || '—'}
+id:     ${s.user?.id || '—'}`);
+      });
+      return;
+    }
+    if (cmd === "SUDO") {
+      if (!getSessionToken()) {
+        showOutput("ERROR", "sign in first");
+        return;
+      }
+      showOutput("SUDO", "requesting elevation...");
+      fetch(`${API_BASE}/api/auth/sudo`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+      }).then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'sudo denied');
+        setSudo(true);
+        await refreshAuth();
+        showOutput("SUDO", data.message || "SUDO engaged.");
+        toast('SUDO ON');
+      }).catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "UNSUDO") {
+      setSudo(false);
+      fetch(`${API_BASE}/api/auth/unsudo`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+      }).catch(() => {});
+      refreshAuth().then(() => {
+        showOutput("UNSUDO", "Elevation dropped.");
+        toast('SUDO OFF');
+      });
+      return;
+    }
+    if (cmd.startsWith("CLAIM MASTER")) {
+      const secret = cmdRaw.trim().replace(/^CLAIM\s+MASTER\s*/i, '').trim();
+      if (!secret) {
+        showOutput("ERROR", "usage: CLAIM MASTER <bootstrap-secret>");
+        return;
+      }
+      if (!getSessionToken()) {
+        showOutput("ERROR", "sign in first, then CLAIM MASTER <secret>");
+        return;
+      }
+      showOutput("CLAIM MASTER", "validating bootstrap secret...");
+      fetch(`${API_BASE}/api/auth/claim-master`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ secret }),
+      }).then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'claim failed');
+        await refreshAuth();
+        showOutput("CLAIM MASTER", `${data.message}\nrole: ${authState.role}\nNext: SUDO`);
+        toast('MASTER CLAIMED');
+      }).catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
     if (cmd === "EXIT") {
       setActiveNav("EXIT");
       showOutput("EXIT TO DOS", "root stays loaded. there's no DOS to exit to (yet).");
@@ -930,6 +1232,31 @@ ${lines.length ? lines.join('\n') : '  (no child records found)'}`);
   btnOpen.addEventListener('click', () => { if (selected && canOpen(selected)) openEntry(selected); });
   btnInspect.addEventListener('click', () => { if (selected) activateEntry(selected, { inspect: true }); });
 
+  authForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = authEmail.value.trim();
+    const password = authPassword.value;
+    if (!email || !password) return;
+    signIn(email, password)
+      .then(() => showOutput("SIGNIN", `Signed in as ${authState.user?.email || email}\nrole: ${authState.role}`))
+      .catch((err) => showOutput("ERROR", err.message));
+  });
+  document.getElementById('btn-signup').addEventListener('click', () => {
+    const email = authEmail.value.trim();
+    const password = authPassword.value;
+    const name = authName.value.trim();
+    if (!email || !password) {
+      showOutput("ERROR", "enter email + password, then Sign Up");
+      return;
+    }
+    signUp(email, password, name)
+      .then(() => showOutput("SIGNUP", `Account created for ${authState.user?.email || email}\nrole: ${authState.role}`))
+      .catch((err) => showOutput("ERROR", err.message));
+  });
+  btnSignOut.addEventListener('click', () => {
+    signOut().then(() => showOutput("SIGNOUT", "Session cleared. You are GUEST."));
+  });
+
   navList.addEventListener('click', (e) => {
     const li = e.target.closest('li[data-cmd]');
     if (li) handleCommand(li.dataset.cmd);
@@ -945,7 +1272,7 @@ ${lines.length ? lines.join('\n') : '  (no child records found)'}`);
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.target === commandInput) return;
+    if (e.target === commandInput || e.target.closest('#auth-form')) return;
     const map = { F1:'HELP', F2:'INDEX', F3:'MANUAL', F4:'MAP', F5:'LOGS', F6:'SYSTEM' };
     if (map[e.key]) { e.preventDefault(); handleCommand(map[e.key]); }
     if (e.key === '/' && document.activeElement !== commandInput) {
@@ -954,6 +1281,8 @@ ${lines.length ? lines.join('\n') : '  (no child records found)'}`);
     }
   });
 
+  paintAuth();
+  refreshAuth();
   loadRegistry();
 </script>
 </body>
