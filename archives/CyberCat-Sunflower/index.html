@@ -243,36 +243,59 @@
       to { opacity: 1; transform: none; }
     }
 
-    .tape-list { display: flex; flex-direction: column; gap: .35rem; }
-    .tape {
-      display: grid; grid-template-columns: 1fr auto; gap: .45rem .75rem; align-items: center;
-      text-align: left; width: 100%; background: rgba(255,255,255,.02);
-      border: 1px solid rgba(255,255,255,.08); color: inherit; font-family: inherit;
-      padding: .55rem .65rem; cursor: pointer;
-      transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+    .tape-list { display: flex; flex-direction: column; gap: .45rem; }
+    .residency {
+      background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.08);
+      transition: border-color .2s var(--ease), background .2s var(--ease);
     }
-    .tape:hover { border-color: rgba(77,232,255,.45); background: rgba(77,232,255,.05); transform: translateX(2px); }
-    .tape.active { border-color: var(--phosphor); background: rgba(93,255,138,.08); }
-    .tape .tape-body { min-width: 0; }
-    .tape .date { font-family: var(--display); font-size: .68rem; color: var(--amber); letter-spacing: .06em; }
-    .tape .venue { font-size: .82rem; color: var(--text); margin: .15rem 0; }
-    .tape .meta { font-size: .68rem; color: var(--muted); }
-    .tape .engage {
+    .residency:hover { border-color: rgba(77,232,255,.4); background: rgba(77,232,255,.04); }
+    .residency.active { border-color: var(--phosphor); background: rgba(93,255,138,.07); }
+    .res-main {
+      display: grid; grid-template-columns: 1fr auto; gap: .45rem .75rem; align-items: center;
+      padding: .55rem .65rem; cursor: pointer;
+    }
+    .residency .tape-body { min-width: 0; }
+    .residency .date { font-family: var(--display); font-size: .68rem; color: var(--amber); letter-spacing: .06em; }
+    .residency .venue { font-size: .82rem; color: var(--text); margin: .15rem 0; }
+    .residency .meta { font-size: .68rem; color: var(--muted); }
+    .residency .engage {
       font-family: var(--mono); font-size: .62rem; letter-spacing: .1em;
-      color: var(--cyan); border: 1px solid rgba(77,232,255,.45);
-      padding: .35rem .55rem; white-space: nowrap;
+      color: var(--cyan); border: 1px solid rgba(77,232,255,.45); background: transparent;
+      padding: .35rem .55rem; white-space: nowrap; cursor: pointer;
       transition: background .2s var(--ease), color .2s var(--ease);
     }
-    .tape:hover .engage, .tape:focus-visible .engage { background: var(--cyan); color: #031018; }
-    .tape.active .engage {
+    .residency:hover .engage, .residency .engage:focus-visible { background: var(--cyan); color: #031018; outline: none; }
+    .residency.active .engage {
       color: #04120a; background: var(--phosphor); border-color: var(--phosphor);
     }
-    .tape .badges { margin-top: .3rem; display: flex; gap: .3rem; flex-wrap: wrap; }
+    .residency .badges { margin-top: .3rem; display: flex; gap: .3rem; flex-wrap: wrap; }
     .badge {
       font-size: .58rem; letter-spacing: .06em; padding: .1rem .35rem;
       border: 1px solid rgba(93,255,138,.3); color: var(--phosphor-dim);
     }
     .badge.sbd { color: var(--amber); border-color: rgba(255,210,74,.4); }
+    .badge.run { color: var(--magenta); border-color: rgba(255,61,206,.4); }
+    .day-row {
+      display: flex; flex-wrap: wrap; gap: .3rem;
+      padding: 0 .65rem .55rem; border-top: 1px dashed rgba(93,255,138,.12);
+      padding-top: .45rem; margin: 0 .15rem;
+    }
+    .day-chip {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .04em;
+      background: transparent; color: var(--phosphor-dim);
+      border: 1px solid rgba(93,255,138,.28); padding: .22rem .45rem; cursor: pointer;
+      transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
+    }
+    .day-chip:hover, .day-chip:focus-visible {
+      color: var(--cyan); border-color: rgba(77,232,255,.5); outline: none;
+    }
+    .day-chip.active {
+      color: #04120a; background: var(--phosphor); border-color: var(--phosphor); font-weight: 700;
+    }
+    .day-chip.live {
+      box-shadow: 0 0 10px rgba(93,255,138,.35);
+    }
 
     .manifesto, .specs {
       font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
@@ -327,7 +350,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       .tube, .tab-pane.active { animation: none; }
-      .tape, .toast { transition: none; }
+      .tape, .toast, .residency, .day-chip { transition: none; }
     }
   </style>
 </head>
@@ -387,7 +410,7 @@
             </div>
             <div class="viewport">
               <div id="pane-tapes" class="tab-pane active" role="tabpanel">
-                <div class="hint">Pick a show → ENGAGE · setlist songs cue that track · Other Transfers for alternates</div>
+                <div class="hint">Residencies group consecutive nights · day chips pick the show · ENGAGE loads the wave</div>
                 <div class="index-status" id="index-status">Indexing catalog…</div>
                 <div class="filter-row">
                   <input type="search" id="tape-filter" placeholder="Filter date / venue / city…" autocomplete="off" />
@@ -452,6 +475,7 @@
 
   let shows = [];
   let filtered = [];
+  let residencies = [];
   let yearFilter = 'ALL';
   let activeShowKey = null;
   let activeShow = null;
@@ -462,15 +486,18 @@
   let trackIndex = -1;
   let audioCtx = null, filters = [], eqReady = false;
   let toastTimer = null;
+  /** @type {Map<string, string>} residencyId -> selected YYYY-MM-DD */
+  const residencyDay = new Map();
 
   document.getElementById('specs-block').textContent =
 `===================================================================
 uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 ===================================================================
 [+] INDEX       : live years → every available GD show
+[+] RESIDENCY   : consecutive same-venue nights grouped · day chips
 [+] DEFAULT     : best waveform (SBD/remaster/rating weighted)
 [+] ALTERNATES  : Other Transfers button / key O
-[+] DECK        : engage a show, cue songs from the setlist
+[+] DECK        : engage a night, cue songs from the setlist
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0001
 
 Lookup tip: date + venue on the deck is enough to research any tape.
@@ -509,6 +536,100 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
 
   function venuePlace(s) {
     return (s.venue && s.venue.location) || s.location || '';
+  }
+
+  function venueKey(s) {
+    const id = (s.venue && (s.venue.uuid || s.venue.id)) || s.venue_uuid || s.venue_id;
+    if (id != null && id !== '') return `id:${id}`;
+    return `name:${venueName(s).toLowerCase()}|${venuePlace(s).toLowerCase()}`;
+  }
+
+  function daysBetween(a, b) {
+    const ms = Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z');
+    return Math.round(ms / 86400000);
+  }
+
+  function formatDayChip(iso) {
+    return iso.slice(5); // MM-DD
+  }
+
+  function formatResidencyRange(nights) {
+    const first = showDate(nights[0]);
+    const last = showDate(nights[nights.length - 1]);
+    if (first === last) return first;
+    if (first.slice(0, 7) === last.slice(0, 7)) return `${first} → ${last.slice(8)}`;
+    if (first.slice(0, 4) === last.slice(0, 4)) return `${first} → ${last.slice(5)}`;
+    return `${first} → ${last}`;
+  }
+
+  function residencyId(group) {
+    return `${group.venueKey}::${showDate(group.shows[0])}::${showDate(group.shows[group.shows.length - 1])}`;
+  }
+
+  function buildResidencies(list) {
+    const chrono = list.slice().sort((a, b) => showDate(a).localeCompare(showDate(b)) || venueName(a).localeCompare(venueName(b)));
+    const groups = [];
+    let cur = null;
+    for (const s of chrono) {
+      const vk = venueKey(s);
+      const d = showDate(s);
+      if (cur && cur.venueKey === vk) {
+        const prev = showDate(cur.shows[cur.shows.length - 1]);
+        const gap = daysBetween(prev, d);
+        if (gap === 0 || gap === 1) {
+          cur.shows.push(s);
+          continue;
+        }
+      }
+      cur = { venueKey: vk, shows: [s] };
+      groups.push(cur);
+    }
+    return groups.map((g) => {
+      const id = residencyId(g);
+      const hasSbd = g.shows.some((s) => s.has_soundboard_source);
+      const maxRating = Math.max(0, ...g.shows.map((s) => Number(s.avg_rating) || 0));
+      const maxSources = Math.max(0, ...g.shows.map((s) => Number(s.source_count) || 0));
+      const start = showDate(g.shows[0]);
+      const end = showDate(g.shows[g.shows.length - 1]);
+      return {
+        id,
+        venueKey: g.venueKey,
+        shows: g.shows,
+        nights: g.shows.length,
+        hasSbd,
+        maxRating,
+        maxSources,
+        start,
+        end,
+        venue: venueName(g.shows[0]),
+        place: venuePlace(g.shows[0]),
+      };
+    });
+  }
+
+  function sortResidencies(groups, mode) {
+    const sorted = groups.slice();
+    sorted.sort((a, b) => {
+      if (mode === 'date-asc') return a.start.localeCompare(b.start) || a.venue.localeCompare(b.venue);
+      if (mode === 'date-desc') return b.start.localeCompare(a.start) || a.venue.localeCompare(b.venue);
+      if (mode === 'rating') return b.maxRating - a.maxRating || b.start.localeCompare(a.start);
+      if (mode === 'sources') return b.maxSources - a.maxSources || b.start.localeCompare(a.start);
+      return 0;
+    });
+    return sorted;
+  }
+
+  function selectedShowForResidency(res) {
+    const picked = residencyDay.get(res.id);
+    if (picked) {
+      const hit = res.shows.find((s) => showDate(s) === picked);
+      if (hit) return hit;
+    }
+    if (activeShowKey) {
+      const live = res.shows.find((s) => showKey(s) === activeShowKey);
+      if (live) return live;
+    }
+    return res.shows[0];
   }
 
   function sourceTracks(source) {
@@ -670,7 +791,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (!activeShow) return;
     const place = venuePlace(activeShow);
     nowPlaying.innerHTML =
-      `<strong>${activeShow.display_date || activeShow.date}</strong> · ${venueName(activeShow)}<br>` +
+      `<strong>${showDate(activeShow)}</strong> · ${venueName(activeShow)}<br>` +
       `<span style="color:var(--muted)">${place}</span><br>` +
       `<span style="color:var(--cyan)">▶ ${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
   }
@@ -704,12 +825,9 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   async function engageShow(show) {
     activeShow = show;
     activeShowKey = showKey(show);
-    document.querySelectorAll('.tape').forEach((el) => {
-      el.classList.toggle('active', el.dataset.key === activeShowKey);
-      const eng = el.querySelector('.engage');
-      if (eng) eng.textContent = el.dataset.key === activeShowKey ? 'LIVE' : 'ENGAGE';
-    });
-    nowPlaying.innerHTML = `<span class="idle">Engaging ${show.display_date || show.date}…</span>`;
+    syncResidencySelection(show);
+    paintResidencyActive();
+    nowPlaying.innerHTML = `<span class="idle">Engaging ${showDate(show)}…</span>`;
     sourceMeta.textContent = 'Loading transfer…';
     sourceMeta.removeAttribute('title');
     btnAlts.disabled = true;
@@ -731,6 +849,32 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       toast(err.message);
       nowPlaying.innerHTML = `<span class="idle">Engage failed: ${err.message}</span>`;
     }
+  }
+
+  function syncResidencySelection(show) {
+    const d = showDate(show);
+    for (const res of residencies) {
+      if (res.shows.some((s) => showKey(s) === showKey(show))) {
+        residencyDay.set(res.id, d);
+      }
+    }
+  }
+
+  function paintResidencyActive() {
+    document.querySelectorAll('.residency').forEach((el) => {
+      const res = residencies.find((r) => r.id === el.dataset.rid);
+      const live = !!(res && res.shows.some((s) => showKey(s) === activeShowKey));
+      el.classList.toggle('active', live);
+      const eng = el.querySelector('.engage');
+      if (eng) eng.textContent = live ? 'LIVE' : 'ENGAGE';
+      el.querySelectorAll('.day-chip').forEach((chip) => {
+        const selected = residencyDay.get(el.dataset.rid) === chip.dataset.date
+          || (!residencyDay.get(el.dataset.rid) && res && showDate(res.shows[0]) === chip.dataset.date);
+        const isLive = chip.dataset.key === activeShowKey;
+        chip.classList.toggle('active', selected || isLive);
+        chip.classList.toggle('live', isLive);
+      });
+    });
   }
 
   function openAlts() {
@@ -773,24 +917,22 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   function applyFilters() {
     const q = filterInput.value.trim().toLowerCase();
     let list = shows.slice();
-    if (yearFilter !== 'ALL') list = list.filter((s) => String(s.year || (s.date || '').slice(0, 4)) === String(yearFilter));
+    if (yearFilter !== 'ALL') list = list.filter((s) => String(s.year || showDate(s).slice(0, 4)) === String(yearFilter));
     if (q) {
       list = list.filter((s) => {
-        const blob = [s.date, s.display_date, venueName(s), venuePlace(s)].join(' ').toLowerCase();
+        const blob = [showDate(s), s.display_date, venueName(s), venuePlace(s)].join(' ').toLowerCase();
         return blob.includes(q);
       });
     }
-    const mode = sortMode.value;
-    list.sort((a, b) => {
-      if (mode === 'date-asc') return String(a.date).localeCompare(String(b.date));
-      if (mode === 'date-desc') return String(b.date).localeCompare(String(a.date));
-      if (mode === 'rating') return (Number(b.avg_rating) || 0) - (Number(a.avg_rating) || 0);
-      if (mode === 'sources') return (Number(b.source_count) || 0) - (Number(a.source_count) || 0);
-      return 0;
-    });
     filtered = list;
-    renderTapes(filtered);
-    indexStatus.textContent = `${filtered.length} shown · ${shows.length} indexed · year ${yearFilter}`;
+    const mode = sortMode.value;
+    residencies = sortResidencies(buildResidencies(list), mode);
+    renderResidencies(residencies);
+    const multi = residencies.filter((r) => r.nights > 1).length;
+    indexStatus.textContent =
+      `${residencies.length} entries · ${filtered.length} nights` +
+      (multi ? ` · ${multi} residencies` : '') +
+      ` · year ${yearFilter}`;
   }
 
   function renderYearChips(years) {
@@ -813,44 +955,62 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     });
   }
 
-  function renderTapes(list) {
+  function renderResidencies(list) {
     tapesZone.innerHTML = '';
     if (!list.length) {
       tapesZone.textContent = 'No shows match that filter.';
       return;
     }
-    // Cap DOM for very large ALL views: render first 500 + note
-    const MAX = 500;
+    const MAX = 400;
     const slice = list.slice(0, MAX);
     const frag = document.createDocumentFragment();
-    slice.forEach((show) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      const isActive = showKey(show) === activeShowKey;
-      btn.className = 'tape' + (isActive ? ' active' : '');
-      btn.dataset.key = showKey(show);
-      btn.setAttribute('aria-label', `Engage ${show.display_date || show.date} ${venueName(show)}`);
+
+    slice.forEach((res) => {
+      const selected = selectedShowForResidency(res);
+      residencyDay.set(res.id, showDate(selected));
+      const liveHere = res.shows.some((s) => showKey(s) === activeShowKey);
+
+      const card = document.createElement('article');
+      card.className = 'residency' + (liveHere ? ' active' : '');
+      card.dataset.rid = res.id;
+
+      const main = document.createElement('div');
+      main.className = 'res-main';
+      main.setAttribute('role', 'button');
+      main.tabIndex = 0;
+      main.setAttribute('aria-label', `Engage ${showDate(selected)} ${res.venue}`);
 
       const body = document.createElement('div');
       body.className = 'tape-body';
 
       const date = document.createElement('div');
       date.className = 'date';
-      date.textContent = show.display_date || show.date;
+      if (res.nights > 1) {
+        date.textContent = `${formatResidencyRange(res.shows)} · ${res.nights} NIGHTS`;
+      } else {
+        date.textContent = showDate(selected);
+      }
 
       const venue = document.createElement('div');
       venue.className = 'venue';
-      venue.textContent = venueName(show);
+      venue.textContent = res.venue;
 
       const meta = document.createElement('div');
       meta.className = 'meta';
-      const rating = show.avg_rating != null ? Number(show.avg_rating).toFixed(2) : '—';
-      const xfers = show.source_count || 0;
-      meta.textContent = `${venuePlace(show)}${xfers ? ` · ${xfers} transfers` : ''} · ★${rating}`;
+      const rating = selected.avg_rating != null ? Number(selected.avg_rating).toFixed(2) : '—';
+      const xfers = selected.source_count || 0;
+      const nightLabel = res.nights > 1 ? `night ${showDate(selected).slice(5)} · ` : '';
+      meta.textContent = `${res.place}${res.place ? ' · ' : ''}${nightLabel}${xfers ? `${xfers} transfers · ` : ''}★${rating}`;
 
       const badges = document.createElement('div');
       badges.className = 'badges';
-      if (show.has_soundboard_source) {
+      if (res.nights > 1) {
+        const run = document.createElement('span');
+        run.className = 'badge run';
+        run.textContent = 'RESIDENCY';
+        badges.appendChild(run);
+      }
+      if (res.hasSbd) {
         const b = document.createElement('span');
         b.className = 'badge sbd';
         b.textContent = 'SBD';
@@ -859,19 +1019,72 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
 
       body.append(date, venue, meta, badges);
 
-      const engage = document.createElement('span');
+      const engage = document.createElement('button');
+      engage.type = 'button';
       engage.className = 'engage';
-      engage.textContent = isActive ? 'LIVE' : 'ENGAGE';
+      engage.textContent = liveHere ? 'LIVE' : 'ENGAGE';
+      engage.addEventListener('click', (e) => {
+        e.stopPropagation();
+        engageShow(selectedShowForResidency(res));
+      });
 
-      btn.append(body, engage);
-      btn.addEventListener('click', () => engageShow(show));
-      frag.appendChild(btn);
+      main.append(body, engage);
+      main.addEventListener('click', (e) => {
+        if (e.target.closest('.engage')) return;
+        engageShow(selectedShowForResidency(res));
+      });
+      main.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          engageShow(selectedShowForResidency(res));
+        }
+      });
+
+      card.appendChild(main);
+
+      if (res.nights > 1) {
+        const days = document.createElement('div');
+        days.className = 'day-row';
+        days.setAttribute('role', 'tablist');
+        days.setAttribute('aria-label', `${res.venue} residency nights`);
+        res.shows.forEach((show) => {
+          const d = showDate(show);
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'day-chip';
+          chip.dataset.date = d;
+          chip.dataset.key = showKey(show);
+          chip.textContent = formatDayChip(d);
+          chip.title = `${d} · ${venueName(show)}`;
+          chip.setAttribute('aria-label', `Select ${d}`);
+          if (d === showDate(selected)) chip.classList.add('active');
+          if (showKey(show) === activeShowKey) chip.classList.add('live');
+          chip.addEventListener('click', (e) => {
+            e.stopPropagation();
+            residencyDay.set(res.id, d);
+            days.querySelectorAll('.day-chip').forEach((c) => {
+              c.classList.toggle('active', c.dataset.date === d);
+            });
+            // refresh meta for selected night without full re-render
+            const pick = show;
+            const r = pick.avg_rating != null ? Number(pick.avg_rating).toFixed(2) : '—';
+            const x = pick.source_count || 0;
+            meta.textContent = `${res.place}${res.place ? ' · ' : ''}night ${d.slice(5)} · ${x ? `${x} transfers · ` : ''}★${r}`;
+            engageShow(pick);
+          });
+          days.appendChild(chip);
+        });
+        card.appendChild(days);
+      }
+
+      frag.appendChild(card);
     });
+
     tapesZone.appendChild(frag);
     if (list.length > MAX) {
       const note = document.createElement('div');
       note.className = 'empty';
-      note.textContent = `Showing ${MAX} of ${list.length} — refine year/search to narrow.`;
+      note.textContent = `Showing ${MAX} of ${list.length} entries — refine year/search to narrow.`;
       tapesZone.appendChild(note);
     }
   }
@@ -888,9 +1101,9 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (e.key === '/' && !e.target.matches('input,select,textarea')) {
       e.preventDefault(); filterInput.focus(); filterInput.select();
     }
-    if (e.key === 'Enter' && !e.target.matches('input,select,textarea') && filtered.length) {
-      const next = filtered.find((s) => showKey(s) === activeShowKey) || filtered[0];
-      if (next) { e.preventDefault(); engageShow(next); }
+    if (e.key === 'Enter' && !e.target.matches('input,select,textarea') && residencies.length) {
+      const res = residencies.find((r) => r.shows.some((s) => showKey(s) === activeShowKey)) || residencies[0];
+      if (res) { e.preventDefault(); engageShow(selectedShowForResidency(res)); }
     }
     if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
     if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
