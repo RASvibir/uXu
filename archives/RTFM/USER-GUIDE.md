@@ -27,11 +27,12 @@ This guide is for everyone. No coding required.
 
 ## Finding Your Way (0?0)
 
-- **↑ ↓** move through the registry or Quick Nav (lands on ARCHIVE INDEX by default)
+- On load, **↑ ↓** drive **Quick Nav** (starts on ARCHIVE INDEX)
 - **← →** move between zones (registry · actions · Quick Nav · account · command)
-- **Enter** open the selected archive or run the highlighted Quick Nav item
-- **/** jump to the command line
+- **r** registry · **q** Quick Nav · **Enter** open archive or run Quick Nav item
+- **/** jump to the command line · **?** keyboard map
 - **F1** Help · **F2** Index · **F3** Manuals · **F4** Map · **F5** Logs · **F6** System
+- Long docs (ABOUT / RTFM / FAQ / iNi) open scrolled to the **top**
 
 Quick Nav (always visible): **ABOUT · CREATE · FAQ · ARCHIVE INDEX · USER OPTIONS · iNi Provenance · RTFM**  
 USER OPTIONS folds Manual Library, Install, Map, Logs, System, Setup Master, Exit.

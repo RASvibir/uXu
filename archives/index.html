@@ -1291,8 +1291,8 @@
       <div class="screen" role="application" aria-label="0?0 uXu root archive console">
         <div class="topbar">
           <span class="id">0?0.uXu.0000</span>
-          <span class="path">ROOT ARCHIVE :: NAVIGATION :: INDEX :: MANUAL LIBRARY</span>
-          <span class="hint" id="nav-hint">Tab panels · ←→ zones · ↑↓ move · Enter act · / cmd · i details · ? keys</span>
+          <span class="path">ROOT ARCHIVE :: QUICK NAV · iNi · RTFM</span>
+          <span class="hint" id="nav-hint">↑↓ Quick Nav · ←→ zones · Enter act · / cmd · i details · ? keys</span>
         </div>
         <div class="rule"></div>
 
@@ -1418,7 +1418,7 @@ Preserve. Connect. Discover.
 You are in 0?0 — the root of the archive.
 
 Quick Nav: ABOUT · FAQ · INDEX · USER OPTIONS · iNi Provenance · RTFM
-Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
+Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
@@ -3168,21 +3168,21 @@ const list = document.getElementById('archive-list');
 <ul>
   <li><strong>Registry</strong> — forever ids (<code>Title.uXu.NNNN</code>). Numbers are history, not rank. If access ends, the row stays as a placemarker so the count stays honest.</li>
   <li><strong>Open</strong> — jump into an archive that has a real page to visit.</li>
-  <li><strong>Docs</strong> — FAQ for everyday use, RTFM for deeper tabs, MANUAL LIBRARY for pamphlets.</li>
-  <li><strong>Map / logs / system</strong> — light provenance and runtime honesty.</li>
+  <li><strong>Docs</strong> — ABOUT / FAQ / RTFM tabs · <strong>iNi Provenance</strong> · MANUAL LIBRARY (under USER OPTIONS).</li>
+  <li><strong>Map / logs / system</strong> — light provenance and runtime honesty (USER OPTIONS).</li>
   <li><strong>Account gate</strong> — optional sign-in for people who need a session; browsing as guest is fine.</li>
 </ul>
 <pre>uXu
 └── 0?0.uXu.0000
     ├── Registry (forever placemarkers)
-    ├── RTFM / FAQ / MANUAL library
+    ├── Quick Nav (ABOUT · FAQ · INDEX · USER OPTIONS · iNi · RTFM)
     ├── Transparency
     └── Relationships (*:*)</pre>
 <p class="muted"><code>*:*</code> means “these archives are connected.” It is not endorsement, ownership, or control.</p>
 
 <h3>iNi (opt-in provenance)</h3>
 <p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space where creators who choose it treat origin, authorship, lineage, and custody as first-class data. Not required to publish.</p>
-<p>On 0?0: type <strong>INI</strong> or use Quick Nav. Full pamphlet: <code>INI-PROVENANCE.md</code> in MANUAL LIBRARY.</p>
+<p>On 0?0: open Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Hover tip: <em>join our community</em>. Full pamphlet: <code>INI-PROVENANCE.md</code> via MANUAL LIBRARY.</p>
 
 <h3>How and why I created it</h3>
 <p>I built uXu because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
@@ -3206,11 +3206,11 @@ const list = document.getElementById('archive-list');
 <p class="lede">Start here if you just want to <em>use</em> 0?0. No coding required.</p>
 <h3>Do these five things</h3>
 <ol>
-  <li>Look at the <strong>registry</strong> table — that is the commons roster.</li>
-  <li>Move with <kbd>↑</kbd><kbd>↓</kbd>, open with <kbd>Enter</kbd> or <strong>Open Archive</strong>.</li>
-  <li>Read <strong>ABOUT</strong> (this RTFM’s first tab) and <strong>FAQ</strong> for the friendly path.</li>
+  <li>Quick Nav starts focused — <kbd>↑</kbd><kbd>↓</kbd> move, <kbd>Enter</kbd> runs the item (lands on ARCHIVE INDEX).</li>
+  <li>Look at the <strong>registry</strong> (<kbd>r</kbd> or ←→ to that zone) — that is the commons roster.</li>
+  <li>Read <strong>ABOUT</strong> and <strong>FAQ</strong> for the friendly path; <strong>RTFM</strong> for deeper tabs.</li>
   <li>Press <strong>CREATE ARCHIVE</strong> when you want your own shelf — start with a simple folder.</li>
-  <li>Install the public <strong>uXu</strong> app if you want the invite on your home screen.</li>
+  <li>Optional: <strong>iNi Provenance</strong> for authenticity docs · <strong>USER OPTIONS → INSTALL uXu</strong> for the invite app.</li>
 </ol>
 <h3>Where to click</h3>
 <table>
@@ -3218,33 +3218,41 @@ const list = document.getElementById('archive-list');
   <tr><td>ABOUT</td><td>What uXu is · how 0?0 works · why it exists</td></tr>
   <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
   <tr><td>CREATE ARCHIVE</td><td>Starter path + next serial</td></tr>
-  <tr><td>USER OPTIONS</td><td>Fold-out: Manual Library · Install · Map · Logs · System · …</td></tr>
-  <tr><td>iNi Provenance</td><td>Opt-in authenticity protocol</td></tr>
-  <tr><td>RTFM tabs</td><td>Deeper: nav → commands → depth → code → source</td></tr>
-  <tr><td>MANUAL LIBRARY</td><td>Long-form pamphlets (inside USER OPTIONS)</td></tr>
+  <tr><td>ARCHIVE INDEX</td><td>Back to registry welcome / focus</td></tr>
+  <tr><td>USER OPTIONS ▸</td><td>Fold-out: Manual · Install · Map · Logs · System · Setup · Exit</td></tr>
+  <tr><td>iNi Provenance</td><td>Opt-in authenticity protocol (bottom flair)</td></tr>
+  <tr><td>RTFM</td><td>Deeper tabs: about → ease → nav → commands → depth → code → source</td></tr>
 </table>
-<p class="muted">Stuck? Email <strong>rasip@chloreform.org</strong>. Or type <code>HELP</code> for the command cheat sheet.</p>`;
+<p class="muted">Stuck? Email <strong>rasip@chloreform.org</strong>. Or type <code>HELP</code> / press <kbd>?</kbd> for the keyboard map.</p>`;
 
     if (nav) nav.innerHTML = `
 <p class="lede">You are in <strong>0?0</strong> — root console of the uXu commons. This RTFM is the operator-facing 0?0 manual.</p>
 <h3>First moves</h3>
 <ul>
-  <li>Select a registry row · <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect</li>
-  <li><kbd>/</kbd> jump to the command line · type a command · Enter</li>
+  <li>Boot lands on <strong>Quick Nav</strong> · <kbd>↑↓</kbd> · <kbd>Enter</kbd> run (default highlight: ARCHIVE INDEX)</li>
+  <li><kbd>←→</kbd> change zones · <kbd>r</kbd> registry · <kbd>q</kbd> Quick Nav · <kbd>/</kbd> command line</li>
+  <li>Registry: <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect / toggle detail modals</li>
   <li><kbd>?</kbd> full keyboard map</li>
-  <li><strong>RTFM</strong> (this panel) · <strong>MANUAL LIBRARY</strong> pamphlet index</li>
 </ul>
+<h3>Quick Nav layout</h3>
+<pre>ABOUT
+CREATE ARCHIVE
+FAQ
+ARCHIVE INDEX          ← default land
+USER OPTIONS ▸         ← Manual · Install · Map · Logs · System · Setup · Exit
+iNi Provenance         ← neat flair (bottom)
+RTFM                   ← aggressive flair + tip (bottom)</pre>
 <h3>Zones</h3>
 <table>
   <tr><th>Zone</th><th>Keys</th><th>Job</th></tr>
+  <tr><td>Quick Nav</td><td><kbd>↑↓</kbd> Enter · ▸/← USER OPTIONS</td><td>Run console commands</td></tr>
   <tr><td>Registry</td><td><kbd>↑↓</kbd> <kbd>Enter</kbd></td><td>Browse / open archives</td></tr>
   <tr><td>Actions</td><td><kbd>o</kbd> <kbd>i</kbd> <kbd>n</kbd></td><td>Open · Inspect · Create</td></tr>
-  <tr><td>Quick Nav</td><td><kbd>↑↓</kbd> Enter</td><td>Same as typing the command</td></tr>
   <tr><td>Account</td><td>Tab fields</td><td>Sign in / up / out</td></tr>
   <tr><td>Command</td><td><kbd>/</kbd></td><td>Full command vocabulary</td></tr>
 </table>
 <h3>Panel travel</h3>
-<p><kbd>Tab</kbd> / <kbd>←→</kbd> move zones · <kbd>Esc</kbd> back · <kbd>F1</kbd>–<kbd>F6</kbd> HELP INDEX MANUAL MAP LOGS SYSTEM</p>
+<p><kbd>Tab</kbd> / <kbd>←→</kbd> move zones · <kbd>Esc</kbd> back · long docs scroll from the <strong>top</strong> · <kbd>F1</kbd>–<kbd>F6</kbd> HELP INDEX MANUAL MAP LOGS SYSTEM</p>
 <p class="muted">Public invite app brands as <strong>uXu</strong>. Inside the commons, <strong>0?0</strong> is the root console.</p>
 <p>Need a human: <strong>rasip@chloreform.org</strong></p>`;
 
@@ -3256,17 +3264,18 @@ const list = document.getElementById('archive-list');
   <tr><td><code>INDEX</code></td><td>List registry ids + placemarkers</td></tr>
   <tr><td><code>OPEN CYBERCAT</code></td><td>Open archive by name</td></tr>
   <tr><td><code>OPEN</code> / <code>LOAD 0001</code></td><td>Open selection or id suffix</td></tr>
-  <tr><td><code>MAP</code></td><td>Provenance trail</td></tr>
+  <tr><td><code>MAP</code></td><td>Provenance trail (also USER OPTIONS)</td></tr>
   <tr><td><code>LOGS</code></td><td>Transparency logs</td></tr>
   <tr><td><code>SYSTEM</code></td><td>Runtime info</td></tr>
   <tr><td><code>INSTALL</code></td><td>Public uXu PWA / home screen</td></tr>
   <tr><td><code>EXIT</code></td><td>Stay on root (DOS joke)</td></tr>
 </table>
-<h3>Manuals</h3>
+<h3>Manuals &amp; guides</h3>
 <table>
   <tr><th>Command</th><th>What it does</th></tr>
   <tr><td><code>ABOUT</code></td><td>What uXu is · how 0?0 works · why it exists</td></tr>
   <tr><td><code>FAQ</code></td><td>Friendly everyday how-to</td></tr>
+  <tr><td><code>INI</code></td><td>iNi Provenance guide (Quick Nav flair)</td></tr>
   <tr><td><code>RTFM</code></td><td>This 0?0 manual (tabs)</td></tr>
   <tr><td><code>MANUAL</code></td><td>Manual library index (pamphlets)</td></tr>
   <tr><td><code>READ &lt;slug|n&gt;</code></td><td>Open a library pamphlet</td></tr>
@@ -3274,8 +3283,8 @@ const list = document.getElementById('archive-list');
   <tr><td><code>ARCHIVE MANUALS</code></td><td>Index creator manuals from data.json</td></tr>
   <tr><td><code>FIND MANUAL &lt;q&gt;</code></td><td>Filter that index</td></tr>
   <tr><td><code>CREATE ARCHIVE</code></td><td>Creation manual + next serial</td></tr>
-  <tr><td><code>INI</code></td><td>iNi provenance protocol (opt-in)</td></tr>
   <tr><td><code>BACK</code></td><td>Return one step in manuals</td></tr>
+  <tr><td><code>HELP</code></td><td>Compact command list</td></tr>
 </table>
 <h3>Account (day-to-day)</h3>
 <table>
@@ -3283,9 +3292,8 @@ const list = document.getElementById('archive-list');
   <tr><td><code>SIGNUP</code> / <code>SIGNIN</code></td><td>Create or enter a session</td></tr>
   <tr><td><code>SIGNOUT</code> · <code>WHOAMI</code></td><td>Leave / confirm identity</td></tr>
   <tr><td><code>AUTH</code></td><td>Account gate help</td></tr>
-  <tr><td><code>HELP</code></td><td>Compact command list</td></tr>
 </table>
-<p class="muted">Admin succession commands exist for operators (<code>SETUP MASTER</code>, recovery). They are not required for browsing or creating a normal archive.</p>`;
+<p class="muted">Admin succession commands exist for operators (<code>SETUP MASTER</code>, recovery). They are not required for browsing or creating a normal archive. USER OPTIONS folds several of the above into one menu.</p>`;
 
     if (depth) depth.innerHTML = `
 <p class="lede">Grow only when you want to. Each tier builds on the last.</p>
@@ -3488,7 +3496,11 @@ README.md`;
 </details>
 <details>
   <summary>How do I browse?</summary>
-  <p>Use the registry table. Arrow keys move · Enter opens · <kbd>i</kbd> inspects · <kbd>/</kbd> focuses the command line. Or click Quick Nav.</p>
+  <p>On load, arrows drive <strong>Quick Nav</strong> (starts on ARCHIVE INDEX). <kbd>←→</kbd> change zones · <kbd>r</kbd> jumps to the registry · <kbd>Enter</kbd> opens · <kbd>i</kbd> inspects · <kbd>/</kbd> command line.</p>
+</details>
+<details>
+  <summary>Where did Manual Library / Install / Map go?</summary>
+  <p>Under <strong>USER OPTIONS ▸</strong> in Quick Nav (expand with Enter or click). <strong>iNi Provenance</strong> and <strong>RTFM</strong> stay visible at the bottom with flair.</p>
 </details>
 <details>
   <summary>How do I create an archive?</summary>
@@ -3504,7 +3516,7 @@ README.md`;
 </details>
 <details>
   <summary>RTFM vs FAQ vs MANUAL LIBRARY?</summary>
-  <p><strong>FAQ</strong> = everyday answers. <strong>ABOUT / RTFM</strong> = story + deeper tabs (ease → source). <strong>MANUAL LIBRARY</strong> = long pamphlets. <strong>INI</strong> = provenance opt-in guide.</p>
+  <p><strong>FAQ</strong> = everyday answers. <strong>ABOUT / RTFM</strong> = story + deeper tabs (ease → source). <strong>iNi Provenance</strong> = opt-in authenticity. <strong>MANUAL LIBRARY</strong> (USER OPTIONS) = long pamphlets.</p>
 </details>
 <details>
   <summary>How do I install the app?</summary>
@@ -3538,6 +3550,7 @@ README.md`;
 
 <h3>What it is</h3>
 <p>A name, a protocol, and a community boundary defined by practice — not a company label. uXu does not require iNi. Creators who want explicit authenticity documentation may opt in.</p>
+<p class="muted">Quick Nav tip on hover: <em>join our community</em>.</p>
 
 <pre>uXu  (public collection)
  └── 0?0  (console)
@@ -3572,7 +3585,7 @@ README.md`;
 <p class="muted">Self-attestation — not a legal chain-of-custody certificate.</p>
 
 <h3>Read more</h3>
-<p>Full pamphlet: <code>archives/RTFM/INI-PROVENANCE.md</code> · MANUAL LIBRARY when ingested · templates ship with <code>optIn: false</code>.</p>
+<p>Full pamphlet: <code>archives/RTFM/INI-PROVENANCE.md</code> · also via <strong>USER OPTIONS → MANUAL LIBRARY</strong> when ingested · templates ship with <code>optIn: false</code>.</p>
 <p>Questions: <strong>rasip@chloreform.org</strong></p>`;
     }
     showIniUi();
@@ -3769,7 +3782,7 @@ Roles
 Keyboard
   ?               full keyboard map (mouse optional)
   Tab / ←→        move between zones
-  ↑↓              registry or quick nav
+  ↑↓              Quick Nav on boot · registry after r / ←→
   Enter / o       open · i inspect · n create
   /               command line · Esc back
   a r q c         account / registry / nav / command
@@ -4428,7 +4441,7 @@ Then attest here so SETUP MASTER can check it off.`);
       const labels = {
         registry: 'REGISTRY · ↑↓ select · Enter/o open · i inspect · ←→ zone',
         actions: 'ACTIONS · ←→ buttons · Enter press · Esc registry',
-        nav: 'QUICK NAV · ↑↓ · Enter · ▸ USER OPTIONS · ←→ zone',
+        nav: 'QUICK NAV · ↑↓ · Enter · ▸ USER OPTIONS · iNi · RTFM · ←→ zone',
         auth: 'ACCOUNT · Tab fields · Enter sign in',
         command: 'COMMAND · type + Enter · Esc back',
       };
@@ -4520,16 +4533,22 @@ Then attest here so SETUP MASTER can check it off.`);
 Zones (Tab / Shift+Tab or ← →)
   registry → actions → quick nav → account → command
 
-Registry
+Boot
+  ↑ ↓ start on Quick Nav (ARCHIVE INDEX highlighted)
+
+Quick Nav
+  ↑ ↓     move · Enter / Space run
+  → / Enter on USER OPTIONS  expand fold-out
+  ←       collapse USER OPTIONS
+  Bottom: iNi Provenance · RTFM (flair)
+
+Registry (press r or ←→ to this zone)
   ↑ ↓     move selection
   Home/End  first / last
   Enter / o   open archive (if openable)
-  i         inspect
+  i         toggle details / inspect
   n         create archive
-  Space     inspect (same as click)
-
-Quick Nav
-  ↑ ↓     move · Enter / Space run command
+  Space     inspect
 
 Actions toolbar
   ← →     between Open / Inspect / Create / Install
@@ -4537,7 +4556,7 @@ Actions toolbar
 
 Global (when not typing in a field)
   /       focus command line
-  Esc     leave field → registry (or BACK in manuals)
+  Esc     leave field / close docs step
   a       account gate
   c       command line
   r       registry
@@ -4545,10 +4564,11 @@ Global (when not typing in a field)
   F1–F6   HELP INDEX MANUAL MAP LOGS SYSTEM
   ?       this map
 
-Manuals
-  ↑ ↓ Enter  browse / open · Esc / Backspace list
+Manuals / docs
+  Open from the top · scroll down for the rest
+  ↑ ↓ Enter  browse pamphlet lists · Esc / Backspace back
 
-Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
+Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     toast('keyboard map');
   }
 

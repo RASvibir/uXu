@@ -1,7 +1,7 @@
 # 0?0 RTFM
 
-Tags: rtfm, 0q0, commands, navigation, depth, code, source
-Source: interactive twin on 0?0 — press **RTFM**
+Tags: rtfm, 0q0, commands, navigation, depth, code, source, quick-nav
+Source: interactive twin on 0?0 — press **RTFM** (Quick Nav bottom flair)
 
 ## What This Is
 
@@ -9,21 +9,36 @@ The **0?0 manual**. On the live console it opens as a tabbed panel:
 
 | Tab | Contents |
 |-----|----------|
-| Nav | Zones, keys, first moves |
+| About | What uXu / 0?0 / iNi are · license |
+| Ease | First five moves · where to click |
+| Nav | Zones, Quick Nav layout, keys |
 | Commands | Full visitor command vocabulary |
 | Depth | Incremental archive tiers 0→4 |
 | Code | Copy-paste examples in sub-tabs |
 | Source | Public inventory (no secrets) |
 
-**MANUAL LIBRARY** is separate — that command lists pamphlet pages
-(User Guide, Archive Creation, CyberCat, …).
+**MANUAL LIBRARY** is separate — under **USER OPTIONS** (or type `MANUAL`).
+**iNi Provenance** is its own Quick Nav item (not an RTFM tab).
 
 ## Quick split
 
 ```text
-RTFM              → interactive 0?0 manual (this doc’s twin)
-MANUAL            → pamphlet library index
+ABOUT / RTFM      → interactive 0?0 manual (this doc’s twin)
+INI               → iNi Provenance guide
+MANUAL            → pamphlet library index (USER OPTIONS)
 ARCHIVE MANUALS   → search uxu.manuals on created archives
+```
+
+## Quick Nav (current)
+
+```text
+ABOUT
+CREATE ARCHIVE
+FAQ
+ARCHIVE INDEX          ← keyboard land on boot
+USER OPTIONS ▸         ← Manual · Install · Map · Logs · System · Setup · Exit
+iNi Provenance
+RTFM
 ```
 
 ## Redaction

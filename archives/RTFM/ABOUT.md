@@ -1,6 +1,6 @@
 # About uXu & 0?0
 
-Tags: about, uxu, 0q0, origin, commons
+Tags: about, uxu, 0q0, origin, commons, ini, quick-nav
 Source: interactive twin — ABOUT or RTFM → About on 0?0
 
 ## What uXu is
@@ -21,20 +21,24 @@ chip or console **← 0?0** back control.
 
 - **Registry** — forever ids (`Title.uXu.NNNN`). Placemarkers keep history honest.
 - **Open** — enter archives that have a real page.
-- **Docs** — FAQ, RTFM (About → Ease → … → Source), MANUAL LIBRARY.
-- **Map / logs / system** — light provenance and runtime honesty.
+- **Quick Nav** — ABOUT · CREATE · FAQ · ARCHIVE INDEX · USER OPTIONS · **iNi Provenance** · **RTFM**
+- **USER OPTIONS** — folds Manual Library, Install, Map, Logs, System, Setup Master, Exit
 - **Account gate** — optional; guests can browse.
 
 ```text
 uXu
 └── 0?0.uXu.0000
     ├── Registry (forever placemarkers)
-    ├── RTFM / FAQ / MANUAL library
+    ├── Quick Nav (ABOUT · FAQ · INDEX · USER OPTIONS · iNi · RTFM)
     ├── Transparency
     └── Relationships (*:*)
 ```
 
 `*:*` means connected — not endorsement, ownership, or control.
+
+Keyboard: boot lands on **Quick Nav** (ARCHIVE INDEX). `↑↓` move · `Enter` run ·
+`←→` change zones · `r` registry · `q` Quick Nav · `/` command · `?` map.
+Long docs open scrolled to the **top**.
 
 ## iNi (opt-in provenance)
 
@@ -42,7 +46,8 @@ uXu
 where creators who choose it treat origin, authorship, lineage, and custody as
 first-class data. It is not required to publish on uXu.
 
-On 0?0: type **INI**. Full pamphlet: `INI-PROVENANCE.md` / MANUAL LIBRARY.
+On 0?0: Quick Nav **iNi Provenance** (or type `INI`). Hover tip: *join our community*.
+Full pamphlet: `INI-PROVENANCE.md` / MANUAL LIBRARY.
 
 ## How and why it was created
 
@@ -74,4 +79,3 @@ Human contact: **rasip@chloreform.org** — Victor Birkle.
 
 **Live:** https://rasvibir.github.io/uXu/  
 **Repo:** https://github.com/RASvibir/uXu
-

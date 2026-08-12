@@ -8,13 +8,13 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 ### Interactive manuals
 - **ABOUT** — what uXu is, how 0?0 works, why it exists (RTFM → About tab)
-- **INI** — iNi provenance protocol (opt-in authenticity / inner-circle ethic)
+- **iNi Provenance** — Quick Nav flair + `INI` guide · pamphlet `INI-PROVENANCE.md`
 - **RTFM (0?0 console)** — tabbed 0?0 manual: About · Ease · Nav · Commands · Depth · Code · Source
 - **FAQ** — friendly functional how-to
-- **MANUAL LIBRARY** — pamphlet index on 0?0 (F3)
+- **USER OPTIONS** — Manual Library, Install, Map, Logs, System, Setup Master, Exit
+- **MANUAL LIBRARY** — pamphlet index on 0?0 (F3 / USER OPTIONS)
 - **User Guide** — browse, install public **uXu** app, commons links, reach admin
 - **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
-- **iNi Provenance** — name, protocol fields, opt-in tag (`INI-PROVENANCE.md`)
 - **Master Admin Guide** — claim, seal, recovery email, optional 2FA (`SETUP MASTER`)
 - **CyberCat Sunflower Manual** — visitor / curator deck guide
 - **Developers Handbook** — builder / coder patterns

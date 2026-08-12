@@ -76,7 +76,8 @@ Joining iNi is not a newsletter signup. It means adopting the protocol:
 3. Share norms about how origin, authorship, and custody are described  
 
 The community is defined by **practice**, not membership badges alone.
-0?0 is the beta front door into that idea (`INI` on the console).
+0?0 is the beta front door into that idea — Quick Nav **iNi Provenance**
+(or type `INI`). Hover tip: *join our community*.
 
 ## Conceptual pillars
 
@@ -106,7 +107,7 @@ In your archive `data.json`:
 }
 ```
 
-On 0?0: type **INI** for this guide live. Registry rows may show an **iNi**
+On 0?0: Quick Nav **iNi Provenance** or type **INI**. Registry rows may show an **iNi**
 cue when `optIn` is true (honesty badge — not enforcement).
 
 ## What iNi is not (beta)

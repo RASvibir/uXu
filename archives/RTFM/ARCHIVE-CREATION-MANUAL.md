@@ -93,7 +93,7 @@ Optional authenticity protocol. Leave `optIn: false` unless you fill provenance 
 }
 ```
 
-On 0?0: **INI**. Full pamphlet: `INI-PROVENANCE.md`.
+On 0?0: Quick Nav **iNi Provenance** or type **INI**. Full pamphlet: `INI-PROVENANCE.md`.
 
 ## Template forks (creator's choice)
 
