@@ -541,9 +541,9 @@
     transform:translateY(4px);
   }
 
-  #nav-list{list-style:none; margin:0; padding:0; font-size:.76rem;}
+  #nav-list{list-style:none; margin:0; padding:0; font-size:.72rem;}
   #nav-list li{
-    padding:.28rem .4rem .28rem 1.6ch;
+    padding:.22rem .35rem .22rem 1.5ch;
     cursor:pointer;
     position:relative;
     border-radius:1px;
@@ -570,12 +570,65 @@
     outline:1px solid var(--green-bright);
     outline-offset:-1px;
   }
+  #nav-list li.nav-user-opt{
+    padding-left:2.2ch;
+    color:var(--green-dim);
+    font-size:.7rem;
+  }
+  #nav-list li.nav-user-opt.active{ color:var(--highlight-fg); }
+  #nav-list li.nav-user-toggle{
+    color:var(--cyan);
+    letter-spacing:.04em;
+    border:1px dashed rgba(94,240,255,.35);
+    margin:.2rem 0;
+  }
+  #nav-list li.nav-user-toggle::before{ content:"▸"; color:var(--cyan); }
+  #nav-list li.nav-user-toggle.is-open::before{ content:"▾"; }
+  #nav-list li.nav-user-toggle:focus-visible,
+  #nav-list li.nav-user-toggle:hover{
+    color:var(--green-bright);
+    border-color:rgba(94,240,255,.65);
+    background:rgba(94,240,255,.08);
+  }
+  #nav-list li.nav-user-toggle.active{
+    background:rgba(94,240,255,.12);
+    color:var(--cyan);
+  }
+  #nav-list li.nav-ini{
+    color:var(--cyan);
+    font-weight:800;
+    letter-spacing:.04em;
+    margin-top:.2rem;
+    border:1px solid rgba(94,240,255,.4);
+    background:linear-gradient(105deg, rgba(94,240,255,.1), rgba(61,232,114,.06));
+    text-shadow:0 0 10px rgba(94,240,255,.3);
+  }
+  #nav-list li.nav-ini::before{
+    content:"◈";
+    color:var(--cyan);
+    font-weight:800;
+  }
+  #nav-list li.nav-ini:hover,
+  #nav-list li.nav-ini:focus-visible{
+    color:#041018;
+    background:var(--cyan);
+    border-color:var(--cyan);
+    transform:translateX(2px);
+    outline-color:var(--cyan);
+    text-shadow:none;
+  }
+  #nav-list li.nav-ini.active{
+    background:rgba(94,240,255,.28);
+    color:#e8ffff;
+    border-color:var(--cyan);
+  }
+  #nav-list li.nav-ini.active::before{content:"›"; color:#e8ffff;}
   #nav-list li.nav-rtfm{
     color:var(--rtfm);
     font-weight:800;
-    letter-spacing:.22em;
+    letter-spacing:.18em;
     text-transform:uppercase;
-    margin-top:.15rem;
+    margin-top:.12rem;
     border:1px solid rgba(255,59,47,.45);
     background:rgba(255,30,20,.08);
     text-shadow:0 0 10px rgba(255,59,47,.35);
@@ -605,6 +658,16 @@
   }
   #nav-list li.nav-rtfm:not(.active){
     animation:rtfm-pulse 2.4s var(--ease) infinite;
+  }
+  #nav-box{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+  }
+  #nav-list{
+    overflow-y:auto;
+    max-height:min(22rem, 48vh);
+    scrollbar-width:thin;
   }
 
   .rtfm-tip{
@@ -1235,8 +1298,8 @@ Preserve. Connect. Discover.
 
 You are in 0?0 — the root of the archive.
 
-Quick Nav: ABOUT · FAQ · INDEX · … · iNi Provenance · RTFM
-Keyboard: ? map · / command · ↑↓ registry.</pre>
+Quick Nav: ABOUT · FAQ · INDEX · USER OPTIONS · iNi Provenance · RTFM
+Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
@@ -1252,13 +1315,14 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
                 <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
                 <li data-cmd="FAQ" tabindex="0">FAQ</li>
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
-                <li data-cmd="MANUAL" tabindex="0">MANUAL LIBRARY</li>
-                <li data-cmd="INSTALL" tabindex="0">INSTALL uXu</li>
-                <li data-cmd="MAP" tabindex="0">PROVENANCE MAP</li>
-                <li data-cmd="LOGS" tabindex="0">TRANSPARENCY LOGS</li>
-                <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
-                <li data-cmd="SETUP MASTER" tabindex="0">SETUP MASTER</li>
-                <li data-cmd="EXIT" tabindex="0">EXIT TO DOS</li>
+                <li id="nav-user-toggle" class="nav-user-toggle" data-nav-toggle="user" tabindex="0" role="button" aria-expanded="false">USER OPTIONS ▸</li>
+                <li data-cmd="MANUAL" data-user-opt tabindex="-1" class="nav-user-opt" hidden>MANUAL LIBRARY</li>
+                <li data-cmd="INSTALL" data-user-opt tabindex="-1" class="nav-user-opt" hidden>INSTALL uXu</li>
+                <li data-cmd="MAP" data-user-opt tabindex="-1" class="nav-user-opt" hidden>PROVENANCE MAP</li>
+                <li data-cmd="LOGS" data-user-opt tabindex="-1" class="nav-user-opt" hidden>TRANSPARENCY LOGS</li>
+                <li data-cmd="SYSTEM" data-user-opt tabindex="-1" class="nav-user-opt" hidden>SYSTEM INFO</li>
+                <li data-cmd="SETUP MASTER" data-user-opt tabindex="-1" class="nav-user-opt" hidden>SETUP MASTER</li>
+                <li data-cmd="EXIT" data-user-opt tabindex="-1" class="nav-user-opt" hidden>EXIT TO DOS</li>
                 <li data-cmd="INI" tabindex="0" class="nav-ini">iNi Provenance</li>
                 <li data-cmd="RTFM" tabindex="0" class="nav-rtfm" aria-describedby="rtfm-tip">RTFM</li>
               </ul>
@@ -2429,9 +2493,37 @@ source:     Neon :: archive_records
 validation: ${entry.certainty}${unresolvedBlock}${openHint}`);
   }
 
+  function setUserOptionsOpen(open) {
+    const toggle = document.getElementById('nav-user-toggle');
+    const opts = [...navList.querySelectorAll('li[data-user-opt]')];
+    const isOpen = !!open;
+    opts.forEach((li) => {
+      li.hidden = !isOpen;
+      li.tabIndex = isOpen ? 0 : -1;
+    });
+    if (toggle) {
+      toggle.classList.toggle('is-open', isOpen);
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      toggle.textContent = isOpen ? 'USER OPTIONS ▾' : 'USER OPTIONS ▸';
+    }
+  }
+
+  function toggleUserOptions() {
+    const toggle = document.getElementById('nav-user-toggle');
+    const open = toggle?.getAttribute('aria-expanded') === 'true';
+    setUserOptionsOpen(!open);
+  }
+
+  function navFocusableItems() {
+    return [...navList.querySelectorAll('li[data-cmd], li[data-nav-toggle]')].filter((li) => !li.hidden);
+  }
+
   function setActiveNav(cmd){
+    const userOpt = navList.querySelector(`li[data-user-opt][data-cmd="${CSS.escape(cmd)}"]`);
+    if (userOpt) setUserOptionsOpen(true);
     document.querySelectorAll('#nav-list li').forEach(li => {
-      li.classList.toggle('active', li.dataset.cmd === cmd);
+      if (li.dataset.cmd) li.classList.toggle('active', li.dataset.cmd === cmd);
+      else li.classList.remove('active');
     });
   }
 
@@ -3975,6 +4067,12 @@ Then attest here so SETUP MASTER can check it off.`);
   });
 
   navList.addEventListener('click', (e) => {
+    const toggle = e.target.closest('li[data-nav-toggle]');
+    if (toggle) {
+      toggleUserOptions();
+      toggle.focus();
+      return;
+    }
     const li = e.target.closest('li[data-cmd]');
     if (li) {
       if (li.classList.contains('nav-rtfm')) hideRtfmTip();
@@ -3982,13 +4080,45 @@ Then attest here so SETUP MASTER can check it off.`);
     }
   });
   navList.addEventListener('keydown', (e) => {
-    const items = [...navList.querySelectorAll('li[data-cmd]')];
+    const toggle = e.target.closest('li[data-nav-toggle]');
     const li = e.target.closest('li[data-cmd]');
-    if (!li) return;
-    const idx = items.indexOf(li);
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCommand(li.dataset.cmd); }
-    if (e.key === 'ArrowDown' && items[idx + 1]) { e.preventDefault(); items[idx + 1].focus(); }
-    if (e.key === 'ArrowUp' && items[idx - 1]) { e.preventDefault(); items[idx - 1].focus(); }
+    const items = navFocusableItems();
+    const cur = toggle || li;
+    if (!cur) return;
+    const idx = items.indexOf(cur);
+
+    if (toggle) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleUserOptions();
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setUserOptionsOpen(true);
+        const first = navList.querySelector('li[data-user-opt]:not([hidden])');
+        first?.focus();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setUserOptionsOpen(false);
+        return;
+      }
+    }
+
+    if (li && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      handleCommand(li.dataset.cmd);
+    }
+    if (li?.hasAttribute('data-user-opt') && e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setUserOptionsOpen(false);
+      document.getElementById('nav-user-toggle')?.focus();
+      return;
+    }
+    if (e.key === 'ArrowDown' && items[idx + 1]) { e.preventDefault(); items[idx + 1].focus(); items[idx + 1].scrollIntoView({ block: 'nearest' }); }
+    if (e.key === 'ArrowUp' && items[idx - 1]) { e.preventDefault(); items[idx - 1].focus(); items[idx - 1].scrollIntoView({ block: 'nearest' }); }
     if (e.key === 'Home') { e.preventDefault(); items[0]?.focus(); }
     if (e.key === 'End') { e.preventDefault(); items[items.length - 1]?.focus(); }
   });
@@ -4072,7 +4202,7 @@ Then attest here so SETUP MASTER can check it off.`);
       const labels = {
         registry: 'REGISTRY · ↑↓ select · Enter/o open · i inspect · ←→ zone',
         actions: 'ACTIONS · ←→ buttons · Enter press · Esc registry',
-        nav: 'QUICK NAV · ↑↓ · Enter run · ←→ zone',
+        nav: 'QUICK NAV · ↑↓ · Enter · ▸ USER OPTIONS · ←→ zone',
         auth: 'ACCOUNT · Tab fields · Enter sign in',
         command: 'COMMAND · type + Enter · Esc back',
       };
@@ -4103,13 +4233,22 @@ Then attest here so SETUP MASTER can check it off.`);
   function focusNavItem(delta = 0) {
     focusZone = 'nav';
     paintFocusZone();
-    const items = [...navList.querySelectorAll('li[data-cmd]')];
+    const items = navFocusableItems();
     if (!items.length) return;
-    const active = document.activeElement?.closest?.('li[data-cmd]');
-    let idx = active ? items.indexOf(active) : items.findIndex((li) => li.classList.contains('active'));
+    const activeEl = document.activeElement;
+    const focused = activeEl?.closest?.('#nav-list li');
+    let idx = focused && items.includes(focused) ? items.indexOf(focused) : -1;
+    if (idx < 0) {
+      idx = items.findIndex((li) => li.classList.contains('active') && li.dataset.cmd);
+    }
+    if (idx < 0) {
+      // Default land: ARCHIVE INDEX
+      idx = items.findIndex((li) => li.dataset.cmd === 'INDEX');
+    }
     if (idx < 0) idx = 0;
     idx = Math.max(0, Math.min(items.length - 1, idx + delta));
-    items[idx].focus();
+    items[idx].focus({ preventScroll: false });
+    items[idx].scrollIntoView({ block: 'nearest' });
   }
 
   function focusActionButtons(delta = 0) {
@@ -4431,12 +4570,14 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
   // Boot: land keyboard focus on registry so arrows work immediately
   window.addEventListener('load', () => {
     setTimeout(() => {
+      setUserOptionsOpen(false);
       if (!isTypingTarget(document.activeElement)) focusRegistrySelectedOrFirst();
     }, 400);
   });
 
   paintAuth();
   refreshAuth();
+  setUserOptionsOpen(false);
   loadRegistry();
 </script>
 </body>
