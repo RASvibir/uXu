@@ -3,44 +3,2469 @@
   "artist": "Grateful Dead",
   "curator": "Victor Birkle III",
   "featured": true,
-  "description": "A cyberpunk-inspired archive of landmark Grateful Dead live performances. These shows represent pivotal moments in the band's 30-year history—recordings that shifted musical paradigms, defined eras, and remain touchstones for the community. Audio sourced from Internet Archive and community archives.",
+  "collectionMode": "timeline-pilot",
+  "description": "Pilot timeline \u2014 ten Grateful Dead shows from the early Fillmore years through the final Soldier Field concert. Audio streams resolved via Relisten from Internet Archive transfers (best-rated soundboard preferred). Once playback and storage prove out, this collection expands toward full-catalog coverage.",
   "shows": [
+    {
+      "date": "1969-12-31",
+      "venue": "Boston Tea Party",
+      "city": "Boston",
+      "state": "MA",
+      "country": "USA",
+      "setlist": [
+        "China Cat Sunflower > Jam >",
+        "I Know You Rider",
+        "Mama Tried",
+        "Next Time You See Me",
+        "Cold Rain & Snow",
+        "Black Peter",
+        "Hard To Handle",
+        "Me & My Uncle",
+        "Mason's Children",
+        "Dire Wolf",
+        "Uncle John's Band",
+        "Alligator->",
+        "Drums ->",
+        "Alligator ->Jam ->AWBYG Jam >",
+        "Alligator ->",
+        "Caution (Do Not Stop On Tracks)->",
+        "Feedback >",
+        "Good Lovin' ->",
+        "Drums >",
+        "The Eleven",
+        "High Time",
+        "Cumberland Blues",
+        "Big Boy Pete",
+        "Not Fade Away ->",
+        "Merry-Go-Round Tuning, Dark Star Tease",
+        "Seasons",
+        "The Race Is On",
+        "Silver Threads & Golden Needles >",
+        "Ol' Slewfoot",
+        "Dancin' In The Streets"
+      ],
+      "notes": "NYE Boston Tea Party \u2014 early cosmic era \u00b7 Relisten best source (SBD) \u00b7 gd1969-12-31.sbd.clevenger.6704.sbeok.shnf",
+      "audioSources": [
+        {
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "sbd>reel master>2 cassette generations>dat>cdr>shn",
+          "archiveIdentifier": "gd1969-12-31.sbd.clevenger.6704.sbeok.shnf",
+          "relistenSourceId": 3876161,
+          "avgRating": 10.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "China Cat Sunflower > Jam >",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t01.mp3",
+          "duration": 325,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "I Know You Rider",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t02.mp3",
+          "duration": 334,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Mama Tried",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t03.mp3",
+          "duration": 158,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Next Time You See Me",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t04.mp3",
+          "duration": 229,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Cold Rain & Snow",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t05.mp3",
+          "duration": 317,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Black Peter",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t06.mp3",
+          "duration": 537,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Hard To Handle",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t07.mp3",
+          "duration": 376,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Me & My Uncle",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t08.mp3",
+          "duration": 204,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Mason's Children",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t09.mp3",
+          "duration": 498,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Dire Wolf",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t10.mp3",
+          "duration": 304,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "Uncle John's Band",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d1t11.mp3",
+          "duration": 451,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Alligator->",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t01.mp3",
+          "duration": 299,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Drums ->",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t02.mp3",
+          "duration": 116,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Alligator ->Jam ->AWBYG Jam >",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t03.mp3",
+          "duration": 739,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Alligator ->",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t04.mp3",
+          "duration": 103,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Caution (Do Not Stop On Tracks)->",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t05.mp3",
+          "duration": 374,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Feedback >",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t06.mp3",
+          "duration": 180,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Good Lovin' ->",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t07.mp3",
+          "duration": 113,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Drums >",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t08.mp3",
+          "duration": 83,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "The Eleven",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d2t09.mp3",
+          "duration": 821,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "High Time",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t01.mp3",
+          "duration": 403,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "Cumberland Blues",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t02.mp3",
+          "duration": 427,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "Big Boy Pete",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t03.mp3",
+          "duration": 208,
+          "position": 23,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away ->",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t04.mp3",
+          "duration": 497,
+          "position": 24,
+          "set": "Set"
+        },
+        {
+          "title": "Merry-Go-Round Tuning, Dark Star Tease",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t05.mp3",
+          "duration": 65,
+          "position": 25,
+          "set": "Set"
+        },
+        {
+          "title": "Seasons",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t06.mp3",
+          "duration": 275,
+          "position": 26,
+          "set": "Set"
+        },
+        {
+          "title": "The Race Is On",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t07.mp3",
+          "duration": 185,
+          "position": 27,
+          "set": "Set"
+        },
+        {
+          "title": "Silver Threads & Golden Needles >",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t08.mp3",
+          "duration": 150,
+          "position": 28,
+          "set": "Set"
+        },
+        {
+          "title": "Ol' Slewfoot",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t09.mp3",
+          "duration": 210,
+          "position": 29,
+          "set": "Set"
+        },
+        {
+          "title": "Dancin' In The Streets",
+          "url": "https://archive.org/download/gd1969-12-31.sbd.clevenger.6704.sbeok.shnf/gd69-12-31d3t10.mp3",
+          "duration": 505,
+          "position": 30,
+          "set": "Set"
+        }
+      ]
+    },
+    {
+      "date": "1970-02-13",
+      "venue": "Fillmore East",
+      "city": "Late Show New York",
+      "state": "NY",
+      "country": "USA",
+      "setlist": [
+        "Cold Rain And Snow",
+        "Beat It On Down The Line",
+        "Good Lovin'",
+        "Mama Tried ->",
+        "Black Peter",
+        "Hard To Handle",
+        "Saint Stephen ->",
+        "Not Fade Away",
+        "Casey Jones",
+        "Introduction",
+        "China Cat Sunflower ->",
+        "I Know You Rider",
+        "Me And My Uncle",
+        "Dire Wolf",
+        "Smokestack Lightnin'",
+        "Monkey And The Engineer",
+        "Little Sadie",
+        "Wake Up Little Susie ->",
+        "Black Peter",
+        "Uncle John's Band",
+        "Katie Mae",
+        "Dark Star ->",
+        "That's It For The Other One ->",
+        "Turn On Your Lovelight",
+        "And We Bid You Good Night"
+      ],
+      "notes": "Fillmore East \u2014 Dark Star era \u00b7 Relisten best source (SBD) \u00b7 gd1970-02-13.sbd.miller.97613.sbeok.flac16",
+      "audioSources": [
+        {
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "SBD -> Master Reel (7 inch 1/2 Track at 15ips) -> Dat (48k)",
+          "archiveIdentifier": "gd1970-02-13.sbd.miller.97613.sbeok.flac16",
+          "relistenSourceId": 3851899,
+          "avgRating": 10.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Cold Rain And Snow",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t01.mp3",
+          "duration": 345,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Beat It On Down The Line",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t02.mp3",
+          "duration": 172,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Good Lovin'",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t03.mp3",
+          "duration": 554,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Mama Tried ->",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t04.mp3",
+          "duration": 158,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Black Peter",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t05.mp3",
+          "duration": 612,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Hard To Handle",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t06.mp3",
+          "duration": 403,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Saint Stephen ->",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t07.mp3",
+          "duration": 400,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t08.mp3",
+          "duration": 610,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Casey Jones",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d1t09.mp3",
+          "duration": 293,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Introduction",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t01.mp3",
+          "duration": 104,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "China Cat Sunflower ->",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t02.mp3",
+          "duration": 260,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "I Know You Rider",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t03.mp3",
+          "duration": 345,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Me And My Uncle",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t04.mp3",
+          "duration": 253,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Dire Wolf",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t05.mp3",
+          "duration": 279,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Smokestack Lightnin'",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t06.mp3",
+          "duration": 1420,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Monkey And The Engineer",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t07.mp3",
+          "duration": 144,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Little Sadie",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t08.mp3",
+          "duration": 184,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Wake Up Little Susie ->",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t09.mp3",
+          "duration": 153,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Black Peter",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t10.mp3",
+          "duration": 570,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Uncle John's Band",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t11.mp3",
+          "duration": 335,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "Katie Mae",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d2t12.mp3",
+          "duration": 405,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "Dark Star ->",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d3t01.mp3",
+          "duration": 1768,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "That's It For The Other One ->",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d3t02.mp3",
+          "duration": 1797,
+          "position": 23,
+          "set": "Set"
+        },
+        {
+          "title": "Turn On Your Lovelight",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d4t01.mp3",
+          "duration": 1849,
+          "position": 24,
+          "set": "Set"
+        },
+        {
+          "title": "And We Bid You Good Night",
+          "url": "https://archive.org/download/gd1970-02-13.sbd.miller.97613.sbeok.flac16/gd70-02-13d4t02.mp3",
+          "duration": 227,
+          "position": 25,
+          "set": "Set"
+        }
+      ]
+    },
+    {
+      "date": "1972-05-26",
+      "venue": "The Strand Lyceum",
+      "city": "London",
+      "state": "",
+      "country": "England",
+      "setlist": [
+        "Promised Land",
+        "Playing In The Band",
+        "Sugaree",
+        "Mr. Charlie",
+        "Black Throated Wind",
+        "Loser",
+        "Next Time You See Me",
+        "El Paso",
+        "Dire Wolf",
+        "Two Souls In Communion",
+        "He's Gone",
+        "Cumberland Blues",
+        "Jack Straw",
+        "Chinatown Shuffle",
+        "China Cat Sunflower >",
+        "Know You, Rider",
+        "Not Fade Away >",
+        "Going Down the Road, Feeling Bad >",
+        "Not Fade Away",
+        "Truckin' >",
+        "The Other One >",
+        "Drumz >",
+        "The Other One >",
+        "Morning Dew >",
+        "The Other One >",
+        "Sing Me Back Home",
+        "Me & My Uncle",
+        "Ramble On, Rose",
+        "Sugar Magnolia",
+        "Casey Jones",
+        "One More Saturday Night"
+      ],
+      "notes": "Europe '72 Lyceum \u2014 international peak \u00b7 Relisten best source (SBD) \u00b7 gd1972-05-26.sbd.mvernon.5931.shnf",
+      "audioSources": [
+        {
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t1.mp3",
+          "sourceType": "sbd",
+          "label": "Master SBD reel > DAT > CD-R >EAC > CDR",
+          "archiveIdentifier": "gd1972-05-26.sbd.mvernon.5931.shnf",
+          "relistenSourceId": 3852512,
+          "avgRating": 10.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Promised Land",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t1.mp3",
+          "duration": 181,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Playing In The Band",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t10.mp3",
+          "duration": 1056,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Sugaree",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t2.mp3",
+          "duration": 436,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Mr. Charlie",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t3.mp3",
+          "duration": 222,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Black Throated Wind",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t4.mp3",
+          "duration": 367,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Loser",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t5.mp3",
+          "duration": 390,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Next Time You See Me",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t6.mp3",
+          "duration": 270,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "El Paso",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t7.mp3",
+          "duration": 277,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Dire Wolf",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t8.mp3",
+          "duration": 243,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Two Souls In Communion",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d1t9.mp3",
+          "duration": 435,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "He's Gone",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t1.mp3",
+          "duration": 516,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Cumberland Blues",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t2.mp3",
+          "duration": 308,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Jack Straw",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t3.mp3",
+          "duration": 301,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Chinatown Shuffle",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t4.mp3",
+          "duration": 166,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "China Cat Sunflower >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t5.mp3",
+          "duration": 325,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Know You, Rider",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t6.mp3",
+          "duration": 364,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t7.mp3",
+          "duration": 346,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Going Down the Road, Feeling Bad >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t8.mp3",
+          "duration": 487,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d2t9.mp3",
+          "duration": 190,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Truckin' >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t1.mp3",
+          "duration": 541,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "The Other One >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t2.mp3",
+          "duration": 757,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "Drumz >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t3.mp3",
+          "duration": 73,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "The Other One >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t4.mp3",
+          "duration": 1193,
+          "position": 23,
+          "set": "Set"
+        },
+        {
+          "title": "Morning Dew >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t5.mp3",
+          "duration": 632,
+          "position": 24,
+          "set": "Set"
+        },
+        {
+          "title": "The Other One >",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t6.mp3",
+          "duration": 347,
+          "position": 25,
+          "set": "Set"
+        },
+        {
+          "title": "Sing Me Back Home",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d3t7.mp3",
+          "duration": 643,
+          "position": 26,
+          "set": "Set"
+        },
+        {
+          "title": "Me & My Uncle",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d4t1.mp3",
+          "duration": 212,
+          "position": 27,
+          "set": "Set"
+        },
+        {
+          "title": "Ramble On, Rose",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d4t2.mp3",
+          "duration": 377,
+          "position": 28,
+          "set": "Set"
+        },
+        {
+          "title": "Sugar Magnolia",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d4t3.mp3",
+          "duration": 478,
+          "position": 29,
+          "set": "Set"
+        },
+        {
+          "title": "Casey Jones",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d4t4.mp3",
+          "duration": 393,
+          "position": 30,
+          "set": "Set"
+        },
+        {
+          "title": "One More Saturday Night",
+          "url": "https://archive.org/download/gd1972-05-26.sbd.mvernon.5931.shnf/gd72-05-26d4t5.mp3",
+          "duration": 296,
+          "position": 31,
+          "set": "Set"
+        }
+      ]
+    },
+    {
+      "date": "1972-08-27",
+      "venue": "Old Renaissance Faire Grounds",
+      "city": "Veneta",
+      "state": "OR",
+      "country": "USA",
+      "setlist": [
+        "Stage Announcements",
+        "The Promised Land",
+        "Sugaree",
+        "Me and My Uncle",
+        "Deal",
+        "Black Throated Wind",
+        "China Cat Sunflower >",
+        "I Know You Rider",
+        "Mexicali Blues",
+        "Bertha",
+        "Stage Announcements",
+        "Playin' In The Band",
+        "He's Gone",
+        "Jack Straw",
+        "Bird Song",
+        "Greatest Story Ever Told",
+        "Dark Star >",
+        "El Paso",
+        "Sing Me Back Home",
+        "Sugar Magnolia",
+        "Casey Jones",
+        "One More Saturday Night",
+        "Stage Anouncements"
+      ],
+      "notes": "Veneta \u2014 golden-era field trip \u00b7 Relisten best source (SBD) \u00b7 gd1972-08-27.sbd.hollister.2199.sbeok.shnf",
+      "audioSources": [
+        {
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "Master Betty reel > PCM > DAT > ZA2 > CD > EAC > SHN",
+          "archiveIdentifier": "gd1972-08-27.sbd.hollister.2199.sbeok.shnf",
+          "relistenSourceId": 3876923,
+          "avgRating": 10.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Stage Announcements",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t01.mp3",
+          "duration": 358,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "The Promised Land",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t02.mp3",
+          "duration": 217,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Sugaree",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t03.mp3",
+          "duration": 556,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Me and My Uncle",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t04.mp3",
+          "duration": 207,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Deal",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t05.mp3",
+          "duration": 360,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Black Throated Wind",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t06.mp3",
+          "duration": 565,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "China Cat Sunflower >",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t07.mp3",
+          "duration": 475,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "I Know You Rider",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t08.mp3",
+          "duration": 510,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Mexicali Blues",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t09.mp3",
+          "duration": 265,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Bertha",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d1t10.mp3",
+          "duration": 353,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "Stage Announcements",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d2t01.mp3",
+          "duration": 160,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Playin' In The Band",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d2t02.mp3",
+          "duration": 1281,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "He's Gone",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d2t03.mp3",
+          "duration": 728,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Jack Straw",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d2t04.mp3",
+          "duration": 360,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Bird Song",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d2t05.mp3",
+          "duration": 817,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Greatest Story Ever Told",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d2t06.mp3",
+          "duration": 356,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Dark Star >",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t01.mp3",
+          "duration": 1902,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "El Paso",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t02.mp3",
+          "duration": 289,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Sing Me Back Home",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t03.mp3",
+          "duration": 782,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Sugar Magnolia",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t04.mp3",
+          "duration": 702,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "Casey Jones",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t05.mp3",
+          "duration": 420,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "One More Saturday Night",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t06.mp3",
+          "duration": 278,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "Stage Anouncements",
+          "url": "https://archive.org/download/gd1972-08-27.sbd.hollister.2199.sbeok.shnf/gd72-08-27d3t07.mp3",
+          "duration": 180,
+          "position": 23,
+          "set": "Set"
+        }
+      ]
+    },
+    {
+      "date": "1974-05-19",
+      "venue": "Portland Memorial Coliseum",
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "setlist": [
+        "Mississippi Half-Step Uptown Toodeloo",
+        "Mexicali Blues",
+        "Big Railroad Blues",
+        "Black Throated Wind",
+        "Scarlet Begonias",
+        "Beat It On Down The Line",
+        "Tennessee Jed",
+        "Me And Bobby McGee",
+        "Sugaree",
+        "Jack Straw",
+        "It Must Have Been The Roses",
+        "El Paso",
+        "Loose Lucy",
+        "Money Money",
+        "China Cat Sunflower ->",
+        "I Know You Rider",
+        "Tuning",
+        "Promised Land ->",
+        "Bertha ->",
+        "Greatest Story Ever Told",
+        "Ship Of Fools",
+        "Weather Report Suite ->",
+        "Wharf Rat",
+        "Big River",
+        "Peggy-O",
+        "Tico Tico",
+        "Truckin' ->",
+        "Mind Left Body Jam ->",
+        "Not Fade Away ->",
+        "Goin' Down The Road Feeling Bad",
+        "One More Saturday Night",
+        "U.S. Blues",
+        "Johnny B. Goode *(Audience Only)*"
+      ],
+      "notes": "Wall of Sound era \u00b7 Relisten best source (SBD) \u00b7 gd1974-05-19.131464.mtx.dusborne.flac16",
+      "audioSources": [
+        {
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t01.mp3",
+          "sourceType": "sbd",
+          "label": "2 Source Matrix by Dusborne; Soundboard  (shnid:116983) Recording Info: SBD -> Master Reel -> Dat; Transfer Info: Dat -> Samplitude Professional v11.03 -> FLAC; All Transfers and Mastering By Charlie Miller and Audience (shnid:115876) Source:Sony ECM18N mics>Sony 152SD deck; Recorded by Pat Lee;",
+          "archiveIdentifier": "gd1974-05-19.131464.mtx.dusborne.flac16",
+          "relistenSourceId": 3877380,
+          "avgRating": 10.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Mississippi Half-Step Uptown Toodeloo",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t01.mp3",
+          "duration": 517,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Mexicali Blues",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t02.mp3",
+          "duration": 298,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Big Railroad Blues",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t03.mp3",
+          "duration": 269,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Black Throated Wind",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t04.mp3",
+          "duration": 470,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Scarlet Begonias",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t05.mp3",
+          "duration": 337,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Beat It On Down The Line",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t06.mp3",
+          "duration": 280,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Tennessee Jed",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t07.mp3",
+          "duration": 514,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Me And Bobby McGee",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t08.mp3",
+          "duration": 396,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Sugaree",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t09.mp3",
+          "duration": 482,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Jack Straw",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t10.mp3",
+          "duration": 449,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "It Must Have Been The Roses",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t11.mp3",
+          "duration": 323,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "El Paso",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t12.mp3",
+          "duration": 278,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Loose Lucy",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t13.mp3",
+          "duration": 355,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Money Money",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t14.mp3",
+          "duration": 276,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "China Cat Sunflower ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t15.mp3",
+          "duration": 525,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "I Know You Rider",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s1t16.mp3",
+          "duration": 307,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Tuning",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t01.mp3",
+          "duration": 60,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Promised Land ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t02.mp3",
+          "duration": 198,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Bertha ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t03.mp3",
+          "duration": 366,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Greatest Story Ever Told",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t04.mp3",
+          "duration": 388,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "Ship Of Fools",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t05.mp3",
+          "duration": 431,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "Weather Report Suite ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t06.mp3",
+          "duration": 1072,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "Wharf Rat",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t07.mp3",
+          "duration": 676,
+          "position": 23,
+          "set": "Set"
+        },
+        {
+          "title": "Big River",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t08.mp3",
+          "duration": 327,
+          "position": 24,
+          "set": "Set"
+        },
+        {
+          "title": "Peggy-O",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t09.mp3",
+          "duration": 521,
+          "position": 25,
+          "set": "Set"
+        },
+        {
+          "title": "Tico Tico",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t10.mp3",
+          "duration": 129,
+          "position": 26,
+          "set": "Set"
+        },
+        {
+          "title": "Truckin' ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t11.mp3",
+          "duration": 939,
+          "position": 27,
+          "set": "Set"
+        },
+        {
+          "title": "Mind Left Body Jam ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t12.mp3",
+          "duration": 195,
+          "position": 28,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away ->",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t13.mp3",
+          "duration": 417,
+          "position": 29,
+          "set": "Set"
+        },
+        {
+          "title": "Goin' Down The Road Feeling Bad",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t14.mp3",
+          "duration": 416,
+          "position": 30,
+          "set": "Set"
+        },
+        {
+          "title": "One More Saturday Night",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t15.mp3",
+          "duration": 313,
+          "position": 31,
+          "set": "Set"
+        },
+        {
+          "title": "U.S. Blues",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t16.mp3",
+          "duration": 344,
+          "position": 32,
+          "set": "Set"
+        },
+        {
+          "title": "Johnny B. Goode *(Audience Only)*",
+          "url": "https://archive.org/download/gd1974-05-19.131464.mtx.dusborne.flac16/gd74-05-19s2t17.mp3",
+          "duration": 238,
+          "position": 33,
+          "set": "Set"
+        }
+      ]
+    },
     {
       "date": "1977-05-08",
       "venue": "Barton Hall, Cornell University",
       "city": "Ithaca",
       "state": "NY",
       "country": "USA",
-      "setlist": ["Bertha", "Good Lovin'", "Tennessee Jed", "Jack Straw", "Deal", "Scarlet Begonias", "Fire on the Mountain", "Johnny B. Goode", "Estimated Prophet", "Eyes of the World"],
-      "notes": "Widely considered the greatest live Grateful Dead performance ever recorded. Pristine SBD recording from a college gymnasium. The playing is breathtaking—every instrument sits perfectly in the mix, and the band is locked in telepathically. This is THE gateway show for newcomers.",
-      "attendance": 5000,
+      "setlist": [
+        "Minglewood Blues",
+        "Loser",
+        "El Paso",
+        "They Love Each Other",
+        "Jack Straw",
+        "Deal",
+        "Lazy Lightning ->",
+        "Supplication",
+        "Brown Eyed Women",
+        "Mama Tried",
+        "Row Jimmy",
+        "Dancin' In The Streets",
+        "Take A Step Back",
+        "Scarlet Begonias ->",
+        "Fire On The Mountain",
+        "Estimated Prophet",
+        "St. Stephen ->",
+        "Not Fade Away ->",
+        "St. Stephen ->",
+        "Morning Dew",
+        "One More Saturday Night"
+      ],
+      "notes": "Cornell \u2014 the gateway show \u00b7 Relisten best source (SBD) \u00b7 gd1977-05-08.mtx.seamons.97274.sbeok.flac16",
       "audioSources": [
-        { "url": "https://archive.org/download/gd77-05-08.sbd.seamons.86046.flac16/gd1977-05-08d1t01.mp3", "sourceType": "sbd", "label": "Soundboard (Seamons transfer)" }
+        {
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "Matrix mix (SBD/AUD)",
+          "archiveIdentifier": "gd1977-05-08.mtx.seamons.97274.sbeok.flac16",
+          "relistenSourceId": 3877801,
+          "avgRating": 9.600000381469727
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Minglewood Blues",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t01.mp3",
+          "duration": 396,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Loser",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t02.mp3",
+          "duration": 533,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "El Paso",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t03.mp3",
+          "duration": 322,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "They Love Each Other",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t04.mp3",
+          "duration": 551,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Jack Straw",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t05.mp3",
+          "duration": 484,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Deal",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t06.mp3",
+          "duration": 449,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Lazy Lightning ->",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t07.mp3",
+          "duration": 209,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Supplication",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t08.mp3",
+          "duration": 327,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Brown Eyed Women",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t09.mp3",
+          "duration": 408,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Mama Tried",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t10.mp3",
+          "duration": 227,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "Row Jimmy",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d1t11.mp3",
+          "duration": 787,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Dancin' In The Streets",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d2t01.mp3",
+          "duration": 970,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Take A Step Back",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d2t02.mp3",
+          "duration": 108,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Scarlet Begonias ->",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d2t03.mp3",
+          "duration": 643,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Fire On The Mountain",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d2t04.mp3",
+          "duration": 963,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Estimated Prophet",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d2t05.mp3",
+          "duration": 607,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "St. Stephen ->",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d3t01.mp3",
+          "duration": 283,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away ->",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d3t02.mp3",
+          "duration": 981,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "St. Stephen ->",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d3t03.mp3",
+          "duration": 114,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Morning Dew",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d3t04.mp3",
+          "duration": 918,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "One More Saturday Night",
+          "url": "https://archive.org/download/gd1977-05-08.mtx.seamons.97274.sbeok.flac16/gd77-05-08d3t05.mp3",
+          "duration": 312,
+          "position": 21,
+          "set": "Set"
+        }
       ]
     },
     {
-      "date": "1972-05-26",
-      "venue": "Lyceum",
-      "city": "London",
-      "country": "England",
-      "setlist": ["Promised Land", "Sugaree", "China Cat Sunflower", "I Know You Rider", "Truckin'", "Might as Well", "Johnny B. Goode", "Black Peter"],
-      "notes": "Europe '72 tour highlight. The entire Europe '72 run is legendary—the Dead took everything they learned and toured internationally for the first time. This Lyceum shows them at peak musicianship. Later officially released on CD.",
-      "attendance": 2000,
+      "date": "1978-07-08",
+      "venue": "Red Rocks Amphitheatre",
+      "city": "Morrison",
+      "state": "CO",
+      "country": "USA",
+      "setlist": [
+        "Getting Everything Just Exactly Perfect",
+        "Bertha >",
+        "Good Lovin'",
+        "Dire Wolf",
+        "El Paso",
+        "It Must Have Been the Roses",
+        "New Minglewood Blues",
+        "Ramble On Rose",
+        "[tuning]",
+        "Promised Land",
+        "Deal",
+        "Samson & Delilah",
+        "Ship of Fools",
+        "Estimated Prophet >",
+        "The Other One >",
+        "Eyes of the World >",
+        "Drums >",
+        "Space >",
+        "Wharf Rat >",
+        "Franklin's Tower >",
+        "Sugar Magnolia",
+        "[crowd]",
+        "Terrapin Station >",
+        "One More Saturday Night",
+        "[crowd]",
+        "Werewolves of London"
+      ],
+      "notes": "Red Rocks \u2014 outdoor majesty \u00b7 Relisten best source (SBD) \u00b7 gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16",
       "audioSources": [
-        { "url": "https://archive.org/download/gd1972-05-26.sbd.unknown.7411.flac16/gd1972-05-26d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
+        {
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "Matrix from Source 1:  SBD  (shnid=106070) Recording Info: SBD -> Master Reel -> PCM -> Roland SRC-2 -> Dat (48k) Transfer Info: Dat (Sony R500) -> Sound Devices 744T -> Samplitude Professional v11.03 -> FLAC and Source 2:  AUD  (shnid=91766) Analog Audience Source: FOB Master Cassettes (MAC) Medium Stock Brands: MAC = 3 x Maxell UD XL II C90 Analog",
+          "archiveIdentifier": "gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16",
+          "relistenSourceId": 3878132,
+          "avgRating": 10.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Getting Everything Just Exactly Perfect",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t01.mp3",
+          "duration": 446,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Bertha >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t02.mp3",
+          "duration": 400,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Good Lovin'",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t03.mp3",
+          "duration": 429,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Dire Wolf",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t04.mp3",
+          "duration": 307,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "El Paso",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t05.mp3",
+          "duration": 275,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "It Must Have Been the Roses",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t06.mp3",
+          "duration": 465,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "New Minglewood Blues",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t07.mp3",
+          "duration": 444,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Ramble On Rose",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t08.mp3",
+          "duration": 481,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "[tuning]",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t09.mp3",
+          "duration": 213,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Promised Land",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t10.mp3",
+          "duration": 297,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "Deal",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d1t11.mp3",
+          "duration": 379,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Samson & Delilah",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d2t01.mp3",
+          "duration": 445,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Ship of Fools",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d2t02.mp3",
+          "duration": 489,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Estimated Prophet >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d2t03.mp3",
+          "duration": 770,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "The Other One >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d2t04.mp3",
+          "duration": 531,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Eyes of the World >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d2t05.mp3",
+          "duration": 684,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Drums >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d2t06.mp3",
+          "duration": 526,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Space >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t01.mp3",
+          "duration": 407,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Wharf Rat >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t02.mp3",
+          "duration": 522,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Franklin's Tower >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t03.mp3",
+          "duration": 639,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "Sugar Magnolia",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t04.mp3",
+          "duration": 566,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "[crowd]",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t05.mp3",
+          "duration": 89,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "Terrapin Station >",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t06.mp3",
+          "duration": 644,
+          "position": 23,
+          "set": "Set"
+        },
+        {
+          "title": "One More Saturday Night",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t07.mp3",
+          "duration": 283,
+          "position": 24,
+          "set": "Set"
+        },
+        {
+          "title": "[crowd]",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t08.mp3",
+          "duration": 78,
+          "position": 25,
+          "set": "Set"
+        },
+        {
+          "title": "Werewolves of London",
+          "url": "https://archive.org/download/gd1978-07-08.125797.mtx.eichorn.sbeok.t-flac16/gd78-07-08d3t09.mp3",
+          "duration": 410,
+          "position": 26,
+          "set": "Set"
+        }
       ]
     },
     {
-      "date": "1970-02-13",
-      "venue": "Fillmore East",
+      "date": "1980-10-31",
+      "venue": "Radio City Music Hall",
       "city": "New York",
       "state": "NY",
       "country": "USA",
-      "setlist": ["China Cat Sunflower", "Dark Star", "The Other One", "Turn On Your Love Light"],
-      "notes": "Late show. One of the legendary early Dark Stars—a sprawling 20+ minute exploration that defines the band's improvisational power. The early 1970s Dark Stars are among the Dead's finest extended compositions.",
-      "attendance": 2500,
+      "setlist": [
+        "crowd noise",
+        "Frankin & Davis preshow",
+        "Brent Intros \"Frank & David\"",
+        "Frankin & Davis intro",
+        "tuning & banter",
+        "Heaven Help The Fool",
+        "tuning & banter",
+        "Sage And Spirit",
+        "Little Sadie",
+        "tuning & banter",
+        "The Monkey And The Engineer",
+        "tuning & banter",
+        "It Mustve Been The Roses",
+        "tuning & banter",
+        "Cassidy",
+        "tuning & banter",
+        "Bird Song ->",
+        "Ripple",
+        "ambiance",
+        "Jerry\u2019s Kids Telethon",
+        "Jerry Garcia Interview",
+        "Steve Parrish Interview #1",
+        "Are You Too High",
+        "Hassles In Hempstead",
+        "Drummers Interview",
+        "Bathroom Navigation",
+        "Drug Warning #1",
+        "Jerry's Kids Update",
+        "Deadheads",
+        "Dr. Henry Kissinger",
+        "Jerry's Kids Update",
+        "Sharon Interview",
+        "Bob Weir Interview",
+        "Brunswick Check Presentation",
+        "tuning & banter",
+        "Jack Straw",
+        "Cold Rain And Snow",
+        "tuning & banter",
+        "Me And My Uncle ->",
+        "Mexicali Blues",
+        "tuning & banter",
+        "Ramble On Rose ->",
+        "Little Red Rooster",
+        "tuning & banter",
+        "Brown Eyed Women ->",
+        "Looks Like Rain ->",
+        "Deal",
+        "Break Announcement",
+        "Jerry's Kids Update/Missing Finger",
+        "Trivia Question",
+        "Steve Parrish Interview #2",
+        "Phil Lesh Interview",
+        "Trivia Question",
+        "Brent Mydland Interview",
+        "Trivia Question",
+        "Jerry's Kids Update",
+        "Drug Warning #2",
+        "More Brunswick & Tripping Tom",
+        "tuning and banter",
+        "Don't Ease Me In ->",
+        "Lost Sailor ->",
+        "Saint Of Circumstance ->",
+        "Franklin's Tower ->",
+        "Drums ->",
+        "Space ->",
+        "Fire On The Mountain ->",
+        "Not Fade Away ->",
+        "Stella Blue ->",
+        "Going Down The Road Felling Bad ->",
+        "Good Lovin'",
+        "encore applause & banter",
+        "Uncle John's Band",
+        "applause",
+        "Frankin & Davis outro & crowd"
+      ],
+      "notes": "Radio City \u2014 Halloween run \u00b7 Relisten best source (SBD) \u00b7 gd1980-10-31.140416.sbd.bershaw.flac16",
       "audioSources": [
-        { "url": "https://archive.org/download/gd70-02-13.sbd.unknown.7411.flac16/gd1970-02-13d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
+        {
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t01.mp3",
+          "sourceType": "sbd",
+          "label": "Source: 10\u201d 1/4 track SBD Feed Master Reels @ 7.5ips;",
+          "archiveIdentifier": "gd1980-10-31.140416.sbd.bershaw.flac16",
+          "relistenSourceId": 3879315,
+          "avgRating": 8.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "crowd noise",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t01.mp3",
+          "duration": 47,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Frankin & Davis preshow",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t02.mp3",
+          "duration": 393,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Brent Intros \"Frank & David\"",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t03.mp3",
+          "duration": 27,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Frankin & Davis intro",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t04.mp3",
+          "duration": 124,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t05.mp3",
+          "duration": 268,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Heaven Help The Fool",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t06.mp3",
+          "duration": 359,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t07.mp3",
+          "duration": 145,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Sage And Spirit",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t08.mp3",
+          "duration": 164,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Little Sadie",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t09.mp3",
+          "duration": 162,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t10.mp3",
+          "duration": 44,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "The Monkey And The Engineer",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t11.mp3",
+          "duration": 148,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t12.mp3",
+          "duration": 53,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "It Mustve Been The Roses",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t13.mp3",
+          "duration": 386,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t14.mp3",
+          "duration": 53,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Cassidy",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t15.mp3",
+          "duration": 344,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t16.mp3",
+          "duration": 105,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Bird Song ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t17.mp3",
+          "duration": 570,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Ripple",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t18.mp3",
+          "duration": 280,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "ambiance",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t19.mp3",
+          "duration": 120,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Jerry\u2019s Kids Telethon",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t20.mp3",
+          "duration": 102,
+          "position": 20,
+          "set": "Set"
+        },
+        {
+          "title": "Jerry Garcia Interview",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t21.mp3",
+          "duration": 56,
+          "position": 21,
+          "set": "Set"
+        },
+        {
+          "title": "Steve Parrish Interview #1",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t22.mp3",
+          "duration": 120,
+          "position": 22,
+          "set": "Set"
+        },
+        {
+          "title": "Are You Too High",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t23.mp3",
+          "duration": 89,
+          "position": 23,
+          "set": "Set"
+        },
+        {
+          "title": "Hassles In Hempstead",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t24.mp3",
+          "duration": 67,
+          "position": 24,
+          "set": "Set"
+        },
+        {
+          "title": "Drummers Interview",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t25.mp3",
+          "duration": 136,
+          "position": 25,
+          "set": "Set"
+        },
+        {
+          "title": "Bathroom Navigation",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t26.mp3",
+          "duration": 77,
+          "position": 26,
+          "set": "Set"
+        },
+        {
+          "title": "Drug Warning #1",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t27.mp3",
+          "duration": 32,
+          "position": 27,
+          "set": "Set"
+        },
+        {
+          "title": "Jerry's Kids Update",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t28.mp3",
+          "duration": 71,
+          "position": 28,
+          "set": "Set"
+        },
+        {
+          "title": "Deadheads",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t29.mp3",
+          "duration": 63,
+          "position": 29,
+          "set": "Set"
+        },
+        {
+          "title": "Dr. Henry Kissinger",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t30.mp3",
+          "duration": 162,
+          "position": 30,
+          "set": "Set"
+        },
+        {
+          "title": "Jerry's Kids Update",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t31.mp3",
+          "duration": 26,
+          "position": 31,
+          "set": "Set"
+        },
+        {
+          "title": "Sharon Interview",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t32.mp3",
+          "duration": 51,
+          "position": 32,
+          "set": "Set"
+        },
+        {
+          "title": "Bob Weir Interview",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t33.mp3",
+          "duration": 186,
+          "position": 33,
+          "set": "Set"
+        },
+        {
+          "title": "Brunswick Check Presentation",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s1t34.mp3",
+          "duration": 142,
+          "position": 34,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t01.mp3",
+          "duration": 215,
+          "position": 35,
+          "set": "Set"
+        },
+        {
+          "title": "Jack Straw",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t02.mp3",
+          "duration": 370,
+          "position": 36,
+          "set": "Set"
+        },
+        {
+          "title": "Cold Rain And Snow",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t03.mp3",
+          "duration": 374,
+          "position": 37,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t04.mp3",
+          "duration": 110,
+          "position": 38,
+          "set": "Set"
+        },
+        {
+          "title": "Me And My Uncle ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t05.mp3",
+          "duration": 178,
+          "position": 39,
+          "set": "Set"
+        },
+        {
+          "title": "Mexicali Blues",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t06.mp3",
+          "duration": 263,
+          "position": 40,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t07.mp3",
+          "duration": 81,
+          "position": 41,
+          "set": "Set"
+        },
+        {
+          "title": "Ramble On Rose ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t08.mp3",
+          "duration": 472,
+          "position": 42,
+          "set": "Set"
+        },
+        {
+          "title": "Little Red Rooster",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t09.mp3",
+          "duration": 613,
+          "position": 43,
+          "set": "Set"
+        },
+        {
+          "title": "tuning & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t10.mp3",
+          "duration": 105,
+          "position": 44,
+          "set": "Set"
+        },
+        {
+          "title": "Brown Eyed Women ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t11.mp3",
+          "duration": 311,
+          "position": 45,
+          "set": "Set"
+        },
+        {
+          "title": "Looks Like Rain ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t12.mp3",
+          "duration": 413,
+          "position": 46,
+          "set": "Set"
+        },
+        {
+          "title": "Deal",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t13.mp3",
+          "duration": 379,
+          "position": 47,
+          "set": "Set"
+        },
+        {
+          "title": "Break Announcement",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t14.mp3",
+          "duration": 36,
+          "position": 48,
+          "set": "Set"
+        },
+        {
+          "title": "Jerry's Kids Update/Missing Finger",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t15.mp3",
+          "duration": 71,
+          "position": 49,
+          "set": "Set"
+        },
+        {
+          "title": "Trivia Question",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t16.mp3",
+          "duration": 56,
+          "position": 50,
+          "set": "Set"
+        },
+        {
+          "title": "Steve Parrish Interview #2",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t17.mp3",
+          "duration": 132,
+          "position": 51,
+          "set": "Set"
+        },
+        {
+          "title": "Phil Lesh Interview",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t18.mp3",
+          "duration": 144,
+          "position": 52,
+          "set": "Set"
+        },
+        {
+          "title": "Trivia Question",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t19.mp3",
+          "duration": 82,
+          "position": 53,
+          "set": "Set"
+        },
+        {
+          "title": "Brent Mydland Interview",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t20.mp3",
+          "duration": 120,
+          "position": 54,
+          "set": "Set"
+        },
+        {
+          "title": "Trivia Question",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t21.mp3",
+          "duration": 124,
+          "position": 55,
+          "set": "Set"
+        },
+        {
+          "title": "Jerry's Kids Update",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t22.mp3",
+          "duration": 86,
+          "position": 56,
+          "set": "Set"
+        },
+        {
+          "title": "Drug Warning #2",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t23.mp3",
+          "duration": 157,
+          "position": 57,
+          "set": "Set"
+        },
+        {
+          "title": "More Brunswick & Tripping Tom",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s2t24.mp3",
+          "duration": 174,
+          "position": 58,
+          "set": "Set"
+        },
+        {
+          "title": "tuning and banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t01.mp3",
+          "duration": 734,
+          "position": 59,
+          "set": "Set"
+        },
+        {
+          "title": "Don't Ease Me In ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t02.mp3",
+          "duration": 216,
+          "position": 60,
+          "set": "Set"
+        },
+        {
+          "title": "Lost Sailor ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t03.mp3",
+          "duration": 365,
+          "position": 61,
+          "set": "Set"
+        },
+        {
+          "title": "Saint Of Circumstance ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t04.mp3",
+          "duration": 390,
+          "position": 62,
+          "set": "Set"
+        },
+        {
+          "title": "Franklin's Tower ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t05.mp3",
+          "duration": 541,
+          "position": 63,
+          "set": "Set"
+        },
+        {
+          "title": "Drums ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t06.mp3",
+          "duration": 736,
+          "position": 64,
+          "set": "Set"
+        },
+        {
+          "title": "Space ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t07.mp3",
+          "duration": 252,
+          "position": 65,
+          "set": "Set"
+        },
+        {
+          "title": "Fire On The Mountain ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t08.mp3",
+          "duration": 617,
+          "position": 66,
+          "set": "Set"
+        },
+        {
+          "title": "Not Fade Away ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t09.mp3",
+          "duration": 384,
+          "position": 67,
+          "set": "Set"
+        },
+        {
+          "title": "Stella Blue ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t10.mp3",
+          "duration": 588,
+          "position": 68,
+          "set": "Set"
+        },
+        {
+          "title": "Going Down The Road Felling Bad ->",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t11.mp3",
+          "duration": 374,
+          "position": 69,
+          "set": "Set"
+        },
+        {
+          "title": "Good Lovin'",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t12.mp3",
+          "duration": 397,
+          "position": 70,
+          "set": "Set"
+        },
+        {
+          "title": "encore applause & banter",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t13.mp3",
+          "duration": 360,
+          "position": 71,
+          "set": "Set"
+        },
+        {
+          "title": "Uncle John's Band",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t14.mp3",
+          "duration": 485,
+          "position": 72,
+          "set": "Set"
+        },
+        {
+          "title": "applause",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t15.mp3",
+          "duration": 47,
+          "position": 73,
+          "set": "Set"
+        },
+        {
+          "title": "Frankin & Davis outro & crowd",
+          "url": "https://archive.org/download/gd1980-10-31.140416.sbd.bershaw.flac16/gd1980-10-31.sbd.bershaw.s3t16.mp3",
+          "duration": 195,
+          "position": 74,
+          "set": "Set"
+        }
+      ]
+    },
+    {
+      "date": "1989-10-09",
+      "venue": "Hampton Coliseum",
+      "city": "Hampton",
+      "state": "VA",
+      "country": "USA",
+      "setlist": [
+        "Feel Like A Stranger",
+        "Built To Last",
+        "Little Red Rooster",
+        "Ramble on Rose",
+        "We Can Run",
+        "Jack-A-Roe",
+        "Stuck Inside Of Mobile With The Memphis Blues Again",
+        "Row Jimmy",
+        "The Music Never Stopped",
+        "Playing In The Band >",
+        "Uncle John's Band >",
+        "Playing in the Band >",
+        "Dark Star >",
+        "Drums > Space >",
+        "Death Don't Have No Mercy",
+        "Dear Mr. Fantasy >",
+        "Hey Jude Finale >",
+        "Throwing Stones >",
+        "Good Lovin'",
+        "Attics of My Life"
+      ],
+      "notes": "Hampton \u2014 late-80s fire \u00b7 Relisten best source (SBD) \u00b7 gd89-10-09.sbd.serafin.7721.sbeok.shnf",
+      "audioSources": [
+        {
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "Lineage: SBD > PCM (analog output) > D > D > D > D",
+          "archiveIdentifier": "gd89-10-09.sbd.serafin.7721.sbeok.shnf",
+          "relistenSourceId": 3886474,
+          "avgRating": 9.662651062011719
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Feel Like A Stranger",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t01.mp3",
+          "duration": 550,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Built To Last",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t02.mp3",
+          "duration": 322,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Little Red Rooster",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t03.mp3",
+          "duration": 569,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "Ramble on Rose",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t04.mp3",
+          "duration": 486,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "We Can Run",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t05.mp3",
+          "duration": 403,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Jack-A-Roe",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t06.mp3",
+          "duration": 258,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Stuck Inside Of Mobile With The Memphis Blues Again",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t07.mp3",
+          "duration": 722,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Row Jimmy",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d1t08.mp3",
+          "duration": 644,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "The Music Never Stopped",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d2t01.mp3",
+          "duration": 536,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "Playing In The Band >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d2t02.mp3",
+          "duration": 633,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "Uncle John's Band >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d2t03.mp3",
+          "duration": 730,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Playing in the Band >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d2t04.mp3",
+          "duration": 141,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Dark Star >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d2t05.mp3",
+          "duration": 1084,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Drums > Space >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d2t06.mp3",
+          "duration": 1025,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Death Don't Have No Mercy",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d3t01.mp3",
+          "duration": 526,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Dear Mr. Fantasy >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d3t02.mp3",
+          "duration": 280,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Hey Jude Finale >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d3t03.mp3",
+          "duration": 228,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Throwing Stones >",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d3t04.mp3",
+          "duration": 624,
+          "position": 18,
+          "set": "Set"
+        },
+        {
+          "title": "Good Lovin'",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d3t05.mp3",
+          "duration": 502,
+          "position": 19,
+          "set": "Set"
+        },
+        {
+          "title": "Attics of My Life",
+          "url": "https://archive.org/download/gd89-10-09.sbd.serafin.7721.sbeok.shnf/gd89-10-09d3t06.mp3",
+          "duration": 320,
+          "position": 20,
+          "set": "Set"
+        }
       ]
     },
     {
@@ -49,192 +2474,164 @@
       "city": "Chicago",
       "state": "IL",
       "country": "USA",
-      "setlist": ["Touch of Grey", "Shakedown Street", "So Many Roads", "Sugar Magnolia", "Johnny B. Goode", "Black Muddy River"],
-      "notes": "The final Grateful Dead concert. Bittersweet and transcendent. Jerry Garcia passed away two months later. This show carries historical weight—30 years of collective memory, friendship, and musical evolution captured in one night.",
-      "attendance": 60000,
+      "setlist": [
+        "Touch Of Grey",
+        "Little Red Rooster",
+        "Lazy River Road",
+        "When I Paint My Masterpiece",
+        "Childhood's End",
+        "Cumberland Blues",
+        "Promised Land",
+        "Shakedown Street",
+        "Samson And Delilah",
+        "So Many Roads",
+        "Samba In The Rain",
+        "Corrina ->",
+        "Drums ->",
+        "Space ->",
+        "Unbroken Chain ->",
+        "Sugar Magnolia",
+        "Black Muddy River",
+        "Box Of Rain"
+      ],
+      "notes": "Soldier Field \u2014 the final show \u00b7 Relisten best source (SBD) \u00b7 gd1995-07-09.sbd.miller.114369.flac16",
       "audioSources": [
-        { "url": "https://archive.org/download/gd95-07-09.sbd.unknown.7411.flac16/gd1995-07-09d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1969-12-31",
-      "venue": "Fillmore West",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Johnny B. Goode", "Mama Tried", "Dark Star", "St. Stephen", "The Eleven", "Lovelight"],
-      "notes": "New Year's Eve 1969. The Dead rung in the 1970s with this historic run at the Fillmore West. Captures a band ready to explode into their greatest decade. The early Dark Star/St. Stephen combinations set the template for endless improvisation.",
-      "attendance": 1500,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd69-12-31.aud.unknown.7411.flac16/gd1969-12-31d1t01.mp3", "sourceType": "aud", "label": "Audience Recording" }
-      ]
-    },
-    {
-      "date": "1974-06-24",
-      "venue": "Great American Music Hall",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Ramrod", "Cold Rain and Snow", "They Love Each Other", "Mississippi Uptown", "Stella Blue", "Help on the Way", "Slipknot", "The Wheel", "Greatest Story Ever Told"],
-      "notes": "Summer 1974—the Dead's last tour before the hiatus. This era features some of the tightest, most disciplined playing of their career. The Help > Slip > Franklin's Tower suite becomes a cornerstone of the Dead's setlist for decades.",
-      "attendance": 1000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd74-06-24.sbd.unknown.7411.flac16/gd1974-06-24d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1980-09-05",
-      "venue": "The Warfield",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Cold Rain and Snow", "Friend of the Devil", "Dire Wolf", "Looks Like Rain", "Passenger", "I Need a Miracle", "Ripple", "Brokedown Palace"],
-      "notes": "The legendary Warfield run—five nights that officially ended the Dead's hiatus and signaled their return to regular touring. This show captures the joy and reunion energy of the band coming back together.",
-      "attendance": 2200,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd80-09-05.sbd.unknown.7411.flac16/gd1980-09-05d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1973-05-26",
-      "venue": "Lyceum Theatre",
-      "city": "London",
-      "country": "England",
-      "setlist": ["Bertha", "Me & My Uncle", "Black Peter", "Mule Skinner Blues", "Jack Straw", "Pigpen's Shuffle", "Casey Jones"],
-      "notes": "Another legendary European run. The 1973 Europe tour features some of the most adventurous playing of the era. This Lyceum show from the week-long stand demonstrates the Dead's ability to evolve nightly.",
-      "attendance": 2000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd73-05-26.aud.unknown.7411.flac16/gd1973-05-26d1t01.mp3", "sourceType": "aud", "label": "Audience Recording" }
-      ]
-    },
-    {
-      "date": "1968-12-29",
-      "venue": "Fillmore West",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Dark Star", "St. Stephen", "The Eleven", "Johnny B. Goode", "Lovelight"],
-      "notes": "Deep in the Fillmore West run, 1968. The Dead were still finding their sound, but the cosmic reach was already evident. This show captures raw energy and the band's willingness to explore without a safety net.",
-      "attendance": 1200,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd68-12-29.aud.unknown.7411.flac16/gd1968-12-29d1t01.mp3", "sourceType": "aud", "label": "Audience Recording" }
-      ]
-    },
-    {
-      "date": "1981-06-14",
-      "venue": "RFK Stadium",
-      "city": "Washington",
-      "state": "DC",
-      "country": "USA",
-      "setlist": ["Shakedown Street", "Jack Straw", "Dire Wolf", "Candyman", "Feel Like a Stranger", "Cassidy", "Passenger", "Hurricane"],
-      "notes": "The legendary Merle Haggard sit-in. Jerry sat in with Merle Haggard for several songs—a rare and magical moment capturing country and jam colliding beautifully. The Dead's musicianship allowed them to play with anyone.",
-      "attendance": 50000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd81-06-14.sbd.unknown.7411.flac16/gd1981-06-14d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1972-08-27",
-      "venue": "Veneta Fairgrounds",
-      "city": "Veneta",
-      "state": "OR",
-      "country": "USA",
-      "setlist": ["Bertha", "Me and My Uncle", "Big Boy Pete", "Jack Straw", "Pigpen's Shuffle", "Johnny B. Goode", "Brown Eyed Women", "One More Saturday Night"],
-      "notes": "The Veneta show—a pivotal moment in Dead history. Officially released as a stand-alone album. Captures the band in peak form during the golden era. The playing is immaculate and the vibe is pure 1972.",
-      "attendance": 20000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd72-08-27.sbd.seamons.86046.flac16/gd1972-08-27d1t01.mp3", "sourceType": "sbd", "label": "Soundboard (Seamons transfer)" }
-      ]
-    },
-    {
-      "date": "1989-03-23",
-      "venue": "The Warfield",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Feel Like a Stranger", "Cassidy", "Dire Wolf", "Loser", "Black Muddy River", "Scarlet Begonias", "Fire on the Mountain", "Johnny B. Goode"],
-      "notes": "Late 1980s—Jerry was battling health issues but still delivering magical performances. This show captures the band's resilience and their ability to create profound music even in difficult times.",
-      "attendance": 2200,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd89-03-23.sbd.unknown.7411.flac16/gd1989-03-23d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1975-07-31",
-      "venue": "Great American Music Hall",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Ramrod", "Cold Rain and Snow", "Plays a Few Sketches Before Dinner", "Help on the Way", "Slipknot", "Franklin's Tower", "The Music Never Stopped"],
-      "notes": "Post-hiatus return. The Dead came back stronger and tighter than ever. This show exemplifies the mid-70s sound—tight, groovy, exploratory. The Help > Slip > Franklin's Tower is a masterpiece.",
-      "attendance": 1000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd75-07-31.sbd.unknown.7411.flac16/gd1975-07-31d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1982-06-10",
-      "venue": "Portland Memorial Coliseum",
-      "city": "Portland",
-      "state": "OR",
-      "country": "USA",
-      "setlist": ["Shakedown Street", "Jack Straw", "Dire Wolf", "Birdsong", "Scarlet Begonias", "Fire on the Mountain", "Johnny B. Goode", "Black Muddy River"],
-      "notes": "Early 1980s—the Dead were playing consistently and developing their modern-era sound. This show features solid, energetic playing and the beginning of the band's extended radio popularity.",
-      "attendance": 8000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd82-06-10.sbd.unknown.7411.flac16/gd1982-06-10d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1993-08-20",
-      "venue": "Red Rocks Amphitheatre",
-      "city": "Morrison",
-      "state": "CO",
-      "country": "USA",
-      "setlist": ["Touch of Grey", "Shakedown Street", "Cassidy", "Scarlet Begonias", "Fire on the Mountain", "Estimated Prophet", "Terrapin Station", "Truckin'", "Johnny B. Goode"],
-      "notes": "Red Rocks—one of the most sacred Dead venues. The natural acoustics combined with the band's late-era tightness create something transcendent. Officially recorded and released. The energy is palpable.",
-      "attendance": 15000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd93-08-20.sbd.unknown.7411.flac16/gd1993-08-20d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1983-10-24",
-      "venue": "The Warfield",
-      "city": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "setlist": ["Ramrod", "Cold Rain and Snow", "Looks Like Rain", "She Belongs to Me", "Passenger", "Brokedown Palace", "Johnny B. Goode"],
-      "notes": "Another legendary Warfield run. By the mid-80s, the Dead had settled into a more consistent groove while maintaining their improvisational edge. This show features the band playing with confidence and joy.",
-      "attendance": 2200,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd83-10-24.sbd.unknown.7411.flac16/gd1983-10-24d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
-      ]
-    },
-    {
-      "date": "1971-08-06",
-      "venue": "Fillmore East",
-      "city": "New York",
-      "state": "NY",
-      "country": "USA",
-      "setlist": ["Johnny B. Goode", "Bertha", "Mama Tried", "Dark Star", "St. Stephen", "The Eleven", "Johnny B. Goode"],
-      "notes": "Early 1970s—the Dead's improvisational peak. The extended St. Stephen > The Eleven sequences define an era. This show captures the raw power and cosmic reach of the early 70s sound.",
-      "attendance": 2500,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd71-08-06.aud.unknown.7411.flac16/gd1971-08-06d1t01.mp3", "sourceType": "aud", "label": "Audience Recording" }
-      ]
-    },
-    {
-      "date": "1988-05-07",
-      "venue": "Great Woods Amphitheatre",
-      "city": "Mansfield",
-      "state": "MA",
-      "country": "USA",
-      "setlist": ["Shakedown Street", "Looks Like Rain", "Cassidy", "Dire Wolf", "Estimated Prophet", "Eyes of the World", "Johnny B. Goode", "Black Muddy River"],
-      "notes": "Late 80s touring—the Dead were everywhere and playing consistently. This amphitheater show captures the band in their groove, playing to dedicated fans across America.",
-      "attendance": 12000,
-      "audioSources": [
-        { "url": "https://archive.org/download/gd88-05-07.sbd.unknown.7411.flac16/gd1988-05-07d1t01.mp3", "sourceType": "sbd", "label": "Soundboard" }
+        {
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t01.mp3",
+          "sourceType": "sbd",
+          "label": "SBD -> Dat (44.1k)",
+          "archiveIdentifier": "gd1995-07-09.sbd.miller.114369.flac16",
+          "relistenSourceId": 3892154,
+          "avgRating": 8.0
+        }
+      ],
+      "tracks": [
+        {
+          "title": "Touch Of Grey",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t01.mp3",
+          "duration": 451,
+          "position": 1,
+          "set": "Set"
+        },
+        {
+          "title": "Little Red Rooster",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t02.mp3",
+          "duration": 466,
+          "position": 2,
+          "set": "Set"
+        },
+        {
+          "title": "Lazy River Road",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t03.mp3",
+          "duration": 423,
+          "position": 3,
+          "set": "Set"
+        },
+        {
+          "title": "When I Paint My Masterpiece",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t04.mp3",
+          "duration": 348,
+          "position": 4,
+          "set": "Set"
+        },
+        {
+          "title": "Childhood's End",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t05.mp3",
+          "duration": 283,
+          "position": 5,
+          "set": "Set"
+        },
+        {
+          "title": "Cumberland Blues",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t06.mp3",
+          "duration": 280,
+          "position": 6,
+          "set": "Set"
+        },
+        {
+          "title": "Promised Land",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t07.mp3",
+          "duration": 279,
+          "position": 7,
+          "set": "Set"
+        },
+        {
+          "title": "Shakedown Street",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t08.mp3",
+          "duration": 856,
+          "position": 8,
+          "set": "Set"
+        },
+        {
+          "title": "Samson And Delilah",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t09.mp3",
+          "duration": 468,
+          "position": 9,
+          "set": "Set"
+        },
+        {
+          "title": "So Many Roads",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d1t10.mp3",
+          "duration": 705,
+          "position": 10,
+          "set": "Set"
+        },
+        {
+          "title": "Samba In The Rain",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t01.mp3",
+          "duration": 400,
+          "position": 11,
+          "set": "Set"
+        },
+        {
+          "title": "Corrina ->",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t02.mp3",
+          "duration": 888,
+          "position": 12,
+          "set": "Set"
+        },
+        {
+          "title": "Drums ->",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t03.mp3",
+          "duration": 832,
+          "position": 13,
+          "set": "Set"
+        },
+        {
+          "title": "Space ->",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t04.mp3",
+          "duration": 809,
+          "position": 14,
+          "set": "Set"
+        },
+        {
+          "title": "Unbroken Chain ->",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t05.mp3",
+          "duration": 420,
+          "position": 15,
+          "set": "Set"
+        },
+        {
+          "title": "Sugar Magnolia",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t06.mp3",
+          "duration": 568,
+          "position": 16,
+          "set": "Set"
+        },
+        {
+          "title": "Black Muddy River",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t07.mp3",
+          "duration": 318,
+          "position": 17,
+          "set": "Set"
+        },
+        {
+          "title": "Box Of Rain",
+          "url": "https://archive.org/download/gd1995-07-09.sbd.miller.114369.flac16/gd95-07-09d2t08.mp3",
+          "duration": 293,
+          "position": 18,
+          "set": "Set"
+        }
       ]
     }
   ]

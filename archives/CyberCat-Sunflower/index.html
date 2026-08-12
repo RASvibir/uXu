@@ -627,19 +627,22 @@
     let filtered = [];
     let selectedIdx = -1;
     let activeShowKey = null;
+    let activeShow = null;
+    let playlist = [];
+    let trackIndex = -1;
     let toastTimer = null;
 
     document.getElementById('specs-block').textContent =
 `===================================================================
 uXu TUBE PLAYER · CYBERCAT SUNFLOWER
 ===================================================================
-[+] DISPLAY     : Phosphor CRT matrix · scanline interlaced
-[+] AUDIO       : Web Audio API · 5-band biquad chain
-[+] SOURCING    : archive.org streams only (no re-host)
+[+] COLLECTION  : timeline-pilot (10 shows, early→final)
+[+] AUDIO       : Relisten → Internet Archive MP3 streams
+[+] PIPELINE    : HTML5 audio + optional 5-band Web Audio EQ
 [+] NAV         : F-keys · arrow select · filter · Enter engage
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0001
 
-System nominal. Phosphor warm. Ready to ride.`;
+Pilot mode. Prove playback, then expand the catalog.`;
 
     setInterval(() => {
       document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
@@ -649,43 +652,67 @@ System nominal. Phosphor warm. Ready to ride.`;
       toastEl.textContent = msg;
       toastEl.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2000);
+      toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
     }
 
     function initAudioEngine() {
       if (initialized) return;
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const source = audioCtx.createMediaElementSource(player);
-      const freqs = [60, 230, 910, 4000, 14000];
-      filters = freqs.map((freq, idx) => {
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = idx === 0 ? 'lowshelf' : idx === freqs.length - 1 ? 'highshelf' : 'peaking';
-        filter.frequency.value = freq;
-        filter.gain.value = 0;
-        return filter;
-      });
-      source.connect(filters[0]);
-      for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
-      filters[filters.length - 1].connect(audioCtx.destination);
-      bindSlider('eq-60', filters[0], 'v-60');
-      bindSlider('eq-230', filters[1], 'v-230');
-      bindSlider('eq-910', filters[2], 'v-910');
-      bindSlider('eq-4k', filters[3], 'v-4k');
-      bindSlider('eq-14k', filters[4], 'v-14k');
-      initialized = true;
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaElementSource(player);
+        const freqs = [60, 230, 910, 4000, 14000];
+        filters = freqs.map((freq, idx) => {
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = idx === 0 ? 'lowshelf' : idx === freqs.length - 1 ? 'highshelf' : 'peaking';
+          filter.frequency.value = freq;
+          filter.gain.value = 0;
+          return filter;
+        });
+        source.connect(filters[0]);
+        for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
+        filters[filters.length - 1].connect(audioCtx.destination);
+        bindSlider('eq-60', filters[0], 'v-60');
+        bindSlider('eq-230', filters[1], 'v-230');
+        bindSlider('eq-910', filters[2], 'v-910');
+        bindSlider('eq-4k', filters[3], 'v-4k');
+        bindSlider('eq-14k', filters[4], 'v-14k');
+        initialized = true;
+      } catch (err) {
+        console.warn('EQ unavailable; native playback still works', err);
+      }
     }
 
     function bindSlider(id, node, labelId) {
       const slider = document.getElementById(id);
       const label = document.getElementById(labelId);
       slider.addEventListener('input', (e) => {
+        if (!audioCtx) return;
         node.gain.setValueAtTime(Number(e.target.value), audioCtx.currentTime);
         const v = Number(e.target.value);
         label.textContent = `${v > 0 ? '+' : ''}${v}dB`;
       });
     }
 
-    player.addEventListener('play', initAudioEngine);
+    player.addEventListener('play', () => {
+      initAudioEngine();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    });
+
+    player.addEventListener('ended', () => {
+      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
+        playTrack(trackIndex + 1);
+      } else {
+        toast('End of tape');
+      }
+    });
+
+    player.addEventListener('error', () => {
+      const mediaErr = player.error;
+      toast(`Stream error${mediaErr ? ' (' + mediaErr.code + ')' : ''} — trying next track`);
+      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
+        setTimeout(() => playTrack(trackIndex + 1), 400);
+      }
+    });
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -709,44 +736,87 @@ System nominal. Phosphor warm. Ready to ride.`;
       return `${show.date}::${show.venue}`;
     }
 
-    function renderSetlist(setlist) {
+    function buildPlaylist(show) {
+      if (Array.isArray(show.tracks) && show.tracks.length) {
+        return show.tracks.filter((t) => t && t.url);
+      }
+      const src = show.audioSources && show.audioSources[0];
+      if (src && src.url) {
+        return [{ title: (show.setlist && show.setlist[0]) || 'Track 1', url: src.url, set: 'Set' }];
+      }
+      return [];
+    }
+
+    function renderSetlist() {
       setlistOut.innerHTML = '';
-      if (!setlist || !setlist.length) {
-        setlistOut.innerHTML = '<div class="empty">No setlist for this tape.</div>';
+      if (!playlist.length) {
+        setlistOut.innerHTML = '<div class="empty">No tracks on this tape.</div>';
         setlistCount.textContent = '0 TRACKS';
         return;
       }
-      setlistCount.textContent = `${setlist.length} TRACKS`;
-      setlist.forEach((song, idx) => {
-        const row = document.createElement('div');
-        row.className = 'song';
+      setlistCount.textContent = `${playlist.length} TRACKS`;
+      playlist.forEach((track, idx) => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'song' + (idx === trackIndex ? ' playing' : '');
+        row.style.cssText = 'display:flex;gap:.6rem;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px dotted rgba(255,255,255,.08);color:inherit;font:inherit;padding:.28rem 0;cursor:pointer;';
+        if (idx === trackIndex) {
+          row.style.color = 'var(--cyan)';
+          row.style.background = 'rgba(77,232,255,.08)';
+        }
         const n = document.createElement('span');
         n.className = 'n';
         n.textContent = String(idx + 1).padStart(2, '0');
         const t = document.createElement('span');
-        t.textContent = String(song).toUpperCase();
+        t.textContent = String(track.title || 'TRACK').toUpperCase();
         row.append(n, t);
+        row.addEventListener('click', () => playTrack(idx));
         setlistOut.appendChild(row);
       });
     }
 
+    function updateNowPlaying(track) {
+      if (!activeShow) return;
+      const place = [activeShow.city, activeShow.state, activeShow.country].filter(Boolean).join(', ');
+      const src = activeShow.audioSources && activeShow.audioSources[0];
+      nowPlaying.innerHTML =
+        `<strong>${activeShow.date}</strong> · ${activeShow.venue}<br>` +
+        `<span style="color:var(--muted)">${place}</span><br>` +
+        `<span style="color:var(--cyan)">▶ ${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
+      sourceTag.textContent = ((src && src.sourceType) || 'SRC').toUpperCase();
+    }
+
+    function playTrack(idx) {
+      if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+      trackIndex = idx;
+      const track = playlist[idx];
+      player.src = track.url;
+      player.load();
+      const playPromise = player.play();
+      if (playPromise && playPromise.catch) {
+        playPromise.catch(() => toast('Press play on the deck to start'));
+      }
+      updateNowPlaying(track);
+      renderSetlist();
+      const activeRow = setlistOut.children[idx];
+      if (activeRow && activeRow.scrollIntoView) {
+        activeRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+
     function engageShow(show) {
-      const src = show.audioSources && show.audioSources[0];
-      if (!src || !src.url) {
+      playlist = buildPlaylist(show);
+      if (!playlist.length) {
         toast('No audio source on this tape');
         return;
       }
+      activeShow = show;
       activeShowKey = showKey(show);
-      player.src = src.url;
-      player.play().catch(() => toast('Click play on the deck to start'));
-      sourceTag.textContent = (src.sourceType || 'SRC').toUpperCase();
-      const place = [show.city, show.state, show.country].filter(Boolean).join(', ');
-      nowPlaying.innerHTML = `<strong>${show.date}</strong> · ${show.venue}<br><span style="color:var(--muted)">${place}</span>`;
-      renderSetlist(show.setlist || []);
       document.querySelectorAll('.tape').forEach((el) => {
         el.classList.toggle('active', el.dataset.key === activeShowKey);
       });
-      toast(`Engaged ${show.date}`);
+      toast(`Engaged ${show.date} · ${playlist.length} tracks`);
+      playTrack(0);
     }
 
     function renderTapes(list) {
@@ -775,7 +845,8 @@ System nominal. Phosphor warm. Ready to ride.`;
         meta.className = 'meta';
         const place = [show.city, show.state, show.country].filter(Boolean).join(', ');
         const src = show.audioSources && show.audioSources[0];
-        meta.textContent = `${place}${src ? ' · ' + (src.label || src.sourceType) : ''}`;
+        const nTracks = (show.tracks && show.tracks.length) || (show.setlist && show.setlist.length) || 0;
+        meta.textContent = `${place} · ${nTracks} tracks${src ? ' · ' + (src.sourceType || '').toUpperCase() : ''}`;
 
         const notes = document.createElement('div');
         notes.className = 'notes';
@@ -822,13 +893,10 @@ System nominal. Phosphor warm. Ready to ride.`;
         filterInput.select();
       }
 
-      const onFilter = document.activeElement === filterInput;
-      if (onFilter && (e.key === 'ArrowDown' || e.key === 'Enter')) {
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          const first = tapesZone.querySelector('.tape');
-          if (first) first.focus();
-        }
+      if (document.activeElement === filterInput && e.key === 'ArrowDown') {
+        e.preventDefault();
+        const first = tapesZone.querySelector('.tape');
+        if (first) first.focus();
         return;
       }
 
@@ -838,17 +906,22 @@ System nominal. Phosphor warm. Ready to ride.`;
         if (e.key === 'ArrowDown' && tapes[idx + 1]) { e.preventDefault(); tapes[idx + 1].focus(); }
         if (e.key === 'ArrowUp' && tapes[idx - 1]) { e.preventDefault(); tapes[idx - 1].focus(); }
         if (e.key === 'ArrowUp' && idx === 0) { e.preventDefault(); filterInput.focus(); }
+        if (e.key === 'Enter') { e.preventDefault(); tapes[idx].click(); }
       }
+
+      if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
+      if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
     });
 
     fetch('data.json')
       .then((res) => res.json())
       .then((data) => {
         shows = data.shows || [];
+        const mode = data.collectionMode || 'archive';
         document.getElementById('manifesto-text-block').textContent =
-          `--- ARCHIVE COLLECTION MANIFESTO ---\n\n${(data.description || '').toUpperCase()}\n\nARTIST: ${(data.artist || '').toUpperCase()}\nCURATOR: ${(data.curator || '').toUpperCase()}\nSHOWS: ${shows.length}`;
+          `--- ARCHIVE COLLECTION MANIFESTO ---\n\n${(data.description || '').toUpperCase()}\n\nARTIST: ${(data.artist || '').toUpperCase()}\nCURATOR: ${(data.curator || '').toUpperCase()}\nMODE: ${String(mode).toUpperCase()}\nSHOWS: ${shows.length}`;
         applyFilter();
-        toast(`${shows.length} tapes indexed`);
+        toast(`${shows.length} timeline tapes indexed`);
       })
       .catch(() => {
         tapesZone.textContent = '[ERROR: Failed to load data.json]';
