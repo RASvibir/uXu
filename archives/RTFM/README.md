@@ -9,6 +9,7 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 ### Interactive manuals (also in 0?0 MANUAL)
 - **User Guide** — browse, install public **uXu** app, commons links, reach admin
 - **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
+- **Master Admin Guide** — claim, seal, recovery email, optional 2FA (`SETUP MASTER`)
 - **CyberCat Sunflower Manual** — visitor / curator deck guide
 - **Developers Handbook** — builder / coder patterns
 - **Source Code Pamphlet** — repo map without secrets or operator internals

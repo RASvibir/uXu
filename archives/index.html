@@ -630,6 +630,7 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
                 <li data-cmd="LOGS" tabindex="0">TRANSPARENCY LOGS</li>
                 <li data-cmd="SYSTEM" tabindex="0">SYSTEM INFO</li>
                 <li data-cmd="AUTH" tabindex="0">ACCOUNT / AUTH</li>
+                <li data-cmd="SETUP MASTER" tabindex="0">SETUP MASTER</li>
                 <li data-cmd="HELP" tabindex="0">HELP</li>
                 <li data-cmd="EXIT" tabindex="0">EXIT TO DOS</li>
               </ul>
@@ -1480,6 +1481,9 @@ LOGS              show transparency logs
 MANUAL            open manuals (lands on User Guide)
 CREATE ARCHIVE    open the Archive Creation Manual
 INSTALL           install the public uXu app (invite / home screen)
+SETUP MASTER      interactive guide: claim → lock → recovery → 2FA
+RECOVERY …        ADD / LIST / REMOVE / 2FA (admin + SUDO)
+ASSUME MASTER     recovery account takes the crown (emergency)
 READ <slug|n>     open a manual (or Enter on selection)
 BACK              return to manual list
 SECTION <n>       jump to ## heading while reading
@@ -1491,7 +1495,7 @@ SIGNOUT
 WHOAMI
 SUDO              elevate ADMIN session
 UNSUDO            drop elevation
-CLAIM MASTER <secret>
+CLAIM MASTER      founding rite (sealed once an admin exists)
 EXIT              root stays loaded
 
 Need help from a human?
@@ -1500,7 +1504,7 @@ Need help from a human?
 Roles
   GUEST  public browse
   USER   signed-in account
-  ADMIN  master operator (after CLAIM MASTER)
+  ADMIN  master operator
   SUDO   temporary ADMIN elevation
 
 Keyboard
@@ -1719,26 +1723,63 @@ id:     ${s.user?.id || '—'}`);
       });
       return;
     }
-    if (cmd.startsWith("CLAIM MASTER")) {
-      const secret = cmdRaw.trim().replace(/^CLAIM\s+MASTER\s*/i, '').trim();
-      if (!secret) {
-        showOutput("ERROR", "usage: CLAIM MASTER <bootstrap-secret>");
-        return;
-      }
+    if (cmd === "SETUP MASTER" || cmd === "SETUP") {
+      setActiveNav("SETUP MASTER");
+      runSetupMasterGuide();
+      return;
+    }
+    if (cmd === "RECOVERY" || cmd.startsWith("RECOVERY ")) {
+      handleRecoveryCommand(cmdRaw.trim());
+      return;
+    }
+    if (cmd === "ASSUME MASTER") {
       if (!getSessionToken()) {
-        showOutput("ERROR", "sign in first, then CLAIM MASTER <secret>");
+        showOutput("ERROR", "sign in with the recovery email first");
         return;
       }
-      showOutput("CLAIM MASTER", "validating bootstrap secret...");
+      showOutput("ASSUME MASTER", "requesting succession...");
+      fetch(`${API_BASE}/api/auth/assume-master`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: '{}',
+      }).then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || data.message || 'assume failed');
+        await refreshAuth();
+        showOutput("ASSUME MASTER", `${data.message}\nrole: ${authState.role}\nNext: SUDO`);
+        toast('CROWN ASSUMED');
+      }).catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "CLAIM MASTER" || cmd.startsWith("CLAIM MASTER")) {
+      const secret = cmdRaw.trim().replace(/^CLAIM\s+MASTER\s*/i, '').trim();
+      if (!getSessionToken()) {
+        showOutput("ERROR", "sign in first, then CLAIM MASTER <secret> (empty throne only)");
+        return;
+      }
+      // No secret → still hit API to hear sealed lore / status
+      showOutput("CLAIM MASTER", secret ? "validating bootstrap secret..." : "consulting the rite...");
       fetch(`${API_BASE}/api/auth/claim-master`, {
         method: 'POST',
         headers: authHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ secret }),
+        body: JSON.stringify({ secret: secret || '' }),
       }).then(async (res) => {
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'claim failed');
+        if (data.sealed || data.lore) {
+          showOutput("CLAIM MASTER", data.message || "Rite sealed.");
+          toast('RITE SEALED');
+          return;
+        }
+        if (!res.ok) throw new Error(data.error || data.message || 'claim failed');
         await refreshAuth();
-        showOutput("CLAIM MASTER", `${data.message}\nrole: ${authState.role}\nNext: SUDO`);
+        showOutput("CLAIM MASTER",
+`${data.message}
+role: ${authState.role}
+
+Next:
+  SUDO
+  SETUP MASTER
+  RECOVERY ADD <second-email>`);
         toast('MASTER CLAIMED');
       }).catch((err) => showOutput("ERROR", err.message));
       return;
@@ -1750,6 +1791,153 @@ id:     ${s.user?.id || '—'}`);
     }
     showOutput("UNKNOWN COMMAND", `"${cmdRaw}" not recognized. type HELP for a list of commands.`);
   }
+
+  async function runSetupMasterGuide() {
+    showOutput("SETUP MASTER", "loading guide status...");
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/setup-status`, { headers: authHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'setup status failed');
+      const lines = (data.steps || []).map((s) => `${s.done ? '[x]' : '[ ]'}  ${s.id}. ${s.title}`);
+      const rec = (data.recoveryEmails || [])
+        .map((r) => `  - ${r.email}${r.twoFactorAttested ? ' · 2FA attested' : ' · 2FA optional'}`)
+        .join('\n');
+      showOutput("SETUP MASTER — interactive guide",
+`Follow these steps on 0?0. Re-run SETUP MASTER anytime to refresh checks.
+
+${lines.join('\n')}
+
+Throne: ${data.claimSealed ? 'SEALED (admin exists)' : 'EMPTY (claim still possible)'}
+Signed in: ${data.signedIn ? 'yes' : 'no'} · role: ${data.role || 'GUEST'} · sudo: ${data.sudo ? 'ON' : 'OFF'}
+Recovery keys: ${data.recoveryCount || 0}
+${rec || '  (none yet)'}
+
+────────
+HOW TO ADVANCE
+1) SIGNUP / SIGNIN with your master email
+2) If throne empty: CLAIM MASTER <bootstrap-secret>
+   (secret from Wrangler — never commit it)
+3) SUDO
+4) Have a SECOND email SIGNUP on 0?0, then:
+     RECOVERY ADD other@email.com
+5) Optional 2FA (recommended):
+     • Enable 2FA on your Neon account:
+       https://console.neon.tech → Account settings → Set up two-factor authentication
+       Docs: https://neon.com/docs/manage/accounts#two-factor-authentication
+     • Use a strong unique password on the recovery uXu login
+     • Then attest:  RECOVERY 2FA other@email.com
+6) CLAIM MASTER becomes a sealed lore rite automatically once an admin exists.
+   Public attempts get comedy, not a crown.
+
+Emergency later: sign in as recovery → ASSUME MASTER → SUDO
+
+Full pamphlet: MANUAL → READ master-admin-guide`);
+    } catch (err) {
+      showOutput("ERROR", err.message);
+    }
+  }
+
+  async function handleRecoveryCommand(raw) {
+    const parts = raw.trim().split(/\s+/);
+    const sub = (parts[1] || 'LIST').toUpperCase();
+    const email = parts.slice(2).join(' ').trim().toLowerCase();
+
+    if (sub === 'LIST' || sub === 'STATUS') {
+      showOutput("RECOVERY LIST", "loading...");
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/recovery`, { headers: authHeaders() });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'failed');
+        const rows = data.recovery || [];
+        showOutput("RECOVERY LIST", rows.length
+          ? rows.map((r) => `${r.email}\n  2FA attested: ${r.two_factor_attested ? 'yes' : 'no'}\n  since: ${r.created_at || '—'}`).join('\n\n')
+          : "no recovery accounts yet\n\nSUDO then: RECOVERY ADD second@email.com");
+      } catch (err) {
+        showOutput("ERROR", err.message);
+      }
+      return;
+    }
+
+    if (sub === 'ADD') {
+      if (!email) {
+        showOutput("ERROR", "usage: RECOVERY ADD second@email.com\n(that account must SIGNUP first)");
+        return;
+      }
+      showOutput("RECOVERY ADD", `adding ${email}...`);
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/recovery/add`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'add failed');
+        showOutput("RECOVERY ADD", data.message);
+        toast('recovery added');
+      } catch (err) {
+        showOutput("ERROR", err.message);
+      }
+      return;
+    }
+
+    if (sub === 'REMOVE' || sub === 'RM') {
+      if (!email) {
+        showOutput("ERROR", "usage: RECOVERY REMOVE email@domain.com");
+        return;
+      }
+      showOutput("RECOVERY REMOVE", `revoking ${email}...`);
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/recovery/remove`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'remove failed');
+        showOutput("RECOVERY REMOVE", data.message);
+        toast('recovery removed');
+      } catch (err) {
+        showOutput("ERROR", err.message);
+      }
+      return;
+    }
+
+    if (sub === '2FA' || sub === 'TOTP') {
+      if (!email) {
+        showOutput("ERROR",
+`usage: RECOVERY 2FA email@domain.com
+
+First enable 2FA on Neon:
+  https://console.neon.tech → Account settings → Set up two-factor authentication
+Then attest here so SETUP MASTER can check it off.`);
+        return;
+      }
+      showOutput("RECOVERY 2FA", `attesting 2FA for ${email}...`);
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/recovery/attest-2fa`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ email, attested: true }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'attest failed');
+        showOutput("RECOVERY 2FA", `${data.message}\n\nRe-run SETUP MASTER to see the checklist update.`);
+        toast('2FA attested');
+      } catch (err) {
+        showOutput("ERROR", err.message);
+      }
+      return;
+    }
+
+    showOutput("ERROR",
+`usage:
+  RECOVERY LIST
+  RECOVERY ADD second@email.com
+  RECOVERY REMOVE second@email.com
+  RECOVERY 2FA second@email.com`);
+  }
+
+  // NOTE: duplicate EXIT/unknown removed — handlers above cover claim/setup/recovery
 
   commandForm.addEventListener('submit', (e) => {
     e.preventDefault();

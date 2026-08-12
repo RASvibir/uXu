@@ -48,16 +48,22 @@ CLAIM MASTER <bootstrap-secret>
 SUDO
 ```
 
-After claim succeeds, rotate or clear the bootstrap secret if you no longer need it.
+After claim succeeds, run `SETUP MASTER` on 0?0, add a recovery email, optionally attest 2FA, then rotate or clear the bootstrap secret if you no longer need empty-throne break-glass.
+
+See `archives/RTFM/MASTER-ADMIN-GUIDE.md`.
 
 ### Worker auth routes
 
 - `GET /api/auth/config`
 - `GET /api/auth/me` (session bearer token)
-- `POST /api/auth/claim-master`
+- `GET /api/auth/setup-status`
+- `GET /api/auth/recovery` (ADMIN + SUDO)
+- `POST /api/auth/claim-master` (sealed if admin exists)
 - `POST /api/auth/sudo`
 - `POST /api/auth/unsudo`
 - `POST /api/auth/sign-out`
+- `POST /api/auth/recovery/add|remove|attest-2fa` (ADMIN + SUDO)
+- `POST /api/auth/assume-master` (recovery account)
 - `GET /api/auth/events` (requires ADMIN + SUDO)
 
 Session token comes from Neon Auth `sign-up` / `sign-in` JSON `token` and is sent as `Authorization: Bearer …`.
