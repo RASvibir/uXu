@@ -6,6 +6,11 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 ## What's in RTFM?
 
+### Interactive manuals (also in 0?0 MANUAL)
+- **CyberCat Sunflower Manual** — visitor / curator deck guide
+- **Developers Handbook** — ideas and patterns for building archives
+- **Source Code Pamphlet** — repo map without secrets or operator internals
+
 ### Code Examples
 - **Audio players** — Interactive HTML/CSS/JS for streaming audio with controls
 - **Gallery templates** — Image browser, slideshow, lightbox patterns
@@ -35,7 +40,7 @@ Tags: audio, player, controls, web-audio-api, interactive
 Source: CyberCat Sunflower archive
 ```
 
-Browse by topic or keyword to find what you need.
+Browse by topic or keyword to find what you need. On the live root console, run MANUAL.
 
 ## How to Contribute to RTFM
 

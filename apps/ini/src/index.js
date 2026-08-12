@@ -143,6 +143,47 @@ async function handleLogs(sql, request) {
   return json(request, { logs });
 }
 
+async function handleManuals(sql, request) {
+  const manuals = await sql`
+    select slug, title, updated_at
+    from manual_pages
+    order by title
+  `;
+  return json(request, { manuals });
+}
+
+async function handleManualBySlug(sql, request, slug) {
+  const rows = await sql`
+    select slug, title, body, updated_at
+    from manual_pages
+    where slug = ${slug}
+    limit 1
+  `;
+  if (!rows.length) {
+    return json(request, { error: 'manual not found', slug }, 404);
+  }
+  return json(request, { manual: rows[0] });
+}
+
+async function handleSystem(sql, request) {
+  const root = await sql`
+    select schema_version, updated_at, status
+    from archive_records
+    where id = ${ROOT_ID}
+    limit 1
+  `;
+  const row = root[0] || {};
+  return json(request, {
+    system: {
+      schema_version: row.schema_version || '1.0.0',
+      runtime: 'cloudflare-worker',
+      neon_branch: 'production',
+      status: row.status || 'unknown',
+      updated_at: row.updated_at || null,
+    },
+  });
+}
+
 async function handleAuthMe(sql, request) {
   const ctx = await resolveSession(sql, request);
   if (ctx.invalid) return json(request, { error: 'session invalid or expired', role: 'GUEST' }, 401);
@@ -303,10 +344,14 @@ const GET_ROUTES = {
   '/api/root/registry': handleRegistry,
   '/api/root/provenance': handleProvenance,
   '/api/root/logs': handleLogs,
+  '/api/root/manuals': handleManuals,
+  '/api/root/system': handleSystem,
   '/api/auth/me': handleAuthMe,
   '/api/auth/config': (sql, request, env) => handleAuthConfig(request, env),
   '/api/auth/events': handleAuthEvents,
 };
+
+const MANUAL_SLUG_RE = /^\/api\/root\/manuals\/([a-z0-9][a-z0-9_-]*)$/i;
 
 const POST_ROUTES = {
   '/api/auth/claim-master': handleClaimMaster,
@@ -331,6 +376,10 @@ export default {
 
     try {
       if (request.method === 'GET') {
+        const manualMatch = url.pathname.match(MANUAL_SLUG_RE);
+        if (manualMatch) {
+          return await handleManualBySlug(sql, request, decodeURIComponent(manualMatch[1]));
+        }
         const handler = GET_ROUTES[url.pathname];
         if (!handler) return json(request, { error: 'not found' }, 404);
         return await handler(sql, request, env);

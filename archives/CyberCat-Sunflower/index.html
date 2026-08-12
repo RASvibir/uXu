@@ -332,6 +332,10 @@
       font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
     }
     .specs { color: var(--phosphor-dim); }
+    .manual-body {
+      font-size: .78rem; line-height: 1.55; color: var(--text);
+      white-space: pre-wrap; max-height: 100%; overflow: auto;
+    }
 
     .statusbar {
       display: flex; flex-wrap: wrap; justify-content: space-between;
@@ -439,6 +443,7 @@
               <button type="button" class="tab-btn active" data-tab="tapes"><kbd>F1</kbd>Tapes Index</button>
               <button type="button" class="tab-btn" data-tab="manifest"><kbd>F2</kbd>Archive Log</button>
               <button type="button" class="tab-btn" data-tab="specs"><kbd>F3</kbd>Sys Config</button>
+              <button type="button" class="tab-btn" data-tab="manual"><kbd>F4</kbd>Manual</button>
             </div>
             <div class="viewport">
               <div id="pane-tapes" class="tab-pane active" role="tabpanel">
@@ -462,13 +467,17 @@
               <div id="pane-specs" class="tab-pane" role="tabpanel" hidden>
                 <div class="specs" id="specs-block"></div>
               </div>
+              <div id="pane-manual" class="tab-pane" role="tabpanel" hidden>
+                <div class="hint">Visitor / curator guide · also in 0?0 via MANUAL → READ cybercat-sunflower</div>
+                <div class="manual-body" id="manual-body">Loading manual…</div>
+              </div>
             </div>
           </div>
         </section>
       </div>
 
       <footer class="statusbar">
-        <span><kbd>F1</kbd>–<kbd>F3</kbd> · <kbd>Enter</kbd> engage · song click · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
+        <span><kbd>F1</kbd>–<kbd>F4</kbd> · <kbd>Enter</kbd> engage · song click · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
         <span id="catalog-foot">Grateful Dead full catalog</span>
       </footer>
       <div class="toast" id="toast" role="status"></div>
@@ -488,6 +497,25 @@
 
 <script>
   const RELISTEN = 'https://api.relisten.net/api/v2/artists/grateful-dead';
+  const API_BASE = 'https://uxu-ini-production.chrf-podcast.workers.dev';
+  const MANUAL_FALLBACK = `# CyberCat Sunflower Manual
+
+## First Ride
+Open Tapes Index (F1), filter or pick a night, Engage to load the best wave.
+Use the setlist to jump songs; n/p for next/prev; o for Other Transfers.
+Tune the 5-band EQ while you listen.
+
+## Keyboard
+F1 Tapes · F2 Archive Log · F3 Sys Config · F4 Manual
+Enter engage · n/p tracks · o transfers
+
+## Legal
+Streams public Grateful Dead transfers. Only add recordings you can lawfully share.
+
+## Home
+Return to 0?0 for the shared MANUAL library (Developers Handbook + Source Code Pamphlet).
+
+(Offline fallback — live manual loads from the uXu Worker when reachable.)`;
   const player = document.getElementById('main-player');
   const nowPlaying = document.getElementById('now-playing');
   const sourceTag = document.getElementById('source-tag');
@@ -942,10 +970,31 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       pane.classList.toggle('active', on);
       pane.hidden = !on;
     });
+    if (tabId === 'manual') loadManualPane();
   }
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
+
+  let manualLoaded = false;
+  async function loadManualPane() {
+    const el = document.getElementById('manual-body');
+    if (!el) return;
+    if (manualLoaded && el.dataset.source === 'api') return;
+    el.textContent = 'Loading manual…';
+    try {
+      const res = await fetch(`${API_BASE}/api/root/manuals/cybercat-sunflower`);
+      const data = await res.json();
+      if (!res.ok || !data.manual?.body) throw new Error(data.error || 'manual missing');
+      el.textContent = data.manual.body;
+      el.dataset.source = 'api';
+      manualLoaded = true;
+    } catch {
+      el.textContent = MANUAL_FALLBACK;
+      el.dataset.source = 'fallback';
+      manualLoaded = true;
+    }
+  }
 
   function renderSetJumps() {
     setJumps.innerHTML = '';
@@ -1332,6 +1381,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (e.key === 'F1') { e.preventDefault(); switchTab('tapes'); }
     if (e.key === 'F2') { e.preventDefault(); switchTab('manifest'); }
     if (e.key === 'F3') { e.preventDefault(); switchTab('specs'); }
+    if (e.key === 'F4') { e.preventDefault(); switchTab('manual'); }
     if (e.key === 'o' && !e.target.matches('input,select,textarea')) { e.preventDefault(); openAlts(); }
     if (e.key === '/' && !e.target.matches('input,select,textarea')) {
       e.preventDefault(); filterInput.focus(); filterInput.select();

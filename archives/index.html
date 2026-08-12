@@ -451,7 +451,7 @@
         <div class="topbar">
           <span class="id">0?0.uXu.0000</span>
           <span class="path">ROOT ARCHIVE :: NAVIGATION :: INDEX :: MANUAL LIBRARY</span>
-          <span class="hint" id="nav-hint">↑↓ navigate · Enter open · / focus command</span>
+          <span class="hint" id="nav-hint">↑↓ navigate · Enter open · F3 MANUAL · / focus command</span>
         </div>
         <div class="rule"></div>
 
@@ -568,6 +568,11 @@ Click a registry row, use Quick Nav, or type HELP.</pre>
   let registry = [];
   let selected = null;
   let authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
+  let manuals = [];
+  let manualSelected = 0;
+  let manualMode = 'list'; // list | read
+  let manualOpen = null; // { slug, title, body }
+  let manualSections = []; // [{ n, title, start, end }]
 
   const tbody = document.querySelector('#registry-table tbody');
   const activeSummary = document.querySelector('#active-summary');
@@ -974,6 +979,135 @@ validation: ${entry.certainty}${unresolvedBlock}${openHint}`);
     });
   }
 
+  function parseManualSections(body) {
+    const lines = String(body || '').split('\n');
+    const heads = [];
+    lines.forEach((line, i) => {
+      const m = line.match(/^##\s+(.+)$/);
+      if (m) heads.push({ title: m[1].trim(), start: i });
+    });
+    return heads.map((h, idx) => ({
+      n: idx + 1,
+      title: h.title,
+      start: h.start,
+      end: idx + 1 < heads.length ? heads[idx + 1].start : lines.length,
+    }));
+  }
+
+  function renderManualList() {
+    manualMode = 'list';
+    if (!manuals.length) {
+      showOutput("MANUAL LIBRARY",
+`no manuals ingested yet
+
+Local RTFM lives at /RTFM/ in the repo.
+Try again after the Worker manuals route is live.`);
+      return;
+    }
+    if (manualSelected < 0) manualSelected = 0;
+    if (manualSelected >= manuals.length) manualSelected = manuals.length - 1;
+    const lines = manuals.map((m, i) => {
+      const mark = i === manualSelected ? '>' : ' ';
+      return `${mark} ${String(i + 1).padStart(2, ' ')}. ${m.title}\n     slug: ${m.slug}`;
+    });
+    showOutput("MANUAL LIBRARY",
+`${lines.join('\n\n')}
+
+↑↓ select · Enter / READ open · BACK returns here
+Also: READ cybercat-sunflower · READ developers-handbook`);
+  }
+
+  async function loadManualList() {
+    showOutput("MANUAL LIBRARY", "loading...");
+    try {
+      const res = await fetch(`${API_BASE}/api/root/manuals`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      manuals = data.manuals || [];
+      manualOpen = null;
+      manualSections = [];
+      renderManualList();
+    } catch (err) {
+      showOutput("ERROR", `loading manuals: ${err.message}`);
+    }
+  }
+
+  function openManualByRef(raw) {
+    const key = String(raw || '').trim();
+    if (!key) return;
+    const asNum = parseInt(key, 10);
+    if (/^\d+$/.test(key) && asNum >= 1) {
+      openManualAt(asNum - 1);
+      return;
+    }
+    const slug = key.toLowerCase().replace(/\s+/g, '-');
+    const idx = manuals.findIndex((m) => m.slug === slug || m.title.toLowerCase() === key.toLowerCase());
+    if (idx >= 0) {
+      openManualAt(idx);
+      return;
+    }
+    // Allow direct slug fetch even if list not loaded
+    fetchManualSlug(slug);
+  }
+
+  function openManualAt(idx) {
+    if (!manuals.length) {
+      loadManualList().then(() => {
+        if (manuals[idx]) fetchManualSlug(manuals[idx].slug);
+      });
+      return;
+    }
+    const m = manuals[idx];
+    if (!m) {
+      showOutput("ERROR", `no manual at index ${idx + 1}`);
+      return;
+    }
+    manualSelected = idx;
+    fetchManualSlug(m.slug);
+  }
+
+  async function fetchManualSlug(slug) {
+    showOutput("MANUAL", `loading ${slug}...`);
+    try {
+      const res = await fetch(`${API_BASE}/api/root/manuals/${encodeURIComponent(slug)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      manualOpen = data.manual;
+      manualMode = 'read';
+      manualSections = parseManualSections(manualOpen.body);
+      const toc = manualSections.length
+        ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
+        : '  (no ## sections)';
+      showOutput(manualOpen.title,
+`${manualOpen.body}
+
+────────
+TOC (SECTION n)
+${toc}
+
+BACK · MANUAL  return to library`);
+      toast(`opened ${manualOpen.slug}`);
+    } catch (err) {
+      showOutput("ERROR", `loading manual: ${err.message}`);
+    }
+  }
+
+  function showManualSection(n) {
+    const sec = manualSections.find((s) => s.n === n);
+    if (!sec || !manualOpen) return;
+    const lines = String(manualOpen.body).split('\n');
+    const chunk = lines.slice(sec.start, sec.end).join('\n');
+    const toc = manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n');
+    showOutput(`${manualOpen.title} :: §${n}`,
+`${chunk}
+
+────────
+TOC (SECTION n)
+${toc}
+
+BACK · MANUAL  return to library`);
+  }
+
   function handleCommand(cmdRaw) {
     const cmd = cmdRaw.trim().toUpperCase();
     if (!cmd) return;
@@ -996,7 +1130,10 @@ GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
 MAP               show root provenance
 LOGS              show transparency logs
-MANUAL            show manual library
+MANUAL            browse manual library
+READ <slug|n>     open a manual (or Enter on selection)
+BACK              return to manual list
+SECTION <n>       jump to ## heading while reading
 SYSTEM            show system info
 AUTH              account status + gate help
 SIGNUP email pass [name]
@@ -1015,8 +1152,8 @@ Roles
   SUDO   temporary ADMIN elevation
 
 Keyboard
-  ↑↓              move registry / quick nav
-  Enter           open selected archive
+  ↑↓              move registry / manual list / quick nav
+  Enter           open selected archive or manual
   /               focus command line
   F1–F6           quick nav shortcuts`);
       return;
@@ -1054,15 +1191,33 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       }).catch(err => showOutput("ERROR", `loading logs: ${err.message}`));
       return;
     }
-    if (cmd === "MANUAL") {
+    if (cmd === "MANUAL" || cmd === "BACK") {
       setActiveNav("MANUAL");
-      showOutput("MANUAL LIBRARY", "loading...");
-      fetch(`${API_BASE}/api/root/manuals`).then(r => r.json()).then(data => {
-        const manuals = data.manuals || [];
-        showOutput("MANUAL LIBRARY", manuals.length
-          ? manuals.map(m => `${m.title} (${m.status})`).join('\n')
-          : "no manuals ingested yet\n\nLocal RTFM lives at /RTFM/ in the repo.");
-      }).catch(err => showOutput("ERROR", `loading manuals: ${err.message}`));
+      loadManualList();
+      return;
+    }
+    if (cmd === "READ" || cmd.startsWith("READ ")) {
+      setActiveNav("MANUAL");
+      const raw = cmdRaw.trim().slice(4).trim();
+      if (!raw) {
+        if (manuals.length) openManualAt(manualSelected);
+        else showOutput("ERROR", "usage: READ <slug|number>\nOr run MANUAL first.");
+        return;
+      }
+      openManualByRef(raw);
+      return;
+    }
+    if (cmd === "SECTION" || cmd.startsWith("SECTION ")) {
+      const n = parseInt(cmdRaw.trim().slice(7).trim(), 10);
+      if (!manualOpen || manualMode !== 'read') {
+        showOutput("ERROR", "open a manual first (READ), then SECTION <n>");
+        return;
+      }
+      if (!n || n < 1 || n > manualSections.length) {
+        showOutput("ERROR", `SECTION 1–${manualSections.length || 0}`);
+        return;
+      }
+      showManualSection(n);
       return;
     }
     if (cmd === "SYSTEM") {
@@ -1274,10 +1429,36 @@ id:     ${s.user?.id || '—'}`);
   document.addEventListener('keydown', (e) => {
     if (e.target === commandInput || e.target.closest('#auth-form')) return;
     const map = { F1:'HELP', F2:'INDEX', F3:'MANUAL', F4:'MAP', F5:'LOGS', F6:'SYSTEM' };
-    if (map[e.key]) { e.preventDefault(); handleCommand(map[e.key]); }
+    if (map[e.key]) { e.preventDefault(); handleCommand(map[e.key]); return; }
     if (e.key === '/' && document.activeElement !== commandInput) {
       e.preventDefault();
       commandInput.focus();
+      return;
+    }
+    // Manual library browse when MANUAL nav is active and list is showing
+    const manualNavOn = document.querySelector('#nav-list li[data-cmd="MANUAL"]')?.classList.contains('active');
+    if (manualNavOn && manualMode === 'list' && manuals.length) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        manualSelected = Math.min(manuals.length - 1, manualSelected + 1);
+        renderManualList();
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        manualSelected = Math.max(0, manualSelected - 1);
+        renderManualList();
+        return;
+      }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        openManualAt(manualSelected);
+        return;
+      }
+    }
+    if (manualNavOn && manualMode === 'read' && (e.key === 'Escape' || e.key === 'Backspace')) {
+      e.preventDefault();
+      renderManualList();
     }
   });
 
