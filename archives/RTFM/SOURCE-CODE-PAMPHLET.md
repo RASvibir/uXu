@@ -15,8 +15,8 @@ security-sensitive operator details.
 ```text
 uXu/
   README.md           commons charter (public)
-  LICENSE             MIT + media clarification
-  CONTRIBUTING.md     contributor rules
+  LICENSE             MIT (media clarification in README)
+  CONTRIBUTING.md     contributor rules (incl. license / provenance)
   archives/           what people open in a browser (GitHub Pages root)
     index.html        0?0 root CRT console + uXu invite PWA hooks
     manifest.webmanifest / sw.js / icons/   public uXu install (landing only)
@@ -105,3 +105,8 @@ This pamphlet will not list environment secret names as how-tos, connection
 strings, bootstrap claims, elevation procedures, allowlist bypass notes, or
 token header recipes. If you need operator access, use private channels —
 not this library.
+
+## License
+
+MIT for software and original documentation in this repository (`LICENSE`).
+Third-party media and linked assets keep their own licenses. See the root README.

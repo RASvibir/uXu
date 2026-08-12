@@ -110,3 +110,8 @@ On 0?0: **INI**. Pamphlet: `archives/RTFM/INI-PROVENANCE.md`.
 4. Register via PR or email rasip@chloreform.org — next `Title.uXu.NNNN` is assigned.
 
 See RTFM **Archive Creation Manual** for the complexity tree and placemarker rules.
+
+## License
+
+Templates are part of the uXu repository and ship under the same **MIT** license
+(`LICENSE`). Media you attach to a new archive remains under its own terms.

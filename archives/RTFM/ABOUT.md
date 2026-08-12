@@ -65,3 +65,13 @@ Design bets:
 *built to archive. tuned to overachieve.*
 
 Human contact: **rasip@chloreform.org** — Victor Birkle.
+
+## License & rights
+
+- Repository software and original docs: **MIT** — see root `LICENSE`.
+- Third-party media linked by archives: not owned by uXu; keep source terms.
+- Registration ≠ ownership. Optional **iNi** provenance is self-attestation.
+
+**Live:** https://rasvibir.github.io/uXu/  
+**Repo:** https://github.com/RASvibir/uXu
+

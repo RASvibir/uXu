@@ -4,6 +4,8 @@ Runtime app for the root archive interface inside the uXu repository.
 This directory is the app/runtime root for Neon, environment files,
 and Cloudflare Worker deployment. Archive content remains in `/archives`.
 
+**License:** MIT (same as the uXu repository root `LICENSE`).
+
 **Public visitors** should use the site / User Guide — not this file.
 This README is for operators deploying the Worker.
 

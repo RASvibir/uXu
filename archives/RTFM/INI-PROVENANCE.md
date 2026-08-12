@@ -119,3 +119,6 @@ cue when `optIn` is true (honesty badge — not enforcement).
 ## Contact
 
 Questions about iNi practice or registration: **rasip@chloreform.org**
+
+uXu software & original docs: **MIT** (`LICENSE`). Provenance fields document
+honesty; they do not rewrite media copyright.

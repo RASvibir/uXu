@@ -31,3 +31,9 @@ ARCHIVE MANUALS   → search uxu.manuals on created archives
 The Source tab lists repo layout, public API reads, pamphlet names, and
 template files. It deliberately omits passwords, connection strings,
 bootstrap secrets, token recipes, and privilege-elevation how-tos.
+
+## License
+
+uXu software and original documentation: **MIT** (Copyright 2026 Victor Birkle).
+Media linked by archives stays under its own licenses / taping policies.
+See the root README “License” section and `LICENSE`.

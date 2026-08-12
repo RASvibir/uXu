@@ -8,6 +8,7 @@
 6. **Commons link** — Prefer a home link to the uXu landing. Choose style `uXu` (public chip) or `0?0` (console back-link). See `templates/snippets/home-link.html`.
 7. **Template forks** — Only fork archives that set `allowTemplateForks` and stay within their `templateForkDepth`.
 8. **No landing PWA on child archives** — The installable **uXu** app is the public invite surface only.
+9. **License** — Code and original docs are MIT ([LICENSE](LICENSE)). Media and third-party works stay under their own terms; do not imply uXu owns them. Prefer clear provenance (optional iNi fields).
 
 `/templates/` and entries like `CyberCat-Sunflower/` are optional references.
 

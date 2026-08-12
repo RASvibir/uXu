@@ -23,8 +23,12 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 Admin contact for humans: rasip@chloreform.org
 
-Templates: `/templates/` (commons-link snippet + fork policy).  
+**License:** MIT for software & original docs (`LICENSE`). Media linked by
+archives stays under its own terms — see root README.
+
+Templates: `/templates/` (commons-link snippet + fork policy + iNi fields).  
 Public invite PWA: **uXu** wordmark only (not branded as 0?0).
+Live: https://rasvibir.github.io/uXu/
 
 ### Code Examples
 - **Audio players** — Interactive HTML/CSS/JS for streaming audio with controls

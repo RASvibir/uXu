@@ -1,19 +1,20 @@
 # CyberCat Sunflower Manual
 
-Tags: cybercat, grateful-dead, player, eq, setlist, visitor-guide, interactive
-Source: CyberCat Sunflower archive
+Tags: cybercat, grateful-dead, player, eq, setlist, visitor-guide, interactive, license
+Source: CyberCat Sunflower archive · 0?0.uXu.0001
 
 ## What This Archive Is
 
-CyberCat Sunflower is a Grateful Dead live catalog deck on uXu.
+CyberCat Sunflower is a Grateful Dead live catalog deck on uXu
+(`CyberCat_Sunflower.uXu.0001` — first non-root room).
 Browse shows, engage a tape, follow the setlist, and shape the wave with a 5-band EQ.
 Date + venue on the deck is enough to research any tape elsewhere.
 
-Home path back to the commons: open 0?0 (the root archive console).
+Home path back to the commons: **← 0?0** / open the uXu landing.
 
 ## First Ride
 
-1. Open the CyberCat deck from 0?0 (OPEN CYBERCAT) or go straight to the archive page.
+1. Open the CyberCat deck from 0?0 (`OPEN CYBERCAT`) or go straight to the archive page.
 2. Use Tapes Index (F1) to browse residencies and day chips.
 3. Filter by date, venue, or city; sort by date, rating, or transfer count.
 4. Press Enter or Engage to load the best available waveform.
@@ -45,25 +46,34 @@ Curator notes, what the archive is for, and how it sits inside uXu.
 Technical notes about the player stack (browser audio, sources, layout).
 
 ### Manual
-This guide. Also available from 0?0 via MANUAL → READ cybercat-sunflower.
+This guide. Also available from 0?0 via MANUAL LIBRARY → READ cybercat-sunflower.
 
-## Audio & Legal Notes
+## Audio, legal & license
 
-Grateful Dead culture includes an explicit taping / sharing tradition.
-This deck streams publicly available transfers (Internet Archive and related catalog APIs).
-Do not add recordings you cannot lawfully share.
-Prefer documenting provenance in notes when you curate new shows.
+**Code / UI / original notes** for this archive follow the uXu repository
+[MIT License](https://github.com/RASvibir/uXu/blob/main/LICENSE)
+(Copyright 2026 Victor Birkle).
 
-For deeper sourcing patterns, see RTFM: SOURCING_LEGAL_AUDIO.md in the repo.
+**Recordings are separate.** Grateful Dead culture includes an explicit
+taping / sharing tradition. This deck streams publicly available transfers
+(Internet Archive and related catalog APIs). uXu and CyberCat do **not**
+own those recordings — follow each item’s terms and only add what you can
+lawfully share.
+
+Prefer documenting provenance in show notes when you curate new nights.
+Optional commons-wide iNi provenance fields live in archive `data.json`
+(`uxu.ini`) if you want structured origin / custody notes.
+
+For deeper sourcing patterns, see RTFM: `SOURCING_LEGAL_AUDIO.md` in the repo.
 
 ## Growing The Catalog
 
 Curators: keep setlists accurate, rank audioSources best-first, and write human notes
 that explain why a night matters. Schema and curator tips live under
-archives/CyberCat-Sunflower/docs/.
+`archives/CyberCat-Sunflower/docs/`.
 
 ## Finding Center
 
-Lost in the catalog? Return to 0?0 — the root of uXu.
-On the root console, MANUAL opens the shared library (this guide, the Developers
-Handbook, and the Source Code Pamphlet).
+Lost in the catalog? Return to **0?0** — the root of uXu.
+On the root console: **ABOUT** / **RTFM**, **iNi Provenance**, and
+**USER OPTIONS → MANUAL LIBRARY** for the shared pamphlet set.

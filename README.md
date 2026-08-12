@@ -3,7 +3,8 @@
 **Shared archive commons.** Independent archives keep their own voice, stack, and curation. uXu registers, connects, and helps people find them.
 
 **Live:** [https://rasvibir.github.io/uXu/](https://rasvibir.github.io/uXu/)  
-**Invite app:** Install **uXu** from that page (PWA wordmark icon). The public invite does **not** brand itself as `0?0`.
+**Repo:** [https://github.com/RASvibir/uXu](https://github.com/RASvibir/uXu)  
+**Invite app:** Install **uXu** from the live page (PWA wordmark icon). The public invite does **not** brand itself as `0?0`.
 
 Admin (humans): **rasip@chloreform.org**
 
@@ -12,8 +13,8 @@ Admin (humans): **rasip@chloreform.org**
 | Surface | Role |
 |---------|------|
 | **uXu** (landing / PWA) | Public door into the commons |
-| **0?0** (`0?0.uXu.0000`) | Root console inside the commons — registry, manuals, map, logs |
-| **iNi** | Opt-in provenance protocol + inner-circle ethic (see RTFM / `INI`) |
+| **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
+| **iNi** | Opt-in provenance protocol (Quick Nav **iNi Provenance** / `INI`) |
 | **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
 | **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
@@ -24,7 +25,7 @@ Admin (humans): **rasip@chloreform.org**
 uXu
 └── 0?0.uXu.0000
     ├── Registry (forever placemarkers)
-    ├── RTFM / MANUAL library
+    ├── RTFM / MANUAL library / iNi
     ├── Transparency
     └── Relationships (*:*)
 ```
@@ -60,18 +61,31 @@ Archive_A.uXu*:*Archive_B.uXu
 
 ## Documentation
 
-On the live console: **MANUAL** (lands on the User Guide), or **CREATE ARCHIVE**.  
-In the repo: `archives/RTFM/`.
+On the live console:
+
+- **ABOUT** / **RTFM** — 0?0 story and operator manual  
+- **iNi Provenance** — opt-in authenticity protocol  
+- **USER OPTIONS** — Manual Library, Install, Map, Logs, System, …  
+- **CREATE ARCHIVE** — next serial + creation guide  
+
+In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, …).
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
 
-## License & content
+## License
 
-- **Software & docs in this repository** are under the [MIT License](LICENSE) (Copyright 2026 Victor Birkle).
-- **Archive media and third-party works** are not owned by uXu. Follow each source’s license / taping policy (e.g. Internet Archive items). Contributors are responsible for what they publish.
-- **Independent archives** remain their creators’ — registration in uXu does not transfer ownership.
+**Software, templates, and original documentation** in this repository are licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Victor Birkle.
+
+**Media clarification (not a second license):**
+
+- The MIT grant covers code, templates, and docs in this repo.
+- It does **not** claim ownership of third-party media, recordings, or other assets linked or embedded by independent archives.
+- Those remain under their own licenses, permissions, and taping policies (e.g. Internet Archive items, Grateful Dead taping tradition).
+- **uXu is a commons layer for registration and discovery** — not a rights holder for contributor content.
+- Independent archives remain their creators’. Registration does not transfer ownership.
+- Optional **iNi** provenance fields document origin/custody; they are self-attestation, not a legal title deed.
 
 ## Data & privacy
 

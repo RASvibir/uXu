@@ -235,6 +235,8 @@ Relationships between archives can be declared with `*:*` (a link, not control).
 
 - Share only what you may share (permission, license, or clear taping policy).
 - Prefer public libraries like Internet Archive when they already host the file.
+- uXu repo code/docs are **MIT**; media you link stays under **its** terms — registration does not transfer ownership.
+- Optional `uxu.ini` / iNi provenance documents origin honestly; it is not a title deed.
 - If unsure, ask the admin before publishing.
 
 ## After You Build

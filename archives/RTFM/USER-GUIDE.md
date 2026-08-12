@@ -1,6 +1,6 @@
 # User Guide
 
-Tags: user-guide, beginners, 0q0, visitors, non-tech, landing
+Tags: user-guide, beginners, 0q0, visitors, non-tech, landing, license
 Source: 0?0 root archive · uXu commons
 
 ## Welcome
@@ -13,27 +13,37 @@ open, and understand what is here.
 
 This guide is for everyone. No coding required.
 
+**Live:** https://rasvibir.github.io/uXu/  
+**Repo:** https://github.com/RASvibir/uXu
+
 ## What You Can Do Here
 
 1. **Browse the registry** — the table lists archives that belong to this commons.
 2. **Open an archive** — select a row and press Enter, or click Open Archive.
-3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** for pamphlets.
-4. **Try CyberCat Sunflower** — a Grateful Dead listening deck. Type OPEN CYBERCAT.
-5. **Create your own archive** — use CREATE ARCHIVE (Quick Nav) when you are ready.
-   Start simple; grow later.
+3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
+4. **Try CyberCat Sunflower** — a Grateful Dead listening deck. Type `OPEN CYBERCAT`.
+5. **Create your own archive** — use CREATE ARCHIVE when you are ready. Start simple; grow later.
+6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer.
 
 ## Finding Your Way (0?0)
 
-- **↑ ↓** move through the registry or a manual list
-- **Enter** open the selected archive or manual
+- **↑ ↓** move through the registry or Quick Nav (lands on ARCHIVE INDEX by default)
+- **← →** move between zones (registry · actions · Quick Nav · account · command)
+- **Enter** open the selected archive or run the highlighted Quick Nav item
 - **/** jump to the command line
 - **F1** Help · **F2** Index · **F3** Manuals · **F4** Map · **F5** Logs · **F6** System
+
+Quick Nav (always visible): **ABOUT · CREATE · FAQ · ARCHIVE INDEX · USER OPTIONS · iNi Provenance · RTFM**  
+USER OPTIONS folds Manual Library, Install, Map, Logs, System, Setup Master, Exit.
 
 Useful commands:
 
 ```text
 HELP
 INDEX
+ABOUT
+FAQ
+INI
 RTFM
 MANUAL
 ARCHIVE MANUALS
@@ -47,7 +57,8 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 
 | Guide | Who it is for |
 |-------|----------------|
-| **RTFM** (0?0 console tabs) | Navigation, commands, depth, code examples, safe source list |
+| **ABOUT / RTFM** | Story + 0?0 tabs (ease → source) |
+| **iNi Provenance** | Opt-in authenticity protocol |
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |
 | CyberCat Sunflower Manual | Listening / using that deck |
@@ -55,10 +66,11 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | Source Code Pamphlet | Curious readers who want a map of the repo |
 
 On 0?0: **RTFM** opens the interactive 0?0 manual. **MANUAL LIBRARY** opens
-the pamphlet index. While docs are open, **INDEX ARCHIVE MANUALS** finds
-creator manuals declared in `data.json` → `uxu.manuals`.
+the pamphlet index. **INDEX ARCHIVE MANUALS** finds creator manuals declared in
+`data.json` → `uxu.manuals`.
 
-The registry lists **ID** (`uXu.NNNN`) and **NAME** (hover the name for the full title when clipped).
+The registry lists **ID** (`uXu.NNNN`) and **NAME**. Tap **i** for keyboard
+detail modals; hover still works for pathway / full name.
 Ids are forever. If access ends you still see a placemarker such as
 **(deleted by user)**, **(removed by admin)**, **(locked archive)**, or
 **(under investigation)** — so the count of created archives stays honest.
@@ -67,7 +79,7 @@ Ids are forever. If access ends you still see a placemarker such as
 
 Share **uXu** — not 0?0 — when inviting people from outside.
 
-On the root console: **Install uXu** (or type `INSTALL`).
+On the root console: open **USER OPTIONS → INSTALL uXu** (or type `INSTALL`).
 Or use the browser’s Add to Home Screen / Install App.
 
 - Icon: **uXu** wordmark  
@@ -97,6 +109,13 @@ You can browse as a guest.
 Signing up is optional and lets you keep an account with the commons.
 Day-to-day visitors do not need admin powers.
 
+## License & rights (plain language)
+
+- **Code and original docs** in the uXu repo are **MIT** (Copyright 2026 Victor Birkle). See the repo `LICENSE`.
+- **Audio, images, and other media** linked by archives are **not** owned by uXu. Follow each source’s license, permission, or taping policy.
+- **Registering an archive** does not transfer ownership of your collection.
+- Optional **iNi** fields are honesty / provenance notes — not a legal title certificate.
+
 ## Reach An Admin
 
 Need help, want an archive registered, found a problem, or have a question?
@@ -121,7 +140,8 @@ You will get a human reply. There is no automated ticket maze.
 
 ## Next Steps
 
-- Curious listener → OPEN CYBERCAT, then read its Manual (F4 on that deck).
+- Curious listener → `OPEN CYBERCAT`, then read its Manual (F4 on that deck).
 - Ready to contribute → CREATE ARCHIVE or READ archive-creation.
+- Want provenance practice → **iNi Provenance** / `INI`.
 - Builder / coder → READ developers-handbook.
 - Want the big picture of files → READ source-code-pamphlet.

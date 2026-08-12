@@ -61,7 +61,8 @@ See Archive Creation Manual for the full tier tree. Quick map for builders:
 ## RTFM Contributions
 
 Add tagged markdown under `archives/RTFM/`, credit the source archive, keep
-licenses clear. Optional inspiration — never a rule book.
+licenses clear. Repo software/docs are MIT; media stays with its own terms.
+Optional inspiration — never a rule book.
 
 ## Out Of Scope Here
 
