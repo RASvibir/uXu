@@ -178,13 +178,14 @@
     grid-template-columns:1.1fr 1.7fr 1fr;
     gap:1rem;
     min-width:0;
+    min-height:0;
     flex:1;
   }
   @media (max-width:900px){
     .grid{grid-template-columns:1fr;}
     .screen{min-height:auto;}
   }
-  .col{display:flex; flex-direction:column; gap:.75rem; min-width:0;}
+  .col{display:flex; flex-direction:column; gap:.75rem; min-width:0; min-height:0;}
 
   .logo{
     font-family:var(--display);
@@ -524,7 +525,13 @@
   }
   body.detail-modals-on .detail-hint{ display:none; }
 
-  .output-panel{flex:1; display:flex; flex-direction:column; min-height:10rem;}
+  .output-panel{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    max-height:100%;
+  }
   #active-summary{
     margin:0;
     font-size:.74rem;
@@ -532,9 +539,15 @@
     white-space:pre-wrap;
     word-break:break-word;
     flex:1;
+    min-height:0;
     overflow-y:auto;
+    overflow-anchor:none;
+    scroll-behavior:auto;
+    overscroll-behavior:contain;
     opacity:1;
     transition:opacity .2s var(--ease), transform .25s var(--ease);
+    scrollbar-width:thin;
+    scrollbar-color:var(--green-dim) transparent;
   }
   #active-summary.is-switching{
     opacity:0;
@@ -898,7 +911,7 @@
     display:none;
     flex-direction:column;
     flex:1;
-    min-height:10rem;
+    min-height:0;
     overflow:hidden;
   }
   .rtfm-panel.is-on{display:flex;}
@@ -910,6 +923,7 @@
     margin:0 0 .55rem;
     padding:0 0 .45rem;
     border-bottom:1px solid var(--green-line);
+    flex-shrink:0;
   }
   .rtfm-tabs button{
     font:inherit;
@@ -942,10 +956,34 @@
   }
   .rtfm-body{
     flex:1;
+    min-height:0;
     overflow-y:auto;
+    overflow-anchor:none;
+    scroll-behavior:auto;
+    overscroll-behavior:contain;
     font-size:.74rem;
     line-height:1.55;
     color:var(--green);
+    padding-right:.25rem;
+    padding-bottom:1.25rem;
+    scrollbar-width:thin;
+    scrollbar-color:var(--green-dim) transparent;
+  }
+  .rtfm-body::-webkit-scrollbar,
+  .guide-scroll::-webkit-scrollbar,
+  #active-summary::-webkit-scrollbar{
+    width:8px;
+  }
+  .rtfm-body::-webkit-scrollbar-thumb,
+  .guide-scroll::-webkit-scrollbar-thumb,
+  #active-summary::-webkit-scrollbar-thumb{
+    background:var(--green-dim);
+    border-radius:4px;
+  }
+  .rtfm-body::-webkit-scrollbar-track,
+  .guide-scroll::-webkit-scrollbar-track,
+  #active-summary::-webkit-scrollbar-track{
+    background:transparent;
   }
   .rtfm-body h3{
     margin:.15rem 0 .45rem;
@@ -1030,17 +1068,25 @@
     display:none;
     flex-direction:column;
     flex:1;
-    min-height:10rem;
+    min-height:0;
     overflow:hidden;
   }
   .guide-panel.is-on{display:flex;}
   .guide-panel[hidden]{display:none !important;}
   .guide-scroll{
     flex:1;
+    min-height:0;
     overflow-y:auto;
+    overflow-anchor:none;
+    scroll-behavior:auto;
+    overscroll-behavior:contain;
     font-size:.74rem;
     line-height:1.55;
     color:var(--green);
+    padding-right:.25rem;
+    padding-bottom:1.25rem;
+    scrollbar-width:thin;
+    scrollbar-color:var(--green-dim) transparent;
   }
   .guide-scroll h3{
     margin:.1rem 0 .4rem;
@@ -1555,6 +1601,21 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
     if (activeSummary) activeSummary.hidden = false;
   }
 
+  function resetDocScroll() {
+    const nodes = [
+      document.getElementById('rtfm-body'),
+      document.getElementById('faq-scroll'),
+      document.getElementById('ini-scroll'),
+      document.getElementById('create-scroll'),
+      document.getElementById('active-summary'),
+    ];
+    nodes.forEach((el) => {
+      if (!el) return;
+      el.scrollTop = 0;
+      el.scrollLeft = 0;
+    });
+  }
+
   function showRtfmUi() {
     hideCreateUi();
     hideFaqUi();
@@ -1565,6 +1626,7 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    requestAnimationFrame(() => resetDocScroll());
   }
 
   function showCreateUi() {
@@ -1577,6 +1639,7 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    requestAnimationFrame(() => resetDocScroll());
   }
 
   function showFaqUi() {
@@ -1589,6 +1652,7 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    requestAnimationFrame(() => resetDocScroll());
   }
 
   function showIniUi() {
@@ -1601,6 +1665,7 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    requestAnimationFrame(() => resetDocScroll());
   }
 
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
@@ -1828,6 +1893,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       activeTitle.textContent = title;
       activeSummary.textContent = text;
       activeSummary.classList.remove('is-switching');
+      activeSummary.scrollTop = 0;
     };
     if (reduce) { apply(); return; }
     activeSummary.classList.add('is-switching');
@@ -3363,6 +3429,7 @@ README.md`;
       pane.hidden = !on;
     });
     if (rtfmTab === 'source') fillRtfmSourceFiles();
+    requestAnimationFrame(() => resetDocScroll());
   }
 
   function setRtfmCodeTab(id) {
@@ -3373,6 +3440,7 @@ README.md`;
     document.querySelectorAll('[data-rtfm-code-pane]').forEach((pane) => {
       pane.hidden = pane.getAttribute('data-rtfm-code-pane') !== rtfmCodeTab;
     });
+    requestAnimationFrame(() => resetDocScroll());
   }
 
   function openRtfm(opts = {}) {
@@ -3387,6 +3455,10 @@ README.md`;
     setManualToolbar('rtfm');
     activeTitle.textContent = opts.title || '0?0 · RTFM';
     toast(opts.toast || 'RTFM — 0?0 manual');
+    requestAnimationFrame(() => {
+      resetDocScroll();
+      requestAnimationFrame(resetDocScroll);
+    });
   }
 
   function openAbout() {
