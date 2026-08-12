@@ -1782,7 +1782,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v8';
+    const SW_BUST = 'uxu_sw_bust_v9';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -4711,7 +4711,8 @@ Then attest here so SETUP MASTER can check it off.`);
 
   // —— Keyboard-first console (mouse optional) ——
   const FOCUS_ZONES = ['registry', 'actions', 'nav', 'auth', 'command'];
-  let focusZone = 'registry';
+  let focusZone = 'nav';
+  let bootNavReady = false;
 
   function isTypingTarget(el) {
     if (!el || el === document.body) return false;
@@ -5119,18 +5120,33 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     return false;
   }
 
-  // Boot: arrows control Quick Nav from the start (ARCHIVE INDEX land)
+  // Boot: arrows control Quick Nav from the start (ARCHIVE INDEX land).
+  // Always take focus from Account Gate autofill/password managers.
+  function bootFocusQuickNav() {
+    setUserOptionsOpen(false);
+    const active = document.activeElement;
+    if (active === commandInput) return;
+    if (active && active.closest && active.closest('#auth-form')) {
+      try { active.blur(); } catch (_) { /* ignore */ }
+    }
+    focusNavItem(0);
+    bootNavReady = true;
+  }
+
   window.addEventListener('load', () => {
-    setTimeout(() => {
-      setUserOptionsOpen(false);
-      if (!isTypingTarget(document.activeElement)) focusNavItem(0);
-    }, 400);
+    bootFocusQuickNav();
+    setTimeout(bootFocusQuickNav, 80);
+    setTimeout(bootFocusQuickNav, 450);
   });
 
   paintAuth();
   refreshAuth();
   setUserOptionsOpen(false);
-  loadRegistry();
+  loadRegistry().finally(() => {
+    if (!bootNavReady || document.activeElement?.closest?.('#auth-form')) {
+      bootFocusQuickNav();
+    }
+  });
 </script>
 </body>
 </html>
