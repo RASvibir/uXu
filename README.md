@@ -1,79 +1,82 @@
 # uXu
 
-## Shared Archive Commons
+**Shared archive commons.** Independent archives keep their own voice, stack, and curation. uXu registers, connects, and helps people find them.
 
-uXu is a shared archive commons layer. It does not own archive content.  
-It provides registration, identification, preservation, discovery, and declared relationships between independent archives.
+**Live:** [https://rasvibir.github.io/uXu/](https://rasvibir.github.io/uXu/)  
+**Invite app:** Install **uXu** from that page (PWA wordmark icon). The public invite does **not** brand itself as `0?0`.
 
-## Canonical Hierarchy
+Admin (humans): **rasip@chloreform.org**
+
+## What you will find
+
+| Surface | Role |
+|---------|------|
+| **uXu** (landing / PWA) | Public door into the commons |
+| **0?0** (`0?0.uXu.0000`) | Root console inside the commons — registry, manuals, map, logs |
+| **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
+| **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
+| **templates/** | Optional starters (commons link + template-fork fields) |
+
+## Canonical hierarchy
 
 ```text
 uXu
 └── 0?0.uXu.0000
-    ├── Registry
-    ├── RTFM Library
+    ├── Registry (forever placemarkers)
+    ├── RTFM / MANUAL library
     ├── Transparency
-    └── Relationships
+    └── Relationships (*:*)
 ```
 
-## Root Archive
-
-`0?0.uXu.0000` is the canonical navigation point, archive index, repository guide, operational reference, transparency record, and documentation center.
-
-## Finding the Center
-
-No matter how deep into the chasms you travel, there is always a path back to the spoke.
-
-Searching for `0` or `?` — either one alone — will always resolve toward the center of uXu.  
-Both are shorthand pings to the `0?0` control interface.
-
-> If you can’t decide which home is better... why not both?!
-
-## Archive Identity
-
-Archive format:
+## Archive identity
 
 ```text
-Title.uXu.Registry.Archive-Serial
+Title.uXu.NNNN
 ```
 
-Archive numbers are historical registration identifiers. They do not represent ownership, authority, importance, or ranking.
+- `NNNN` is the next free serial when an archive is created (`0000` root, `0001` first child, …).
+- Numbers are historical — not rank or ownership.
+- **Ids are forever.** Delete/lock/investigate change the **marker**, not the row. Examples: `(deleted by user)`, `(removed by admin)`, `(locked archive)`, `(under investigation)`, `(live archive)`, `(audience only)`.
 
-## Relationship Marker
+## Commons link on archives
 
-`*:*` is the uXu declared relationship marker.
+Creators choose how the link home looks (same destination):
 
-It records a connection between archives, sources, mirrors, references, migrations, or attribution paths.
+| Style | Appearance | Feel |
+|-------|------------|------|
+| `uXu` | **uXu** chip | Public / site-ad style |
+| `0?0` | **← 0?0** | Console back-link |
 
-Example:
+See `templates/` and the Archive Creation Manual.
+
+## Relationships
+
+`*:*` declares a connection between archives. It is not ownership, endorsement, or control.
 
 ```text
 Archive_A.uXu*:*Archive_B.uXu
 ```
 
-means Archive A declares a relationship with Archive B.
-
-`*:*` does not imply ownership, endorsement, authorship, or control.
-
 ## Documentation
 
-RTFM is a library inside `0?0`.
+On the live console: **MANUAL** (lands on the User Guide), or **CREATE ARCHIVE**.  
+In the repo: `archives/RTFM/`.
 
-RTFM provides manuals, technical references, contribution guides, provenance rules, indexing methods, and development notes.
+## Contributing
 
-## Independence Principle
+See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
 
-Each archive remains an independent node with its own creator, community, technology, and purpose.
+## License & content
 
-uXu preserves connections without replacing archive identity.
+- **Software & docs in this repository** are under the [MIT License](LICENSE) (Copyright 2026 Victor Birkle).
+- **Archive media and third-party works** are not owned by uXu. Follow each source’s license / taping policy (e.g. Internet Archive items). Contributors are responsible for what they publish.
+- **Independent archives** remain their creators’ — registration in uXu does not transfer ownership.
 
-## Data & Privacy
+## Data & privacy
 
-User activity and shared content may be stored as compressed shared data archives, isolated to account authenticity.
-Users may request downloads of their own shared archive data.
-Those requests are authenticated to the requesting account before release.
+Account-authenticated activity may be stored for authenticity. Users may request downloads of their own shared archive data after authentication. Admins do not casually browse private files; illegal or malicious material may be flagged and inspected under documented oversight (see User Guide).
 
-## Initial Registry
+## Finding the center
 
-- `0?0.uXu.0000` — canonical root archive
-- `CyberCat_Sunflower.uXu.0001` — first registered non-root archive
+Searching for `0` or `?` resolves toward the root console.  
+> If you can’t decide which home is better... why not both?!

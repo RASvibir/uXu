@@ -14,19 +14,24 @@ security-sensitive operator details.
 
 ```text
 uXu/
-  README.md           commons charter
-  archives/           what people open in a browser
-    index.html        0?0 root CRT console
+  README.md           commons charter (public)
+  LICENSE             MIT + media clarification
+  CONTRIBUTING.md     contributor rules
+  archives/           what people open in a browser (GitHub Pages root)
+    index.html        0?0 root CRT console + uXu invite PWA hooks
+    manifest.webmanifest / sw.js / icons/   public uXu install (landing only)
     CyberCat-Sunflower/
     RTFM/             manuals & reusable notes
     seed-13/          additional archive seed
   apps/ini/           runtime Worker (API) + Prisma schema
-  templates/          optional starter HTML / JSON schema
+  templates/          optional starter HTML / JSON + home-link snippet
   docs/runtime/       runtime layout notes
 ```
 
-GitHub Pages publishes the archives/ tree as the public site root.
-The Cloudflare Worker under apps/ini answers JSON API routes used by the console.
+GitHub Pages publishes the `archives/` tree as the public site root.
+The Cloudflare Worker under `apps/ini` answers JSON API routes used by the console.
+The installable **uXu** PWA is a public invite into that landing — it does not
+present as 0?0; 0?0 is the console identity once you are inside.
 
 ## 0?0 Console (archives/index.html)
 

@@ -25,11 +25,13 @@ Each show includes setlist, venue info, attendance, and a note about its histori
 
 ## How to Use
 
-1. Open `index.html` in a browser
-2. Click a show from the "TAPES_INDEX" tab on the right
-3. The audio player loads and the setlist displays
-4. Use the 5-band EQ to adjust bass, mids, treble
-5. Switch tabs to read the archive description or system specs
+1. Open from uXu / 0?0 (**OPEN CYBERCAT**) or open `index.html` directly
+2. Use **← 0?0 ROOT** to return to the commons landing
+3. Browse **Tapes Index** (F1); Engage a night to load audio
+4. Use the setlist and 5-band EQ; **Other Transfers** for alternates
+5. **Manual** (F4) for the visitor guide
+
+Public invite to the commons is the **uXu** app / site — this archive keeps its own CyberCat deck UI.
 
 ## Technical Details
 
@@ -81,7 +83,8 @@ Want to add more shows? Fork the repo, add shows to `data.json`, and submit a PR
 
 ## License
 
-MIT — Do whatever you want with this code.
+MIT for this archive’s code and original documentation — see the repository [LICENSE](../../LICENSE).  
+Audio streams from Internet Archive / related public sources under their own terms and the Grateful Dead taping tradition. uXu does not own those recordings.
 
 ---
 

@@ -1,16 +1,15 @@
-# ini runtime
+# ini runtime (operators)
 
 Runtime app for the root archive interface inside the uXu repository.
 This directory is the app/runtime root for Neon, environment files,
 and Cloudflare Worker deployment. Archive content remains in `/archives`.
 
+**Public visitors** should use the site / User Guide — not this file.
+This README is for operators deploying the Worker.
+
 ## Auth (Neon Auth + Worker)
 
-Neon Auth base URL (public):
-
-```text
-https://ep-crimson-firefly-ad77brka.neonauth.c-2.us-east-1.aws.neon.tech/uXu/auth
-```
+Neon Auth base URL is configured as a non-secret Worker var (`NEON_AUTH_BASE_URL`).
 
 Roles in `0?0`:
 
@@ -21,19 +20,18 @@ Roles in `0?0`:
 | `ADMIN` | Master operator (`neon_auth.user.role = admin`) |
 | `SUDO` | Temporary elevation flag for an ADMIN session |
 
-### Create an account
-
-In `0?0`:
+### Create an account (console)
 
 ```text
 SIGNUP you@email.com yourpassword YourName
 ```
 
-Or use the **ACCOUNT GATE** form.
+Or use the ACCOUNT GATE form on 0?0.
 
-### Claim master administrator
+### Claim master administrator (one-time / private)
 
-1. Deploy Worker secrets (once):
+Only needed for first bootstrap. Prefer setting admin in the Neon Auth console
+when possible. Keep the bootstrap secret in Wrangler secrets — never commit it.
 
 ```bash
 cd apps/ini
@@ -42,14 +40,15 @@ npx wrangler secret put ADMIN_BOOTSTRAP_SECRET --env production
 npx wrangler secret put MASTER_ADMIN_EMAIL --env production
 ```
 
-2. Sign in on `0?0`, then:
+Then, privately (not in public docs you hand strangers):
 
 ```text
+SIGNIN …
 CLAIM MASTER <bootstrap-secret>
 SUDO
 ```
 
-You can also mark a user admin in Neon Console → Auth → Users → Make admin, then `SUDO`.
+After claim succeeds, rotate or clear the bootstrap secret if you no longer need it.
 
 ### Worker auth routes
 

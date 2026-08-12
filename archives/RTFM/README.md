@@ -7,16 +7,16 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 ## What's in RTFM?
 
 ### Interactive manuals (also in 0?0 MANUAL)
-- **User Guide** — non-tech landing for 0?0 (how to browse, install uXu, reach admin)
-- **Archive Creation Manual** — simple start, home door, template forks, complexity tree
+- **User Guide** — browse, install public **uXu** app, commons links, reach admin
+- **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
 - **CyberCat Sunflower Manual** — visitor / curator deck guide
 - **Developers Handbook** — builder / coder patterns
 - **Source Code Pamphlet** — repo map without secrets or operator internals
 
 Admin contact for humans: rasip@chloreform.org
 
-Templates live in `/templates/` (commons-link snippet + fork policy fields).
-Public invite PWA is **uXu** only (wordmark icon) — it does not present as 0?0.
+Templates: `/templates/` (commons-link snippet + fork policy).  
+Public invite PWA: **uXu** wordmark only (not branded as 0?0).
 
 ### Code Examples
 - **Audio players** — Interactive HTML/CSS/JS for streaming audio with controls
