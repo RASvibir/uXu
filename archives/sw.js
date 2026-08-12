@@ -1,8 +1,6 @@
-/* uXu landing PWA — network-first shell so Quick Nav / flair updates show up. */
-const CACHE = 'uxu-landing-v3';
-const LANDING = [
-  './',
-  './index.html',
+/* uXu landing PWA — icons/manifest only. HTML always from network. */
+const CACHE = 'uxu-landing-v4';
+const ASSETS = [
   './manifest.webmanifest',
   './icons/uxu-192.png',
   './icons/uxu-512.png',
@@ -11,7 +9,7 @@ const LANDING = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(LANDING)).then(() => self.skipWaiting())
+    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
   );
 });
 
@@ -23,14 +21,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-function isLandingRequest(url) {
-  const path = url.pathname.replace(/\/+$/, '') || '/';
-  const leaf = path.split('/').filter(Boolean).pop() || '';
-  if (leaf === 'uXu' || leaf === 'index.html' || leaf === '') {
-    if (/\/(CyberCat-Sunflower|RTFM|seed-13|icons)\b/i.test(url.pathname)) return false;
-    return true;
-  }
-  return false;
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+function isLandingNavigate(url) {
+  if (/\/(CyberCat-Sunflower|RTFM|seed-13|icons)\b/i.test(url.pathname)) return false;
+  const leaf = url.pathname.replace(/\/+$/, '').split('/').filter(Boolean).pop() || '';
+  return leaf === 'uXu' || leaf === 'index.html' || leaf === '';
 }
 
 self.addEventListener('fetch', (event) => {
@@ -40,29 +38,24 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (/\/(CyberCat-Sunflower|RTFM|seed-13)\//i.test(url.pathname)) return;
 
-  // Navigate: network first, fall back to cache (was cache-first — hid nav updates)
-  if (req.mode === 'navigate' && isLandingRequest(url)) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('./index.html', copy));
-          return res;
-        })
-        .catch(() => caches.match('./index.html'))
-    );
+  // Never cache the console HTML — Quick Nav / docs must stay fresh
+  if (req.mode === 'navigate' && isLandingNavigate(url)) {
+    event.respondWith(fetch(req));
     return;
   }
 
-  if (LANDING.some((p) => url.pathname.endsWith(p.replace('./', '/')))) {
+  if (url.pathname.endsWith('/index.html') || url.pathname.endsWith('/uXu/') || /\/uXu$/.test(url.pathname.replace(/\/+$/, ''))) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  if (ASSETS.some((p) => url.pathname.endsWith(p.replace('./', '/')))) {
     event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-          return res;
-        })
-        .catch(() => caches.match(req))
+      caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy));
+        return res;
+      }))
     );
   }
 });

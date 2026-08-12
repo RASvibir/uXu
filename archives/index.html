@@ -1604,9 +1604,49 @@ Keyboard: ? map · / command · ↑↓ registry · ←→ zone.</pre>
   }
 
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
-  // Nested archives like CyberCat keep their own pages and are unchanged.
+  // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+    const SW_BUST = 'uxu_sw_bust_v4';
+    (async () => {
+      try {
+        const needsBust = localStorage.getItem(SW_BUST) !== '1';
+        if (needsBust && 'caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter((k) => k.startsWith('uxu-landing-')).map((k) => caches.delete(k)));
+        }
+        if (needsBust) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          if (regs.length) {
+            await Promise.all(regs.map((r) => r.unregister()));
+            localStorage.setItem(SW_BUST, '1');
+            location.reload();
+            return;
+          }
+          localStorage.setItem(SW_BUST, '1');
+        }
+      } catch (_) { /* ignore */ }
+
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).then((reg) => {
+        reg.update().catch(() => {});
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        reg.addEventListener('updatefound', () => {
+          const nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', () => {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+              nw.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+      }).catch(() => {});
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        location.reload();
+      });
+    })();
   }
   let deferredInstall = null;
   window.addEventListener('beforeinstallprompt', (e) => {
