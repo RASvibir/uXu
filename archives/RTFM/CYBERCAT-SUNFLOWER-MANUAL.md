@@ -61,8 +61,9 @@ own those recordings — follow each item’s terms and only add what you can
 lawfully share.
 
 Prefer documenting provenance in show notes when you curate new nights.
-Optional commons-wide iNi provenance fields live in archive `data.json`
-(`uxu.ini`) if you want structured origin / custody notes.
+This archive **opts into iNi**: structured origin / custody fields live in
+`data.json` (`uxu.ini.optIn: true`). Community paper trail:
+https://github.com/RASvibir/iNi/blob/main/content/articles/2026-08-12-cybercat-sunflower-provenance.md
 
 For deeper sourcing patterns, see RTFM: `SOURCING_LEGAL_AUDIO.md` in the repo.
 
