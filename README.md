@@ -64,7 +64,7 @@ Archive_A.uXu*:*Archive_B.uXu
 On the live console:
 
 - **ABOUT** / **RTFM** — 0?0 story and operator manual  
-- **iNi Provenance** — opt-in authenticity protocol · community site https://soloist.ai/uxu (`INI SITE`)  
+- **iNi Provenance** — opt-in authenticity protocol · community site https://soloist.ai/uxu (`INI SITE` / see website on INI panel)  
 - **USER OPTIONS** — Manual Library, Install, Map, Logs, System, …  
 - **CREATE ARCHIVE** — next serial + creation guide  
 

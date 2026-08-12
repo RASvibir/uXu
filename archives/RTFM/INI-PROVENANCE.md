@@ -88,7 +88,7 @@ Joining iNi is not a newsletter signup. It means adopting the protocol:
 The community is defined by **practice**, not membership badges alone.
 0?0 is a front door into that idea — Quick Nav **iNi Provenance**
 (or type `INI`). Hover tip: *join our community*. Community website:
-https://soloist.ai/uxu (`INI SITE` / **see website**).
+https://soloist.ai/uxu (`INI SITE` / **see website** on the INI panel).
 
 ## Conceptual pillars
 

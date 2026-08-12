@@ -1160,20 +1160,25 @@
   }
   .guide-scroll a.ini-site{
     display:inline-block;
-    padding:.28rem .7rem;
-    border:1px solid rgba(94,240,255,.65);
-    background:rgba(94,240,255,.12);
-    color:var(--cyan);
+    padding:.42rem .95rem;
+    border:1px solid rgba(94,240,255,.75);
+    background:linear-gradient(105deg, rgba(94,240,255,.22), rgba(61,232,114,.1));
+    color:#e8ffff;
     text-decoration:none;
     font-weight:800;
-    letter-spacing:.04em;
-    font-size:.72rem;
+    letter-spacing:.05em;
+    font-size:.78rem;
+    box-shadow:0 0 12px rgba(94,240,255,.18);
   }
   .guide-scroll a.ini-site:hover,
   .guide-scroll a.ini-site:focus-visible{
-    background:rgba(94,240,255,.28);
-    color:#e8ffff;
+    background:linear-gradient(105deg, rgba(94,240,255,.4), rgba(61,232,114,.2));
+    color:#fff;
     outline:1px solid var(--cyan);
+  }
+  .guide-scroll .ini-site-url{
+    margin:.15rem 0 .85rem;
+    font-size:.7rem;
   }
   .guide-scroll details{
     border:1px solid var(--green-line);
@@ -1762,7 +1767,7 @@ Keyboard: ↑↓ Quick Nav (starts here) · ←→ zone · / command · ? map.</
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v5';
+    const SW_BUST = 'uxu_sw_bust_v7';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -3422,7 +3427,7 @@ const list = document.getElementById('archive-list');
 
 <h3>iNi (opt-in provenance)</h3>
 <p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space for origin, authorship, lineage, and custody. Not required to publish on uXu.</p>
-<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Option: <strong>see website</strong> → <a href="https://soloist.ai/uxu" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a>. Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
+<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Inside that panel: <strong>see website</strong> → <a href="https://soloist.ai/uxu" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a> (or type <code>INI SITE</code>). Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
 
 <h3>How and why I created it</h3>
 <p>I built <strong>uXu</strong> because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
@@ -3787,10 +3792,13 @@ README.md`;
     if (root) {
       root.innerHTML = `
 <p class="lede"><strong>iNi</strong> — opt-in provenance beside uXu. An “I and I” practice for origin, authorship, lineage, and custody.</p>
+
+<h3>Community website</h3>
+<p>Public face for iNi practice, FAQ, and contact — separate from this console.</p>
 <p class="ini-actions">
-  <a class="ini-site" href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener">see website</a>
+  <a class="ini-site" href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener">Open iNi website ↗</a>
 </p>
-<p class="muted">Community face: <a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a> · or type <code>INI SITE</code></p>
+<p class="muted ini-site-url"><a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">${INI_COMMUNITY_URL}</a> · or type <code>INI SITE</code></p>
 
 <h3>What it is</h3>
 <p>A name, a protocol, and a community boundary defined by practice — not a company label. uXu does not require iNi. Creators who want explicit authenticity documentation may opt in.</p>
@@ -3848,7 +3856,8 @@ README.md`;
 
 ${INI_COMMUNITY_URL}
 
-Back on 0?0: type INI for the provenance guide, or continue browsing the commons.`);
+From iNi Provenance: use see website · or type INI SITE
+Back on 0?0: type INI for the provenance guide.`);
   }
 
   async function openRootManual(slug, opts = {}) {

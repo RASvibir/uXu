@@ -53,7 +53,7 @@ where creators who choose it treat origin, authorship, lineage, and custody as
 first-class data. It is not required to publish on uXu.
 
 In the archive interface: Quick Nav **iNi Provenance** (or type `INI`).
-Option: **see website** → https://soloist.ai/uxu (or type `INI SITE`).
+Inside that panel: **see website** → https://soloist.ai/uxu (or type `INI SITE`).
 Hover tip: *join our community*. Pamphlet: `INI-PROVENANCE.md` / MANUAL LIBRARY.
 
 ## How and why it was created
