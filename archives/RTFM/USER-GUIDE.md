@@ -51,8 +51,12 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | Developers Handbook | Builders and coders |
 | Source Code Pamphlet | Curious readers who want a map of the repo |
 
-The registry lists **ARCHIVE ID** (Title.uXu.NNNN) and **NAME**.
+The registry lists **ARCHIVE ID** (`Title.uXu.NNNN`) and **NAME**.
 Hover the name for the full title when the column is clipped.
+
+Ids are forever. If access ends you still see a placemarker such as
+**(deleted by user)**, **(removed by admin)**, **(locked archive)**, or
+**(under investigation)** — so the count of created archives stays honest.
 
 ## Accounts (Simple View)
 

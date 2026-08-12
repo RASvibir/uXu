@@ -242,10 +242,10 @@
     position:sticky; top:0;
     background:rgba(3,8,5,.95);
   }
-  th:nth-child(1), td:nth-child(1){width:42%;}
-  th:nth-child(2), td:nth-child(2){width:28%;}
-  th:nth-child(3), td:nth-child(3){width:15%;}
-  th:nth-child(4), td:nth-child(4){width:15%;}
+  th:nth-child(1), td:nth-child(1){width:36%;}
+  th:nth-child(2), td:nth-child(2){width:26%;}
+  th:nth-child(3), td:nth-child(3){width:24%;}
+  th:nth-child(4), td:nth-child(4){width:14%;}
   td{
     padding:.32rem .3rem;
     overflow:hidden;
@@ -270,6 +270,17 @@
     cursor:help;
     border-bottom:1px dotted rgba(61,232,114,.35);
   }
+  td.col-status .mark{
+    font-size:.66rem;
+    letter-spacing:.03em;
+    color:var(--green-dim);
+  }
+  td.col-status .mark.is-live{ color:var(--green-bright); }
+  td.col-status .mark.is-locked{ color:var(--amber, #d4a017); }
+  td.col-status .mark.is-deleted{ color:var(--green-dim); opacity:.85; }
+  td.col-status .mark.is-admin-removed{ color:#c97b7b; }
+  td.col-status .mark.is-investigate{ color:#ff8a5c; }
+  td.col-status .mark.is-audience{ color:var(--cyan); }
   tbody tr{cursor:pointer;}
   tbody tr:hover td{background:rgba(15,58,34,.45);}
   tbody tr:focus-visible, tbody tr.active{
@@ -278,6 +289,13 @@
   }
   tbody tr.active td{color:var(--highlight-fg);}
   tbody tr.active td.col-id{color:var(--cyan);}
+  tbody tr.is-placemarker td.col-id,
+  tbody tr.is-placemarker td.col-name{ opacity:.72; }
+  tbody tr.is-deleted td{ opacity:.55; }
+  tbody tr.is-admin-removed td{ opacity:.6; }
+  tbody tr.is-investigate td.col-name .name-hit{
+    border-bottom-color:rgba(255,138,92,.45);
+  }
 
   .name-modal{
     position:fixed;
@@ -560,7 +578,7 @@
               <div class="registry-wrap">
                 <table id="registry-table">
                   <thead>
-                    <tr><th>ARCHIVE ID</th><th>NAME</th><th>STATUS</th><th>TYPE</th></tr>
+                    <tr><th>ARCHIVE ID</th><th>NAME</th><th>MARKER</th><th>TYPE</th></tr>
                   </thead>
                   <tbody></tbody>
                 </table>
@@ -887,6 +905,8 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
   function canOpen(entry){
     if (!entry) return false;
     if (entry.type === 'ROOT-CONSOLE' || entry.id === '0?0.uXu.0000') return false;
+    // Forever placemarkers may remain listed but not publicly openable
+    if (!isPubliclyOpenable(entry)) return false;
     const href = localArchiveHref(entry);
     if (!href) return false;
     if (isSelfHref(href)) return false;
@@ -900,6 +920,53 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
       }
     }
     return isLocalPlayerHref(href);
+  }
+
+  /** Normalize registry status → placemarker kind (rows are never removed). */
+  function placemarkerInfo(entry) {
+    const raw = String(entry?.status || 'unknown').toLowerCase().replace(/[\s-]+/g, '_');
+    const map = {
+      complete: { kind: 'live', label: '(live archive)', openable: true },
+      active: { kind: 'live', label: '(live archive)', openable: true },
+      open: { kind: 'live', label: '(live archive)', openable: true },
+      live: { kind: 'live', label: '(live archive)', openable: true },
+      planned: { kind: 'planned', label: '(planned archive)', openable: false },
+      // Owner soft-delete — id stays forever
+      deleted: { kind: 'deleted', label: '(deleted by user)', openable: false },
+      deleted_by_user: { kind: 'deleted', label: '(deleted by user)', openable: false },
+      user_deleted: { kind: 'deleted', label: '(deleted by user)', openable: false },
+      // Admin removal — id stays forever
+      removed: { kind: 'admin-removed', label: '(removed by admin)', openable: false },
+      removed_by_admin: { kind: 'admin-removed', label: '(removed by admin)', openable: false },
+      admin_removed: { kind: 'admin-removed', label: '(removed by admin)', openable: false },
+      locked: { kind: 'locked', label: '(locked archive)', openable: false },
+      sealed: { kind: 'locked', label: '(locked archive)', openable: false },
+      private: { kind: 'locked', label: '(locked archive)', openable: false },
+      audience: { kind: 'audience', label: '(audience only)', openable: true },
+      audience_only: { kind: 'audience', label: '(audience only)', openable: true },
+      contrib_locked: { kind: 'audience', label: '(audience only)', openable: true },
+      under_investigation: { kind: 'investigate', label: '(under investigation)', openable: false },
+      investigating: { kind: 'investigate', label: '(under investigation)', openable: false },
+      flagged: { kind: 'investigate', label: '(under investigation)', openable: false },
+    };
+    return map[raw] || { kind: 'unknown', label: `(${raw || 'unknown'})`, openable: false };
+  }
+
+  function isPubliclyOpenable(entry) {
+    return placemarkerInfo(entry).openable;
+  }
+
+  function registryStats() {
+    const total = registry.length;
+    const live = registry.filter((e) => placemarkerInfo(e).kind === 'live' || placemarkerInfo(e).kind === 'audience').length;
+    const marked = total - live;
+    return { total, live, marked };
+  }
+
+  function refreshRegistryCount() {
+    const s = registryStats();
+    document.getElementById('registry-count').textContent =
+      `${s.total} PLACED · ${s.live} OPEN`;
   }
 
   function openEntry(entry){
@@ -975,7 +1042,7 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
         unresolved: r.unresolved || [],
         parent: r.parent || null,
       }));
-      document.getElementById('registry-count').textContent = `${registry.length} REC`;
+      refreshRegistryCount();
       renderRegistry();
       toast('Registry linked to Neon');
     } catch (err) {
@@ -1014,7 +1081,8 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
   function showNameModal(entry, anchorEl) {
     clearTimeout(nameModalTimer);
     nameModalTitle.textContent = entry.title || '(unnamed)';
-    nameModalId.textContent = entry.id || '';
+    const mark = placemarkerInfo(entry);
+    nameModalId.textContent = `${entry.id || ''}\n${mark.label}`;
     nameModal.hidden = false;
     // measure then place near the name cell
     const rect = anchorEl.getBoundingClientRect();
@@ -1036,10 +1104,15 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
     tbody.innerHTML = "";
     hideNameModal();
     registry.forEach((entry, idx) => {
+      const mark = placemarkerInfo(entry);
       const tr = document.createElement('tr');
       tr.tabIndex = 0;
       tr.dataset.id = entry.id;
       tr.dataset.idx = String(idx);
+      if (mark.kind !== 'live' && mark.kind !== 'audience') tr.classList.add('is-placemarker');
+      if (mark.kind === 'deleted') tr.classList.add('is-deleted');
+      if (mark.kind === 'admin-removed') tr.classList.add('is-admin-removed');
+      if (mark.kind === 'investigate') tr.classList.add('is-investigate');
 
       const tdId = document.createElement('td');
       tdId.className = 'col-id';
@@ -1052,7 +1125,7 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
       hit.className = 'name-hit';
       hit.textContent = entry.title || '—';
       hit.tabIndex = 0;
-      hit.setAttribute('aria-label', `Full archive name: ${entry.title || 'unnamed'}`);
+      hit.setAttribute('aria-label', `Full archive name: ${entry.title || 'unnamed'} ${mark.label}`);
       hit.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
         showNameModal(entry, hit);
@@ -1065,7 +1138,13 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
       tdName.appendChild(hit);
 
       const tdStatus = document.createElement('td');
-      tdStatus.textContent = entry.status;
+      tdStatus.className = 'col-status';
+      const markEl = document.createElement('span');
+      markEl.className = `mark is-${mark.kind}`;
+      markEl.textContent = mark.label;
+      markEl.title = `status: ${entry.status}`;
+      tdStatus.appendChild(markEl);
+
       const tdType = document.createElement('td');
       tdType.textContent = entry.type;
 
@@ -1108,12 +1187,16 @@ F3 opens manuals (User Guide first). CREATE ARCHIVE starts a new entry.</pre>
     const unresolvedBlock = entry.unresolved && entry.unresolved.length
       ? `\n\nunresolved:\n${entry.unresolved.map(u => `  - ${typeof u === 'string' ? u : JSON.stringify(u)}`).join('\n')}`
       : '';
+    const mark = placemarkerInfo(entry);
     const openHint = canOpen(entry)
       ? `\n\n[Enter / Open Archive / OPEN] launch ${localArchiveHref(entry)}`
-      : '\n\n[Inspect only — no local player path]';
+      : mark.kind === 'deleted' || mark.kind === 'admin-removed' || mark.kind === 'locked' || mark.kind === 'investigate'
+        ? `\n\n[Placemarker ${mark.label} — not publicly openable. Id retained forever.]`
+        : '\n\n[Inspect only — no local player path]';
     showOutput(entry.id,
 `archive id: ${entry.id}
 name:       ${entry.title}
+marker:     ${mark.label}
 status:     ${entry.status}
 type:       ${entry.type}
 path:       ${entry.path}
@@ -1325,8 +1408,13 @@ BACK · MANUAL  return to library`);
 
     if (cmd === "INDEX") {
       setActiveNav("INDEX");
+      const s = registryStats();
       showOutput("ARCHIVE INDEX", registry.length
-        ? registry.map(e => `${e.id}\n  name: ${e.title}\n  ${e.status} · ${e.type}`).join('\n\n')
+        ? `Placed forever: ${s.total} · currently openable: ${s.live}\n(ids are never reused; removals leave placemarkers)\n\n` +
+          registry.map(e => {
+            const m = placemarkerInfo(e);
+            return `${e.id}\n  name: ${e.title}\n  ${m.label} · ${e.type}`;
+          }).join('\n\n')
         : "no records loaded");
       return;
     }

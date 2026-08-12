@@ -118,6 +118,21 @@ On 0?0, **CREATE ARCHIVE** shows the next free serial before the guide body.
 Use a clear human **name** (shown in the NAME column) plus the full **archive id**.
 In the registry table, hover (or focus) the name to see the full title if it is truncated.
 
+### Forever placemarkers
+
+Once an archive id is issued, the registry row stays forever — even after teardown.
+Public open may stop; the id and a marker remain so history stays pure.
+
+| Marker | Meaning |
+|--------|---------|
+| (live archive) | Open to the commons |
+| (audience only) | Public can view/listen; contributions frozen |
+| (locked archive) | Public access disconnected (killswitch) |
+| (deleted by user) | Owner removed public archive; placemarker kept |
+| (removed by admin) | Admin removed public archive; placemarker kept |
+| (under investigation) | Flagged / review in progress |
+| (planned archive) | Reserved / not live yet |
+
 Relationships between archives can be declared with `*:*` (a link, not control).
 
 ## Legal Quick Rules
