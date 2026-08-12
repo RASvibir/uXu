@@ -21,10 +21,9 @@ This guide is for everyone. No coding required.
 1. **Browse the registry** — the table lists archives that belong to this commons.
 2. **Open an archive** — select a row and press Enter, or click Open Archive.
 3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
-4. **Try Starter** — the public how-to archive (`OPEN STARTER`). Copy that pattern to make your own.
-5. **Or try CyberCat Sunflower** — a full Grateful Dead listening deck (`OPEN CYBERCAT`).
-6. **Create your own archive** — use CREATE ARCHIVE when you are ready. Start simple; grow later.
-7. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer. Optional notes page: https://soloist.ai/uxu (`INI SITE` on the INI panel).
+4. **Create your own archive** — sign in, then `CREATE ARCHIVE` (or the Create Archive button). Fill the form, Save & create, confirm — it registers right away.
+5. **Try CyberCat Sunflower** — a full Grateful Dead listening deck (`OPEN CYBERCAT`).
+6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer. Optional notes page: https://soloist.ai/uxu (`INI SITE` on the INI panel).
 
 ## Finding Your Way (0?0)
 

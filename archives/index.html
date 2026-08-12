@@ -1787,7 +1787,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v16';
+    const SW_BUST = 'uxu_sw_bust_v17';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -2083,6 +2083,16 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     return p;
   }
 
+  function isLiveWorkerArchivePath(path) {
+    return /\/api\/archives\/[^/]+\/app\/?$/i.test(String(path || ''));
+  }
+
+  function liveWorkerArchiveUrl(path) {
+    const p = String(path || '');
+    if (/^https?:\/\//i.test(p)) return p;
+    return `${API_BASE.replace(/\/$/, '')}${p.startsWith('/') ? p : '/' + p}`;
+  }
+
   function localArchiveHref(entryOrPath){
     if (!entryOrPath) return null;
 
@@ -2090,6 +2100,10 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       const entry = entryOrPath;
       const byId = LOCAL_ARCHIVE_PATHS[entry.id] || LOCAL_ARCHIVE_PATHS[entry.slug] || LOCAL_ARCHIVE_PATHS[entry.title];
       if (byId) return siteBase() + byId;
+
+      if (isLiveWorkerArchivePath(entry.path)) {
+        return liveWorkerArchiveUrl(entry.path);
+      }
 
       // Child records (e.g. .0001) inherit open target from openable parent.
       if (entry.parent) {
@@ -2105,6 +2119,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
 
     const path = entryOrPath;
     if (/^https?:\/\//i.test(path)) return path;
+    if (isLiveWorkerArchivePath(path)) return liveWorkerArchiveUrl(path);
     const normalized = normalizeRegistryPath(path);
     if (!normalized) return null;
     if (/^https?:\/\//i.test(normalized)) return normalized;
@@ -2116,7 +2131,10 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     if (/^https?:\/\//i.test(href)) {
       try {
         const u = new URL(href, location.href);
-        return u.origin === location.origin && /\.html?$/i.test(u.pathname);
+        if (u.origin === location.origin && /\.html?$/i.test(u.pathname)) return true;
+        // 0?0-created live drafts hosted on the Worker
+        if (href.includes('/api/archives/') && href.includes('/app')) return true;
+        return false;
       } catch {
         return false;
       }
@@ -2221,6 +2239,22 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       `${s.total} PLACED · ${s.live} OPEN`;
   }
 
+  async function openLiveWorkerArchive(entry, href) {
+    toast(`Loading ${entry.title || entry.id}…`);
+    try {
+      const res = await fetch(href, { headers: authHeaders() });
+      const html = await res.text();
+      if (!res.ok) {
+        showOutput('ERROR', `Could not open live archive.\n${html.slice(0, 240)}`);
+        return;
+      }
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      location.assign(URL.createObjectURL(blob));
+    } catch (err) {
+      showOutput('ERROR', `open failed: ${err.message}`);
+    }
+  }
+
   function openEntry(entry){
     if (!entry) {
       toast('No archive selected');
@@ -2243,6 +2277,10 @@ Guests cannot open this room.`);
     }
     if (isSelfHref(href)) {
       toast('Already at this archive');
+      return;
+    }
+    if (isLiveWorkerArchivePath(entry.path) || (href.includes('/api/archives/') && href.includes('/app'))) {
+      openLiveWorkerArchive(entry, href);
       return;
     }
     if (/^https?:\/\//i.test(href)) {
@@ -3324,31 +3362,219 @@ RTFM                    0?0 manual`);
     }
   }
 
-  async function openCreateArchiveManual() {
-    setActiveNav("CREATE");
+  function downloadTextFile(filename, text) {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  function buildStarterPackFiles(result) {
+    const data = result.data || {};
+    const name = data.archiveName || result.title || 'Archive';
+    const readme = `# ${name}
+
+**Id:** \`${result.id}\`
+
+Created on 0?0. Live page is already registered.
+
+## Files
+
+- \`data.json\` — your metadata (downloaded)
+- Copy \`archives/Starter/index.html\` (or repo \`templates/index.html\`) beside it if you want a static folder in the repo.
+
+## Open
+
+On 0?0: \`OPEN ${String(name).split(/\\s+/)[0].toUpperCase()}\`
+`;
+    return {
+      'data.json': JSON.stringify(data, null, 2) + '\n',
+      'README.md': readme,
+    };
+  }
+
+  async function openCreateArchiveWizard(prefill = {}) {
+    setActiveNav('CREATE');
     hideManualToolbar();
+    document.getElementById('active-title').textContent = 'CREATE ARCHIVE';
+
+    if (authState.role === 'GUEST') {
+      showCreateUi();
+      const scroll = document.getElementById('create-scroll');
+      if (scroll) {
+        scroll.innerHTML = `
+<p class="lede">Create a real archive in the commons — starts from a simple template.</p>
+<p class="muted">Sign in first (Account Gate, or <code>SIGNUP</code> / <code>SIGNIN</code>). Then come back to <strong>CREATE ARCHIVE</strong>.</p>
+<p class="muted">Nothing is registered until you press <strong>Save &amp; create</strong> and confirm.</p>`;
+      }
+      showOutput('CREATE ARCHIVE',
+`Sign in required.
+
+  SIGNUP you@email.com yourpassword YourName
+  SIGNIN you@email.com yourpassword
+
+Then: CREATE ARCHIVE
+Or click Create Archive.`);
+      toast('sign in to create');
+      return;
+    }
+
+    const defaultTitle = 'Anon Archive';
     const next = nextArchiveSerial();
-    const example = formatArchiveIdExample('Your_Archive');
-    showOutput("CREATE ARCHIVE",
-`Public practice room (stays this way for future users):
+    const previewName = prefill.title || defaultTitle;
+    const exampleId = formatArchiveIdExample(String(previewName).replace(/\s+/g, '_'));
 
-  1. OPEN STARTER         see the working Tier 1 example
-  2. Copy archives/Starter/  →  archives/Your-Name/
-     (or copy repo /templates/ for a blank twin)
-  3. Edit data.json       name · description · shows
-  4. Open index.html locally, then register
-     PR or email rasip@chloreform.org
+    showCreateUi();
+    const scroll = document.getElementById('create-scroll');
+    if (!scroll) return;
 
-Next free serial: .${next}
-Example id:       ${example}
-Format:           Title.uXu.NNNN
+    scroll.innerHTML = `
+<p class="lede">Starter template — rename <strong>Anon Archive</strong> to your title before you save.</p>
+<form class="create-form" id="create-archive-form">
+  <label>Archive name (change this)
+    <input id="create-title" name="title" type="text" required maxlength="80" placeholder="Anon Archive" value="${escapeHtml(prefill.title || defaultTitle)}" />
+  </label>
+  <label>Short description
+    <textarea id="create-description" name="description" maxlength="400" placeholder="One or two sentences visitors will see">${escapeHtml(prefill.description || '')}</textarea>
+  </label>
+  <label>First item (optional)
+    <input id="create-first-item" name="firstItem" type="text" maxlength="120" placeholder="A note, show, or link title" value="${escapeHtml(prefill.firstItem || '')}" />
+  </label>
+  <label>Home link style
+    <select id="create-home-style" name="homeLinkStyle">
+      <option value="uXu" selected>uXu chip (public)</option>
+      <option value="0?0">← 0?0 (console back)</option>
+    </select>
+  </label>
+  <label class="tag-row" style="text-transform:none;letter-spacing:0;display:flex;gap:.5rem;align-items:center;">
+    <input id="create-private" name="private" type="checkbox" ${prefill.private ? 'checked' : ''} />
+    <span>Private (only you / stewards can open)</span>
+  </label>
+  <div class="folder-preview" id="create-id-preview">Will register as ~ ${escapeHtml(exampleId)} (next free .${next})</div>
+  <div class="ini-actions">
+    <button type="submit" class="ghost-btn accent" id="create-save-btn">Save &amp; create</button>
+    <button type="button" class="ghost-btn" id="create-cancel-btn">Cancel</button>
+  </div>
+</form>
+<p class="muted">On save you’ll get an “are you sure?” check. The name you enter becomes the archive id (e.g. Your_Name.uXu.NNNN).</p>
+<p class="muted">Commands: <code>CREATE ARCHIVE</code> · <code>CREATE ARCHIVE Anon Archive</code> · <code>NEW ARCHIVE</code></p>`;
 
-Personal rooms (like Ledger) are separate — copy Starter; don’t empty it.
+    const titleInput = document.getElementById('create-title');
+    const preview = document.getElementById('create-id-preview');
+    const updatePreview = () => {
+      const t = (titleInput?.value || defaultTitle).trim() || defaultTitle;
+      preview.textContent = `Will register as ~ ${formatArchiveIdExample(t.replace(/\s+/g, '_'))} (next free .${nextArchiveSerial()})`;
+    };
+    titleInput?.addEventListener('input', updatePreview);
+    if (titleInput && !prefill.title) {
+      titleInput.select();
+    }
 
-More depth (optional):
-  READ archive-creation   full manual + complexity tree
-  ARCHIVE MANUALS         Starter’s “How to make an archive”`);
-    toast(`starter: OPEN STARTER · next .${next}`);
+    document.getElementById('create-cancel-btn')?.addEventListener('click', () => {
+      hideGuidePanels();
+      showOutput('CREATE ARCHIVE', 'Cancelled. Template was not saved — nothing was created.');
+      toast('cancelled');
+    });
+
+    document.getElementById('create-archive-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('create-title').value.trim();
+      const description = document.getElementById('create-description').value.trim();
+      const firstItem = document.getElementById('create-first-item').value.trim();
+      const homeLinkStyle = document.getElementById('create-home-style').value;
+      const isPrivate = document.getElementById('create-private').checked;
+      if (!title) {
+        toast('name required');
+        return;
+      }
+      const tentativeId = formatArchiveIdExample(title.replace(/\s+/g, '_'));
+      if (title === 'Anon Archive') {
+        const keep = window.confirm(
+          'The name is still “Anon Archive”.\n\n' +
+          'OK = create it with that name anyway\n' +
+          'Cancel = go back and type your own title'
+        );
+        if (!keep) {
+          titleInput?.focus();
+          titleInput?.select();
+          toast('rename first');
+          return;
+        }
+      }
+      const ok = window.confirm(
+        `Create archive "${title}"?\n\n` +
+        `This will register it in the commons as roughly:\n${tentativeId}\n\n` +
+        (isPrivate ? 'Visibility: PRIVATE (stewards only)\n\n' : 'Visibility: public in the registry\n\n') +
+        'Are you sure? Click OK to create, Cancel to keep editing.'
+      );
+      if (!ok) {
+        toast('not created');
+        return;
+      }
+
+      const saveBtn = document.getElementById('create-save-btn');
+      if (saveBtn) saveBtn.disabled = true;
+      showOutput('CREATE ARCHIVE', `Creating "${title}"…`);
+      try {
+        const res = await fetch(`${API_BASE}/api/archives/create`, {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({
+            title,
+            description,
+            firstItem,
+            homeLinkStyle,
+            private: isPrivate,
+            confirm: true,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || data.message || `create failed (${res.status})`);
+
+        const pack = buildStarterPackFiles(data);
+        downloadTextFile(`${data.folderSlug || 'archive'}-data.json`, pack['data.json']);
+        downloadTextFile(`${data.folderSlug || 'archive'}-README.md`, pack['README.md']);
+
+        await loadRegistry();
+        await refreshStewardAccess();
+        const created = registry.find((r) => r.id === data.id);
+        if (created) {
+          selected = created;
+          renderRegistry();
+        }
+
+        hideGuidePanels();
+        showOutput('CREATE ARCHIVE',
+`Created.
+
+  id:     ${data.id}
+  title:  ${data.title}
+  status: ${data.status}
+  open:   OPEN ${String(data.title).split(/\s+/)[0].toUpperCase()}
+          or select it in the registry → Open Archive
+
+Starter files downloaded (data.json + README).
+Live page is ready now — you do not need a git push to open it.
+
+${data.message || ''}`);
+        toast(`created ${data.id}`);
+      } catch (err) {
+        showOutput('ERROR', err.message);
+        toast('create failed');
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    });
+
+    titleInput?.focus();
+  }
+
+  /** @deprecated name kept — wizard is the create path */
+  async function openCreateArchiveManual(prefill) {
+    return openCreateArchiveWizard(typeof prefill === 'object' ? prefill : {});
   }
 
   function escapeHtml(s) {
@@ -3616,7 +3842,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><td><code>SECTION &lt;n&gt;</code></td><td>Jump to ## heading while reading</td></tr>
   <tr><td><code>ARCHIVE MANUALS</code></td><td>Index creator manuals from data.json</td></tr>
   <tr><td><code>FIND MANUAL &lt;q&gt;</code></td><td>Filter that index</td></tr>
-  <tr><td><code>CREATE ARCHIVE</code></td><td>Short recipe + next serial (live example: OPEN STARTER)</td></tr>
+  <tr><td><code>CREATE ARCHIVE</code></td><td>Open create form — registers only when you Save &amp; confirm</td></tr>
   <tr><td><code>BACK</code></td><td>Return one step in manuals</td></tr>
   <tr><td><code>HELP</code></td><td>Compact command list</td></tr>
 </table>
@@ -3839,7 +4065,7 @@ README.md`;
 </details>
 <details>
   <summary>How do I create an archive?</summary>
-  <p>Start simple: open <strong>Starter</strong> (<code>OPEN STARTER</code>) — the public how-to room. Copy that folder (or repo <code>templates/</code>), edit <code>data.json</code>, open <code>index.html</code> locally. Register via PR or email <strong>rasip@chloreform.org</strong>. <code>CREATE ARCHIVE</code> shows the short recipe + next serial. Personal rooms (like Ledger) are separate.</p>
+  <p>Sign in, then <strong>CREATE ARCHIVE</strong> (or the Create Archive button). Fill the template, press <strong>Save &amp; create</strong>, confirm the warning — that registers your room and downloads starter files. You can open it from the registry right away.</p>
 </details>
 <details>
   <summary>Do I need an account?</summary>
@@ -4109,7 +4335,9 @@ INI SITE          open optional iNi public notes (soloist.ai/uxu)
 MANUAL            manual library index (pamphlets)
 ARCHIVE MANUALS   index / search manuals from created archives
 FIND MANUAL <q>   filter that index
-CREATE ARCHIVE    short recipe + next serial (see also OPEN STARTER)
+CREATE ARCHIVE    open template (default name: Anon Archive — change it)
+CREATE ARCHIVE …  same, with your name filled in
+NEW ARCHIVE       alias for CREATE ARCHIVE
 INSTALL           install the public uXu app (invite / home screen)
 SETUP MASTER      interactive guide: claim → lock → recovery → 2FA
 RECOVERY …        ADD / LIST / REMOVE / 2FA (admin + SUDO)
@@ -4258,8 +4486,12 @@ Or select CyberCat Sunflower in the registry and press Enter.`);
       else loadManualList();
       return;
     }
-    if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd.startsWith("CREATE ")) {
-      openCreateArchiveManual();
+    if (cmd === "CREATE" || cmd === "CREATE ARCHIVE" || cmd === "NEW ARCHIVE" || cmd === "NEW" || cmd.startsWith("CREATE ") || cmd.startsWith("NEW ARCHIVE ")) {
+      let title = '';
+      if (cmd.startsWith('CREATE ARCHIVE ')) title = cmdRaw.trim().slice('CREATE ARCHIVE '.length).trim();
+      else if (cmd.startsWith('CREATE ') && cmd !== 'CREATE ARCHIVE') title = cmdRaw.trim().slice('CREATE '.length).trim();
+      else if (cmd.startsWith('NEW ARCHIVE ')) title = cmdRaw.trim().slice('NEW ARCHIVE '.length).trim();
+      openCreateArchiveWizard(title ? { title } : {});
       return;
     }
     if (cmd === "INSTALL" || cmd === "INSTALL UXU" || cmd === "PWA") {

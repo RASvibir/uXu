@@ -1226,6 +1226,284 @@ async function handleSignOut(sql, request) {
   return json(request, { ok: true, role: 'GUEST' });
 }
 
+function slugifyArchiveTitle(title) {
+  return String(title || '')
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48) || 'archive';
+}
+
+function archiveIdFromTitle(title, serial) {
+  const safe = String(title || 'Archive')
+    .trim()
+    .replace(/\s+/g, '_')
+    .replace(/[^A-Za-z0-9_?-]/g, '')
+    .slice(0, 48) || 'Archive';
+  return `${safe}.uXu.${serial}`;
+}
+
+async function nextArchiveSerialDb(sql) {
+  const rows = await sql`
+    select id from archive_records
+  `;
+  let max = -1;
+  for (const row of rows) {
+    const m = String(row.id || '').match(/\.(\d{4})$/);
+    if (m) max = Math.max(max, parseInt(m[1], 10));
+  }
+  return String(max + 1).padStart(4, '0');
+}
+
+async function ensureCreatedArchivesTable(sql) {
+  await sql`
+    create table if not exists uxu_created_archives (
+      archive_id text primary key,
+      owner_user_id uuid not null,
+      owner_email text not null,
+      folder_slug text not null,
+      data_json jsonb not null,
+      created_at timestamptz not null default now(),
+      updated_at timestamptz not null default now()
+    )
+  `;
+  await sql`
+    create table if not exists uxu_archive_access (
+      archive_id text not null,
+      email text not null,
+      created_at timestamptz not null default now(),
+      primary key (archive_id, email)
+    )
+  `;
+}
+
+async function handleArchiveCreate(sql, request, env) {
+  const { ctx, error } = await requireUser(sql, request);
+  if (error) return error;
+  const body = await readJson(request);
+  if (!body) return json(request, { error: 'invalid json' }, 400);
+  if (!body.confirm) {
+    return json(request, { error: 'confirm required — set confirm:true after the user accepts the warning' }, 400);
+  }
+
+  const title = String(body.title || body.archiveName || '').trim().slice(0, 80);
+  const description = String(body.description || '').trim().slice(0, 400);
+  if (!title) return json(request, { error: 'title required' }, 400);
+
+  const homeStyle = String(body.homeLinkStyle || 'uXu').toLowerCase() === '0?0' ? '0?0' : 'uXu';
+  const firstItem = String(body.firstItem || '').trim().slice(0, 120);
+  const isPrivate = !!body.private;
+
+  await ensureCreatedArchivesTable(sql);
+  const serial = await nextArchiveSerialDb(sql);
+  const archiveId = archiveIdFromTitle(title, serial);
+  const folderSlug = slugifyArchiveTitle(title);
+  const existing = await sql`select id from archive_records where id = ${archiveId} limit 1`;
+  if (existing.length) {
+    return json(request, { error: `id ${archiveId} already taken — try a different title` }, 409);
+  }
+
+  const dataJson = {
+    archiveName: title,
+    artist: '',
+    curator: '',
+    description: description || `Created on 0?0 by ${ctx.user.email}`,
+    uxu: {
+      homeLink: { style: homeStyle, href: '../index.html' },
+      allowTemplateForks: false,
+      templateForkDepth: 1,
+      templateOf: 'Starter.uXu.0003',
+      templateDepth: 1,
+      manuals: [
+        {
+          title: 'Visitor Guide',
+          path: 'manuals/USER-MANUAL.md',
+          description: 'How to use this archive',
+        },
+      ],
+      tags: [],
+      contactEmail: null,
+      contactEmailPublic: false,
+      ini: {
+        optIn: false,
+        tag: 'iNi',
+        provenance: {
+          origin: '',
+          authors: [],
+          custody: '',
+          lineage: '',
+          conditions: '',
+          attestedAt: null,
+        },
+      },
+    },
+    shows: firstItem
+      ? [{ title: firstItem, date: new Date().toISOString().slice(0, 10), venue: 'First note', setlist: [] }]
+      : [],
+  };
+
+  const livePath = `/api/archives/${encodeURIComponent(archiveId)}/app`;
+  await sql`
+    insert into archive_records (
+      id, title, slug, status, type, root, archive, parent, path,
+      canonical_source, summary, creator, date_label, schema_version, certainty,
+      tags, distribution, provenance, relations, validation, unresolved
+    ) values (
+      ${archiveId},
+      ${title},
+      ${folderSlug},
+      ${isPrivate ? 'private' : 'active'},
+      'archive',
+      ${ROOT_ID},
+      'uXu',
+      ${ROOT_ID},
+      ${livePath},
+      '/api/root',
+      ${dataJson.description},
+      ${ctx.user.name || ctx.user.email},
+      ${new Date().getFullYear().toString()},
+      '1.0.0',
+      'defined',
+      '[]'::jsonb,
+      '[]'::jsonb,
+      ${{
+        certainty: 'defined',
+        holdingOrganization: 'uXu',
+        createdVia: '0?0-create',
+      }},
+      ${{ children: [], siblings: [], references: [] }},
+      ${{ pathStatus: 'live-worker', metadataStatus: 'complete' }},
+      '[]'::jsonb
+    )
+  `;
+
+  await sql`
+    insert into uxu_created_archives (archive_id, owner_user_id, owner_email, folder_slug, data_json)
+    values (
+      ${archiveId},
+      ${ctx.user.id},
+      ${ctx.user.email},
+      ${folderSlug},
+      ${dataJson}
+    )
+  `;
+
+  await sql`
+    insert into uxu_archive_access (archive_id, email)
+    values (${archiveId}, ${String(ctx.user.email).toLowerCase()})
+    on conflict do nothing
+  `;
+
+  await logAuthEvent(sql, {
+    userId: ctx.user.id,
+    email: ctx.user.email,
+    eventType: 'archive_created',
+    detail: `${archiveId} private=${isPrivate}`,
+  });
+
+  return json(request, {
+    ok: true,
+    id: archiveId,
+    title,
+    serial,
+    folderSlug,
+    status: isPrivate ? 'private' : 'active',
+    path: livePath,
+    data: dataJson,
+    message: `Created ${archiveId}. Open it from the registry or type OPEN ${title.split(/\s+/)[0].toUpperCase()}.`,
+  });
+}
+
+function renderLiveArchiveHtml(archiveId, data) {
+  const title = String(data.archiveName || 'Archive').replace(/</g, '&lt;');
+  const desc = String(data.description || '').replace(/</g, '&lt;');
+  const items = Array.isArray(data.shows) ? data.shows : [];
+  const listHtml = items.length
+    ? items
+        .map((item) => {
+          const label = String(item.title || item.venue || 'Item').replace(/</g, '&lt;');
+          const meta = [item.date, item.venue].filter(Boolean).join(' · ').replace(/</g, '&lt;');
+          return `<div class="card"><div>${label}</div>${meta ? `<div class="meta">${meta}</div>` : ''}</div>`;
+        })
+        .join('')
+    : '<p class="meta">No items yet — edit this archive later or download the starter pack from 0?0.</p>';
+  const homeStyle = data?.uxu?.homeLink?.style === '0?0' ? '0?0' : 'uXu';
+  const homeLabel = homeStyle === '0?0' ? '← 0?0' : 'uXu';
+  // Prefer relative back to GitHub Pages console when opened from there; absolute fallback.
+  return `<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title} · uXu</title>
+<style>
+:root{--bg:#0a0c0a;--text:#d8ffe6;--accent:#3de872;--muted:#7a8f84;--mono:ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:var(--mono);background:var(--bg);color:var(--text);padding:1rem 1.25rem 2rem;max-width:40rem}
+a.home{display:inline-block;margin-bottom:1rem;color:#041208;background:var(--accent);padding:.2rem .65rem;text-decoration:none;font-weight:700}
+a.home.back{color:var(--accent);background:transparent;border:1px solid rgba(61,232,114,.35)}
+h1{font-size:1.35rem;margin:0 0 .35rem}.tag{color:var(--muted);font-size:.8rem;margin-bottom:1rem}
+.card{border:1px solid rgba(61,232,114,.25);padding:.65rem .75rem;background:rgba(61,232,114,.04);margin:.4rem 0}
+.meta{color:var(--muted);font-size:.75rem;margin-top:.25rem}
+.note{margin-top:1.25rem;font-size:.75rem;color:var(--muted);line-height:1.45}
+</style></head><body>
+<a class="home ${homeStyle === '0?0' ? 'back' : ''}" href="javascript:history.length>1?history.back():location.href='https://rasvibir.github.io/uXu/'">${homeLabel}</a>
+<h1>${title}</h1>
+<p class="tag">${archiveId.replace(/</g, '&lt;')} · ${desc}</p>
+${listHtml}
+<p class="note">Created on 0?0. This live page is served from your account draft. Download the folder pack from the console if you want files in the repo.</p>
+</body></html>`;
+}
+
+async function handleArchiveApp(sql, request, archiveId) {
+  await ensureCreatedArchivesTable(sql);
+  const rows = await sql`
+    select data_json, owner_email from uxu_created_archives
+    where archive_id = ${archiveId}
+    limit 1
+  `;
+  if (!rows.length) {
+    return new Response('Archive not found (or not a 0?0-created live draft).', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', ...corsHeaders(request) },
+    });
+  }
+
+  const rec = await sql`select status from archive_records where id = ${archiveId} limit 1`;
+  const status = String(rec[0]?.status || '').toLowerCase();
+  if (status === 'private' || status === 'locked' || status === 'sealed') {
+    const session = await resolveSession(sql, request);
+    const email = String(session.user?.email || '').toLowerCase();
+    const access = email
+      ? await sql`
+          select 1 from uxu_archive_access
+          where archive_id = ${archiveId} and lower(email) = ${email}
+          limit 1
+        `
+      : [];
+    const ok = access.length || session.role === 'ADMIN';
+    if (!ok) {
+      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Private</title>
+<style>body{font-family:monospace;background:#0a0c0a;color:#d8ffe6;padding:2rem}a{color:#3de872}</style></head>
+<body><h1>Private archive</h1><p>Sign in on <a href="https://rasvibir.github.io/uXu/">0?0</a> as a steward, then open again.</p></body></html>`;
+      return new Response(html, {
+        status: 401,
+        headers: { 'Content-Type': 'text/html; charset=utf-8', ...corsHeaders(request) },
+      });
+    }
+  }
+
+  const data = rows[0].data_json;
+  const html = renderLiveArchiveHtml(archiveId, typeof data === 'string' ? JSON.parse(data) : data);
+  return new Response(html, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+      ...corsHeaders(request),
+    },
+  });
+}
+
 const GET_ROUTES = {
   '/api/root': handleRoot,
   '/api/root/registry': handleRegistry,
@@ -1247,6 +1525,7 @@ const GET_ROUTES = {
 const MANUAL_SLUG_RE = /^\/api\/root\/manuals\/([a-z0-9][a-z0-9_-]*)$/i;
 const ARCHIVE_CONTACT_RE = /^\/api\/archives\/([^/]+)\/contact$/i;
 const ARCHIVE_ACCESS_RE = /^\/api\/archives\/([^/]+)\/access$/i;
+const ARCHIVE_APP_RE = /^\/api\/archives\/([^/]+)\/app$/i;
 
 const POST_ROUTES = {
   '/api/auth/claim-master': handleClaimMaster,
@@ -1263,6 +1542,7 @@ const POST_ROUTES = {
   '/api/auth/archive-contact/request': handleArchiveContactRequest,
   '/api/auth/archive-contact/approve': (sql, request) => handleArchiveContactDecide(sql, request, true),
   '/api/auth/archive-contact/deny': (sql, request) => handleArchiveContactDecide(sql, request, false),
+  '/api/archives/create': handleArchiveCreate,
   '/api/root/tags': handleTagUpsert,
 };
 
@@ -1293,6 +1573,10 @@ export default {
         const accessMatch = url.pathname.match(ARCHIVE_ACCESS_RE);
         if (accessMatch) {
           return await handleArchiveAccess(sql, request, decodeURIComponent(accessMatch[1]));
+        }
+        const appMatch = url.pathname.match(ARCHIVE_APP_RE);
+        if (appMatch) {
+          return await handleArchiveApp(sql, request, decodeURIComponent(appMatch[1]));
         }
         const handler = GET_ROUTES[url.pathname];
         if (!handler) return json(request, { error: 'not found' }, 404);
