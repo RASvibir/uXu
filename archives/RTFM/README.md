@@ -7,7 +7,7 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 ## What's in RTFM?
 
 ### Interactive manuals
-- **ABOUT** — what uXu is, how 0?0 works, why it exists (RTFM → About tab)
+- **ABOUT** — what **uXu** is (site · repo · app); 0?0 as the archive interface
 - **iNi Provenance** — Quick Nav flair + `INI` guide · pamphlet `INI-PROVENANCE.md`
 - **RTFM (0?0 console)** — tabbed 0?0 manual: About · Ease · Nav · Commands · Depth · Code · Source
 - **FAQ** — friendly functional how-to

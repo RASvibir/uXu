@@ -58,7 +58,7 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 
 | Guide | Who it is for |
 |-------|----------------|
-| **ABOUT / RTFM** | Story + 0?0 tabs (ease → source) |
+| **ABOUT / RTFM** | **ABOUT** = what uXu is (site · repo · app); RTFM = using the 0?0 archive interface |
 | **iNi Provenance** | Opt-in authenticity protocol |
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |

@@ -9,7 +9,7 @@ The **0?0 manual**. On the live console it opens as a tabbed panel:
 
 | Tab | Contents |
 |-----|----------|
-| About | What uXu / 0?0 / iNi are · license |
+| About | What **uXu** is (site · repo · app) · 0?0 as archive interface · iNi · license |
 | Ease | First five moves · where to click |
 | Nav | Zones, Quick Nav layout, keys |
 | Commands | Full visitor command vocabulary |

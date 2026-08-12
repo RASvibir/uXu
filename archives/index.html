@@ -3152,55 +3152,56 @@ const list = document.getElementById('archive-list');
     const source = document.getElementById('rtfm-pane-source');
 
     if (about) about.innerHTML = `
-<p class="lede"><strong>uXu</strong> is a shared archive commons. Independent archives keep their own voice, stack, and curation. Nobody takes your collection away from you.</p>
+<p class="lede"><strong>uXu</strong> is the shared archive commons — the <strong>site</strong>, the <strong>repo</strong>, and the installable <strong>app</strong>. Independent archives keep their own voice. Nobody takes your collection away from you.</p>
 
 <h3>What uXu is</h3>
-<p>uXu is the public door and the connective tissue — a place where archives can be found, opened, and related to each other without becoming one company’s product.</p>
+<p>uXu is the public name and connective tissue: a place where archives can be found, opened, and related to each other without becoming one company’s product.</p>
 <ul>
-  <li><strong>uXu</strong> (landing / installable app) — the invite into the commons</li>
-  <li><strong>0?0</strong> (<code>0?0.uXu.0000</code>) — the root console once you are inside</li>
-  <li><strong>Child archives</strong> — like CyberCat Sunflower — each its own room</li>
+  <li><strong>uXu site</strong> — <a href="https://rasvibir.github.io/uXu/" style="color:var(--cyan)">rasvibir.github.io/uXu</a> — the live commons landing</li>
+  <li><strong>uXu repo</strong> — github.com/RASvibir/uXu — software, templates, and docs (MIT)</li>
+  <li><strong>uXu app</strong> — installable PWA invite (wordmark <strong>uXu</strong>, not 0?0)</li>
+  <li><strong>Child archives</strong> — each its own room (e.g. CyberCat Sunflower)</li>
 </ul>
 <p>Registration is not ownership. A link home can look like a public <strong>uXu</strong> chip or a console <strong>← 0?0</strong> back control — creator’s choice.</p>
 
-<h3>How 0?0 works</h3>
-<p><strong>0?0</strong> is the front desk of the commons. It does a few jobs well:</p>
+<h3>0?0 — the archive interface</h3>
+<p><strong>0?0</strong> (<code>0?0.uXu.0000</code>) is the <em>root archive interface</em> inside uXu — the CRT console you are in now. It is not the brand of the site or the app.</p>
 <ul>
-  <li><strong>Registry</strong> — forever ids (<code>Title.uXu.NNNN</code>). Numbers are history, not rank. If access ends, the row stays as a placemarker so the count stays honest.</li>
-  <li><strong>Open</strong> — jump into an archive that has a real page to visit.</li>
-  <li><strong>Docs</strong> — ABOUT / FAQ / RTFM tabs · <strong>iNi Provenance</strong> · MANUAL LIBRARY (under USER OPTIONS).</li>
+  <li><strong>Registry</strong> — forever ids (<code>Title.uXu.NNNN</code>). Placemarkers keep history honest.</li>
+  <li><strong>Open</strong> — jump into an archive that has a real page.</li>
+  <li><strong>Docs</strong> — ABOUT (this page) · FAQ · RTFM · <strong>iNi Provenance</strong> · MANUAL LIBRARY (USER OPTIONS).</li>
   <li><strong>Map / logs / system</strong> — light provenance and runtime honesty (USER OPTIONS).</li>
-  <li><strong>Account gate</strong> — optional sign-in for people who need a session; browsing as guest is fine.</li>
+  <li><strong>Account gate</strong> — optional; guests can browse.</li>
 </ul>
-<pre>uXu
-└── 0?0.uXu.0000
-    ├── Registry (forever placemarkers)
+<pre>uXu  ← site · repo · app
+└── 0?0.uXu.0000  ← archive interface (this console)
+    ├── Registry
     ├── Quick Nav (ABOUT · FAQ · INDEX · USER OPTIONS · iNi · RTFM)
     ├── Transparency
     └── Relationships (*:*)</pre>
-<p class="muted"><code>*:*</code> means “these archives are connected.” It is not endorsement, ownership, or control.</p>
+<p class="muted"><code>*:*</code> means connected — not endorsement, ownership, or control.</p>
 
 <h3>iNi (opt-in provenance)</h3>
-<p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space where creators who choose it treat origin, authorship, lineage, and custody as first-class data. Not required to publish.</p>
-<p>On 0?0: open Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Hover tip: <em>join our community</em>. Full pamphlet: <code>INI-PROVENANCE.md</code> via MANUAL LIBRARY.</p>
+<p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space for origin, authorship, lineage, and custody. Not required to publish on uXu.</p>
+<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Hover tip: <em>join our community</em>. Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
 
 <h3>How and why I created it</h3>
-<p>I built uXu because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
-<p>The first non-root room was <strong>CyberCat Sunflower</strong> — a Grateful Dead listening deck — proof that a full personality could live under the commons without being sanded down into a generic template. <strong>0?0</strong> grew as the root so there would always be a center: a place to look things up, open a door, read a manual, and leave a trail.</p>
+<p>I built <strong>uXu</strong> because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
+<p>The first non-root room was <strong>CyberCat Sunflower</strong> — proof a full personality could live under the commons. <strong>0?0</strong> is the interface at the center: look things up, open a door, read a manual, leave a trail.</p>
 <p>Why this shape?</p>
 <ul>
   <li><strong>Forever ids</strong> — history should not vanish when access does.</li>
   <li><strong>Simple first</strong> — a folder, a page, a list. Complexity is optional (see Depth).</li>
-  <li><strong>Keyboard-honest UI</strong> — the console should work like a tool, not only a brochure.</li>
-  <li><strong>Public invite ≠ root console</strong> — share <strong>uXu</strong>; work inside <strong>0?0</strong>.</li>
+  <li><strong>Keyboard-honest UI</strong> — the archive interface should work like a tool, not only a brochure.</li>
+  <li><strong>Share uXu, work in 0?0</strong> — public invite brands as <strong>uXu</strong>; the console is the archive interface.</li>
   <li><strong>Legal &amp; kind</strong> — only share what you have the right to share; keep the commons safe.</li>
 </ul>
-<p>The tagline is half joke, half brief: <em>built to archive. tuned to overachieve.</em> I want the boring durable parts done carefully, and the playful CRT surface done with love.</p>
+<p>The tagline is half joke, half brief: <em>built to archive. tuned to overachieve.</em></p>
 <h3>License &amp; rights</h3>
 <p><strong>Software &amp; original docs</strong> in the uXu repo are <strong>MIT</strong> (Copyright 2026 Victor Birkle). <strong>Media</strong> linked by archives stays under its own licenses / taping policies — uXu does not own those works. Registration is not ownership. Optional <strong>iNi</strong> provenance is self-attestation.</p>
 <p>Live: <a href="https://rasvibir.github.io/uXu/" style="color:var(--cyan)">rasvibir.github.io/uXu</a> · Repo: github.com/RASvibir/uXu</p>
-<p>Human contact for registration, questions, or problems: <strong>rasip@chloreform.org</strong> — Victor Birkle.</p>
-<p class="muted">Next tabs ramp from everyday controls (Ease) up through navigation, commands, growth tiers, code examples, and a safe Source inventory.</p>`;
+<p>Human contact: <strong>rasip@chloreform.org</strong> — Victor Birkle.</p>
+<p class="muted">RTFM tabs continue from Ease through Source for using this archive interface in depth.</p>`;
 
     if (ease) ease.innerHTML = `
 <p class="lede">Start here if you just want to <em>use</em> 0?0. No coding required.</p>
@@ -3215,7 +3216,7 @@ const list = document.getElementById('archive-list');
 <h3>Where to click</h3>
 <table>
   <tr><th>Control</th><th>Job</th></tr>
-  <tr><td>ABOUT</td><td>What uXu is · how 0?0 works · why it exists</td></tr>
+  <tr><td>ABOUT</td><td>What <strong>uXu</strong> is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
   <tr><td>CREATE ARCHIVE</td><td>Starter path + next serial</td></tr>
   <tr><td>ARCHIVE INDEX</td><td>Back to registry welcome / focus</td></tr>
@@ -3273,7 +3274,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
 <h3>Manuals &amp; guides</h3>
 <table>
   <tr><th>Command</th><th>What it does</th></tr>
-  <tr><td><code>ABOUT</code></td><td>What uXu is · how 0?0 works · why it exists</td></tr>
+  <tr><td><code>ABOUT</code></td><td>What uXu is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td><code>FAQ</code></td><td>Friendly everyday how-to</td></tr>
   <tr><td><code>INI</code></td><td>iNi Provenance guide (Quick Nav flair)</td></tr>
   <tr><td><code>RTFM</code></td><td>This 0?0 manual (tabs)</td></tr>
@@ -3470,7 +3471,7 @@ README.md`;
   }
 
   function openAbout() {
-    openRtfm({ tab: 'about', nav: 'ABOUT', title: '0?0 · ABOUT', toast: 'About uXu / 0?0' });
+    openRtfm({ tab: 'about', nav: 'ABOUT', title: 'uXu · ABOUT', toast: 'About uXu' });
   }
 
   function openFaq() {
@@ -3484,11 +3485,11 @@ README.md`;
 
 <details open>
   <summary>What is uXu?</summary>
-  <p>A shared archive commons. Independent archives keep their own voice. uXu helps people find and open them.</p>
+  <p>The shared archive commons — the <strong>site</strong>, the <strong>repo</strong>, and the installable <strong>app</strong>. Independent archives keep their own voice. uXu helps people find and open them.</p>
 </details>
 <details>
   <summary>What is 0?0?</summary>
-  <p>The root console inside the commons (<code>0?0.uXu.0000</code>). Registry, docs, map, logs. The public invite app brands as <strong>uXu</strong>, not 0?0.</p>
+  <p>The <strong>root archive interface</strong> inside uXu (<code>0?0.uXu.0000</code>) — this CRT console. Registry, docs, map, logs. The public site and invite app brand as <strong>uXu</strong>, not 0?0.</p>
 </details>
 <details>
   <summary>What is iNi?</summary>
@@ -3516,7 +3517,7 @@ README.md`;
 </details>
 <details>
   <summary>RTFM vs FAQ vs MANUAL LIBRARY?</summary>
-  <p><strong>FAQ</strong> = everyday answers. <strong>ABOUT / RTFM</strong> = story + deeper tabs (ease → source). <strong>iNi Provenance</strong> = opt-in authenticity. <strong>MANUAL LIBRARY</strong> (USER OPTIONS) = long pamphlets.</p>
+  <p><strong>ABOUT</strong> = what <strong>uXu</strong> is (site · repo · app). <strong>FAQ</strong> = everyday answers. <strong>RTFM</strong> = deeper use of the 0?0 archive interface. <strong>iNi Provenance</strong> = opt-in authenticity. <strong>MANUAL LIBRARY</strong> (USER OPTIONS) = long pamphlets.</p>
 </details>
 <details>
   <summary>How do I install the app?</summary>
@@ -3745,7 +3746,7 @@ INDEX             list all archive ids
 MAP               show root provenance
 LOGS              show transparency logs
 RTFM              interactive 0?0 manual (about → ease → … → source)
-ABOUT             what uXu is · how 0?0 works · why it exists
+ABOUT             what uXu is (site · repo · app) · 0?0 archive interface
 FAQ               friendly functional how-to
 INI               iNi provenance protocol (opt-in)
 MANUAL            manual library index (pamphlets)
