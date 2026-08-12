@@ -708,7 +708,11 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       return { kind: 'encore', label: 'ENCORE', explicit: true };
     }
     // Soft mid-tape pads — only used as inferred set breaks
-    if (/^(tuning|crowd|dead air|intro|introduction)\b/.test(t) && t.length < 48) {
+    if (
+      (/^(tuning|crowd|dead air|intro|introduction)\b/.test(t) && t.length < 48)
+      || /\bdead air\b/.test(t)
+      || /\btake a step back\b/.test(t)
+    ) {
       return { kind: 'soft', label: 'BREAK', explicit: false };
     }
     return null;
@@ -813,7 +817,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       if (mark.kind === 'soft' && !usedSoft) {
         // One inferred mid-show break from tuning/crowd when no explicit set2 yet
         const ratio = idx / tracks.length;
-        if (ratio >= 0.28 && ratio <= 0.72 && inferredSets === 1) {
+        if (ratio >= 0.25 && ratio <= 0.78 && inferredSets === 1) {
           usedSoft = true;
           inferredSets = 2;
           const destIdx = nextPlayableIndex(tracks, idx + 1);
