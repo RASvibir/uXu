@@ -332,15 +332,24 @@
     font-family:var(--mono);
     font-size:.82rem;
     line-height:1.5;
-    pointer-events:none;
+    pointer-events:auto;
     opacity:0;
     visibility:hidden;
     transform:none;
     transition:opacity .12s var(--ease);
   }
-  .name-modal.show{
+  .name-modal.show,
+  .id-modal.show{
     opacity:1;
     visibility:visible;
+  }
+  body.detail-modals-on .name-modal.show,
+  body.detail-modals-on .id-modal.show{
+    border-color:var(--green-bright);
+    box-shadow:
+      0 0 0 1px rgba(3,8,5,.9),
+      0 12px 40px rgba(0,0,0,.75),
+      0 0 28px rgba(109,255,154,.22);
   }
   .name-modal .nm-k{
     display:block;
@@ -453,6 +462,59 @@
     cursor:help;
     border-bottom:1px dotted rgba(94,240,255,.4);
   }
+  .detail-hint{
+    position:absolute;
+    left:50%;
+    bottom:2.65rem;
+    transform:translateX(-50%) translateY(6px);
+    z-index:40;
+    display:flex;
+    align-items:center;
+    gap:.65rem;
+    padding:.4rem .55rem .4rem .7rem;
+    background:rgba(4,12,8,.96);
+    border:1px solid var(--cyan);
+    color:var(--highlight-fg);
+    font-size:.72rem;
+    letter-spacing:.03em;
+    white-space:nowrap;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .2s var(--ease), transform .2s var(--ease), visibility .2s;
+    box-shadow:0 8px 24px rgba(0,0,0,.45);
+  }
+  .detail-hint.show{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateX(-50%) translateY(0);
+  }
+  .detail-hint kbd{
+    font:inherit;
+    color:var(--cyan);
+    border:1px solid var(--green-line);
+    padding:0 .28rem;
+    margin:0 .15rem;
+  }
+  .detail-hint .detail-hint-dismiss{
+    font:inherit;
+    font-size:.62rem;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--green-dim);
+    background:transparent;
+    border:1px solid var(--green-line);
+    padding:.18rem .4rem;
+    cursor:pointer;
+  }
+  .detail-hint .detail-hint-dismiss:hover,
+  .detail-hint .detail-hint-dismiss:focus-visible{
+    color:var(--cyan);
+    border-color:var(--cyan);
+    outline:none;
+  }
+  body.detail-modals-on .detail-hint{ display:none; }
 
   .output-panel{flex:1; display:flex; flex-direction:column; min-height:10rem;}
   #active-summary{
@@ -1045,7 +1107,7 @@
         <div class="topbar">
           <span class="id">0?0.uXu.0000</span>
           <span class="path">ROOT ARCHIVE :: NAVIGATION :: INDEX :: MANUAL LIBRARY</span>
-          <span class="hint" id="nav-hint">Tab panels · ←→ zones · ↑↓ move · Enter act · / cmd · ? keys</span>
+          <span class="hint" id="nav-hint">Tab panels · ←→ zones · ↑↓ move · Enter act · / cmd · i details · ? keys</span>
         </div>
         <div class="rule"></div>
 
@@ -1118,7 +1180,7 @@
               </div>
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
-                <button type="button" class="ghost-btn" id="btn-inspect" disabled accesskey="i" title="Inspect (i)">Inspect</button>
+                <button type="button" class="ghost-btn" id="btn-inspect" disabled title="Inspect selected archive">Inspect</button>
                 <button type="button" class="ghost-btn" id="btn-create" accesskey="n" title="Create (n)">Create Archive</button>
                 <button type="button" class="ghost-btn" id="btn-install" hidden title="Install uXu (p)">Install uXu</button>
               </div>
@@ -1204,8 +1266,12 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
 
         <div class="rule"></div>
         <div class="statusbar">
-          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>zone <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>inspect <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
+          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>zone <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>details <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
           <span class="foot">uXu — built to archive. tuned to overachieve.</span>
+        </div>
+        <div class="detail-hint" id="detail-hint" role="status" aria-live="polite" hidden>
+          <span>tap <kbd>i</kbd> for display</span>
+          <button type="button" class="detail-hint-dismiss" id="detail-hint-dismiss" title="Don’t show this hint again">don’t show again</button>
         </div>
         <div class="toast" id="toast" role="status"></div>
       </div>
@@ -1220,6 +1286,21 @@ Keyboard: ? map · / command · ↑↓ registry.</pre>
 
   let registry = [];
   let selected = null;
+  let detailModalsEnabled = false;
+  let detailHintShown = false;
+  let keyboardUseTimer = null;
+  const DETAIL_HINT_STORE = 'uxu_detail_hint_dismissed';
+  function isDetailHintDismissed() {
+    try { return localStorage.getItem(DETAIL_HINT_STORE) === '1'; }
+    catch { return false; }
+  }
+  function dismissDetailHintForever() {
+    try { localStorage.setItem(DETAIL_HINT_STORE, '1'); }
+    catch { /* ignore */ }
+    detailHintShown = true;
+    hideDetailHint();
+    toast("hint hidden — tap i anytime for display");
+  }
   let authState = { role: 'GUEST', sudo: false, user: null, mode: 'GUEST' };
   let manuals = [];
   let manualSelected = 0;
@@ -1903,35 +1984,154 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     window.addEventListener('resize', hideRtfmTip);
   }
 
-  function hideNameModal() {
+  function hideDetailHint() {
+    clearTimeout(keyboardUseTimer);
+    const el = document.getElementById('detail-hint');
+    if (!el) return;
+    el.classList.remove('show');
+    el.hidden = true;
+  }
+
+  function showDetailHint() {
+    if (detailModalsEnabled || detailHintShown || isDetailHintDismissed()) return;
+    const el = document.getElementById('detail-hint');
+    if (!el) return;
+    detailHintShown = true;
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('show'));
+  }
+
+  function noteKeyboardRegistryUse() {
+    if (detailModalsEnabled || detailHintShown || isDetailHintDismissed()) return;
+    clearTimeout(keyboardUseTimer);
+    keyboardUseTimer = setTimeout(() => {
+      if (detailModalsEnabled || detailHintShown || isDetailHintDismissed()) return;
+      const inRegistry = focusZone === 'registry'
+        || document.activeElement?.closest?.('#registry-table');
+      if (inRegistry) showDetailHint();
+    }, 1000);
+  }
+
+  const detailHintDismissBtn = document.getElementById('detail-hint-dismiss');
+  if (detailHintDismissBtn) {
+    detailHintDismissBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dismissDetailHintForever();
+    });
+  }
+
+  function syncDetailHitsTabIndex() {
+    document.querySelectorAll('#registry-table .id-hit, #registry-table .name-hit').forEach((el) => {
+      el.tabIndex = detailModalsEnabled ? 0 : -1;
+    });
+  }
+
+  function updateDetailLegend() {
+    const legend = document.getElementById('key-legend');
+    if (!legend) return;
+    const iLabel = detailModalsEnabled ? 'details●' : 'details';
+    legend.innerHTML = `<kbd>Tab</kbd>panel <kbd>←→</kbd>zone <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>${iLabel} <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys`;
+    document.body.classList.toggle('detail-modals-on', detailModalsEnabled);
+  }
+
+  function toggleDetailModals() {
+    detailModalsEnabled = !detailModalsEnabled;
+    hideDetailHint();
+    syncDetailHitsTabIndex();
+    updateDetailLegend();
+    if (detailModalsEnabled) {
+      if (selected) {
+        const row = [...tbody.querySelectorAll('tr')].find((tr) => tr.dataset.id === selected.id);
+        const idHit = row?.querySelector('.id-hit');
+        const nameHit = row?.querySelector('.name-hit');
+        if (idHit) showIdModal(selected, idHit);
+        else if (nameHit) showNameModal(selected, nameHit);
+      }
+      toast("details on — tap i to hide");
+    } else {
+      toast("details off — mouse hover still works");
+      hideNameModal(true);
+      hideIdModal(true);
+    }
+  }
+
+  function isModalHovered(el) {
+    try {
+      return !!(el && !el.hidden && el.classList.contains('show') && el.matches(':hover'));
+    } catch {
+      return false;
+    }
+  }
+
+  function hideNameModal(force = false) {
     clearTimeout(nameModalTimer);
+    if (!nameModal) return;
+    if (!force && isModalHovered(nameModal)) return;
     nameModal.classList.remove('show');
     nameModal.hidden = true;
   }
 
-  function placeFixedModal(modalEl, anchorEl) {
+  function hideIdModal(force = false) {
+    clearTimeout(idModalTimer);
+    if (!idModal) return;
+    if (!force && isModalHovered(idModal)) return;
+    idModal.classList.remove('show');
+    idModal.hidden = true;
+  }
+
+  function scheduleHideNameModal(delay) {
+    clearTimeout(nameModalTimer);
+    const ms = delay != null ? delay : 180;
+    nameModalTimer = setTimeout(() => hideNameModal(false), ms);
+  }
+
+  function scheduleHideIdModal(delay) {
+    clearTimeout(idModalTimer);
+    const ms = delay != null ? delay : 180;
+    idModalTimer = setTimeout(() => hideIdModal(false), ms);
+  }
+
+  function placeFixedModal(modalEl, anchorEl, opts = {}) {
     modalEl.style.left = '0px';
     modalEl.style.top = '0px';
     modalEl.style.visibility = 'hidden';
     modalEl.style.opacity = '0';
 
-    const rect = anchorEl.getBoundingClientRect();
     const pad = 12;
     const mw = Math.max(modalEl.offsetWidth || 260, 200);
     const mh = Math.max(modalEl.offsetHeight || 110, 70);
     const vw = window.innerWidth;
     const vh = window.innerHeight;
+    const pin = opts.pin === true || opts.fromKeyboard === true || detailModalsEnabled;
 
-    let left = rect.left;
-    let top = rect.bottom + pad;
-
-    const belowFits = top + mh <= vh - pad;
-    const aboveFits = rect.top - pad - mh >= pad;
-    if (!belowFits && aboveFits) {
-      top = rect.top - mh - pad;
-    } else if (!belowFits) {
-      left = Math.min(rect.right + pad, vw - mw - pad);
-      top = Math.min(Math.max(pad, rect.top), vh - mh - pad);
+    let left;
+    let top;
+    if (pin && anchorEl) {
+      // Stable dock beside the registry — easy to find with the mouse while using keys
+      const wrap = document.querySelector('.registry-wrap');
+      const wrapRect = wrap?.getBoundingClientRect();
+      const row = anchorEl.closest?.('tr') || anchorEl;
+      const rowRect = row.getBoundingClientRect();
+      left = wrapRect ? wrapRect.right + pad : rowRect.right + pad;
+      top = rowRect.top;
+      if (left + mw > vw - pad) {
+        left = wrapRect
+          ? Math.max(pad, wrapRect.left - mw - pad)
+          : Math.max(pad, rowRect.left - mw - pad);
+      }
+    } else {
+      const rect = anchorEl.getBoundingClientRect();
+      left = rect.left;
+      top = rect.bottom + pad;
+      const belowFits = top + mh <= vh - pad;
+      const aboveFits = rect.top - pad - mh >= pad;
+      if (!belowFits && aboveFits) {
+        top = rect.top - mh - pad;
+      } else if (!belowFits) {
+        left = Math.min(rect.right + pad, vw - mw - pad);
+        top = Math.min(Math.max(pad, rect.top), vh - mh - pad);
+      }
     }
 
     if (left + mw > vw - pad) left = Math.max(pad, vw - mw - pad);
@@ -1946,29 +2146,26 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     requestAnimationFrame(() => modalEl.classList.add('show'));
   }
 
-  function showNameModal(entry, anchorEl) {
+  function showNameModal(entry, anchorEl, opts = {}) {
+    // Mouse parked on a modal wins over keyboard / other triggers
+    if (isModalHovered(nameModal) || isModalHovered(idModal)) return;
     clearTimeout(nameModalTimer);
-    hideIdModal();
+    hideIdModal(false);
+    if (isModalHovered(idModal)) return;
     const mark = placemarkerInfo(entry);
     const fullName = archiveDisplayName(entry);
     nameModalTitle.textContent = fullName;
     nameModalId.textContent = `${archiveIdOnly(entry)} · ${mark.label}`;
     nameModal.hidden = false;
     nameModal.classList.remove('show');
-    placeFixedModal(nameModal, anchorEl);
+    placeFixedModal(nameModal, anchorEl, opts);
   }
 
-  function hideIdModal() {
+  function showIdModal(entry, anchorEl, opts = {}) {
+    if (isModalHovered(nameModal) || isModalHovered(idModal)) return;
     clearTimeout(idModalTimer);
-    if (!idModal) return;
-    idModal.classList.remove('show');
-    idModal.hidden = true;
-  }
-
-  function showIdModal(entry, anchorEl) {
-    clearTimeout(idModalTimer);
-    hideNameModal();
-    if (!idModal) return;
+    hideNameModal(false);
+    if (isModalHovered(nameModal) || !idModal) return;
     const fullId = entry.id || archiveIdOnly(entry);
     const name = archiveDisplayName(entry);
     const pathway = archiveFilePathway(entry);
@@ -1983,7 +2180,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     }
     idModal.hidden = false;
     idModal.classList.remove('show');
-    placeFixedModal(idModal, anchorEl);
+    placeFixedModal(idModal, anchorEl, opts);
   }
 
   async function copyIdModalPathway() {
@@ -2022,19 +2219,29 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       copyIdModalPathway();
     });
   }
+  if (nameModal) {
+    nameModal.addEventListener('mouseenter', () => clearTimeout(nameModalTimer));
+    nameModal.addEventListener('mouseleave', () => scheduleHideNameModal(160));
+  }
   if (idModal) {
     idModal.addEventListener('mouseenter', () => clearTimeout(idModalTimer));
-    idModal.addEventListener('mouseleave', () => {
-      idModalTimer = setTimeout(hideIdModal, 180);
+    idModal.addEventListener('mouseleave', () => scheduleHideIdModal(160));
+    window.addEventListener('scroll', () => {
+      if (isModalHovered(nameModal) || isModalHovered(idModal)) return;
+      hideNameModal(false);
+      hideIdModal(false);
+    }, true);
+    window.addEventListener('resize', () => {
+      if (isModalHovered(nameModal) || isModalHovered(idModal)) return;
+      hideNameModal(false);
+      hideIdModal(false);
     });
-    window.addEventListener('scroll', hideIdModal, true);
-    window.addEventListener('resize', hideIdModal);
   }
 
   function renderRegistry() {
     tbody.innerHTML = "";
-    hideNameModal();
-    hideIdModal();
+    hideNameModal(true);
+    hideIdModal(true);
     registry.forEach((entry, idx) => {
       const mark = placemarkerInfo(entry);
       const tr = document.createElement('tr');
@@ -2054,19 +2261,18 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       const idHit = document.createElement('span');
       idHit.className = 'id-hit';
       idHit.textContent = idOnly;
-      idHit.tabIndex = 0;
-      idHit.setAttribute('aria-label', `Archive id ${entry.id || idOnly}. Open for pathway copy.`);
+      idHit.tabIndex = detailModalsEnabled ? 0 : -1;
+      idHit.setAttribute('aria-label', `Archive id ${entry.id || idOnly}. Hover for pathway; tap i for keyboard details.`);
       idHit.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
         showIdModal(entry, idHit);
       });
-      idHit.addEventListener('mouseleave', () => {
-        idModalTimer = setTimeout(hideIdModal, 200);
+      idHit.addEventListener('mouseleave', () => scheduleHideIdModal(200));
+      idHit.addEventListener('focus', () => {
+        if (!detailModalsEnabled) return;
+        showIdModal(entry, idHit, { fromKeyboard: true });
       });
-      idHit.addEventListener('focus', () => showIdModal(entry, idHit));
-      idHit.addEventListener('blur', () => {
-        idModalTimer = setTimeout(hideIdModal, 200);
-      });
+      idHit.addEventListener('blur', () => scheduleHideIdModal(200));
       tdId.appendChild(idHit);
 
       const tdName = document.createElement('td');
@@ -2074,17 +2280,18 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       const hit = document.createElement('span');
       hit.className = 'name-hit';
       hit.textContent = displayName;
-      hit.tabIndex = 0;
+      hit.tabIndex = detailModalsEnabled ? 0 : -1;
       hit.setAttribute('aria-label', `Full archive name: ${displayName}`);
       hit.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
         showNameModal(entry, hit);
       });
-      hit.addEventListener('mouseleave', () => {
-        nameModalTimer = setTimeout(hideNameModal, 160);
+      hit.addEventListener('mouseleave', () => scheduleHideNameModal(160));
+      hit.addEventListener('focus', () => {
+        if (!detailModalsEnabled) return;
+        showNameModal(entry, hit, { fromKeyboard: true });
       });
-      hit.addEventListener('focus', () => showNameModal(entry, hit));
-      hit.addEventListener('blur', hideNameModal);
+      hit.addEventListener('blur', () => scheduleHideNameModal(160));
       tdName.appendChild(hit);
 
       const tdStatus = document.createElement('td');
@@ -2114,9 +2321,24 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         if (e.key === ' ') { e.preventDefault(); activateEntry(entry, { inspect: true }); }
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
           e.preventDefault();
+          noteKeyboardRegistryUse();
           const next = e.key === 'ArrowDown' ? idx + 1 : idx - 1;
           const row = tbody.querySelector(`tr[data-idx="${next}"]`);
-          if (row) { row.focus(); row.click(); }
+          if (row) {
+            row.focus();
+            row.click();
+            if (detailModalsEnabled) {
+              const nextEntry = registry[next];
+              const idHitNext = row.querySelector('.id-hit');
+              // Don't steal the modal if the mouse is parked on it
+              if (nextEntry && idHitNext && !isModalHovered(nameModal) && !isModalHovered(idModal)) {
+                showIdModal(nextEntry, idHitNext, { fromKeyboard: true });
+              }
+            } else if (!isModalHovered(nameModal) && !isModalHovered(idModal)) {
+              hideNameModal(false);
+              hideIdModal(false);
+            }
+          }
         }
       });
       tbody.appendChild(tr);
@@ -3926,8 +4148,7 @@ Commands still work for everything (OPEN, MANUAL, SETUP MASTER, …).`);
     }
     if (k === 'i') {
       e.preventDefault();
-      if (selected) activateEntry(selected, { inspect: true });
-      else toast('select an archive first');
+      toggleDetailModals();
       return;
     }
     if (k === 'n') {
