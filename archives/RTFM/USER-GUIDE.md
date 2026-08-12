@@ -28,9 +28,9 @@ This guide is for everyone. No coding required.
 ## Finding Your Way (0?0)
 
 - On load, **↑ ↓** drive **Quick Nav** (starts on ARCHIVE INDEX)
-- **← →** move between zones (registry · actions · Quick Nav · account · command)
-- **r** registry · **q** Quick Nav · **Enter** open archive or run Quick Nav item
-- **/** jump to the command line · **?** keyboard map
+- **→** from Quick Nav enters the **registry**; **← →** move one zone (no wrap)
+- **Tab / Shift+Tab** cycle zones (wraps): Quick Nav → registry → actions → command → account
+- **r** registry · **q** Quick Nav · **a** account · **/** jump to the command line · **?** keyboard map
 - **F1** Help · **F2** Index · **F3** Manuals · **F4** Map · **F5** Logs · **F6** System
 - Long docs (ABOUT / RTFM / FAQ / iNi) open scrolled to the **top**
 

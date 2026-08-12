@@ -42,6 +42,16 @@ iNi Provenance
 RTFM
 ```
 
+## Keyboard (zones)
+
+```text
+Boot          ↑↓ on Quick Nav (ARCHIVE INDEX)
+Zones         nav → registry → actions → command → account
+← →           one zone, no wrap (→ from Quick Nav = registry)
+Tab           cycle zones (wraps)
+Jump          q nav · r registry · c|/ command · a account
+```
+
 ## Redaction
 
 The Source tab lists repo layout, public API reads, pamphlet names, and

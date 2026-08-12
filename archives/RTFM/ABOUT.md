@@ -43,8 +43,10 @@ uXu  ← site · repo · app
 
 `*:*` means connected — not endorsement, ownership, or control.
 
-On the interface: boot lands on Quick Nav · `↑↓` move · `Enter` run · `←→` zones ·
-`r` registry · `q` Quick Nav · `/` command · `?` map. Long docs open at the **top**.
+On the interface: boot lands on Quick Nav · `↑↓` move · `Enter` run ·
+`→` enters the registry · `←→` move one zone (no wrap) · `Tab` cycles zones
+(wraps) · `r` registry · `q` Quick Nav · `/` command · `a` account · `?` map.
+Long docs open at the **top**.
 
 ## iNi (opt-in provenance)
 
