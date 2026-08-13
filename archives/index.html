@@ -4010,7 +4010,7 @@ GET /api/root/logs
 GET /api/root/provenance
 GET /api/root/system
 GET /api/auth/config
-GET /api/auth/setup-status   (checklist flags only)</pre>
+GET /api/auth/setup-status   (checklist flags; emails only ADMIN+SUDO)</pre>
 <p class="muted">Host is configured in the console script as <code>API_BASE</code>. Exact hostname may change with deploy.</p>
 <h3>RTFM pamphlets on disk</h3>
 <pre id="rtfm-source-files">loading local RTFM names…</pre>
@@ -5002,9 +5002,12 @@ Next:
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'setup status failed');
       const lines = (data.steps || []).map((s) => `${s.done ? '[x]' : '[ ]'}  ${s.id}. ${s.title}`);
-      const rec = (data.recoveryEmails || [])
-        .map((r) => `  - ${r.email}${r.twoFactorAttested ? ' · 2FA attested' : ' · 2FA optional'}`)
-        .join('\n');
+      const canSeeRecoveryEmails = Array.isArray(data.recoveryEmails);
+      const rec = canSeeRecoveryEmails
+        ? ((data.recoveryEmails || [])
+            .map((r) => `  - ${r.email}${r.twoFactorAttested ? ' · 2FA attested' : ' · 2FA optional'}`)
+            .join('\n') || '  (none yet)')
+        : '  Addresses hidden — SUDO, then RECOVERY LIST';
       showOutput("SETUP MASTER — interactive guide",
 `Follow these steps on 0?0. Re-run SETUP MASTER anytime to refresh checks.
 
@@ -5013,7 +5016,7 @@ ${lines.join('\n')}
 Throne: ${data.claimSealed ? 'SEALED (admin exists)' : 'EMPTY (claim still possible)'}
 Signed in: ${data.signedIn ? 'yes' : 'no'} · role: ${data.role || 'GUEST'} · sudo: ${data.sudo ? 'ON' : 'OFF'}
 Recovery keys: ${data.recoveryCount || 0}
-${rec || '  (none yet)'}
+${rec}
 
 ────────
 HOW TO ADVANCE

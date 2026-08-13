@@ -58,7 +58,7 @@ See `archives/RTFM/MASTER-ADMIN-GUIDE.md`.
 
 - `GET /api/auth/config`
 - `GET /api/auth/me` (session bearer token)
-- `GET /api/auth/setup-status`
+- `GET /api/auth/setup-status` — checklist flags for everyone; recovery emails only ADMIN + SUDO
 - `GET /api/auth/recovery` (ADMIN + SUDO)
 - `GET /api/auth/accounts` (ADMIN + SUDO) — login emails, private
 - `GET /api/auth/change-email/status`

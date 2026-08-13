@@ -104,7 +104,7 @@ If the master account is lost:
 
 | Command | Who |
 |---------|-----|
-| `SETUP MASTER` | Anyone (shows checklist) |
+| `SETUP MASTER` | Anyone (checklist flags only; recovery addresses need ADMIN + SUDO) |
 | `CLAIM MASTER [secret]` | Signed-in; real claim only if no admins |
 | `SUDO` / `UNSUDO` | Admin |
 | `RECOVERY ADD\|LIST\|REMOVE\|2FA` | Admin + SUDO |

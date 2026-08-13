@@ -686,31 +686,47 @@ async function handleAssumeMaster(sql, request, env) {
 async function handleSetupStatus(sql, request) {
   const ctx = await resolveSession(sql, request);
   const adminCount = await countAdmins(sql);
-  const recoveryRows = await sql`
-    select email, two_factor_attested from uxu_recovery_accounts where revoked_at is null
+  const revealEmails = ctx.role === 'ADMIN' && !!ctx.sudo;
+  const stats = await sql`
+    select
+      count(*)::int as n,
+      coalesce(bool_or(two_factor_attested), false) as any_2fa
+    from uxu_recovery_accounts
+    where revoked_at is null
   `;
+  const recoveryCount = stats[0]?.n || 0;
+  const any2fa = !!stats[0]?.any_2fa;
   const recovery = ctx.user ? await getActiveRecovery(sql, ctx.user.id) : null;
-  return json(request, {
+  const body = {
     signedIn: !!ctx.user,
     role: ctx.role,
     sudo: !!ctx.sudo,
     adminCount,
     claimSealed: adminCount > 0,
-    recoveryCount: recoveryRows.length,
-    recoveryEmails: recoveryRows.map((r) => ({
-      email: r.email,
-      twoFactorAttested: !!r.two_factor_attested,
-    })),
+    recoveryCount,
     isRecovery: !!recovery,
     steps: [
       { id: 1, key: 'signin', done: !!ctx.user, title: 'Sign in on 0?0' },
       { id: 2, key: 'claim', done: adminCount > 0, title: 'Claim master (only if throne empty)' },
       { id: 3, key: 'sudo', done: !!ctx.sudo, title: 'SUDO as admin' },
-      { id: 4, key: 'recovery', done: recoveryRows.length >= 1, title: 'Add recovery email (second account)' },
-      { id: 5, key: '2fa', done: recoveryRows.some((r) => r.two_factor_attested), title: 'Optional: attest 2FA on recovery' },
+      { id: 4, key: 'recovery', done: recoveryCount >= 1, title: 'Add recovery email (second account)' },
+      { id: 5, key: '2fa', done: any2fa, title: 'Optional: attest 2FA on recovery' },
       { id: 6, key: 'seal', done: adminCount > 0, title: 'Rite seals automatically when admin exists' },
     ],
-  });
+  };
+  if (revealEmails) {
+    const recoveryRows = await sql`
+      select email, two_factor_attested
+      from uxu_recovery_accounts
+      where revoked_at is null
+      order by created_at asc
+    `;
+    body.recoveryEmails = recoveryRows.map((r) => ({
+      email: r.email,
+      twoFactorAttested: !!r.two_factor_attested,
+    }));
+  }
+  return json(request, body);
 }
 
 async function handleSudo(sql, request) {
