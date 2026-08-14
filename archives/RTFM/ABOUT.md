@@ -44,7 +44,8 @@ uXu  ← site · repo · app
 `*:*` means connected — not endorsement, ownership, or control.
 
 On the interface: boot lands on Quick Nav · `↑↓` move · `Enter` run ·
-`Tab` changes zones · `←→` open menus / toggle registry table ↔ actions ·
+`Tab` changes zones · `→` opens USER OPTIONS from any nav item · `←→`
+toggle registry table ↔ actions ·
 click a panel to adopt it as the keyboard highlight · `r` registry ·
 `q` Quick Nav · `/` command · `a` account · `?` map.
 Long docs open at the **top**.

@@ -29,7 +29,7 @@ This guide is for everyone. No coding required.
 
 - On load, **↑ ↓** drive **Quick Nav** (starts on ARCHIVE INDEX)
 - **Tab / Shift+Tab** move between zones: Quick Nav → registry → command → account
-- **← →** stay local: open/close USER OPTIONS; on registry, toggle table ↔ actions toolbar
+- **← →** stay local: **→** opens USER OPTIONS from any Quick Nav item; **←** closes it; on registry, toggle table ↔ actions toolbar
 - **Click** a panel to adopt it as the keyboard highlight (mouse and keys share one focus)
 - **r** registry · **q** Quick Nav · **a** account · **/** jump to the command line · **?** keyboard map
 - **F1** Help · **F2** Index · **F3** Manuals · **F4** Map · **F5** Logs · **F6** System
@@ -72,8 +72,9 @@ On 0?0: **RTFM** opens the interactive 0?0 manual. **MANUAL LIBRARY** opens
 the pamphlet index. **INDEX ARCHIVE MANUALS** finds creator manuals declared in
 `data.json` → `uxu.manuals`.
 
-The registry lists **ID** (`uXu.NNNN`) and **NAME**. Tap **i** for keyboard
-detail modals; hover still works for pathway / full name.
+The registry lists **ID** (`uXu.NNNN`) and **NAME**. Hover a moment on a name
+or id for a small tooltip. Tap **i** if you want the fuller pathway card while
+using the keyboard. **Esc** dismisses it.
 Ids are forever. If access ends you still see a placemarker such as
 **(deleted by user)**, **(removed by admin)**, **(locked archive)**, or
 **(under investigation)** — so the count of created archives stays honest.

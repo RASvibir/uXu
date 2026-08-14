@@ -265,6 +265,7 @@
   .kv dd{margin:0; color:var(--green-bright); text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
   .registry-wrap{overflow:auto; max-height:11.5rem; position:relative;}
+  .registry-wrap:focus{outline:none;}
   table{width:100%; border-collapse:collapse; font-size:.72rem; table-layout:fixed;}
   th{
     text-align:left;
@@ -346,24 +347,21 @@
     border-bottom-color:rgba(255,138,92,.45);
   }
 
-  /* Portaled to document.body — must stay outside overflow/clip of the index box */
+  /* Portaled to document.body — quiet hover chips, not blocking cards */
   .name-modal{
     position:fixed;
     z-index:10000;
-    min-width:14rem;
-    max-width:min(36rem, calc(100vw - 1.5rem));
-    padding:.65rem .8rem;
-    background:rgba(4,12,8,.98);
-    border:1px solid var(--cyan);
-    box-shadow:
-      0 0 0 1px rgba(3,8,5,.9),
-      0 12px 40px rgba(0,0,0,.75),
-      0 0 24px rgba(94,240,255,.15);
+    min-width:11rem;
+    max-width:min(22rem, calc(100vw - 1.5rem));
+    padding:.4rem .55rem .45rem;
+    background:rgba(4,12,8,.88);
+    border:1px solid var(--green-line);
+    box-shadow:0 8px 22px rgba(0,0,0,.45);
     color:var(--green-bright);
     font-family:var(--mono);
-    font-size:.82rem;
-    line-height:1.5;
-    pointer-events:auto;
+    font-size:.78rem;
+    line-height:1.4;
+    pointer-events:none;
     opacity:0;
     visibility:hidden;
     transform:none;
@@ -374,13 +372,18 @@
     opacity:1;
     visibility:visible;
   }
+  body.detail-modals-on .name-modal,
+  body.detail-modals-on .id-modal{
+    pointer-events:auto;
+  }
   body.detail-modals-on .name-modal.show,
   body.detail-modals-on .id-modal.show{
     border-color:var(--green-bright);
+    background:rgba(4,12,8,.96);
     box-shadow:
       0 0 0 1px rgba(3,8,5,.9),
-      0 12px 40px rgba(0,0,0,.75),
-      0 0 28px rgba(109,255,154,.22);
+      0 10px 28px rgba(0,0,0,.6),
+      0 0 18px rgba(109,255,154,.16);
   }
   .name-modal .nm-k{
     display:block;
@@ -417,7 +420,7 @@
     color:var(--green-bright);
     display:-webkit-box;
     -webkit-box-orient:vertical;
-    -webkit-line-clamp:4;
+    -webkit-line-clamp:2;
     overflow:hidden;
   }
   .name-modal .nm-blurb.is-empty,
@@ -436,20 +439,17 @@
   .id-modal{
     position:fixed;
     z-index:10000;
-    min-width:16rem;
-    max-width:min(34rem, calc(100vw - 1.5rem));
-    padding:.65rem .8rem .75rem;
-    background:rgba(4,12,8,.98);
-    border:1px solid var(--cyan);
-    box-shadow:
-      0 0 0 1px rgba(3,8,5,.9),
-      0 12px 40px rgba(0,0,0,.75),
-      0 0 24px rgba(94,240,255,.15);
+    min-width:12rem;
+    max-width:min(22rem, calc(100vw - 1.5rem));
+    padding:.4rem .55rem .5rem;
+    background:rgba(4,12,8,.88);
+    border:1px solid var(--green-line);
+    box-shadow:0 8px 22px rgba(0,0,0,.45);
     color:var(--green-bright);
     font-family:var(--mono);
-    font-size:.82rem;
-    line-height:1.5;
-    pointer-events:auto;
+    font-size:.78rem;
+    line-height:1.4;
+    pointer-events:none;
     opacity:0;
     visibility:hidden;
     transition:opacity .12s var(--ease);
@@ -753,9 +753,9 @@
   .rtfm-tip{
     position:fixed;
     z-index:10001;
-    min-width:12rem;
-    max-width:min(18rem, calc(100vw - 1.5rem));
-    padding:.7rem .85rem .75rem;
+    min-width:9rem;
+    max-width:min(14rem, calc(100vw - 1.5rem));
+    padding:.45rem .6rem .5rem;
     background:linear-gradient(165deg, #fff8f4 0%, #ffe8e0 100%);
     border:2px solid var(--rtfm);
     border-radius:10px 10px 10px 2px;
@@ -802,9 +802,9 @@
   .ini-tip{
     position:fixed;
     z-index:10001;
-    min-width:11.5rem;
-    max-width:min(17rem, calc(100vw - 1.5rem));
-    padding:.7rem .85rem .75rem;
+    min-width:9rem;
+    max-width:min(14rem, calc(100vw - 1.5rem));
+    padding:.45rem .6rem .5rem;
     background:linear-gradient(165deg, #f2fffb 0%, #dffaf5 55%, #e8fbff 100%);
     border:2px solid var(--cyan);
     border-radius:2px 12px 12px 12px;
@@ -1423,7 +1423,7 @@
         <div class="topbar">
           <span class="id">0?0.uXu.0000</span>
           <span class="path">ROOT ARCHIVE :: QUICK NAV · iNi · RTFM</span>
-          <span class="hint" id="nav-hint">↑↓ Quick Nav · Tab zones · → menus/actions · / cmd · ? keys</span>
+          <span class="hint" id="nav-hint">↑↓ Quick Nav · Tab zones · → USER OPTIONS · / cmd · ? keys</span>
         </div>
         <div class="rule"></div>
 
@@ -1466,7 +1466,7 @@
                 <span>uXu ARCHIVE REGISTRY</span>
                 <span class="meta" id="registry-count">—</span>
               </div>
-              <div class="registry-wrap">
+              <div class="registry-wrap" tabindex="-1">
                 <table id="registry-table">
                   <thead>
                     <tr><th>ID</th><th>NAME</th><th>MARKER</th><th>TYPE</th></tr>
@@ -1494,12 +1494,10 @@
               <div class="rtfm-tip" id="rtfm-tip" role="tooltip" hidden>
                 <span class="rtfm-tip-k">psst</span>
                 <span class="rtfm-tip-v">read the friendly manual</span>
-                <span class="rtfm-tip-soft">about → ease → nav → commands → depth → code → source</span>
               </div>
               <div class="ini-tip" id="ini-tip" role="tooltip" hidden>
                 <span class="ini-tip-k">iNi</span>
-                <span class="ini-tip-v">opt-in provenance · I and I</span>
-                <span class="ini-tip-soft">optional public notes</span>
+                <span class="ini-tip-v">opt-in provenance</span>
                 <a class="ini-tip-link" href="https://soloist.ai/uxu" target="_blank" rel="noopener">soloist.ai/uxu ↗</a>
               </div>
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
@@ -1552,7 +1550,7 @@ Preserve. Connect. Discover.
 You are in 0?0 — the root of the archive.
 
 Quick Nav: ABOUT · FAQ · INDEX · USER OPTIONS · iNi Provenance · RTFM
-Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / command · ? map.</pre>
+Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions · / command · ? map.</pre>
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
@@ -1562,7 +1560,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
 
           <section class="col">
             <div class="box" id="nav-box">
-              <div class="box-title">QUICK NAV <span class="meta">←→ zone</span></div>
+              <div class="box-title">QUICK NAV <span class="meta">→ menu</span></div>
               <ul id="nav-list" role="menu" aria-label="Quick navigation">
                 <li data-cmd="ABOUT" tabindex="0">ABOUT</li>
                 <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
@@ -1595,7 +1593,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
 
         <div class="rule"></div>
         <div class="statusbar">
-          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>zone <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>details <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
+          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>menu <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>details <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
           <span class="foot">uXu — built to archive. tuned to overachieve.</span>
         </div>
         <div class="detail-hint" id="detail-hint" role="status" aria-live="polite" hidden>
@@ -1835,7 +1833,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → menus / registry actions · / com
   // Landing-only PWA for inviting people to uXu (public brand — not 0?0).
   // Landing PWA — bust stale shell caches so Quick Nav updates appear
   if ('serviceWorker' in navigator) {
-    const SW_BUST = 'uxu_sw_bust_v20';
+    const SW_BUST = 'uxu_sw_bust_v22';
     (async () => {
       try {
         const needsBust = localStorage.getItem(SW_BUST) !== '1';
@@ -2486,8 +2484,9 @@ Guests cannot open this room.`);
   const nameModalId = document.getElementById('name-modal-id');
   const nameModalBlurb = document.getElementById('name-modal-blurb');
   const nameModalBlurbSrc = document.getElementById('name-modal-blurb-src');
-  let nameModalTimer = null;
-  let nameModalEntryId = null;
+    let nameModalTimer = null;
+    let nameModalShowTimer = null;
+    let nameModalEntryId = null;
   // Keep tooltip outside CRT overflow/transform ancestors so it never clips into the index box
   if (nameModal && nameModal.parentElement !== document.body) {
     document.body.appendChild(nameModal);
@@ -2498,8 +2497,9 @@ Guests cannot open this room.`);
   const idModalName = document.getElementById('id-modal-name');
   const idModalPath = document.getElementById('id-modal-path');
   const idModalCopy = document.getElementById('id-modal-copy');
-  let idModalTimer = null;
-  let idModalPathway = '';
+    let idModalTimer = null;
+    let idModalShowTimer = null;
+    let idModalPathway = '';
   if (idModal && idModal.parentElement !== document.body) {
     document.body.appendChild(idModal);
   }
@@ -2514,6 +2514,10 @@ Guests cannot open this room.`);
   if (iniTip && iniTip.parentElement !== document.body) {
     document.body.appendChild(iniTip);
   }
+
+  const HOVER_TIP_DELAY = 450;
+  let rtfmTipShowTimer = null;
+  let iniTipShowTimer = null;
 
   function placeTip(el, anchorEl) {
     if (!el || !anchorEl) return;
@@ -2546,6 +2550,7 @@ Guests cannot open this room.`);
   }
 
   function hideRtfmTip() {
+    clearTimeout(rtfmTipShowTimer);
     if (!rtfmTip) return;
     rtfmTip.classList.remove('show');
     rtfmTip.hidden = true;
@@ -2560,6 +2565,7 @@ Guests cannot open this room.`);
   function hideIniTip() {
     if (!iniTip) return;
     clearTimeout(iniTipHideTimer);
+    clearTimeout(iniTipShowTimer);
     iniTip.classList.remove('show');
     iniTip.hidden = true;
   }
@@ -2575,17 +2581,23 @@ Guests cannot open this room.`);
   }
 
   if (rtfmNav && rtfmTip) {
-    rtfmNav.addEventListener('mouseenter', () => showRtfmTip(rtfmNav));
+    rtfmNav.addEventListener('mouseenter', () => {
+      clearTimeout(rtfmTipShowTimer);
+      rtfmTipShowTimer = setTimeout(() => showRtfmTip(rtfmNav), HOVER_TIP_DELAY);
+    });
     rtfmNav.addEventListener('mouseleave', hideRtfmTip);
-    rtfmNav.addEventListener('focus', () => showRtfmTip(rtfmNav));
-    rtfmNav.addEventListener('blur', hideRtfmTip);
   }
   if (iniNav && iniTip) {
-    iniNav.addEventListener('mouseenter', () => showIniTip(iniNav));
-    iniNav.addEventListener('mouseleave', () => scheduleHideIniTip(180));
-    iniNav.addEventListener('focus', () => showIniTip(iniNav));
-    iniNav.addEventListener('blur', () => scheduleHideIniTip(180));
-    iniTip.addEventListener('mouseenter', () => clearTimeout(iniTipHideTimer));
+    iniNav.addEventListener('mouseenter', () => {
+      clearTimeout(iniTipShowTimer);
+      clearTimeout(iniTipHideTimer);
+      iniTipShowTimer = setTimeout(() => showIniTip(iniNav), HOVER_TIP_DELAY);
+    });
+    iniNav.addEventListener('mouseleave', () => scheduleHideIniTip(120));
+    iniTip.addEventListener('mouseenter', () => {
+      clearTimeout(iniTipShowTimer);
+      clearTimeout(iniTipHideTimer);
+    });
     iniTip.addEventListener('mouseleave', () => scheduleHideIniTip(120));
   }
   window.addEventListener('scroll', () => { hideRtfmTip(); hideIniTip(); }, true);
@@ -2638,7 +2650,7 @@ Guests cannot open this room.`);
     const legend = document.getElementById('key-legend');
     if (!legend) return;
     const iLabel = detailModalsEnabled ? 'details●' : 'details';
-    legend.innerHTML = `<kbd>Tab</kbd>panel <kbd>←→</kbd>zone <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>${iLabel} <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys`;
+    legend.innerHTML = `<kbd>Tab</kbd>panel <kbd>←→</kbd>menu <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>${iLabel} <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys`;
     document.body.classList.toggle('detail-modals-on', detailModalsEnabled);
   }
 
@@ -2657,7 +2669,7 @@ Guests cannot open this room.`);
       }
       toast("details on — tap i to hide");
     } else {
-      toast("details off — mouse hover still works");
+      toast("details off — hover a name or id");
       hideNameModal(true);
       hideIdModal(true);
     }
@@ -2673,6 +2685,7 @@ Guests cannot open this room.`);
 
   function hideNameModal(force = false) {
     clearTimeout(nameModalTimer);
+    clearTimeout(nameModalShowTimer);
     if (!nameModal) return;
     if (!force && isModalHovered(nameModal)) return;
     nameModal.classList.remove('show');
@@ -2682,6 +2695,7 @@ Guests cannot open this room.`);
 
   function hideIdModal(force = false) {
     clearTimeout(idModalTimer);
+    clearTimeout(idModalShowTimer);
     if (!idModal) return;
     if (!force && isModalHovered(idModal)) return;
     idModal.classList.remove('show');
@@ -2689,15 +2703,46 @@ Guests cannot open this room.`);
   }
 
   function scheduleHideNameModal(delay) {
+    clearTimeout(nameModalShowTimer);
     clearTimeout(nameModalTimer);
-    const ms = delay != null ? delay : 180;
+    const ms = delay != null ? delay : 80;
     nameModalTimer = setTimeout(() => hideNameModal(false), ms);
   }
 
   function scheduleHideIdModal(delay) {
+    clearTimeout(idModalShowTimer);
     clearTimeout(idModalTimer);
-    const ms = delay != null ? delay : 180;
+    const ms = delay != null ? delay : 80;
     idModalTimer = setTimeout(() => hideIdModal(false), ms);
+  }
+
+  function scheduleShowNameModal(entry, anchorEl, opts = {}) {
+    clearTimeout(nameModalShowTimer);
+    clearTimeout(nameModalTimer);
+    if (opts.immediate || opts.fromKeyboard || detailModalsEnabled) {
+      showNameModal(entry, anchorEl, opts);
+      return;
+    }
+    nameModalShowTimer = setTimeout(() => showNameModal(entry, anchorEl, opts), HOVER_TIP_DELAY);
+  }
+
+  function scheduleShowIdModal(entry, anchorEl, opts = {}) {
+    clearTimeout(idModalShowTimer);
+    clearTimeout(idModalTimer);
+    if (opts.immediate || opts.fromKeyboard || detailModalsEnabled) {
+      showIdModal(entry, anchorEl, opts);
+      return;
+    }
+    idModalShowTimer = setTimeout(() => showIdModal(entry, anchorEl, opts), HOVER_TIP_DELAY);
+  }
+
+  function hideHoverChrome(opts = {}) {
+    hideRtfmTip();
+    hideIniTip();
+    if (opts.force || !detailModalsEnabled) {
+      hideNameModal(true);
+      hideIdModal(true);
+    }
   }
 
   function placeFixedModal(modalEl, anchorEl, opts = {}) {
@@ -2716,17 +2761,16 @@ Guests cannot open this room.`);
     let left;
     let top;
     if (pin && anchorEl) {
-      // Stable dock beside the registry — easy to find with the mouse while using keys
+      // Dock left of the registry so Quick Nav stays clear
       const wrap = document.querySelector('.registry-wrap');
       const wrapRect = wrap?.getBoundingClientRect();
       const row = anchorEl.closest?.('tr') || anchorEl;
       const rowRect = row.getBoundingClientRect();
-      left = wrapRect ? wrapRect.right + pad : rowRect.right + pad;
+      left = wrapRect ? wrapRect.left - mw - pad : rowRect.left - mw - pad;
       top = rowRect.top;
-      if (left + mw > vw - pad) {
-        left = wrapRect
-          ? Math.max(pad, wrapRect.left - mw - pad)
-          : Math.max(pad, rowRect.left - mw - pad);
+      if (left < pad) {
+        left = wrapRect ? wrapRect.left : Math.max(pad, rowRect.left);
+        top = wrapRect ? wrapRect.bottom + 8 : rowRect.bottom + pad;
       }
     } else {
       const rect = anchorEl.getBoundingClientRect();
@@ -2909,12 +2953,12 @@ Guests cannot open this room.`);
       idHit.className = 'id-hit';
       idHit.textContent = idOnly;
       idHit.tabIndex = detailModalsEnabled ? 0 : -1;
-      idHit.setAttribute('aria-label', `Archive id ${entry.id || idOnly}. Hover for pathway; tap i for keyboard details.`);
+      idHit.setAttribute('aria-label', `Archive id ${entry.id || idOnly}. Hover for a short pathway tip; i for the fuller card.`);
       idHit.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
-        showIdModal(entry, idHit);
+        scheduleShowIdModal(entry, idHit);
       });
-      idHit.addEventListener('mouseleave', () => scheduleHideIdModal(200));
+      idHit.addEventListener('mouseleave', () => scheduleHideIdModal(80));
       idHit.addEventListener('focus', () => {
         if (!detailModalsEnabled) return;
         showIdModal(entry, idHit, { fromKeyboard: true });
@@ -2931,9 +2975,9 @@ Guests cannot open this room.`);
       hit.setAttribute('aria-label', `Full archive name: ${displayName}`);
       hit.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
-        showNameModal(entry, hit);
+        scheduleShowNameModal(entry, hit);
       });
-      hit.addEventListener('mouseleave', () => scheduleHideNameModal(160));
+      hit.addEventListener('mouseleave', () => scheduleHideNameModal(80));
       hit.addEventListener('focus', () => {
         if (!detailModalsEnabled) return;
         showNameModal(entry, hit, { fromKeyboard: true });
@@ -2973,7 +3017,9 @@ Guests cannot open this room.`);
       tr.addEventListener('click', () => {
         userChoseZone = true;
         focusZone = 'registry';
+        registrySub = 'table';
         paintFocusZone();
+        tr.focus({ preventScroll: true });
         activateEntry(entry, { inspect: true });
       });
       tr.addEventListener('dblclick', () => {
@@ -2987,6 +3033,17 @@ Guests cannot open this room.`);
           else activateEntry(entry, { inspect: true });
         }
         if (e.key === ' ') { e.preventDefault(); activateEntry(entry, { inspect: true }); }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          e.stopPropagation();
+          enterRegistrySub('actions');
+          return;
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
         if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
           e.preventDefault();
           e.stopPropagation();
@@ -3014,6 +3071,11 @@ Guests cannot open this room.`);
       });
       tbody.appendChild(tr);
     });
+    if ((focusZone === 'registry' || focusZone === 'actions')
+      && !document.activeElement?.closest?.('#registry-table, #registry-actions, .registry-wrap')) {
+      if (focusZone === 'actions') enterRegistrySub('actions');
+      else enterRegistrySub('table');
+    }
   }
 
   function activateEntry(entry, opts = {}) {
@@ -3836,7 +3898,7 @@ const list = document.getElementById('archive-list');
 <p class="lede">Start here if you just want to <em>use</em> 0?0. No coding required.</p>
 <h3>Do these five things</h3>
 <ol>
-  <li>Quick Nav starts focused — <kbd>↑</kbd><kbd>↓</kbd> move, <kbd>Enter</kbd> runs the item (lands on ARCHIVE INDEX).</li>
+  <li>Quick Nav starts focused — <kbd>↑</kbd><kbd>↓</kbd> move, <kbd>→</kbd> opens USER OPTIONS, <kbd>Enter</kbd> runs the item (lands on ARCHIVE INDEX).</li>
   <li>Look at the <strong>registry</strong> (<kbd>r</kbd> or <kbd>Tab</kbd> to that zone) — that is the commons roster.</li>
   <li>Read <strong>ABOUT</strong> and <strong>FAQ</strong> for the friendly path; <strong>RTFM</strong> for deeper tabs.</li>
   <li>Press <strong>CREATE ARCHIVE</strong> when you want your own shelf — start with a simple folder.</li>
@@ -3861,10 +3923,10 @@ const list = document.getElementById('archive-list');
 <ul>
   <li>Boot lands on <strong>Quick Nav</strong> · <kbd>↑↓</kbd> · <kbd>Enter</kbd> run (default highlight: ARCHIVE INDEX)</li>
   <li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> move between zones (Quick Nav · registry · command · account)</li>
-  <li><kbd>←→</kbd> stay local: open USER OPTIONS, or toggle registry table ↔ actions</li>
+  <li><kbd>←→</kbd> stay local: <kbd>→</kbd> opens USER OPTIONS from any Quick Nav item; on registry, toggle table ↔ actions</li>
   <li>Click any panel to adopt it as the keyboard highlight (mouse and keys share one focus)</li>
   <li><kbd>r</kbd> registry · <kbd>q</kbd> Quick Nav · <kbd>/</kbd> command line · <kbd>a</kbd> account</li>
-  <li>Registry: <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect / toggle detail modals</li>
+  <li>Registry: <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect / quieter detail card · <kbd>Esc</kbd> dismisses tips</li>
   <li><kbd>?</kbd> full keyboard map</li>
 </ul>
 <h3>Quick Nav layout</h3>
@@ -3878,7 +3940,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
 <h3>Zones</h3>
 <table>
   <tr><th>Zone</th><th>Keys</th><th>Job</th></tr>
-  <tr><td>Quick Nav</td><td><kbd>↑↓</kbd> Enter · <kbd>→</kbd> USER OPTIONS · <kbd>Tab</kbd> next zone</td><td>Run console commands</td></tr>
+  <tr><td>Quick Nav</td><td><kbd>↑↓</kbd> Enter · <kbd>→</kbd> USER OPTIONS (any item) · <kbd>Tab</kbd> next zone</td><td>Run console commands</td></tr>
   <tr><td>Registry</td><td><kbd>↑↓</kbd> rows · <kbd>→</kbd> actions · <kbd>Enter</kbd></td><td>Browse / open archives</td></tr>
   <tr><td>Actions</td><td><kbd>←→</kbd> buttons · <kbd>←</kbd> back to table</td><td>Open · Inspect · Create (registry sub-zone)</td></tr>
   <tr><td>Command</td><td><kbd>/</kbd> · <kbd>Tab</kbd> next zone</td><td>Full command vocabulary</td></tr>
@@ -4131,7 +4193,7 @@ README.md`;
 </details>
 <details>
   <summary>How do I browse?</summary>
-  <p>On load, arrows drive <strong>Quick Nav</strong> (starts on ARCHIVE INDEX). <kbd>Tab</kbd> changes zones · <kbd>←→</kbd> open menus / toggle registry table ↔ actions · <kbd>r</kbd> / <kbd>q</kbd> / <kbd>a</kbd> / <kbd>/</kbd> jump · <kbd>Enter</kbd> opens · <kbd>i</kbd> inspects.</p>
+  <p>On load, <kbd>↑↓</kbd> drive <strong>Quick Nav</strong> (starts on ARCHIVE INDEX). <kbd>Tab</kbd> changes zones · <kbd>→</kbd> opens USER OPTIONS from any nav item · <kbd>←→</kbd> toggle registry table ↔ actions · <kbd>r</kbd> / <kbd>q</kbd> / <kbd>a</kbd> / <kbd>/</kbd> jump · <kbd>Enter</kbd> opens · <kbd>i</kbd> inspects.</p>
 </details>
 <details>
   <summary>Where did Manual Library / Install / Map go?</summary>
@@ -4455,7 +4517,7 @@ Roles
 Keyboard
   ?               full keyboard map (mouse optional)
   Tab / Shift+Tab zones: nav → registry → command → account
-  ← →             menus / sub-zones (USER OPTIONS, registry table ↔ actions)
+  ← →             menus / sub-zones (→ USER OPTIONS from any nav item, registry table ↔ actions)
   ↑↓              move within the current zone
   Enter / o       open · i inspect · n create
   /               command line · Esc back
@@ -5223,6 +5285,13 @@ Then attest here so SETUP MASTER can check it off.`);
     if (!cur) return;
     const idx = items.indexOf(cur);
 
+    // If the highlight is another zone but DOM focus lagged on nav, let the
+    // document handler drive arrows instead of reopening USER OPTIONS.
+    if (topZoneOf(focusZone) !== 'nav'
+      && (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+      return;
+    }
+
     if (toggle) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -5232,22 +5301,10 @@ Then attest here so SETUP MASTER can check it off.`);
         toggleUserOptions();
         return;
       }
-      if (e.key === 'ArrowRight') {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
         e.preventDefault();
         e.stopPropagation();
-        focusZone = 'nav';
-        paintFocusZone();
-        setUserOptionsOpen(true);
-        const first = navList.querySelector('li[data-user-opt]:not([hidden])');
-        first?.focus({ preventScroll: true });
-        return;
-      }
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        e.stopPropagation();
-        focusZone = 'nav';
-        paintFocusZone();
-        setUserOptionsOpen(false);
+        handleNavHorizontal(e.key);
         return;
       }
     }
@@ -5263,15 +5320,13 @@ Then attest here so SETUP MASTER can check it off.`);
     if (li?.hasAttribute('data-user-opt') && e.key === 'ArrowLeft') {
       e.preventDefault();
       e.stopPropagation();
-      focusZone = 'nav';
-      paintFocusZone();
-      setUserOptionsOpen(false);
-      document.getElementById('nav-user-toggle')?.focus({ preventScroll: true });
+      handleNavHorizontal('ArrowLeft');
       return;
     }
     if (e.key === 'ArrowDown' && items[idx + 1]) {
       e.preventDefault();
       e.stopPropagation();
+      userChoseZone = true;
       focusZone = 'nav';
       paintFocusZone();
       items[idx + 1].focus({ preventScroll: true });
@@ -5281,6 +5336,7 @@ Then attest here so SETUP MASTER can check it off.`);
     if (e.key === 'ArrowUp' && items[idx - 1]) {
       e.preventDefault();
       e.stopPropagation();
+      userChoseZone = true;
       focusZone = 'nav';
       paintFocusZone();
       items[idx - 1].focus({ preventScroll: true });
@@ -5303,11 +5359,11 @@ Then attest here so SETUP MASTER can check it off.`);
       items[items.length - 1]?.focus({ preventScroll: true });
       return;
     }
-    // Ordinary Quick Nav items: ←→ only for menus (USER OPTIONS), not zone travel
+    // From any Quick Nav item: → opens USER OPTIONS, ← closes it
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
       e.stopPropagation();
-      // no-op on plain items — Tab changes zones
+      handleNavHorizontal(e.key);
     }
   });
 
@@ -5361,6 +5417,7 @@ Then attest here so SETUP MASTER can check it off.`);
   let registrySub = 'table'; // 'table' | 'actions' (sub-zones of registry)
   let bootNavReady = false;
   let userChoseZone = false;
+  let lastNavEl = null;
 
   function isTypingTarget(el) {
     if (!el || el === document.body) return false;
@@ -5389,6 +5446,88 @@ Then attest here so SETUP MASTER can check it off.`);
 
   function topZoneOf(zone) {
     return (zone === 'actions' || zone === 'registry') ? 'registry' : zone;
+  }
+
+  // True only when the user is actually typing in the highlighted zone.
+  // Password-manager autofill into Account Gate does not count.
+  function typingInActiveZone(el) {
+    if (!isTypingTarget(el)) return false;
+    const z = zoneFromElement(el);
+    if (focusZone === 'auth') return z === 'auth';
+    if (focusZone === 'command') return z === 'command';
+    return false;
+  }
+
+  function userOptionsIsOpen() {
+    return document.getElementById('nav-user-toggle')?.getAttribute('aria-expanded') === 'true';
+  }
+
+  function handleNavHorizontal(key) {
+    userChoseZone = true;
+    focusZone = 'nav';
+    paintFocusZone();
+    const activeLi = document.activeElement?.closest?.('#nav-list li')
+      || navList.querySelector('li.active');
+    if (manualMode === 'rtfm' && activeLi?.dataset.cmd === 'RTFM') {
+      const order = ['about', 'ease', 'nav', 'commands', 'depth', 'code', 'source'];
+      const idx = order.indexOf(rtfmTab);
+      if (key === 'ArrowRight') setRtfmTab(order[Math.min(order.length - 1, idx + 1)]);
+      else setRtfmTab(order[Math.max(0, idx - 1)]);
+      return;
+    }
+    const toggle = document.getElementById('nav-user-toggle');
+    if (key === 'ArrowRight') {
+      setUserOptionsOpen(true);
+      const first = navList.querySelector('li[data-user-opt]:not([hidden])');
+      const dest = first || toggle;
+      dest?.focus({ preventScroll: true });
+      lastNavEl = dest || lastNavEl;
+      return;
+    }
+    if (key === 'ArrowLeft' && userOptionsIsOpen()) {
+      setUserOptionsOpen(false);
+      toggle?.focus({ preventScroll: true });
+      lastNavEl = toggle || lastNavEl;
+    }
+  }
+
+  function handleRegistryHorizontal(key) {
+    const ae = document.activeElement;
+    const onActions = focusZone === 'actions' || !!ae?.closest?.('#registry-actions');
+    const onTable = !!ae?.closest?.('#registry-table');
+    if (onActions && !onTable) {
+      const btns = [...document.querySelectorAll('#registry-actions .ghost-btn')].filter((b) => !b.disabled && !b.hidden);
+      const cur = btns.indexOf(ae);
+      if (key === 'ArrowLeft' && cur <= 0) {
+        enterRegistrySub('table');
+        return;
+      }
+      if (key === 'ArrowRight' && cur >= btns.length - 1) return;
+      focusActionButtons(key === 'ArrowRight' ? 1 : -1);
+      return;
+    }
+    if (key === 'ArrowRight') enterRegistrySub('actions');
+  }
+
+  function handleAuthHorizontal(key) {
+    const ae = document.activeElement;
+    if (!ae || ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.isContentEditable) return false;
+    const btns = [...document.querySelectorAll('#auth-form button')].filter((b) => !b.disabled && !b.hidden);
+    if (!btns.length) return false;
+    const cur = btns.indexOf(ae);
+    if (cur < 0) return false;
+    const idx = Math.max(0, Math.min(btns.length - 1, cur + (key === 'ArrowRight' ? 1 : -1)));
+    btns[idx].focus({ preventScroll: true });
+    focusZone = 'auth';
+    paintFocusZone();
+    return true;
+  }
+
+  function stepRtfmTab(key) {
+    const order = ['about', 'ease', 'nav', 'commands', 'depth', 'code', 'source'];
+    const idx = order.indexOf(rtfmTab);
+    if (key === 'ArrowRight') setRtfmTab(order[Math.min(order.length - 1, idx + 1)]);
+    else setRtfmTab(order[Math.max(0, idx - 1)]);
   }
 
   function paintFocusZone() {
@@ -5421,12 +5560,15 @@ Then attest here so SETUP MASTER can check it off.`);
 
   function focusRegistryRow(idx) {
     const rows = [...tbody.querySelectorAll('tr[data-idx]')];
-    if (!rows.length) return;
-    const i = Math.max(0, Math.min(rows.length - 1, idx));
-    const row = rows[i];
     registrySub = 'table';
     focusZone = 'registry';
     paintFocusZone();
+    if (!rows.length) {
+      document.querySelector('.registry-wrap')?.focus({ preventScroll: true });
+      return;
+    }
+    const i = Math.max(0, Math.min(rows.length - 1, idx));
+    const row = rows[i];
     row.focus({ preventScroll: true });
     const entry = registry[i];
     if (entry) activateEntry(entry, { inspect: true });
@@ -5543,16 +5685,19 @@ Then attest here so SETUP MASTER can check it off.`);
     if (idx < 0) idx = 0;
     idx = Math.max(0, Math.min(items.length - 1, idx + delta));
     items[idx].focus({ preventScroll: true });
+    lastNavEl = items[idx];
     try {
       items[idx].scrollIntoView({ block: 'nearest', inline: 'nearest' });
     } catch (_) { /* ignore */ }
   }
 
   function focusAuth() {
+    userChoseZone = true;
     enterZone('auth');
   }
 
   function focusCommand() {
+    userChoseZone = true;
     enterZone('command');
   }
 
@@ -5591,10 +5736,10 @@ Zones (Tab)
   Jump keys: q nav · r registry · c|/ command · a account
 
 ← → are local (not zone travel)
-  Quick Nav         → opens USER OPTIONS · ← closes it
+  Quick Nav         → opens USER OPTIONS from any item · ← closes it
   Registry          → actions toolbar · ← from first action returns to table
   Actions           ← → move Open / Inspect / Create / Install
-  RTFM panel        ← → switch tabs when focus is in the panel
+  RTFM              ← → switch tabs (from the RTFM item or inside the panel)
   Account / command caret in fields · Tab leaves the zone
 
 Boot
@@ -5602,7 +5747,7 @@ Boot
 
 Quick Nav
   ↑ ↓     move · Enter / Space run
-  →       expand USER OPTIONS fold-out
+  →       expand USER OPTIONS (from any Quick Nav item)
   ←       collapse USER OPTIONS
   Bottom: iNi Provenance · RTFM (flair)
 
@@ -5639,15 +5784,17 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
   }
 
   document.addEventListener('keydown', (e) => {
-    // Always allow F-keys and ? from almost anywhere except raw password? Allow F-keys always.
-    const typing = isTypingTarget(e.target);
-    const inAuthField = !!(e.target.closest && e.target.closest('#auth-form'));
-    const inCommandField = e.target === commandInput;
+    // Follow the highlighted zone, not whatever autofill last focused.
+    const typing = typingInActiveZone(e.target);
+    if (e.key === 'Escape' || e.key === 'Tab') hideHoverChrome({ force: true });
+    else if (e.key.startsWith('Arrow')) hideHoverChrome();
 
     if (e.key === 'Escape') {
-      if (typing) {
+      if (isTypingTarget(e.target)) {
         e.preventDefault();
         e.target.blur();
+        if (focusZone === 'nav') { enterZone('nav'); return; }
+        if (focusZone === 'auth') { enterZone('nav'); return; }
         focusRegistrySelectedOrFirst();
         return;
       }
@@ -5711,43 +5858,33 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
       return;
     }
 
-    // ←→ = menus / sub-zones only (not top-level zone travel)
+    // ←→ = menus / sub-zones only (not top-level zone travel).
+    // Drive from focusZone so Account Gate autofill cannot swallow arrows.
     if (!e.altKey && !e.metaKey && !e.ctrlKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
       if (e.target.closest?.('#nav-list')) {
-        // Quick Nav handler owns USER OPTIONS fold
+        return; // nav-list handler already ran handleNavHorizontal
+      }
+      if (focusZone === 'nav') {
+        e.preventDefault();
+        handleNavHorizontal(e.key);
         return;
       }
       if (manualMode === 'rtfm' && e.target.closest?.('.rtfm-tabs, .rtfm-code-tabs, .rtfm-panel')) {
-        const order = ['about', 'ease', 'nav', 'commands', 'depth', 'code', 'source'];
-        const idx = order.indexOf(rtfmTab);
         e.preventDefault();
-        if (e.key === 'ArrowRight') setRtfmTab(order[Math.min(order.length - 1, idx + 1)]);
-        else setRtfmTab(order[Math.max(0, idx - 1)]);
+        stepRtfmTab(e.key);
         return;
       }
-      // Registry zone: table ↔ actions toolbar
       if (focusZone === 'registry' || focusZone === 'actions'
-        || e.target.closest?.('#registry-table') || e.target.closest?.('#registry-actions') || e.target.closest?.('.registry-wrap')) {
+        || e.target.closest?.('#registry-table') || e.target.closest?.('#registry-actions')) {
         e.preventDefault();
-        if (focusZone === 'registry' || e.target.closest?.('#registry-table') || e.target.closest?.('.registry-wrap')) {
-          if (e.key === 'ArrowRight') enterRegistrySub('actions');
-          // ← on table: stay (or no-op)
-          return;
-        }
-        // On actions toolbar: ←→ move buttons; ← from first returns to table
-        const btns = [...document.querySelectorAll('#registry-actions .ghost-btn')].filter((b) => !b.disabled && !b.hidden);
-        const cur = btns.indexOf(document.activeElement);
-        if (e.key === 'ArrowLeft' && cur <= 0) {
-          enterRegistrySub('table');
-          return;
-        }
-        if (e.key === 'ArrowRight' && cur >= btns.length - 1) {
-          return; // end of sub-zone
-        }
-        focusActionButtons(e.key === 'ArrowRight' ? 1 : -1);
+        handleRegistryHorizontal(e.key);
         return;
       }
-      // Auth / command: leave arrows for caret / native field behavior
+      if (focusZone === 'auth') {
+        if (handleAuthHorizontal(e.key)) e.preventDefault();
+        return;
+      }
+      // Command: leave arrows for caret
       return;
     }
 
@@ -5755,8 +5892,16 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
       return;
     }
 
+    // Stolen DOM focus (autofill): ↑↓ still drive the highlighted zone
+    if (focusZone === 'nav' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+      && !e.target.closest?.('#nav-list')) {
+      e.preventDefault();
+      focusNavItem(e.key === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+
     // Auth fields: ↑↓ move within the gate
-    if ((focusZone === 'auth' || inAuthField) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+    if (focusZone === 'auth' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
       e.preventDefault();
       focusAuthFields(e.key === 'ArrowDown' ? 1 : -1);
       return;
@@ -5771,8 +5916,8 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     }
     if (k === 'a') { e.preventDefault(); focusAuth(); return; }
     if (k === 'c') { e.preventDefault(); focusCommand(); return; }
-    if (k === 'r') { e.preventDefault(); focusRegistrySelectedOrFirst(); return; }
-    if (k === 'q') { e.preventDefault(); focusNavItem(0); return; }
+    if (k === 'r') { e.preventDefault(); userChoseZone = true; focusRegistrySelectedOrFirst(); return; }
+    if (k === 'q') { e.preventDefault(); userChoseZone = true; focusNavItem(0); return; }
     if (k === 'o') {
       e.preventDefault();
       if (selected && canOpen(selected)) openEntry(selected);
@@ -5917,17 +6062,35 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
   document.addEventListener('focusin', (e) => {
     const zone = zoneFromElement(e.target);
     if (!zone) return;
-    // Don't let Account Gate autofill steal the zone during boot
-    if (!userChoseZone && zone === 'auth' && !bootNavReady) return;
-    if (!userChoseZone && zone === 'auth' && focusZone === 'nav') return;
+    // Password managers autofocus Account Gate. Bounce DOM focus back to
+    // the highlighted zone until the user Tabs, clicks, or jumps there.
+    if (zone === 'auth' && focusZone !== 'auth') {
+      const restore = focusZone;
+      queueMicrotask(() => {
+        if (userChoseZone || focusZone === 'auth') return;
+        const opts = {};
+        if (restore === 'nav' && lastNavEl?.isConnected) opts.focusEl = lastNavEl;
+        enterZone(restore, opts);
+      });
+      return;
+    }
+    if (zone === 'nav') {
+      lastNavEl = e.target.closest?.('#nav-list li') || lastNavEl;
+    }
     focusZone = zone;
+    if (zone === 'actions') registrySub = 'actions';
+    if (zone === 'registry') registrySub = 'table';
     paintFocusZone();
   });
 
   // Boot: arrows control Quick Nav from the start (ARCHIVE INDEX land).
-  // Always take focus from Account Gate autofill/password managers — until the user chooses a zone.
+  // Keep reclaiming focus from Account Gate autofill until the user chooses a zone.
   function bootFocusQuickNav() {
     if (userChoseZone) return;
+    if (document.activeElement?.closest?.('#nav-list')) {
+      bootNavReady = true;
+      return;
+    }
     setUserOptionsOpen(false);
     const active = document.activeElement;
     if (active === commandInput) return;
@@ -5942,6 +6105,7 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     bootFocusQuickNav();
     setTimeout(bootFocusQuickNav, 80);
     setTimeout(bootFocusQuickNav, 450);
+    setTimeout(bootFocusQuickNav, 1400);
   });
 
   function consumeCreateDeepLink() {

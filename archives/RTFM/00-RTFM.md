@@ -48,7 +48,7 @@ RTFM
 Boot          ↑↓ on Quick Nav (ARCHIVE INDEX)
 Zones (Tab)   nav → registry → command → account
 ← →           menus / sub-zones only
-              USER OPTIONS open/close
+              → USER OPTIONS from any Quick Nav item · ← closes it
               registry table ↔ actions toolbar
 Click         mouse adopts that zone as keyboard highlight
 Jump          q nav · r registry · c|/ command · a account
