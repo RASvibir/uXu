@@ -84,7 +84,7 @@ Want to add more shows? Fork the repo, add shows to `data.json`, and submit a PR
 
 ## License
 
-**Deck software & original documentation:** [MIT License](../../LICENSE) — Copyright (c) 2026 Victor Birkle.
+**Deck software & original documentation:** [MIT License](../../LICENSE) — Copyright (c) 2026 The uXu Project.
 
 **Audio streams:** Internet Archive / related public sources under their own terms and the Grateful Dead taping tradition. uXu does **not** own those recordings. Registration on uXu does not transfer ownership of this archive’s curation either.
 

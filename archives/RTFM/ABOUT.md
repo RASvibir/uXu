@@ -81,7 +81,7 @@ Design bets:
 
 *built to archive. tuned to overachieve.*
 
-Human contact: **rasip@chloreform.org** — Victor Birkle.
+Human contact: [GitHub Issues](https://github.com/RASvibir/uXu/issues).
 
 ## License & rights
 

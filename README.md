@@ -2,11 +2,13 @@
 
 **Shared archive commons.** Independent archives keep their own voice, stack, and curation. uXu registers, connects, and helps people find them.
 
+uXu is **set up independently**. It is open source (MIT). It is not a product of any studio, and it does not speak for archives that register here.
+
 **Live:** [https://rasvibir.github.io/uXu/](https://rasvibir.github.io/uXu/)  
 **Repo:** [https://github.com/RASvibir/uXu](https://github.com/RASvibir/uXu)  
 **Invite app:** Install **uXu** from the live page (PWA wordmark icon). The public invite does **not** brand itself as `0?0`.
 
-Admin (humans): **rasip@chloreform.org**
+Questions: [GitHub Issues](https://github.com/RASvibir/uXu/issues)
 
 ## What you will find
 
@@ -14,7 +16,7 @@ Admin (humans): **rasip@chloreform.org**
 |---------|------|
 | **uXu** (landing / PWA) | Public door into the commons |
 | **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
-| **iNi** | Opt-in provenance protocol (self-attestation). Public notes: [soloist.ai/uxu](https://soloist.ai/uxu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
+| **iNi** | Independent opt-in provenance practice (self-attestation). Public notes: [soloist.ai/uxu](https://soloist.ai/uxu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
 | **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
 | **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
@@ -74,11 +76,11 @@ In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, …).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
 
-**Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater.
+**Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater. uXu and iNi are set up independently of each other as well: uXu is the commons; iNi is optional provenance practice.
 
 ## License
 
-**Software, templates, and original documentation** in this repository are licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Victor Birkle.
+**Software, templates, and original documentation** in this repository are licensed under the [MIT License](LICENSE) — Copyright (c) 2026 The uXu Project.
 
 **Media clarification (not a second license):**
 

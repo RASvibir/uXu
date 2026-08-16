@@ -52,7 +52,7 @@ This guide. Also available from 0?0 via MANUAL LIBRARY → READ cybercat-sunflow
 
 **Code / UI / original notes** for this archive follow the uXu repository
 [MIT License](https://github.com/RASvibir/uXu/blob/main/LICENSE)
-(Copyright 2026 Victor Birkle).
+(Copyright 2026 The uXu Project).
 
 **Recordings are separate.** Grateful Dead culture includes an explicit
 taping / sharing tradition. This deck streams publicly available transfers

@@ -22,7 +22,7 @@ That’s enough for a first archive.
 1. **CREATE ARCHIVE** on 0?0 — opens the template (rename Anon Archive, save, confirm).
 2. Optional: copy this folder’s sibling patterns from repo `templates/` if you want static files.
 3. **Edit `data.json`** — `archiveName`, `description`, and `shows`.
-4. **Open your `index.html`**, then ask to register: pull request, or email **rasip@chloreform.org**.
+4. **Open your `index.html`**, then ask to register: pull request, or a GitHub issue.
 
 You’ll get an id like `Your_Name.uXu.NNNN`.
 

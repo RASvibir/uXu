@@ -165,7 +165,7 @@ cue when `optIn` is true (honesty badge — not enforcement).
 
 ## Contact
 
-Questions about iNi practice or registration: **rasip@chloreform.org**
+Questions: https://github.com/RASvibir/uXu/issues (uXu) or https://github.com/RASvibir/iNi/discussions (iNi)
 
 Optional public notes: **https://soloist.ai/uxu**  
 Paper trail: **https://github.com/RASvibir/iNi**

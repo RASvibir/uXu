@@ -12,4 +12,4 @@
 
 `/templates/` and entries like `CyberCat-Sunflower/` are optional references.
 
-Questions / registration: **rasip@chloreform.org**
+Questions / registration: [GitHub Issues](https://github.com/RASvibir/uXu/issues)

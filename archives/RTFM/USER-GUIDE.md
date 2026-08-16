@@ -120,7 +120,7 @@ Day-to-day visitors do not need admin powers.
 
 ## License & rights (plain language)
 
-- **Code and original docs** in the uXu repo are **MIT** (Copyright 2026 Victor Birkle). See the repo `LICENSE`.
+- **Code and original docs** in the uXu repo are **MIT** (Copyright 2026 The uXu Project). See the repo `LICENSE`.
 - **Audio, images, and other media** linked by archives are **not** owned by uXu. Follow each source’s license, permission, or taping policy.
 - **Registering an archive** does not transfer ownership of your collection.
 - Optional **iNi** fields are honesty / provenance notes — not a legal title certificate.
@@ -129,9 +129,9 @@ Day-to-day visitors do not need admin powers.
 
 Need help, want an archive registered, found a problem, or have a question?
 
-Email the uXu admin:
+Open a GitHub issue:
 
-**rasip@chloreform.org**
+https://github.com/RASvibir/uXu/issues
 
 Please include:
 

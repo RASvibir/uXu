@@ -62,6 +62,6 @@ bootstrap secrets, token recipes, and privilege-elevation how-tos.
 
 ## License
 
-uXu software and original documentation: **MIT** (Copyright 2026 Victor Birkle).
+uXu software and original documentation: **MIT** (Copyright 2026 The uXu Project).
 Media linked by archives stays under its own licenses / taping policies.
 See the root README “License” section and `LICENSE`.

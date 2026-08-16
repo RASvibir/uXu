@@ -27,7 +27,7 @@ Optional: this manual, so **INDEX ARCHIVE MANUALS** can find you.
 3. Change `archiveName` and `description` in `data.json`.
 4. Replace the practice item under `shows` (or use `[]`).
 5. Open your `index.html` in a browser.
-6. Register: PR, or email **rasip@chloreform.org**.
+6. Register: PR, or a GitHub issue.
 
 ## From 0?0
 

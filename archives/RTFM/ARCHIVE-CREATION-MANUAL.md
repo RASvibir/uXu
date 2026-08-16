@@ -30,7 +30,7 @@ That is enough.
 5. List visitor manuals under `uxu.manuals` (starter: `manuals/USER-MANUAL.md`) so
    **0?0 → RTFM → INDEX ARCHIVE MANUALS** can find them.
 6. Open `index.html` in a browser and confirm it loads.
-7. Open a pull request, or email **rasip@chloreform.org** and ask to be registered.
+7. Open a pull request, or a GitHub issue and ask to be registered.
 8. Stay legal and safe (see CONTRIBUTING.md).
 
 You do not need a custom app, a database, or special security on day one.
@@ -184,7 +184,7 @@ Coordinate with admin before promising downloads.
 
 ### Tier 4 — Hardened
 Accounts, restricted surfaces, careful caching, threat modeling.
-Only when you truly need it — email rasip@chloreform.org first.
+Only when you truly need it — open a GitHub issue (RASvibir/uXu) first.
 
 ## Pick Your Lane
 
@@ -249,13 +249,13 @@ Relationships between archives can be declared with `*:*` (a link, not control).
 ## After You Build
 
 1. Test locally.
-2. PR to the uXu repo, or email rasip@chloreform.org.
+2. PR to the uXu repo, or open a GitHub issue (RASvibir/uXu).
 3. Ask for registry listing so 0?0 can OPEN your archive.
 4. Optional: add a short note to RTFM if you invented something reusable.
 
 ## Need Help?
 
-Admin: **rasip@chloreform.org**
+Contact: https://github.com/RASvibir/uXu/issues
 
 Everyday 0?0 use: READ user-guide  
 Code patterns: READ developers-handbook  

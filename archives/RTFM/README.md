@@ -21,7 +21,7 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 - **Source Code Pamphlet** — repo map without secrets or operator internals
 - **00-RTFM.md** / **ABOUT.md** / **INI-PROVENANCE.md** — markdown twins of interactive panels
 
-Admin contact for humans: rasip@chloreform.org
+Contact: https://github.com/RASvibir/uXu/issues
 
 **License:** MIT for software & original docs (`LICENSE`). Media linked by
 archives stays under its own terms — see root README.
