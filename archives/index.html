@@ -1606,7 +1606,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
   </div>
 
 <script>
-  const API_BASE = "https://uxu-ini-production.chrf-podcast.workers.dev";
+  const API_BASE = "https://rasvibir-api.chrf-podcast.workers.dev";
   const AUTH_BASE = "https://ep-crimson-firefly-ad77brka.neonauth.c-2.us-east-1.aws.neon.tech/uXu/auth";
   const SESSION_KEY = "uxu_session_token";
   const SUDO_KEY = "uxu_sudo";
@@ -3789,7 +3789,7 @@ Files downloaded. Live page works now.`);
         label: 'Public registry fetch',
         lang: 'js',
         body: `// Public read — no auth headers required
-const API = 'https://uxu-ini-production.chrf-podcast.workers.dev';
+const API = 'https://rasvibir-api.chrf-podcast.workers.dev';
 
 const res = await fetch(API + '/api/root/registry');
 const { records } = await res.json();
