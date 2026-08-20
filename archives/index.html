@@ -2020,14 +2020,20 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     return data;
   }
 
-  async function signIn(email, password){
-    const data = await neonAuthPost('/sign-in/email', { email, password });
-    if (!data.token) throw new Error('sign-in succeeded but no session token returned');
+  async function signIn(email, password) {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || data.message || "Auth failed");
+    if (!data.token) throw new Error("No session token returned");
     setSessionToken(data.token);
     setSudo(false);
     await refreshAuth();
-    await auditAuthEvent('signin');
-    toast(`signed in as ${data.user?.name || email}`);
+    await auditAuthEvent("signin");
+    toast(`signed in as ${data.email || email}`);
     return data;
   }
 
