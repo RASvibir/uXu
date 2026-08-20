@@ -49,3 +49,5 @@ apps/ini/.dev.vars.*
 apps/ini/.wrangler/
 apps/ini/node_modules/
 apps/ini/.dev.vars
+
+/src/generated/prisma
