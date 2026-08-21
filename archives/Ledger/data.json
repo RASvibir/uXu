@@ -1,0 +1,39 @@
+{
+  "archiveName": "Ledger",
+  "artist": "",
+  "curator": "",
+  "description": "Ledger’s personal archive. Private for now — show him later; add his login as steward when ready. Public how-to stays in Starter.",
+  "uxu": {
+    "homeLink": {
+      "style": "0?0",
+      "href": "../index.html"
+    },
+    "allowTemplateForks": false,
+    "templateForkDepth": 0,
+    "templateOf": "Starter.uXu.0003",
+    "templateDepth": 1,
+    "manuals": [
+      {
+        "title": "Ledger notes",
+        "path": "manuals/USER-MANUAL.md",
+        "description": "Private notes for this room"
+      }
+    ],
+    "tags": [],
+    "contactEmail": null,
+    "contactEmailPublic": false,
+    "ini": {
+      "optIn": false,
+      "tag": "iNi",
+      "provenance": {
+        "origin": "",
+        "authors": [],
+        "custody": "",
+        "lineage": "",
+        "conditions": "",
+        "attestedAt": null
+      }
+    }
+  },
+  "shows": []
+}

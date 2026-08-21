@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ledger · private</title>
+  <style>
+    :root {
+      --bg: #0a0c0a; --text: #d8ffe6; --accent: #3de872; --muted: #7a8f84;
+      --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+      --warn: #e8c27a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: var(--mono);
+      background: var(--bg); color: var(--text); padding: 1rem 1.25rem 2rem;
+      max-width: 40rem;
+    }
+    a.home {
+      display: inline-block; margin-bottom: 1rem; color: var(--accent);
+      border: 1px solid rgba(61,232,114,.35); padding: .25rem .55rem; text-decoration: none;
+      font-size: .85rem;
+    }
+    a.home:hover { background: var(--accent); color: #041208; }
+    h1 { font-size: 1.35rem; margin: 0 0 .35rem; }
+    .tag { color: var(--muted); font-size: .8rem; margin-bottom: 1rem; }
+    #gate, #app { display: none; }
+    #gate.show, #app.show { display: block; }
+    .panel {
+      border: 1px solid rgba(61,232,114,.28);
+      background: rgba(61,232,114,.05);
+      padding: .85rem;
+      font-size: .85rem; line-height: 1.45; color: var(--muted);
+    }
+    .panel strong { color: var(--text); }
+    .panel code { color: var(--accent); }
+    .err { color: var(--warn); margin-top: .75rem; }
+    #archive-list { display: grid; gap: .5rem; margin-top: 1rem; }
+    .card {
+      border: 1px solid rgba(61,232,114,.25); padding: .65rem .75rem;
+      background: rgba(61,232,114,.04);
+    }
+    .empty { color: var(--muted); font-size: .8rem; }
+  </style>
+</head>
+<body>
+  <a class="home" href="../index.html">← 0?0</a>
+  <div id="gate">
+    <h1>Ledger</h1>
+    <p class="tag">private archive · Ledger.uXu.0002</p>
+    <div class="panel">
+      <strong>Steward access only.</strong><br><br>
+      1. Open <code>← 0?0</code> and sign in<br>
+      2. Come back here, or type <code>OPEN LEDGER</code> on the console<br><br>
+      Guests cannot open this room. A second steward can be added later.
+      <div class="err" id="gate-msg"></div>
+    </div>
+  </div>
+  <div id="app">
+    <h1 id="archive-title">Ledger</h1>
+    <p class="tag" id="archive-tag">private · steward ok</p>
+    <p id="archive-desc" class="tag"></p>
+    <div id="archive-list"></div>
+  </div>
+  <script>
+    const API_BASE = 'https://rasvibir-api.chrf-podcast.workers.dev';
+    const ARCHIVE_ID = 'Ledger.uXu.0002';
+    const SESSION_KEY = 'uxu_session_token';
+
+    function token() {
+      try { return sessionStorage.getItem(SESSION_KEY) || ''; }
+      catch { return ''; }
+    }
+
+    async function checkAccess() {
+      const t = token();
+      const gate = document.getElementById('gate');
+      const app = document.getElementById('app');
+      const msg = document.getElementById('gate-msg');
+      if (!t) {
+        gate.classList.add('show');
+        msg.textContent = 'No session found — sign in on 0?0 first.';
+        return false;
+      }
+      try {
+        const res = await fetch(API_BASE + '/api/archives/' + encodeURIComponent(ARCHIVE_ID) + '/access', {
+          headers: { Authorization: 'Bearer ' + t },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.allowed) {
+          gate.classList.add('show');
+          msg.textContent = data.reason || 'This account is not a steward for Ledger.';
+          return false;
+        }
+        app.classList.add('show');
+        return true;
+      } catch (err) {
+        gate.classList.add('show');
+        msg.textContent = 'Could not check access: ' + err.message;
+        return false;
+      }
+    }
+
+    async function loadArchive() {
+      const data = await fetch('data.json').then((r) => r.json());
+      document.getElementById('archive-title').textContent = data.archiveName || 'Ledger';
+      document.title = (data.archiveName || 'Ledger') + ' · private';
+      document.getElementById('archive-desc').textContent = data.description || '';
+      const list = document.getElementById('archive-list');
+      const items = data.shows || data.items || [];
+      if (!items.length) {
+        list.innerHTML = '<p class="empty">No items yet. Add entries under <code>shows</code> in data.json.</p>';
+        return;
+      }
+      items.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const label = item.title || item.venue || ('Item ' + (i + 1));
+        const meta = [item.date, item.venue].filter(Boolean).join(' · ');
+        card.innerHTML = '<div>' + label + '</div>' +
+          (meta ? '<div class="empty">' + meta + '</div>' : '');
+        list.appendChild(card);
+      });
+    }
+
+    checkAccess().then((ok) => { if (ok) return loadArchive(); });
+  </script>
+</body>
+</html>

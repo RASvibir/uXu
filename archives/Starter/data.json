@@ -1,0 +1,51 @@
+{
+  "archiveName": "Starter",
+  "artist": "",
+  "curator": "",
+  "description": "Public how-to room — copy this pattern to make your own archive. Built simple enough for a first project.",
+  "uxu": {
+    "homeLink": {
+      "style": "uXu",
+      "href": "../index.html"
+    },
+    "allowTemplateForks": true,
+    "templateForkDepth": 2,
+    "templateOf": null,
+    "templateDepth": 0,
+    "manuals": [
+      {
+        "title": "How to make an archive",
+        "path": "manuals/USER-MANUAL.md",
+        "description": "Step-by-step recipe — also in 0?0 INDEX ARCHIVE MANUALS"
+      }
+    ],
+    "tags": ["starter", "template", "how-to"],
+    "contactEmail": null,
+    "contactEmailPublic": false,
+    "ini": {
+      "optIn": false,
+      "tag": "iNi",
+      "provenance": {
+        "origin": "",
+        "authors": [],
+        "custody": "",
+        "lineage": "",
+        "conditions": "",
+        "attestedAt": null
+      }
+    }
+  },
+  "shows": [
+    {
+      "title": "Practice item (edit or delete me)",
+      "date": "2026-08-12",
+      "venue": "Your first note",
+      "setlist": [
+        "Change archiveName in data.json to your title",
+        "Write one short description",
+        "Add your own items under shows (or clear this one)",
+        "Register: PR or open a GitHub issue (RASvibir/uXu)"
+      ]
+    }
+  ]
+}
