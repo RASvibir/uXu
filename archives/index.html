@@ -123,7 +123,7 @@
     padding:1rem 1.15rem .9rem;
     overflow:hidden;
     /* Fixed CRT height so docs scroll inside — not the window to the bottom */
-    height:min(78vh, 720px);
+    height:min(82vh, 780px);
     max-height:calc(100dvh - 5.5rem);
     min-height:0;
     display:flex;
@@ -264,7 +264,13 @@
   .kv dt{color:var(--green-dim); white-space:nowrap;}
   .kv dd{margin:0; color:var(--green-bright); text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
-  .registry-wrap{overflow:auto; max-height:11.5rem; position:relative;}
+  .registry-box{flex:0 0 auto;}
+  .registry-wrap{
+    overflow:auto;
+    /* Header + 4 archive rows — keep the type/command screen dominant */
+    max-height:calc(1.25rem + 4 * 1.52rem);
+    position:relative;
+  }
   .registry-wrap:focus{outline:none;}
   table{width:100%; border-collapse:collapse; font-size:.72rem; table-layout:fixed;}
   th{
@@ -575,11 +581,70 @@
   }
   body.detail-modals-on .detail-hint{ display:none; }
 
+  .type-stage{
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:.35rem;
+  }
+  .command-console-chrome{
+    display:none;
+    flex-shrink:0;
+    align-items:center;
+    justify-content:space-between;
+    gap:.75rem;
+    flex-wrap:wrap;
+    font-size:.68rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--green-bright);
+    border-bottom:1px dashed var(--green-line);
+    padding:0 0 .4rem;
+  }
+  .command-console-chrome .meta{
+    color:var(--green-dim);
+    font-weight:500;
+    letter-spacing:.04em;
+    text-transform:none;
+  }
+  .command-console-chrome kbd{
+    font:inherit;
+    color:var(--cyan);
+    border:1px solid var(--green-line);
+    padding:0 .25rem;
+    margin:0 .1rem;
+    text-transform:none;
+    letter-spacing:.02em;
+  }
+  .command-console-chrome .dock-btn{
+    font:inherit;
+    font-size:.62rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    background:transparent;
+    border:1px solid rgba(94,240,255,.35);
+    padding:.18rem .45rem;
+    cursor:pointer;
+  }
+  .command-console-chrome .dock-btn:hover,
+  .command-console-chrome .dock-btn:focus-visible{
+    color:#031018;
+    background:var(--cyan);
+    border-color:var(--cyan);
+    outline:none;
+  }
+  .type-stage.kb-focus .output-panel,
+  .type-stage.kb-focus .prompt-row{
+    border-color:var(--cyan);
+    box-shadow:0 0 0 1px rgba(94,240,255,.35), 0 0 18px rgba(94,240,255,.12);
+  }
   .output-panel{
     flex:1;
     display:flex;
     flex-direction:column;
-    min-height:0;
+    min-height:12.5rem;
     max-height:100%;
   }
   #active-summary{
@@ -1403,10 +1468,57 @@
   }
   .toast.show{opacity:1; transform:translateY(0);}
 
+  body.command-console-on .grid{
+    position:relative;
+  }
+  body.command-console-on .grid::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:20;
+    background:rgba(3,8,5,.78);
+    pointer-events:auto;
+  }
+  body.command-console-on .type-stage{
+    position:absolute;
+    inset:.15rem;
+    z-index:25;
+    background:rgba(3,8,5,.98);
+    border:1px solid var(--green);
+    box-shadow:
+      0 0 0 1px rgba(3,8,5,.9),
+      0 18px 48px rgba(0,0,0,.55),
+      0 0 36px rgba(61,232,114,.16);
+    padding:.7rem .8rem .65rem;
+    gap:.45rem;
+  }
+  body.command-console-on .command-console-chrome{display:flex;}
+  body.command-console-on .output-panel{
+    min-height:0;
+    flex:1;
+  }
+  body.command-console-on #active-summary,
+  body.command-console-on .rtfm-body,
+  body.command-console-on .guide-scroll{
+    font-size:.86rem;
+    line-height:1.62;
+  }
+  body.command-console-on .prompt-row{
+    padding:.5rem .7rem;
+    font-size:.92rem;
+    border-color:var(--green-bright);
+    box-shadow:0 0 16px rgba(61,232,114,.2);
+  }
+  body.command-console-on #command-input{font-size:.95rem;}
+  body.command-console-on .registry-box,
+  body.command-console-on .grid > .col:not(.col-mid){
+    pointer-events:none;
+  }
+
   @media (prefers-reduced-motion:reduce){
     .screen{animation:none;}
     .power-led{animation:none;}
-    #active-summary, #nav-list li, tbody tr td, .ghost-btn, .prompt-row, .toast, .rtfm-tip, .ini-tip{transition:none;}
+    #active-summary, #nav-list li, tbody tr td, .ghost-btn, .prompt-row, .toast, .rtfm-tip, .ini-tip, .type-stage{transition:none;}
     #nav-list li.nav-rtfm:not(.active),
     #nav-list li.nav-ini:not(.active){animation:none;}
   }
@@ -1460,8 +1572,8 @@
             </div>
           </section>
 
-          <section class="col">
-            <div class="box">
+          <section class="col col-mid">
+            <div class="box registry-box">
               <div class="box-title">
                 <span>uXu ARCHIVE REGISTRY</span>
                 <span class="meta" id="registry-count">—</span>
@@ -1507,6 +1619,12 @@
                 <button type="button" class="ghost-btn" id="btn-install" hidden title="Install uXu (p)">Install uXu</button>
               </div>
             </div>
+            <div class="type-stage" id="type-stage">
+              <div class="command-console-chrome">
+                <span>COMMAND CONSOLE</span>
+                <span class="meta">type screen expanded · <kbd>Esc</kbd> docks</span>
+                <button type="button" class="dock-btn" id="btn-dock-console" title="Dock command console (Esc)">Dock</button>
+              </div>
             <div class="box output-panel">
               <div class="box-title" id="active-title">WELCOME TO uXu</div>
               <div class="manual-toolbar" id="manual-toolbar" role="toolbar" aria-label="Manual tools" hidden>
@@ -1554,8 +1672,9 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
             </div>
             <form id="command-form" class="prompt-row" autocomplete="off">
               <label class="prompt-caret" for="command-input">C:\uXu&gt;</label>
-              <input id="command-input" type="text" placeholder="OPEN CYBERCAT · CREATE ARCHIVE · MANUAL · HELP" spellcheck="false" />
+              <input id="command-input" type="text" placeholder="OPEN CYBERCAT · CREATE ARCHIVE · MANUAL · HELP" spellcheck="false" aria-expanded="false" aria-controls="type-stage" />
             </form>
+            </div>
           </section>
 
           <section class="col">
@@ -1593,7 +1712,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
 
         <div class="rule"></div>
         <div class="statusbar">
-          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>menu <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>details <kbd>/</kbd>cmd <kbd>Esc</kbd>back <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
+          <span class="keys" id="key-legend"><kbd>Tab</kbd>panel <kbd>←→</kbd>menu <kbd>↑↓</kbd>move <kbd>Enter</kbd>act <kbd>o</kbd>open <kbd>i</kbd>details <kbd>/</kbd>cmd <kbd>Esc</kbd>dock <kbd>F1</kbd>–<kbd>F6</kbd> <kbd>?</kbd>keys</span>
           <span class="foot">uXu — built to archive. tuned to overachieve.</span>
         </div>
         <div class="detail-hint" id="detail-hint" role="status" aria-live="polite" hidden>
@@ -1663,6 +1782,8 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
   const activeTitle = document.querySelector('#active-title');
   const commandForm = document.querySelector('#command-form');
   const commandInput = document.querySelector('#command-input');
+  const typeStage = document.querySelector('#type-stage');
+  const btnDockConsole = document.querySelector('#btn-dock-console');
   const navList = document.querySelector('#nav-list');
   const btnOpen = document.querySelector('#btn-open');
   const btnInspect = document.querySelector('#btn-inspect');
@@ -5215,8 +5336,25 @@ Then attest here so SETUP MASTER can check it off.`);
 
   commandForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    setCommandConsole(true);
     handleCommand(commandInput.value);
     commandInput.value = "";
+  });
+
+  commandInput.addEventListener('focus', () => {
+    setCommandConsole(true);
+  });
+
+  btnDockConsole?.addEventListener('click', (e) => {
+    e.preventDefault();
+    dockCommandConsole();
+    focusRegistrySelectedOrFirst();
+  });
+
+  document.querySelector('.grid')?.addEventListener('mousedown', (e) => {
+    if (!document.body.classList.contains('command-console-on')) return;
+    if (e.target.closest('#type-stage')) return;
+    dockCommandConsole();
   });
 
   btnOpen.addEventListener('click', () => {
@@ -5446,7 +5584,7 @@ Then attest here so SETUP MASTER can check it off.`);
     const authBox = document.getElementById('auth-form')?.closest('.box');
     if (authBox && authBox.contains(el)) return 'auth';
     if (el.closest('#command-form') || el === commandInput) return 'command';
-    if (el.closest('.output-panel')) return 'command';
+    if (el.closest('#type-stage') || el.closest('.output-panel')) return 'command';
     return null;
   }
 
@@ -5537,12 +5675,12 @@ Then attest here so SETUP MASTER can check it off.`);
   }
 
   function paintFocusZone() {
-    document.querySelectorAll('.box.kb-focus').forEach((b) => b.classList.remove('kb-focus'));
+    document.querySelectorAll('.kb-focus').forEach((b) => b.classList.remove('kb-focus'));
     const map = {
       registry: document.querySelector('.registry-wrap')?.closest('.box'),
       nav: document.getElementById('nav-box'),
       auth: document.getElementById('auth-form')?.closest('.box'),
-      command: document.getElementById('command-form')?.closest('.box') || document.querySelector('.output-panel')?.closest('.box'),
+      command: document.getElementById('type-stage') || document.querySelector('.output-panel'),
     };
     if (focusZone === 'registry' || focusZone === 'actions') {
       map.registry?.classList.add('kb-focus');
@@ -5618,6 +5756,7 @@ Then attest here so SETUP MASTER can check it off.`);
 
   function enterZone(zone, opts = {}) {
     const z = zone === 'actions' ? 'actions' : zone;
+    if (z !== 'command') setCommandConsole(false);
     if (z === 'actions' || z === 'registry') {
       enterRegistrySub(z === 'actions' ? 'actions' : (opts.sub || registrySub || 'table'), opts);
       return;
@@ -5643,12 +5782,15 @@ Then attest here so SETUP MASTER can check it off.`);
       return;
     }
     if (z === 'command') {
+      setCommandConsole(true);
       if (opts.focusEl === commandInput || opts.focusEl?.closest?.('#command-form')) {
         (opts.focusEl || commandInput).focus({ preventScroll: true });
         return;
       }
       commandInput?.focus();
+      return;
     }
+    setCommandConsole(false);
   }
 
   function adoptZoneFromEventTarget(target, opts = {}) {
@@ -5663,6 +5805,8 @@ Then attest here so SETUP MASTER can check it off.`);
       focusZone = zone;
       if (zone === 'actions') registrySub = 'actions';
       if (zone === 'registry') registrySub = 'table';
+      if (target === commandInput || target.closest?.('#command-form')) setCommandConsole(true);
+      else if (!target.closest?.('#type-stage')) setCommandConsole(false);
       paintFocusZone();
       return true;
     }
@@ -5705,6 +5849,23 @@ Then attest here so SETUP MASTER can check it off.`);
   function focusCommand() {
     userChoseZone = true;
     enterZone('command');
+    setCommandConsole(true);
+  }
+
+  function setCommandConsole(on) {
+    const next = !!on;
+    if (document.body.classList.contains('command-console-on') === next) return;
+    document.body.classList.toggle('command-console-on', next);
+    commandInput?.setAttribute('aria-expanded', next ? 'true' : 'false');
+    if (typeStage) {
+      typeStage.setAttribute('aria-modal', next ? 'true' : 'false');
+      if (next) typeStage.setAttribute('role', 'dialog');
+      else typeStage.removeAttribute('role');
+    }
+  }
+
+  function dockCommandConsole() {
+    setCommandConsole(false);
   }
 
   function cycleZone(dir, opts = {}) {
@@ -5796,6 +5957,13 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     else if (e.key.startsWith('Arrow')) hideHoverChrome();
 
     if (e.key === 'Escape') {
+      if (document.body.classList.contains('command-console-on')) {
+        e.preventDefault();
+        dockCommandConsole();
+        if (isTypingTarget(e.target)) e.target.blur();
+        focusRegistrySelectedOrFirst();
+        return;
+      }
       if (isTypingTarget(e.target)) {
         e.preventDefault();
         e.target.blur();
