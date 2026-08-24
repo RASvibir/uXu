@@ -51,3 +51,4 @@ apps/ini/node_modules/
 apps/ini/.dev.vars
 
 /src/generated/prisma
+node_modules

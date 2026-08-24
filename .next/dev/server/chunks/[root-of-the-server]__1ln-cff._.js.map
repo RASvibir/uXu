@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 76, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/app/api/auth/me/route.ts"],"sourcesContent":["import { verify as tok } from \"../../../../lib/token.js\"; export async function GET(req){ const h=req.headers.get(\"authorization\"); if(!h) return Response.json({ ok:false }); try{ const u=tok(h.replace(\"Bearer \",\"\")); return Response.json({ user:u }); }catch{ return Response.json({ ok:false }); }}\n"],"names":["GET","req","h","headers","get","Response","json","ok","u","replace","user"],"mappings":";;;;AAAA;;AAAiE,eAAeA,IAAIC,GAAG;IAAG,MAAMC,IAAED,IAAIE,OAAO,CAACC,GAAG,CAAC;IAAkB,IAAG,CAACF,GAAG,OAAOG,SAASC,IAAI,CAAC;QAAEC,IAAG;IAAM;IAAI,IAAG;QAAE,MAAMC,IAAE,IAAA,wHAAG,EAACN,EAAEO,OAAO,CAAC,WAAU;QAAM,OAAOJ,SAASC,IAAI,CAAC;YAAEI,MAAKF;QAAE;IAAI,EAAC,OAAK;QAAE,OAAOH,SAASC,IAAI,CAAC;YAAEC,IAAG;QAAM;IAAI;AAAC"}},
+    {"offset": {"line": 102, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/lib/token.js"],"sourcesContent":["import jwt from \"jsonwebtoken\"; const key=\"uxu_master_key\"; export const sign=(p)=>jwt.sign(p,key); export const verify=(t)=>jwt.verify(t,key);\n"],"names":["key","sign","p","verify","t"],"mappings":";;;;;;AAAA;;AAAgC,MAAMA,MAAI;AAAyB,MAAMC,OAAK,CAACC,IAAI,kJAAG,CAACD,IAAI,CAACC,GAAEF;AAAa,MAAMG,SAAO,CAACC,IAAI,kJAAG,CAACD,MAAM,CAACC,GAAEJ"}}]
+}
