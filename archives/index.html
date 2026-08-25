@@ -2295,6 +2295,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
   // Pages publishes archives/ as site root. Neon may still store /archives/... paths.
   const LOCAL_ARCHIVE_PATHS = {
     'CyberCat_Sunflower.uXu.0001': 'CyberCat-Sunflower/index.html',
+    'CyberCat_Sunflower.uXu.0002': 'CyberCat-Sunflower/index.html',
     'cybercat-sunflower': 'CyberCat-Sunflower/index.html',
     'CyberCat Sunflower': 'CyberCat-Sunflower/index.html',
     'Ledger.uXu.0002': 'Ledger/index.html',
@@ -3271,7 +3272,34 @@ Guests cannot open this room.`);
     }
   }
 
-  function activateEntry(entry, opts = {}) {
+  function formatIniInspectBlock(entry) {
+    if (!entry || !entry.iniOptIn) return '';
+    const lines = [
+      '',
+      'iNi provenance (self-attested):',
+      `  tag:      ${entry.iniTag || 'iNi'}`,
+    ];
+    if (entry.iniPageUrl) {
+      lines.push(`  I page:   ${entry.iniPageUrl}`);
+    } else {
+      lines.push('  I page:   (none — stamp only; set badgeLinksToIPage + iPage in data.json)');
+    }
+    const p = entry.iniProvenance;
+    if (p) {
+      if (p.origin) lines.push(`  origin:   ${p.origin}`);
+      if (p.authors) {
+        lines.push(`  authors:  ${Array.isArray(p.authors) ? p.authors.join('; ') : p.authors}`);
+      }
+      if (p.custody) lines.push(`  custody:  ${p.custody}`);
+      if (p.lineage) lines.push(`  lineage:  ${p.lineage}`);
+      if (p.conditions) lines.push(`  conditions: ${p.conditions}`);
+      if (p.attestedAt) lines.push(`  attested: ${p.attestedAt}`);
+    }
+    lines.push('  (MAP shows full commons tree · INI for the guide)');
+    return lines.join('\n');
+  }
+
+  async function activateEntry(entry, opts = {}) {
     selected = entry;
     document.querySelectorAll('#registry-table tbody tr').forEach(tr => {
       tr.classList.toggle('active', tr.dataset.id === entry.id);
@@ -3282,6 +3310,8 @@ Guests cannot open this room.`);
 
     if (!opts.inspect && opts.silent) return;
 
+    if (opts.inspect) await enrichOneArchive(entry);
+
     const unresolvedBlock = entry.unresolved && entry.unresolved.length
       ? `\n\nunresolved:\n${entry.unresolved.map(u => `  - ${typeof u === 'string' ? u : JSON.stringify(u)}`).join('\n')}`
       : '';
@@ -3291,6 +3321,7 @@ Guests cannot open this room.`);
       : mark.kind === 'deleted' || mark.kind === 'admin-removed' || mark.kind === 'locked' || mark.kind === 'investigate'
         ? `\n\n[Placemarker ${mark.label} — not publicly openable. Id retained forever.]`
         : '\n\n[Inspect only — no local player path]';
+    const iniBlock = formatIniInspectBlock(entry);
     showOutput(entry.id,
 `archive id: ${entry.id}
 name:       ${archiveDisplayName(entry)}
@@ -3306,7 +3337,62 @@ ${entry.summary}
 
 provenance:
 source:     Neon :: archive_records
-validation: ${entry.certainty}${unresolvedBlock}${openHint}`);
+validation: ${entry.certainty}${iniBlock}${unresolvedBlock}${openHint}`);
+  }
+
+  async function showProvenanceMap() {
+    setActiveNav('MAP');
+    showOutput('PROVENANCE MAP', 'loading registry + iNi trail…');
+    await enrichOpenableArchives();
+
+    let prov = {};
+    try {
+      const res = await fetch(`${API_BASE}/api/root/provenance`);
+      if (res.ok) prov = await res.json();
+    } catch (_) { /* offline — still render tree */ }
+
+    const rootId = '0?0.uXu.0000';
+    const root = registry.find((e) => e.id === rootId)
+      || registry.find((e) => String(e.slug || '').includes('root'))
+      || registry[0];
+    const children = registry
+      .filter((e) => e.id !== root?.id)
+      .sort((a, b) => {
+        const sa = parseInt(String(a.id).match(/\.(\d{4})$/)?.[1] || '9999', 10);
+        const sb = parseInt(String(b.id).match(/\.(\d{4})$/)?.[1] || '9999', 10);
+        return sa - sb;
+      });
+
+    const treeLines = children.map((c, i) => {
+      const branch = i === children.length - 1 ? '└─' : '├─';
+      let note = ` (${String(c.type || 'archive').toLowerCase()})`;
+      if (c.iniOptIn) {
+        note += c.iniPageUrl
+          ? ` · iNi ✓ · I→ ${c.iniPageUrl.replace(INI_PAGES_BASE, '')}`
+          : ' · iNi ✓';
+      }
+      return `  ${branch} ${c.id}${note}`;
+    });
+
+    const iniCount = children.filter((c) => c.iniOptIn).length;
+    const iPageCount = children.filter((c) => c.iniPageUrl).length;
+
+    showOutput('PROVENANCE MAP',
+`protocol: ${prov.protocol || 'iNi'}
+ethic:    ${prov.ethic || 'self-attestation & provenance'}
+custody:  ${prov.custody || 'I and I practice (opt-in per archive)'}
+notes:    ${prov.notes || INI_COMMUNITY_URL}
+trail:    ${prov.paper_trail || INI_PAPER_TRAIL_URL}
+
+${root ? root.id : rootId}  (root console · uXu commons)
+${treeLines.length ? treeLines.join('\n') : '  (no child archives registered yet)'}
+
+iNi opted-in: ${iniCount} archive(s) · I pages linked: ${iPageCount}
+Registry iNi cues open I pages when badgeLinksToIPage + iPage are set.
+Type INI · INI SITE · READ ini-provenance for the guide.
+
+Master admin crown (CLAIM MASTER / ASSUME MASTER) is operator succession —
+separate from iNi provenance stamps.`);
   }
 
   function setUserOptionsOpen(open) {
@@ -3583,6 +3669,7 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     entry.iniTag = tag;
     entry.iniShowBadge = optIn && !(ini && ini.showBadge === false);
     entry.iniPageUrl = resolveIniPageUrl(ini);
+    entry.iniProvenance = (ini && ini.provenance && typeof ini.provenance === 'object') ? ini.provenance : null;
     entry.archiveName = String(data.archiveName || '').trim();
     entry.artist = String(data.artist || '').trim();
     entry.curator = String(data.curator || '').trim();
@@ -4485,10 +4572,13 @@ README.md`;
 </ul>
 <p class="muted">Self-attestation — not a legal chain-of-custody certificate.</p>
 
+<h3>Provenance map</h3>
+<p>Type <code>MAP</code> (or F4) for the live commons tree: every registered archive under 0?0, with iNi opt-in and I page links where set. Inspect a row to read attested origin/custody fields.</p>
+
 <h3>Read more</h3>
 <p>Optional public notes: <a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a></p>
 <p>Community paper trail: <a href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">github.com/RASvibir/iNi</a> — charter, articles, authorizations via PR (not a membership gate).</p>
-<p>Full pamphlet: <code>archives/RTFM/INI-PROVENANCE.md</code> · also via <strong>USER OPTIONS → MANUAL LIBRARY</strong> when ingested · templates ship with <code>optIn: false</code>.</p>
+<p>Full pamphlet: <code>READ ini-provenance</code> · <code>archives/RTFM/INI-PROVENANCE.md</code> · templates ship with <code>optIn: false</code>.</p>
 <p>Questions: <a href="https://github.com/RASvibir/uXu/issues">GitHub Issues</a></p>`;
     }
     showIniUi();
@@ -4587,21 +4677,53 @@ Back on 0?0: type INI for the provenance guide.`);
     fetchManualSlug(m.slug);
   }
 
+  const LOCAL_MANUAL_PATHS = {
+    'ini-provenance': 'RTFM/INI-PROVENANCE.md',
+    'user-guide': 'RTFM/USER-GUIDE.md',
+    'archive-creation': 'RTFM/ARCHIVE-CREATION-MANUAL.md',
+  };
+
   async function fetchManualSlug(slug, opts = {}) {
     showOutput("MANUAL", `loading ${slug}...`);
+    const slugKey = String(slug || '').toLowerCase();
     try {
       const res = await fetch(`${API_BASE}/api/root/manuals/${encodeURIComponent(slug)}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || res.statusText);
-      manualOpen = data.manual;
-      manualMode = 'read';
-      manualSections = parseManualSections(manualOpen.body);
-      const toc = manualSections.length
-        ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
-        : '  (no ## sections)';
-      setManualToolbar('root-read');
-      const title = manualOpen.title;
-      showOutput(title,
+      renderManualRead(data.manual, opts);
+    } catch (err) {
+      const localPath = LOCAL_MANUAL_PATHS[slugKey];
+      if (localPath) {
+        try {
+          const res = await fetch(localPath);
+          if (!res.ok) throw new Error(res.statusText);
+          const body = await res.text();
+          const title = slugKey === 'ini-provenance' ? 'iNi Provenance'
+            : slugKey === 'user-guide' ? 'User Guide'
+            : slugKey === 'archive-creation' ? 'Archive Creation Manual'
+            : slug;
+          renderManualRead({ slug: slugKey, title, body }, opts);
+          toast(`opened ${slugKey} (local RTFM)`);
+          return;
+        } catch (localErr) {
+          showOutput("ERROR", `loading manual: ${err.message} · local fallback failed: ${localErr.message}`);
+          return;
+        }
+      }
+      showOutput("ERROR", `loading manual: ${err.message}`);
+    }
+  }
+
+  function renderManualRead(manual, opts = {}) {
+    manualOpen = manual;
+    manualMode = 'read';
+    manualSections = parseManualSections(manualOpen.body);
+    const toc = manualSections.length
+      ? manualSections.map((s) => `  ${s.n}. ${s.title}`).join('\n')
+      : '  (no ## sections)';
+    setManualToolbar('root-read');
+    const title = manualOpen.title;
+    showOutput(title,
 `${manualOpen.body}
 
 ────────
@@ -4611,10 +4733,7 @@ ${toc}
 INDEX ARCHIVE MANUALS  find creator manuals
 BACK · MANUAL          library index
 RTFM                   interactive 0?0 manual`);
-      toast(`opened ${manualOpen.slug}`);
-    } catch (err) {
-      showOutput("ERROR", `loading manual: ${err.message}`);
-    }
+    if (!opts.silent) toast(`opened ${manualOpen.slug}`);
   }
 
   function showManualSection(n) {
@@ -4661,7 +4780,7 @@ OPEN              open currently selected archive
 LOAD 0001         load/open by id suffix
 GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
-MAP               show root provenance
+MAP               provenance tree (commons + iNi cues)
 LOGS              show transparency logs
 RTFM              interactive 0?0 manual (about → ease → … → source)
 ABOUT             what uXu is (site · repo · app) · 0?0 archive interface
@@ -4878,13 +4997,7 @@ system_state endpoint empty — console still operational.`);
       return;
     }
     if (cmd === "MAP") {
-      setActiveNav("MAP");
-      const root = registry.find(e => !e.parent);
-      const children = registry.filter(e => e.parent === (root && root.id));
-      const lines = children.map((c, i) => `  ${i === children.length - 1 ? '└─' : '├─'} ${c.id}  (${c.type.toLowerCase()})`);
-      showOutput("PROVENANCE MAP",
-`${root ? root.id : "unknown"}
-${lines.length ? lines.join('\n') : '  (no child records found)'}`);
+      showProvenanceMap();
       return;
     }
     if (cmd === "AUTH" || cmd === "ACCOUNT") {
