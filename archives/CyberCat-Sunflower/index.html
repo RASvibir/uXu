@@ -186,7 +186,10 @@
       filter: invert(1) hue-rotate(90deg) saturate(2.2) brightness(1.05);
     }
 
-    .source-bar { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+    .source-bar {
+      display: flex; flex-wrap: wrap; gap: .45rem .55rem; align-items: center;
+    }
+    .source-actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; flex-shrink: 0; }
     .ghost-btn {
       font-family: var(--mono); font-size: .65rem; letter-spacing: .06em;
       text-transform: uppercase; background: transparent; color: var(--cyan);
@@ -200,6 +203,93 @@
     }
     .ghost-btn.best:hover { background: var(--amber); color: #1a1200; }
     .source-meta { font-size: .62rem; color: var(--muted); flex: 1; min-width: 12ch; }
+
+    /* Ripple — herd-sync listening */
+    .ripple-btn {
+      position: relative;
+      isolation: isolate;
+      font-family: var(--display);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255,61,206,.35), rgba(77,232,255,.28));
+      border: 1px solid rgba(255,255,255,.22);
+      padding: .38rem .85rem .34rem;
+      flex-shrink: 0;
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: 999px;
+      box-shadow:
+        0 0 18px rgba(255,61,206,.28),
+        0 0 32px rgba(77,232,255,.12),
+        inset 0 1px 0 rgba(255,255,255,.18);
+      transition: transform .25s var(--ease), filter .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .ripple-btn .ripple-label { position: relative; z-index: 2; }
+    .ripple-btn .ripple-rings {
+      position: absolute;
+      inset: -40%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(77,232,255,.45) 0%, transparent 42%),
+        radial-gradient(circle at 35% 40%, rgba(255,61,206,.35) 0%, transparent 38%);
+      animation: ripple-drift 4.8s ease-in-out infinite;
+    }
+    .ripple-btn::before,
+    .ripple-btn::after {
+      content: "";
+      position: absolute;
+      inset: 50%;
+      border-radius: 50%;
+      border: 1px solid rgba(77,232,255,.55);
+      transform: translate(-50%, -50%) scale(.2);
+      animation: ripple-expand 2.6s ease-out infinite;
+      pointer-events: none;
+    }
+    .ripple-btn::after {
+      border-color: rgba(255,61,206,.45);
+      animation-delay: 1.3s;
+    }
+    .ripple-btn:hover:not(:disabled),
+    .ripple-btn:focus-visible:not(:disabled) {
+      outline: none;
+      transform: scale(1.04);
+      filter: hue-rotate(18deg) saturate(1.35);
+      box-shadow:
+        0 0 24px rgba(255,61,206,.45),
+        0 0 48px rgba(77,232,255,.25);
+    }
+    .ripple-btn:disabled { opacity: .4; cursor: not-allowed; animation: none; }
+    .ripple-btn.is-live {
+      animation: ripple-glow 2.2s ease-in-out infinite;
+      border-color: rgba(93,255,138,.55);
+      color: var(--phosphor);
+    }
+    .ripple-btn.is-live .ripple-label::after {
+      content: " · HERD";
+      color: var(--amber);
+      letter-spacing: .12em;
+    }
+    @keyframes ripple-expand {
+      0% { opacity: .85; transform: translate(-50%, -50%) scale(.15); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
+    }
+    @keyframes ripple-drift {
+      0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+      50% { transform: rotate(8deg) scale(1.08); filter: hue-rotate(28deg); }
+    }
+    @keyframes ripple-glow {
+      0%, 100% { box-shadow: 0 0 16px rgba(93,255,138,.35), 0 0 28px rgba(255,61,206,.2); }
+      50% { box-shadow: 0 0 28px rgba(77,232,255,.45), 0 0 44px rgba(255,61,206,.35); }
+    }
+    .deck-col.ripple-on .panel:first-child {
+      border-color: rgba(255,61,206,.45);
+      box-shadow: inset 0 0 24px rgba(77,232,255,.06);
+    }
+    .deck-col.ripple-on .now-playing { text-shadow: 0 0 12px rgba(77,232,255,.2); }
 
     .eq-grid {
       display: flex; justify-content: space-between; gap: .35rem;
@@ -450,7 +540,7 @@
       </header>
 
       <div class="workspace">
-        <section class="deck-col">
+        <section class="deck-col" id="deck-col">
           <div class="panel">
             <div class="panel-h">
               <span>MASTER AUDIO DECK</span>
@@ -461,9 +551,15 @@
             </div>
             <audio id="main-player" controls crossorigin="anonymous"></audio>
             <div class="source-bar">
-              <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
-              <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Transfers</button>
+              <div class="source-actions">
+                <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
+                <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Transfers</button>
+              </div>
               <span class="source-meta" id="source-meta">No tape loaded</span>
+              <button type="button" class="ripple-btn" id="btn-ripple" disabled title="Join the herd — synchronized setlist ripple">
+                <span class="ripple-rings" aria-hidden="true"></span>
+                <span class="ripple-label">Ripple</span>
+              </button>
             </div>
             <div class="panel-h" style="margin-top:.15rem; border:none; padding:0;"><span>5-BAND ANALOG EQ</span></div>
             <div class="eq-grid" aria-label="Equalizer">
@@ -527,7 +623,7 @@
       </div>
 
       <footer class="statusbar">
-        <span><kbd>F1</kbd>–<kbd>F4</kbd> · <kbd>Enter</kbd> engage · song click · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
+        <span><kbd>F1</kbd>–<kbd>F4</kbd> · <kbd>Enter</kbd> engage · <kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
         <span id="catalog-foot">Grateful Dead full catalog</span>
       </footer>
       <div class="toast" id="toast" role="status"></div>
@@ -582,6 +678,8 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu),
   const toastEl = document.getElementById('toast');
   const btnBest = document.getElementById('btn-best');
   const btnAlts = document.getElementById('btn-alts');
+  const btnRipple = document.getElementById('btn-ripple');
+  const deckCol = document.getElementById('deck-col');
   const altsModal = document.getElementById('alts-modal');
   const altsList = document.getElementById('alts-list');
 
@@ -603,6 +701,29 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu),
   /** @type {Map<string, string>} residencyId -> selected YYYY-MM-DD */
   const residencyDay = new Map();
 
+  const RIPPLE_EPOCH = Date.parse('2026-01-01T00:00:00Z');
+  const RIPPLE_WINDOW_MS = 13 * 24 * 60 * 60 * 1000;
+  const RIPPLE_DEFAULT_SHOW_MS = 2.5 * 60 * 60 * 1000;
+  const RIPPLE_DEFAULT_TRACK_SEC = 420;
+  let rippleActive = false;
+  let rippleSyncTimer = null;
+  let rippleSchedule = [];
+  let rippleWindowId = -1;
+  /** @type {Map<string, { playlist: object[], totalMs: number, ranked: object[] }>} */
+  const rippleShowCache = new Map();
+
+  const SPECS_RIPPLE = `
+[+] RIPPLE       : herd-sync listening — one global setlist ripple
+                 · each year-segment picks its highest-rated show (★ + transfers + SBD)
+                 · plays the full setlist start-to-finish, then advances to the next era
+                 · same show date never repeats within a 13-day rotation window
+                 · everyone on Ripple hears the same song at the same UTC moment
+                 · press Ripple again (or Best Wave / manual ENGAGE) to leave the herd
+
+Ripple is a shared radio clock, not a popularity vote you control locally.
+Setlists keep the herd moving so the same songs do not loop endlessly.
+Key R toggles Ripple when the catalog is ready.`;
+
   document.getElementById('specs-block').textContent =
 `===================================================================
 uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
@@ -612,8 +733,8 @@ uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 [+] DEFAULT     : best waveform (SBD/remaster/rating weighted)
 [+] ALTERNATES  : Other Transfers button / key O
 [+] DECK        : engage a night, cue songs from the setlist
-[+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0001
-
+[+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0002
+${SPECS_RIPPLE}
 Lookup tip: date + venue on the deck is enough to research any tape.
 Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
 
@@ -626,6 +747,202 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+  }
+
+  function rippleShowScore(show) {
+    const rating = Number(show.avg_rating) || 0;
+    const sources = Number(show.source_count) || 0;
+    const sbd = show.has_soundboard_source ? 1.45 : 1;
+    return rating * (1 + Math.log1p(sources) * 0.18) * sbd;
+  }
+
+  function rippleWindowAt(now = Date.now()) {
+    return Math.floor((now - RIPPLE_EPOCH) / RIPPLE_WINDOW_MS);
+  }
+
+  function rippleSeedIndex(seed, len) {
+    if (!len) return 0;
+    let h = (seed >>> 0) ^ 0x9e3779b9;
+    h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+    h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
+    h ^= h >>> 16;
+    return (h >>> 0) % len;
+  }
+
+  function buildRippleSchedule(catalog, windowId) {
+    const byYear = new Map();
+    for (const s of catalog) {
+      const y = String(s.year || showDate(s).slice(0, 4));
+      if (!byYear.has(y)) byYear.set(y, []);
+      byYear.get(y).push(s);
+    }
+    const years = [...byYear.keys()].sort();
+    const schedule = [];
+    const usedDates = new Set();
+    for (const year of years) {
+      const ranked = byYear.get(year).slice().sort((a, b) => rippleShowScore(b) - rippleShowScore(a));
+      const top = ranked.slice(0, Math.min(8, ranked.length));
+      if (!top.length) continue;
+      let pick = null;
+      for (let attempt = 0; attempt < top.length; attempt++) {
+        const idx = rippleSeedIndex(windowId * 9973 + Number(year) * 131 + attempt, top.length);
+        const candidate = top[idx];
+        const d = showDate(candidate);
+        if (!usedDates.has(d)) {
+          pick = candidate;
+          usedDates.add(d);
+          break;
+        }
+      }
+      if (pick) schedule.push({ year, show: pick, estMs: RIPPLE_DEFAULT_SHOW_MS });
+    }
+    return schedule;
+  }
+
+  function rippleScheduleTotalMs(sched) {
+    return sched.reduce((sum, slot) => sum + (slot.actualMs || slot.estMs || RIPPLE_DEFAULT_SHOW_MS), 0) || RIPPLE_DEFAULT_SHOW_MS;
+  }
+
+  function ripplePosition(now = Date.now()) {
+    const windowId = rippleWindowAt(now);
+    if (windowId !== rippleWindowId || !rippleSchedule.length) {
+      rippleWindowId = windowId;
+      rippleSchedule = buildRippleSchedule(shows, windowId);
+    }
+    const windowStart = RIPPLE_EPOCH + windowId * RIPPLE_WINDOW_MS;
+    const elapsed = Math.max(0, now - windowStart);
+    const total = rippleScheduleTotalMs(rippleSchedule);
+    let t = elapsed % total;
+    for (let i = 0; i < rippleSchedule.length; i++) {
+      const slot = rippleSchedule[i];
+      const dur = slot.actualMs || slot.estMs || RIPPLE_DEFAULT_SHOW_MS;
+      if (t < dur) {
+        return { windowId, slotIndex: i, slot, offsetMs: t, elapsedInWindow: elapsed };
+      }
+      t -= dur;
+    }
+    const last = rippleSchedule[rippleSchedule.length - 1];
+    return {
+      windowId,
+      slotIndex: rippleSchedule.length - 1,
+      slot: last,
+      offsetMs: 0,
+      elapsedInWindow: elapsed,
+    };
+  }
+
+  function rippleTrackFromOffset(playlist, offsetMs) {
+    let t = offsetMs;
+    for (let i = 0; i < playlist.length; i++) {
+      const dur = Math.max(1, (Number(playlist[i].duration) || RIPPLE_DEFAULT_TRACK_SEC)) * 1000;
+      if (t < dur) return { trackIndex: i, seekSec: t / 1000 };
+      t -= dur;
+    }
+    return { trackIndex: Math.max(0, playlist.length - 1), seekSec: 0 };
+  }
+
+  function ripplePlaylistTotalMs(playlist) {
+    return playlist.reduce((sum, tr) => sum + Math.max(1, Number(tr.duration) || RIPPLE_DEFAULT_TRACK_SEC) * 1000, 0);
+  }
+
+  async function rippleLoadShow(show) {
+    const d = showDate(show);
+    if (rippleShowCache.has(d)) return rippleShowCache.get(d);
+    const detail = await api(`/shows/${d}`);
+    const ranked = rankSources(detail.sources || []);
+    if (!ranked.length) throw new Error('no stream');
+    const best = ranked[0];
+    const playlist = best.tracks;
+    const totalMs = ripplePlaylistTotalMs(playlist);
+    const pack = { playlist, totalMs, ranked, detail, best };
+    rippleShowCache.set(d, pack);
+    return pack;
+  }
+
+  function rippleApplyPack(show, pack, trackIdx, seekSec) {
+    activeShow = Object.assign({}, show, pack.detail);
+    activeShowKey = showKey(activeShow);
+    syncResidencySelection(activeShow);
+    paintResidencyActive();
+    activeSources = pack.ranked;
+    bestSourceId = pack.ranked[0].source.id;
+    currentSource = pack.best.source;
+    playlist = pack.playlist;
+    setDestinations = buildSetDestinations(playlist);
+    sourceTag.textContent = 'RIPPLE';
+    sourceMeta.textContent = `Herd · ${showDate(show)} · ★${Number(show.avg_rating || 0).toFixed(2)} · segment ${String(show.year || showDate(show).slice(0, 4))}`;
+    sourceMeta.title = lookupHint(activeShow, currentSource);
+    btnBest.disabled = false;
+    btnAlts.disabled = pack.ranked.length < 2;
+    trackIndex = trackIdx;
+    const track = playlist[trackIdx];
+    player.src = track.url;
+    player.load();
+    const startPlay = () => {
+      if (seekSec > 1) player.currentTime = seekSec;
+      player.play().catch(() => toast('Press play to join the Ripple'));
+    };
+    if (player.readyState >= 1) startPlay();
+    else player.addEventListener('loadedmetadata', startPlay, { once: true });
+    updateNowPlaying(track, { ripple: true });
+    renderSetlist();
+  }
+
+  async function rippleSync(force = false) {
+    if (!rippleActive || !shows.length) return;
+    const pos = ripplePosition();
+    const slot = pos.slot;
+    if (!slot) return;
+    const d = showDate(slot.show);
+    try {
+      const pack = await rippleLoadShow(slot.show);
+      slot.actualMs = pack.totalMs;
+      const { trackIndex: ti, seekSec } = rippleTrackFromOffset(pack.playlist, pos.offsetMs);
+      const sameShow = activeShow && showDate(activeShow) === d;
+      const drift = sameShow && trackIndex === ti
+        ? Math.abs((player.currentTime || 0) - seekSec)
+        : Infinity;
+      if (force || !sameShow || drift > 18) {
+        rippleApplyPack(slot.show, pack, ti, seekSec);
+        if (force) toast(`Ripple · ${d} · herd track ${String(ti + 1).padStart(2, '0')}`);
+      }
+    } catch (err) {
+      console.warn('ripple sync', err);
+    }
+  }
+
+  function startRipple() {
+    if (!shows.length) {
+      toast('Catalog still indexing…');
+      return;
+    }
+    rippleActive = true;
+    btnRipple.classList.add('is-live');
+    deckCol.classList.add('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSync(true);
+    rippleSyncTimer = setInterval(() => rippleSync(false), 45000);
+  }
+
+  function stopRipple() {
+    if (!rippleActive) return;
+    rippleActive = false;
+    btnRipple.classList.remove('is-live');
+    deckCol.classList.remove('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSyncTimer = null;
+    if (activeShow && sourceTag.textContent === 'RIPPLE') {
+      sourceTag.textContent = currentSource?.is_soundboard ? 'SBD' : 'AUD';
+    }
+  }
+
+  function toggleRipple() {
+    if (rippleActive) {
+      stopRipple();
+      toast('Ripple off — manual deck');
+      return;
+    }
+    startRipple();
   }
 
   async function api(path) {
@@ -1004,11 +1321,23 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   });
   player.addEventListener('ended', () => {
+    if (rippleActive) {
+      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
+        playTrack(trackIndex + 1, { fromRipple: true });
+      } else {
+        rippleSync(true);
+      }
+      return;
+    }
     if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
     else toast('End of tape');
   });
   player.addEventListener('error', () => {
     toast('Stream error — skipping');
+    if (rippleActive) {
+      setTimeout(() => rippleSync(true), 350);
+      return;
+    }
     if (trackIndex >= 0 && trackIndex < playlist.length - 1) setTimeout(() => playTrack(trackIndex + 1), 350);
   });
 
@@ -1118,21 +1447,26 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     });
   }
 
-  function updateNowPlaying(track) {
+  function updateNowPlaying(track, opts = {}) {
     if (!activeShow) return;
     const place = venuePlace(activeShow);
     const dest = setDestinations.slice().reverse().find((d) => trackIndex >= d.idx);
     const destBit = dest && setDestinations.length > 1
       ? `<span style="color:var(--amber)">${dest.label}</span> · `
       : '';
+    const herdBit = (opts.ripple || rippleActive)
+      ? `<span style="color:var(--magenta)">◎ RIPPLE · HERD</span><br>`
+      : '';
     nowPlaying.innerHTML =
+      herdBit +
       `<strong>${showDate(activeShow)}</strong> · ${venueName(activeShow)}<br>` +
       `<span style="color:var(--muted)">${place}</span><br>` +
       `<span style="color:var(--cyan)">▶ ${destBit}${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
   }
 
-  function playTrack(idx) {
+  function playTrack(idx, opts = {}) {
     if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+    if (rippleActive && !opts.fromRipple) stopRipple();
     trackIndex = idx;
     const track = playlist[idx];
     player.src = track.url;
@@ -1144,7 +1478,8 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
-  function applySource(rankedItem, { announce } = { announce: true }) {
+  function applySource(rankedItem, { announce, fromRipple } = { announce: true, fromRipple: false }) {
+    if (rippleActive && !fromRipple) stopRipple();
     currentSource = rankedItem.source;
     playlist = rankedItem.tracks;
     setDestinations = buildSetDestinations(playlist);
@@ -1158,7 +1493,8 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     playTrack(0);
   }
 
-  async function engageShow(show) {
+  async function engageShow(show, opts = {}) {
+    if (rippleActive && !opts.fromRipple) stopRipple();
     activeShow = show;
     activeShowKey = showKey(show);
     syncResidencySelection(show);
@@ -1244,9 +1580,11 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
 
   btnAlts.addEventListener('click', openAlts);
   btnBest.addEventListener('click', () => {
+    stopRipple();
     const best = activeSources.find((x) => x.source.id === bestSourceId);
     if (best) applySource(best);
   });
+  btnRipple.addEventListener('click', toggleRipple);
   document.getElementById('alts-close').addEventListener('click', closeAlts);
   altsModal.addEventListener('click', (e) => { if (e.target === altsModal) closeAlts(); });
 
@@ -1442,6 +1780,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       const res = residencies.find((r) => r.shows.some((s) => showKey(s) === activeShowKey)) || residencies[0];
       if (res) { e.preventDefault(); engageShow(selectedShowForResidency(res)); }
     }
+    if (e.key === 'r' && !e.target.matches('input,select,textarea')) { e.preventDefault(); toggleRipple(); }
     if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
     if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
   });
@@ -1473,6 +1812,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     document.getElementById('catalog-foot').textContent =
       `${shows.length} Grateful Dead shows indexed`;
     indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
+    btnRipple.disabled = false;
     toast(`${shows.length} shows indexed`);
     applyFilters();
   }
