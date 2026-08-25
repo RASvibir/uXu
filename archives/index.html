@@ -58,7 +58,7 @@
 
   .bezel{
     width:100%;
-    max-width:1180px;
+    max-width:1360px;
     padding:clamp(1.2rem,2.5vw,2.2rem);
     border-radius:28px;
     background:
@@ -123,7 +123,7 @@
     padding:1rem 1.15rem .9rem;
     overflow:hidden;
     /* Fixed CRT height so docs scroll inside — not the window to the bottom */
-    height:min(78vh, 720px);
+    height:min(90vh, 920px);
     max-height:calc(100dvh - 5.5rem);
     min-height:0;
     display:flex;
@@ -182,7 +182,7 @@
 
   .grid{
     display:grid;
-    grid-template-columns:1.1fr 1.7fr 1fr;
+    grid-template-columns:0.68fr 2.9fr 0.62fr;
     gap:1rem;
     min-width:0;
     min-height:0;
@@ -193,8 +193,10 @@
     .screen{
       height:auto;
       max-height:none;
-      min-height:min(70vh, 640px);
+      min-height:min(82vh, 720px);
     }
+    .registry-wrap{max-height:5.5rem;}
+    body.preview-focus .screen{min-height:min(92vh, 820px);}
     body{align-items:flex-start;}
   }
   .col{display:flex; flex-direction:column; gap:.75rem; min-width:0; min-height:0;}
@@ -264,9 +266,49 @@
   .kv dt{color:var(--green-dim); white-space:nowrap;}
   .kv dd{margin:0; color:var(--green-bright); text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
-  .registry-wrap{overflow:auto; max-height:11.5rem; position:relative;}
+  .registry-wrap{overflow:auto; max-height:5.5rem; position:relative;}
+  body.registry-compact .registry-wrap{max-height:3.75rem;}
+  .registry-compact-btn{font-size:.62rem; padding:.15rem .35rem;}
+  body.preview-focus .grid{grid-template-columns:1fr;}
+  body.preview-focus .col:first-child,
+  body.preview-focus .col:last-child{display:none;}
+  body.preview-focus .col:nth-child(2) > .box:first-child{display:none;}
+  body.preview-focus .output-panel{min-height:min(78vh, 760px);}
+  body.preview-focus .screen{height:min(94vh, 960px);}
+  body.preview-modal .preview-backdrop{display:block;}
+  body.preview-modal .col:nth-child(2) > .box.output-panel{
+    position:fixed;
+    z-index:80;
+    left:50%;
+    top:50%;
+    transform:translate(-50%, -50%);
+    width:min(980px, 94vw);
+    height:min(88vh, 780px);
+    max-height:calc(100dvh - 2rem);
+    margin:0;
+    box-shadow:0 24px 80px rgba(0,0,0,.65), 0 0 0 1px var(--green-line);
+  }
+  body.preview-modal .prompt-row{
+    position:fixed;
+    z-index:81;
+    left:50%;
+    bottom:max(1rem, 2dvh);
+    transform:translateX(-50%);
+    width:min(980px, 94vw);
+    margin:0;
+    box-shadow:0 8px 32px rgba(0,0,0,.55);
+  }
+  .preview-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:70;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(2px);
+  }
+  .preview-focus-btn{font-size:.62rem; padding:.15rem .4rem; white-space:nowrap;}
   .registry-wrap:focus{outline:none;}
-  table{width:100%; border-collapse:collapse; font-size:.72rem; table-layout:fixed;}
+  table{width:100%; border-collapse:collapse; font-size:.78rem; table-layout:fixed;}
   th{
     text-align:left;
     font-weight:700;
@@ -581,11 +623,12 @@
     flex-direction:column;
     min-height:0;
     max-height:100%;
+    min-height:20rem;
   }
   #active-summary{
     margin:0;
-    font-size:.74rem;
-    line-height:1.55;
+    font-size:1rem;
+    line-height:1.7;
     white-space:pre-wrap;
     word-break:break-word;
     flex:1;
@@ -867,10 +910,10 @@
     display:flex;
     align-items:center;
     gap:.6ch;
-    margin-top:.1rem;
-    font-size:.8rem;
-    border:1px solid var(--green-line);
-    padding:.35rem .5rem;
+    margin-top:.35rem;
+    font-size:1rem;
+    border:2px solid var(--green-line);
+    padding:.45rem .55rem;
     background:rgba(0,25,10,.4);
     transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
   }
@@ -887,10 +930,10 @@
     outline:none;
     color:var(--green-bright);
     font-family:var(--mono);
-    font-size:.8rem;
+    font-size:1rem;
     caret-color:var(--green-bright);
   }
-  #command-input::placeholder{color:var(--green-dim);}
+  #command-input::placeholder{color:var(--green-dim); font-size:.92rem;}
 
   .action-row{
     display:flex;
@@ -1024,8 +1067,8 @@
     overflow:hidden;
     display:flex;
     flex-direction:column;
-    font-size:.74rem;
-    line-height:1.55;
+    font-size:.96rem;
+    line-height:1.7;
     color:var(--green);
   }
   .rtfm-pane{
@@ -1061,7 +1104,7 @@
   }
   .rtfm-body h3{
     margin:.15rem 0 .45rem;
-    font-size:.82rem;
+    font-size:.94rem;
     color:var(--green-bright);
     letter-spacing:.04em;
   }
@@ -1106,8 +1149,8 @@
     color:var(--highlight-fg);
     overflow-x:auto;
     white-space:pre;
-    font-size:.68rem;
-    line-height:1.45;
+    font-size:.9rem;
+    line-height:1.55;
   }
   .rtfm-code-tabs{
     display:flex;
@@ -1154,8 +1197,9 @@
     overflow-anchor:none;
     scroll-behavior:auto;
     overscroll-behavior:contain;
-    font-size:.74rem;
-    line-height:1.55;
+    font-size:.96rem;
+    line-height:1.7;
+    color:var(--green);
     color:var(--green);
     padding-right:.25rem;
     padding-bottom:1.25rem;
@@ -1464,7 +1508,10 @@
             <div class="box">
               <div class="box-title">
                 <span>uXu ARCHIVE REGISTRY</span>
-                <span class="meta" id="registry-count">—</span>
+                <span class="meta">
+                  <button type="button" class="ghost-btn registry-compact-btn" id="btn-registry-compact" aria-pressed="false" title="Shrink registry table">Shrink</button>
+                  <span id="registry-count">—</span>
+                </span>
               </div>
               <div class="registry-wrap" tabindex="-1">
                 <table id="registry-table">
@@ -1508,7 +1555,11 @@
               </div>
             </div>
             <div class="box output-panel">
-              <div class="box-title" id="active-title">WELCOME TO uXu</div>
+              <div class="box-title">
+                <span id="active-title">WELCOME TO uXu</span>
+                <button type="button" class="ghost-btn preview-focus-btn" id="btn-preview-focus" aria-pressed="false" title="Expand preview (Esc restores layout)">Expand preview</button>
+                <button type="button" class="ghost-btn preview-focus-btn" id="btn-preview-modal" aria-pressed="false" title="Focus preview in modal (Esc closes)">Focus</button>
+              </div>
               <div class="manual-toolbar" id="manual-toolbar" role="toolbar" aria-label="Manual tools" hidden>
                 <button type="button" class="ghost-btn" id="btn-manual-00" title="Open 0?0 RTFM">0?0 RTFM</button>
                 <button type="button" class="ghost-btn" id="btn-manual-library" title="Manual library index">MANUAL LIBRARY</button>
@@ -1601,6 +1652,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
           <button type="button" class="detail-hint-dismiss" id="detail-hint-dismiss" title="Don’t show this hint again">don’t show again</button>
         </div>
         <div class="toast" id="toast" role="status"></div>
+        <div class="preview-backdrop" id="preview-backdrop" aria-hidden="true"></div>
       </div>
     </div>
   </div>
@@ -1778,6 +1830,16 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
     setTimeout(resetDocScroll, 120);
   }
 
+  function ensurePreviewFocus() {
+    if (document.body.classList.contains('preview-focus')) return;
+    document.body.classList.add('preview-focus');
+    const btn = document.getElementById('btn-preview-focus');
+    if (btn) {
+      btn.textContent = 'Restore layout';
+      btn.setAttribute('aria-pressed', 'true');
+    }
+  }
+
   function showRtfmUi() {
     hideCreateUi();
     hideFaqUi();
@@ -1788,6 +1850,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    ensurePreviewFocus();
     scheduleDocScrollReset();
   }
 
@@ -1801,6 +1864,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    ensurePreviewFocus();
     scheduleDocScrollReset();
   }
 
@@ -1814,6 +1878,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    ensurePreviewFocus();
     scheduleDocScrollReset();
   }
 
@@ -1827,6 +1892,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
       panel.classList.add('is-on');
     }
     if (activeSummary) activeSummary.hidden = true;
+    ensurePreviewFocus();
     scheduleDocScrollReset();
   }
 
@@ -5238,6 +5304,43 @@ Then attest here so SETUP MASTER can check it off.`);
     openCreateArchiveWizard();
   });
 
+  const btnRegistryCompact = document.getElementById('btn-registry-compact');
+  const btnPreviewFocus = document.getElementById('btn-preview-focus');
+  const btnPreviewModal = document.getElementById('btn-preview-modal');
+  const previewBackdrop = document.getElementById('preview-backdrop');
+  document.body.classList.add('registry-compact');
+  if (btnRegistryCompact) {
+    btnRegistryCompact.textContent = 'Expand';
+    btnRegistryCompact.setAttribute('aria-pressed', 'true');
+  }
+  btnRegistryCompact?.addEventListener('click', () => {
+    const on = document.body.classList.toggle('registry-compact');
+    btnRegistryCompact.textContent = on ? 'Expand' : 'Shrink';
+    btnRegistryCompact.setAttribute('aria-pressed', String(on));
+  });
+  btnPreviewFocus?.addEventListener('click', () => {
+    const on = document.body.classList.toggle('preview-focus');
+    btnPreviewFocus.textContent = on ? 'Restore layout' : 'Expand preview';
+    btnPreviewFocus.setAttribute('aria-pressed', String(on));
+  });
+  btnPreviewModal?.addEventListener('click', () => {
+    const on = document.body.classList.toggle('preview-modal');
+    if (on && !document.body.classList.contains('preview-focus')) {
+      document.body.classList.add('preview-focus');
+      btnPreviewFocus.textContent = 'Restore layout';
+      btnPreviewFocus.setAttribute('aria-pressed', 'true');
+    }
+    btnPreviewModal.textContent = on ? 'Close focus' : 'Focus';
+    btnPreviewModal.setAttribute('aria-pressed', String(on));
+    if (previewBackdrop) previewBackdrop.setAttribute('aria-hidden', String(!on));
+  });
+  previewBackdrop?.addEventListener('click', () => {
+    document.body.classList.remove('preview-modal');
+    btnPreviewModal.textContent = 'Focus';
+    btnPreviewModal.setAttribute('aria-pressed', 'false');
+    previewBackdrop.setAttribute('aria-hidden', 'true');
+  });
+
   authForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = authEmail.value.trim();
@@ -5796,6 +5899,25 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
     else if (e.key.startsWith('Arrow')) hideHoverChrome();
 
     if (e.key === 'Escape') {
+      if (document.body.classList.contains('preview-modal')) {
+        e.preventDefault();
+        document.body.classList.remove('preview-modal');
+        if (btnPreviewModal) {
+          btnPreviewModal.textContent = 'Focus';
+          btnPreviewModal.setAttribute('aria-pressed', 'false');
+        }
+        if (previewBackdrop) previewBackdrop.setAttribute('aria-hidden', 'true');
+        return;
+      }
+      if (document.body.classList.contains('preview-focus')) {
+        e.preventDefault();
+        document.body.classList.remove('preview-focus');
+        if (btnPreviewFocus) {
+          btnPreviewFocus.textContent = 'Expand preview';
+          btnPreviewFocus.setAttribute('aria-pressed', 'false');
+        }
+        return;
+      }
       if (isTypingTarget(e.target)) {
         e.preventDefault();
         e.target.blur();
