@@ -12,3 +12,7 @@ vars = { NEON_AUTH_BASE_URL = "https://ep-crimson-firefly-ad77brka.neonauth.c-2.
 [env.production]
 name = "uxu-ini-production"
 vars = { NEON_AUTH_BASE_URL = "https://ep-crimson-firefly-ad77brka.neonauth.c-2.us-east-1.aws.neon.tech/uXu/auth" }
+
+routes = [
+  { pattern = "uxu.chloreform.org/*", custom_domain = true }
+]

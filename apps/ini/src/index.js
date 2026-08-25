@@ -370,6 +370,61 @@ async function handleLogin(sql, request) {
     return json({ error: 'login failed', detail: String(err) }, 500);
   }
 }
+async function handlePasswordUpdate(sql, request, ctx) {
+  if (request.method !== 'POST') {
+    return json({ error: 'method not allowed' }, 405);
+  }
+
+  if (!ctx.session) {
+    return json({ error: 'unauthorized' }, 401);
+  }
+
+  try {
+    const body = await request.json().catch(() => ({}));
+    const email = (body.email || '').trim();
+    const newPassword = (body.newPassword || '').trim();
+    const currentPassword = (body.currentPassword || '').trim();
+
+    if (!email || !newPassword) {
+      return json({ error: 'email and newPassword required' }, 400);
+    }
+
+    // allow:
+    // - the logged-in user to change their own password
+    // - an ADMIN in sudo mode to change any user's password
+    if (ctx.session.email !== email && (!ctx.sudoMode || ctx.session.role !== 'ADMIN')) {
+      return json({ error: 'forbidden' }, 403);
+    }
+
+    const users = await sql`
+      SELECT id, email, password_hash, role
+      FROM neon_auth.users
+      WHERE lower(email) = lower(${email})
+    `;
+
+    if (!users.length) {
+      return json({ error: 'user not found' }, 404);
+    }
+
+    const user = users[0];
+
+    // if not in sudo mode, require current password
+    if (!ctx.sudoMode && user.password_hash !== currentPassword) {
+      return json({ error: 'current password incorrect' }, 401);
+    }
+
+    await sql`
+      UPDATE neon_auth.users
+      SET password_hash = ${newPassword}, updated_at = NOW()
+      WHERE id = ${user.id}
+    `;
+
+    return json({ status: 'ok', message: 'password updated', email: user.email }, 200);
+  } catch (err) {
+    console.error('Password update error:', err);
+    return json({ error: 'password update failed', detail: String(err) }, 500);
+  }
+}
 
 async function handleSignup(sql, request) {
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);

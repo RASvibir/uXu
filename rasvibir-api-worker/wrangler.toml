@@ -1,0 +1,27 @@
+name = "rasvibir-api"
+main = "src/index.js"
+compatibility_date = "2026-08-20"
+
+# Non-sensitive configuration only — these are visible in the dashboard
+[vars]
+CORS_ORIGIN = "*"
+JWT_ISSUER = "rasvibir-api"
+
+## ─── Hyperdrive (recommended) ───────────────────────────────────────
+## Create with: npx wrangler hyperdrive create neon-db \
+#   --connection-string="postgres://user:password@ep-xxx.region.aws.neon.tech/dbname?sslmode=require"
+# Then paste the returned ID below.
+
+#[[hyperdrive]]
+#binding = "HYPERDRIVE"
+#id = "<YOUR_HYPERDRIVE_ID>"
+localConnectionString = "postgres://user:password@localhost:5432/devdb"
+
+# ─── Secrets ─────────────────────────────────────────────────────────
+# Set via CLI (encrypted, not visible after setting):
+##   npx wrangler secret put DATABASE_URL    # fallback if not using Hyperdrive
+#   npx wrangler secret put JWT_SECRET      # for signing session tokens
+#
+# For local development, create a .dev.vars file (never commit to git):
+#   DATABASE_URL=postgres://user:password@localhost:5432/devdb
+#   JWT_SECRET=local-dev-secret-not-for-production

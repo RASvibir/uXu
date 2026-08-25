@@ -1,0 +1,35 @@
+{
+  "name": "uxu",
+  "version": "1.0.0",
+  "description": "uXu is a shared archive commons layer. It does not own archive content.   It provides registration, identification, preservation, discovery, and declared relationships between independent archives.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RASvibir/uXu.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/RASvibir/uXu/issues"
+  },
+  "homepage": "https://github.com/RASvibir/uXu#readme",
+  "dependencies": {
+    "@prisma/client": "^7.9.1",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "next": "^16.3.1",
+    "prisma": "^7.9.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "^7.0.2"
+  }
+}

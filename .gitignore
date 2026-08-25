@@ -51,3 +51,12 @@ apps/ini/node_modules/
 apps/ini/.dev.vars
 
 /src/generated/prisma
+node_modules
+
+# rasvibir-api-worker (Cloudflare API — vendored in-repo)
+rasvibir-api-worker/node_modules/
+rasvibir-api-worker/.wrangler/
+rasvibir-api-worker/.dev.vars
+rasvibir-api-worker/.dev.vars.*
+rasvibir-api-worker/.env
+rasvibir-api-worker/.env.*

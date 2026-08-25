@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 52, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/app/api/auth/signup/route.ts"],"sourcesContent":["import db from \"../../../../lib/db.js\"; import { hash } from \"../../../../lib/auth.js\"; export async function POST(req){ const b=await req.json(); const u=await db.master.create({ data:{ email:b.email, password:await hash(b.password) }}); return Response.json({ ok:true, id:u.id }); }\n"],"names":["POST","req","b","json","u","master","create","data","email","password","Response","ok","id"],"mappings":";;;;AAAA;AAAwC;;;AAAuD,eAAeA,KAAKC,GAAG;IAAG,MAAMC,IAAE,MAAMD,IAAIE,IAAI;IAAI,MAAMC,IAAE,MAAM,sHAAE,CAACC,MAAM,CAACC,MAAM,CAAC;QAAEC,MAAK;YAAEC,OAAMN,EAAEM,KAAK;YAAEC,UAAS,MAAM,IAAA,qHAAI,EAACP,EAAEO,QAAQ;QAAE;IAAC;IAAI,OAAOC,SAASP,IAAI,CAAC;QAAEQ,IAAG;QAAMC,IAAGR,EAAEQ,EAAE;IAAC;AAAI"}},
+    {"offset": {"line": 77, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/lib/auth.js"],"sourcesContent":["import bcrypt from \"bcrypt\"; export const hash=(p)=>bcrypt.hash(p,10); export const verify=(p,h)=>bcrypt.compare(p,h);\n"],"names":["hash","p","verify","h","compare"],"mappings":";;;;;;AAAA;;AAAoC,MAAMA,OAAK,CAACC,IAAI,6JAAM,CAACD,IAAI,CAACC,GAAE;AAAY,MAAMC,SAAO,CAACD,GAAEE,IAAI,6JAAM,CAACC,OAAO,CAACH,GAAEE"}},
+    {"offset": {"line": 91, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/lib/db.js"],"sourcesContent":["import { PrismaClient } from \"@prisma/client\"; const db = new PrismaClient(); export default db;\n"],"names":["db"],"mappings":";;;;AAAA;;AAA+C,MAAMA,KAAK,IAAI,sMAAY;uCAAmBA"}}]
+}
