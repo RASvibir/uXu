@@ -1493,7 +1493,22 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     playTrack(0);
   }
 
-  async function engageShow(show, opts = {}) {
+  
+  async function pingHerdPresence(showDateStr) {
+    if (!showDateStr) return;
+    try {
+      await fetch(`${API_BASE}/api/herd/ping`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: showDateStr, active: typeof rippleActive !== "undefined" && rippleActive })
+      });
+    } catch (err) {
+      console.debug("Herd ping offline", err);
+    }
+  }
+
+async function engageShow(show, opts = {
+    pingHerdPresence(showDate(show));}) {
     if (rippleActive && !opts.fromRipple) stopRipple();
     activeShow = show;
     activeShowKey = showKey(show);
