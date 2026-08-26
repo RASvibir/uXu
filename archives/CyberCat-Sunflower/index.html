@@ -730,7 +730,7 @@ uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 ===================================================================
 [+] INDEX       : live years → every available GD show
 [+] RESIDENCY   : consecutive same-venue nights grouped · day chips
-[+] DEFAULT     : best waveform (SBD/remaster/rating weighted)
+[+] RIPPLE      : global jam party · plays full setlist through, then scans herd majority
 [+] ALTERNATES  : Other Transfers button / key O
 [+] DECK        : engage a night, cue songs from the setlist
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0002
@@ -1330,7 +1330,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       return;
     }
     if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
-    else toast('End of tape');
+    else if (typeof triggerRippleSync === 'function') { triggerRippleSync(); } else { toast('End of tape'); }
   });
   player.addEventListener('error', () => {
     toast('Stream error — skipping');
