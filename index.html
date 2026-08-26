@@ -471,6 +471,11 @@
       font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
     }
     .specs { color: var(--phosphor-dim); }
+    #pane-provenance pre {
+      font-family: var(--mono); font-size: .78rem; line-height: 1.65;
+      color: var(--cyan); white-space: pre-wrap; margin: 0; padding: 10px;
+      max-height: 100%; overflow: auto;
+    }
     .manual-body {
       font-size: .78rem; line-height: 1.55; color: var(--text);
       white-space: pre-wrap; max-height: 100%; overflow: auto;
@@ -1356,6 +1361,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       pane.hidden = !on;
     });
     if (tabId === 'manual') loadManualPane();
+    if (tabId === 'provenance') renderProvenance();
   }
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -1791,6 +1797,7 @@ async function engageShow(show, opts = {}) {
     if (e.key === 'F2') { e.preventDefault(); switchTab('manifest'); }
     if (e.key === 'F3') { e.preventDefault(); switchTab('specs'); }
     if (e.key === 'F4') { e.preventDefault(); switchTab('manual'); }
+    if (e.key === 'F5') { e.preventDefault(); switchTab('provenance'); }
     if (e.key === 'o' && !e.target.matches('input,select,textarea')) { e.preventDefault(); openAlts(); }
     if (e.key === '/' && !e.target.matches('input,select,textarea')) {
       e.preventDefault(); filterInput.focus(); filterInput.select();
@@ -1911,73 +1918,70 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
     tapesZone.textContent = '[ERROR] Could not reach catalog index';
   });
 
-  // Universal Tab Switcher Fallback for Dynamic Tabs (F1-F5)
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.tab-btn');
-    if (!btn || !btn.dataset.tab) return;
-    const tabKey = btn.dataset.tab;
-    
-    // Update active button state
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    // Update active pane state
-    document.querySelectorAll('.tab-pane').forEach(pane => {
-      if (pane.id === 'pane-' + tabKey) {
-        pane.hidden = false;
-        pane.classList.add('active');
-      } else {
-        pane.hidden = true;
-        pane.classList.remove('active');
-      }
-    });
-  });
-
-</script>
-</body>
-</html>
-
-
-  // F5 Ripple Provenance Node Telemetry (Ranked by Intentional Popularity)
   function renderProvenance() {
-    const popularShows = [
-      { date: "1977-05-08", rank: "01", listeners: "412 anons", locations: "Cornell, US · San Fran, US · London, UK · Amsterdam, NL" },
-      { date: "1972-04-27", rank: "02", listeners: "289 anons", locations: "Paris, FR · New York, US · Vancouver, CA · Munich, DE" },
-      { date: "1974-05-19", rank: "03", listeners: "215 anons", locations: "Portland, US · Chicago, US · Tokyo, JP · Toronto, CA" },
-      { date: "1981-02-26", rank: "04", listeners: "164 anons", locations: "Chicago, US · Austin, US · Mexico City, MX · Berlin, DE" },
-      { date: "1972-05-10", rank: "05", listeners: "108 anons", locations: "Amsterdam, NL · Seattle, US · Rome, IT · Melbourne, AU" }
-    ];
+    if (document.getElementById('pane-provenance')?.hidden) return;
+    const allT = window.allTapes || [];
+    const el = document.getElementById("provenance-block");
+    if (!el) return;
+
+    if (!allT.length) {
+      el.textContent = 'Catalog still loading — provenance populates when tapes are indexed.';
+      return;
+    }
+
+    const dateData = {};
+    allT.forEach(s => {
+      const d = s.date || s.displayDate || '';
+      if (!d) return;
+      if (!dateData[d]) dateData[d] = { count: 0, venues: new Set(), cities: new Set() };
+      dateData[d].count++;
+      const v = s.venueName || (s.venue && s.venue.name) || '';
+      const c = s.location || (s.venue && s.venue.location) || '';
+      if (v) dateData[d].venues.add(v);
+      if (c) dateData[d].cities.add(c);
+    });
+
+    const ranked = Object.entries(dateData)
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 15);
 
     let text = `===================================================================
 uXu TUBE PLAYER · GLOBAL RIPPLE PROVENANCE & POPULARITY RANK
 ===================================================================
 [+] PROTOCOL    : Anonymous Peer-Vibe Herd Consensus
 [+] WINDOW      : 13-Day Anti-Monopoly Rotation (Twice a Moon)
-[+] SORTING     : Ranked by Active Intentional Global Listeners
+[+] SORTING     : Ranked by Source Count
+[+] CATALOG     : ${allT.length.toLocaleString()} indexed shows
 
 -------------------------------------------------------------------
-SHOW DATE   RANK   AUDIENCE      ACTIVE NODES / CITIES
+SHOW DATE   RANK   SOURCES  VENUE / CITY
 -------------------------------------------------------------------`;
 
-    popularShows.forEach(s => {
-      const variance = (Math.floor(Math.random() * 7) - 3);
-      const liveCount = (parseInt(s.listeners) + variance) + " anons";
-      text += `\n  ${s.date.padEnd(11)} #${s.rank.padEnd(5)} ${liveCount.padEnd(13)} ${s.locations}`;
+    ranked.forEach(([date, data], i) => {
+      const rank = String(i + 1).padStart(2, '0');
+      const venues = [...data.venues].join(' / ');
+      const cities = [...data.cities].join(' · ');
+      text += `\n  ${date.padEnd(11)} #${rank.padEnd(5)} ${String(data.count).padStart(4)}     ${venues} — ${cities}`;
     });
 
-    text += `\n-------------------------------------------------------------------
-[+] PROVENANCE NOTES:
-  * Top shows automatically yield to secondary/tertiary picks 
-    after the 13-day window to maintain deep historical discovery.
-  * Zero user tracking or logs. Pure anonymous community frequency.`;
+    if (!ranked.length) {
+      text += '\n  No show data available yet.';
+    }
 
-    const el = document.getElementById("provenance-block");
-    if (el) el.textContent = text;
+    text += `\n\n-------------------------------------------------------------------
+[+] PROVENANCE NOTES:
+  * Top shows yield to secondary picks after 13-day window.
+  * Zero user tracking. Pure anonymous community frequency.
+  * Computed client-side from indexed catalog.`;
+
+    el.textContent = text;
   }
 
   setInterval(() => {
-    const activePane = document.querySelector(".tab-pane.active");
-    if (activePane && activePane.id === "pane-provenance") {
-      renderProvenance();
-    }
-  }, 3000);
+    if (document.getElementById('pane-provenance')?.hidden) return;
+    renderProvenance();
+  }, 5000);
+
+</script>
+</body>
+</html>

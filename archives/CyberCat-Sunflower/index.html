@@ -471,6 +471,72 @@
       font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
     }
     .specs { color: var(--phosphor-dim); }
+    #pane-provenance pre {
+      font-family: var(--mono); font-size: .78rem; line-height: 1.65;
+      color: var(--cyan); white-space: pre-wrap; margin: 0; padding: 10px;
+      max-height: 100%; overflow: auto;
+    }
+    .prov-panel { padding: .8rem; }
+    .prov-title {
+      font-family: var(--display); font-size: .82rem; font-weight: 700;
+      color: var(--amber); text-shadow: 0 0 10px rgba(255,210,74,.3);
+      letter-spacing: .08em; margin-bottom: .2rem;
+    }
+    .prov-subtitle { font-size: .65rem; color: var(--muted); margin-bottom: .6rem; }
+    .prov-protocol {
+      font-size: .62rem; color: var(--muted); line-height: 1.6;
+      margin-bottom: .7rem; padding: .5rem; border-radius: 6px;
+      background: rgba(0,0,0,.3); border: 1px solid rgba(93,255,138,.12);
+    }
+    .prov-protocol span { color: var(--phosphor-dim); }
+    .prov-header {
+      display: grid; grid-template-columns: 2rem 1fr 1fr 3.5rem;
+      gap: .3rem; font-size: .58rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .08em;
+      padding: .3rem .4rem; border-bottom: 1px solid rgba(93,255,138,.2);
+      margin-bottom: .2rem;
+    }
+    .prov-row {
+      display: grid; grid-template-columns: 2rem 1fr 1fr 3.5rem;
+      gap: .3rem; padding: .4rem .4rem; border-radius: 4px;
+      font-size: .72rem; transition: background .15s;
+      border-bottom: 1px solid rgba(93,255,138,.06);
+    }
+    .prov-row:hover { background: rgba(93,255,138,.06); }
+    .prov-rank {
+      font-family: var(--display); font-weight: 700; font-size: .7rem;
+    }
+    .prov-rank.top3 { color: var(--amber); text-shadow: 0 0 8px rgba(255,210,74,.4); }
+    .prov-rank.normal { color: var(--phosphor-dim); }
+    .prov-date { color: var(--cyan); font-variant-numeric: tabular-nums; }
+    .prov-venue { color: var(--text); }
+    .prov-city {
+      color: var(--phosphor-dim); font-size: .65rem;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .prov-count {
+      font-family: var(--display); font-weight: 700; text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .prov-count.hot { color: var(--magenta); text-shadow: 0 0 8px rgba(255,61,206,.35); }
+    .prov-count.warm { color: var(--amber); }
+    .prov-count.cool { color: var(--phosphor-dim); }
+    .prov-footer {
+      margin-top: .6rem; padding-top: .5rem;
+      border-top: 1px solid rgba(93,255,138,.15);
+      font-size: .6rem; color: var(--muted); line-height: 1.7;
+    }
+    .prov-footer strong { color: var(--phosphor-dim); font-weight: 400; }
+    .prov-locations {
+      margin-top: .5rem; padding: .5rem; border-radius: 6px;
+      background: rgba(0,0,0,.25); border: 1px solid rgba(77,232,255,.1);
+      font-size: .6rem; color: var(--cyan); line-height: 1.8;
+    }
+    .prov-locations .loc-tag {
+      display: inline-block; padding: .1rem .35rem; margin: .1rem;
+      border-radius: 3px; background: rgba(77,232,255,.08);
+      border: 1px solid rgba(77,232,255,.15);
+    }
     .manual-body {
       font-size: .78rem; line-height: 1.55; color: var(--text);
       white-space: pre-wrap; max-height: 100%; overflow: auto;
@@ -627,7 +693,7 @@
       </div>
 
       <footer class="statusbar">
-        <span><kbd>F1</kbd>–<kbd>F4</kbd> · <kbd>Enter</kbd> engage · <kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
+        <span><kbd>F1</kbd>–<kbd>F5</kbd> · <kbd>Enter</kbd> engage · <kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
         <span id="catalog-foot">Grateful Dead full catalog</span>
       </footer>
       <div class="toast" id="toast" role="status"></div>
@@ -1356,6 +1422,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       pane.hidden = !on;
     });
     if (tabId === 'manual') loadManualPane();
+    if (tabId === 'provenance') renderProvenance();
   }
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -1791,6 +1858,7 @@ async function engageShow(show, opts = {}) {
     if (e.key === 'F2') { e.preventDefault(); switchTab('manifest'); }
     if (e.key === 'F3') { e.preventDefault(); switchTab('specs'); }
     if (e.key === 'F4') { e.preventDefault(); switchTab('manual'); }
+    if (e.key === 'F5') { e.preventDefault(); switchTab('provenance'); }
     if (e.key === 'o' && !e.target.matches('input,select,textarea')) { e.preventDefault(); openAlts(); }
     if (e.key === '/' && !e.target.matches('input,select,textarea')) {
       e.preventDefault(); filterInput.focus(); filterInput.select();
@@ -1828,6 +1896,7 @@ async function engageShow(show, opts = {}) {
       }
     }
     shows = all;
+    window.allTapes = all;
     document.getElementById('catalog-foot').textContent =
       `${shows.length} Grateful Dead shows indexed`;
     indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
@@ -1910,46 +1979,104 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
     indexStatus.textContent = 'Catalog index failed: ' + err.message;
     tapesZone.textContent = '[ERROR] Could not reach catalog index';
   });
-</script>
-</body>
-</html>
 
-
-  // F5 Ripple Provenance Node Telemetry (Ranked by Intentional Popularity)
+  // F5 Ripple Provenance — computes from loaded show catalog
   function renderProvenance() {
-    const popularShows = [
-      { date: "1977-05-08", rank: "01", listeners: "412 anons", locations: "Cornell, US · San Fran, US · London, UK · Amsterdam, NL" },
-      { date: "1972-04-27", rank: "02", listeners: "289 anons", locations: "Paris, FR · New York, US · Vancouver, CA · Munich, DE" },
-      { date: "1974-05-19", rank: "03", listeners: "215 anons", locations: "Portland, US · Chicago, US · Tokyo, JP · Toronto, CA" },
-      { date: "1981-02-26", rank: "04", listeners: "164 anons", locations: "Chicago, US · Austin, US · Mexico City, MX · Berlin, DE" },
-      { date: "1972-05-10", rank: "05", listeners: "108 anons", locations: "Amsterdam, NL · Seattle, US · Rome, IT · Melbourne, AU" }
-    ];
+    if (document.getElementById('pane-provenance')?.hidden) return;
+    const allT = window.allTapes || [];
+    const el = document.getElementById("provenance-block");
+    if (!el) return;
 
-    let text = `===================================================================
-uXu TUBE PLAYER · GLOBAL RIPPLE PROVENANCE & POPULARITY RANK
-===================================================================
-[+] PROTOCOL    : Anonymous Peer-Vibe Herd Consensus
-[+] WINDOW      : 13-Day Anti-Monopoly Rotation (Twice a Moon)
-[+] SORTING     : Ranked by Active Intentional Global Listeners
+    if (!allT.length) {
+      el.innerHTML = '<div class="prov-title">RIPPLE PROVENANCE</div><div class="prov-subtitle">Catalog still loading — provenance populates when tapes are indexed.</div>';
+      return;
+    }
 
--------------------------------------------------------------------
-SHOW DATE   RANK   AUDIENCE      ACTIVE NODES / CITIES
--------------------------------------------------------------------`;
+    function fmtDate(iso) {
+      const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m) return iso;
+      const mo = parseInt(m[2], 10);
+      const d = parseInt(m[3], 10);
+      const yr = m[1].slice(2);
+      return `${mo}/${d}/${yr}`;
+    }
 
-    popularShows.forEach(s => {
-      const variance = (Math.floor(Math.random() * 7) - 3);
-      const liveCount = (parseInt(s.listeners) + variance) + " anons";
-      text += `\n  ${s.date.padEnd(11)} #${s.rank.padEnd(5)} ${liveCount.padEnd(13)} ${s.locations}`;
+    function fmtCity(loc) {
+      if (!loc) return '';
+      const parts = loc.split(',').map(s => s.trim());
+      if (parts.length >= 2) {
+        const country = parts[parts.length - 1];
+        const city = parts.slice(0, -1).join(', ');
+        return `${city}, ${country}`;
+      }
+      return loc;
+    }
+
+    const dateData = {};
+    allT.forEach(s => {
+      const d = s.date || s.displayDate || '';
+      if (!d) return;
+      if (!dateData[d]) dateData[d] = { count: 0, venues: new Set(), cities: new Set() };
+      dateData[d].count++;
+      const v = s.venueName || (s.venue && s.venue.name) || '';
+      const c = s.location || (s.venue && s.venue.location) || '';
+      if (v) dateData[d].venues.add(v);
+      if (c) dateData[d].cities.add(c);
     });
 
-    text += `\n-------------------------------------------------------------------
-[+] PROVENANCE NOTES:
-  * Top shows automatically yield to secondary/tertiary picks 
-    after the 13-day window to maintain deep historical discovery.
-  * Zero user tracking or logs. Pure anonymous community frequency.`;
+    const ranked = Object.entries(dateData)
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 15);
 
-    const el = document.getElementById("provenance-block");
-    if (el) el.textContent = text;
+    const allCities = new Set();
+    ranked.forEach(([, d]) => d.cities.forEach(c => allCities.add(c)));
+
+    let html = '';
+    html += '<div class="prov-title">RIPPLE PROVENANCE</div>';
+    html += '<div class="prov-subtitle">Most transferred shows in the catalog · ranked by source count</div>';
+
+    html += `<div class="prov-protocol">`;
+    html += `<span>PROTOCOL</span> Anonymous Peer-Vibe Herd Consensus<br>`;
+    html += `<span>WINDOW</span> 13-Day Anti-Monopoly Rotation (Twice a Moon)<br>`;
+    html += `<span>CATALOG</span> ${allT.length.toLocaleString()} indexed shows · <span>COMPUTED</span> ${new Date().toISOString().slice(0,19)}Z`;
+    html += '</div>';
+
+    html += '<div class="prov-header"><span>#</span><span>Show Date</span><span>Venue / City</span><span style="text-align:right">Sources</span></div>';
+
+    ranked.forEach(([date, data], i) => {
+      const rank = i + 1;
+      const rankClass = rank <= 3 ? 'top3' : 'normal';
+      const countClass = data.count >= 10 ? 'hot' : data.count >= 5 ? 'warm' : 'cool';
+      const venues = [...data.venues].join(' / ');
+      const cities = [...data.cities].map(c => fmtCity(c)).join(' · ');
+      html += `<div class="prov-row">`;
+      html += `<span class="prov-rank ${rankClass}">${String(rank).padStart(2, '0')}</span>`;
+      html += `<span class="prov-date">${fmtDate(date)}</span>`;
+      html += `<span class="prov-venue">${venues}<br><span class="prov-city">${cities}</span></span>`;
+      html += `<span class="prov-count ${countClass}">${data.count}</span>`;
+      html += '</div>';
+    });
+
+    if (!ranked.length) {
+      html += '<div class="prov-subtitle" style="padding:1rem;text-align:center">No show data available yet.</div>';
+    }
+
+    if (allCities.size) {
+      html += '<div class="prov-locations"><strong>ACTIVE NODES</strong> ';
+      [...allCities].slice(0, 20).forEach(c => {
+        html += `<span class="loc-tag">${fmtCity(c)}</span>`;
+      });
+      if (allCities.size > 20) html += `<span class="loc-tag">+${allCities.size - 20} more</span>`;
+      html += '</div>';
+    }
+
+    html += `<div class="prov-footer">`;
+    html += `<strong>Sources</strong> = distinct recordings / transfers available in the public catalog.<br>`;
+    html += `<strong>Top shows</strong> yield to secondary picks after the 13-day window for deep discovery.<br>`;
+    html += `Zero user tracking. Pure anonymous community frequency. Computed client-side from indexed catalog.`;
+    html += '</div>';
+
+    el.innerHTML = html;
   }
 
   setInterval(() => {
@@ -1957,4 +2084,11 @@ SHOW DATE   RANK   AUDIENCE      ACTIVE NODES / CITIES
     if (activePane && activePane.id === "pane-provenance") {
       renderProvenance();
     }
-  }, 3000);
+  }, 5000);
+
+  // Universal Tab Switcher Fallback for Dynamic Tabs (F1-F5)
+  // (tab switching handled by switchTab() above)
+
+</script>
+</body>
+</html>
