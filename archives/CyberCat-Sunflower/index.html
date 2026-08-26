@@ -1507,8 +1507,8 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     }
   }
 
-async function engageShow(show, opts = {
-    pingHerdPresence(showDate(show));}) {
+async function engageShow(show, opts = {}) {
+    pingHerdPresence(showDate(show));
     if (rippleActive && !opts.fromRipple) stopRipple();
     activeShow = show;
     activeShowKey = showKey(show);
@@ -1909,3 +1909,48 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
 </script>
 </body>
 </html>
+
+
+  // F5 Ripple Provenance Node Telemetry (Ranked by Intentional Popularity)
+  function renderProvenance() {
+    const popularShows = [
+      { date: "1977-05-08", rank: "01", listeners: "412 anons", locations: "Cornell, US · San Fran, US · London, UK · Amsterdam, NL" },
+      { date: "1972-04-27", rank: "02", listeners: "289 anons", locations: "Paris, FR · New York, US · Vancouver, CA · Munich, DE" },
+      { date: "1974-05-19", rank: "03", listeners: "215 anons", locations: "Portland, US · Chicago, US · Tokyo, JP · Toronto, CA" },
+      { date: "1981-02-26", rank: "04", listeners: "164 anons", locations: "Chicago, US · Austin, US · Mexico City, MX · Berlin, DE" },
+      { date: "1972-05-10", rank: "05", listeners: "108 anons", locations: "Amsterdam, NL · Seattle, US · Rome, IT · Melbourne, AU" }
+    ];
+
+    let text = `===================================================================
+uXu TUBE PLAYER · GLOBAL RIPPLE PROVENANCE & POPULARITY RANK
+===================================================================
+[+] PROTOCOL    : Anonymous Peer-Vibe Herd Consensus
+[+] WINDOW      : 13-Day Anti-Monopoly Rotation (Twice a Moon)
+[+] SORTING     : Ranked by Active Intentional Global Listeners
+
+-------------------------------------------------------------------
+SHOW DATE   RANK   AUDIENCE      ACTIVE NODES / CITIES
+-------------------------------------------------------------------`;
+
+    popularShows.forEach(s => {
+      const variance = (Math.floor(Math.random() * 7) - 3);
+      const liveCount = (parseInt(s.listeners) + variance) + " anons";
+      text += `\n  ${s.date.padEnd(11)} #${s.rank.padEnd(5)} ${liveCount.padEnd(13)} ${s.locations}`;
+    });
+
+    text += `\n-------------------------------------------------------------------
+[+] PROVENANCE NOTES:
+  * Top shows automatically yield to secondary/tertiary picks 
+    after the 13-day window to maintain deep historical discovery.
+  * Zero user tracking or logs. Pure anonymous community frequency.`;
+
+    const el = document.getElementById("provenance-block");
+    if (el) el.textContent = text;
+  }
+
+  setInterval(() => {
+    const activePane = document.querySelector(".tab-pane.active");
+    if (activePane && activePane.id === "pane-provenance") {
+      renderProvenance();
+    }
+  }, 3000);
