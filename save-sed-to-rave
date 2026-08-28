@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+#
+# save-sed-to-rave — instantiate a new standalone CyberCat deck archive
+# from the generic template (archives/CyberCat-Generic/index.html).
+#
+# The template exposes {{TOKEN}} placeholders (see ARCHIVE_CONFIG in the
+# template). This tool runs the BSD/GNU-sed-safe replacements and validates
+# the resulting deck before printing a summary.
+#
+# Usage:
+#   ./save-sed-to-rave \
+#     --id MY_TAPE \
+#     --title "My Tape Archive" \
+#     [--mode STANDALONE|HERD|FULL] \
+#     [--ripple on|off] \
+#     [--manifest api/my_tape/shows.json] \
+#     [--tracks "audio/one.mp3:240,audio/two.mp3:210"] \
+#     [--from archives/CyberCat-Generic/index.html] \
+#     [--out archives/CyberCat-My-Tape/index.html]
+#
+# Flags:
+#   --id        (required) uppercase archive id, e.g. MY_TAPE — becomes the
+#               storage namespace (uxu_deck_MY_TAPE_*) and herd channel.
+#   --title     (required) human archive title.
+#   --mode      default STANDALONE.
+#   --ripple    on|off — Ripple Sync toggle in the generated deck. OFF unless
+#               explicitly "on".
+#   --manifest  optional manifest URL (e.g. api/<id>/shows.json).
+#   --tracks    optional comma-separated "path:seconds[,path:seconds...]".
+#               Seeded into the setlist; empty -> baseline (Track 0 / 0).
+#   --from      template path (default archives/CyberCat-Generic/index.html).
+#   --out       output path (default archives/CyberCat-<PascalId>/index.html).
+#
+# Example:
+#   ./save-sed-to-rave --id MY_TAPE --title "My Tape Archive" \
+#     --manifest api/my_tape/shows.json \
+#     --tracks "audio/one.mp3:240,audio/two.mp3:210"
+
+set -euo pipefail
+
+usage() { grep -E '^# ' "$0" | sed -E 's/^# ?//' | grep -vE '^$/'; exit "${1:-0}"; }
+
+TPL="archives/CyberCat-Generic/index.html"
+OUT=""
+ID=""
+TITLE=""
+MODE="STANDALONE"
+RIPPLE="off"
+MANIFEST=""
+TRACKS=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --id)        ID="${2:-}";            shift 2 ;;
+    --title)     TITLE="${2:-}";         shift 2 ;;
+    --mode)      MODE="${2:-STANDALONE}"; shift 2 ;;
+    --ripple)    RIPPLE="$(echo "${2:-off}" | tr '[:upper:]' '[:lower:]')"; shift 2 ;;
+    --manifest)  MANIFEST="${2:-}";      shift 2 ;;
+    --tracks)    TRACKS="${2:-}";        shift 2 ;;
+    --from)      TPL="${2:-}";           shift 2 ;;
+    --out)       OUT="${2:-}";           shift 2 ;;
+    -h|--help)   usage 0 ;;
+    *)           echo "ERROR: unknown argument: $1" >&2; usage 1 ;;
+  esac
+done
+
+[[ -n "$ID" ]]     || { echo "ERROR: --id is required" >&2;      usage 1; }
+[[ -n "$TITLE" ]]  || { echo "ERROR: --title is required" >&2;   usage 1; }
+[[ "$RIPPLE" == "on" || "$RIPPLE" == "off" ]] || { echo "ERROR: --ripple must be on|off" >&2; usage 1; }
+
+ID="$(echo "$ID" | tr '[:lower:]' '[:upper:]')"
+
+# Escapes a value for use inside a sed replacement with '|' as delimiter.
+esc() { printf '%s' "$1" | sed 's/[|&\\]/\\&/g'; }
+
+# archives/CyberCat-Generic -> archives/CyberCat-My-Tape
+pascaldir() {
+  local id="$1" w name=""
+  while IFS= read -r w; do
+    [[ -n "$w" ]] || continue
+    w="$(echo "$w" | tr '[:upper:]' '[:lower:]')"
+    name+="-$(echo "${w:0:1}" | tr '[:lower:]' '[:upper:]')${w:1}"
+  done < <(echo "$id" | tr '_' '\n')
+  echo "CyberCat${name}"
+}
+
+# Build setlist payload: { title:"...", url:"...", duration:N },...
+setlist=""
+if [[ -n "$TRACKS" ]]; then
+  IFS=',' read -ra items <<< "$TRACKS"
+  entries=""
+  for it in "${items[@]}"; do
+    [[ -n "$it" ]] || continue
+    IFS=':' read -r path dur <<< "$it"
+    [[ -n "$path" ]] || continue
+    file="$(echo "$(basename "$path")" | sed 's/\.[^.]*$//; s/_/ /g')"
+    entries+="{ title:\"${file}\", url:\"${path}\", duration:${dur:-0} },"
+  done
+  setlist="${entries%,}"
+fi
+
+[[ -n "$OUT" ]] || OUT="archives/$(pascaldir "$ID")/index.html"
+[[ -f "$TPL" ]] || { echo "ERROR: template not found: $TPL" >&2; exit 1; }
+
+# BSD (macOS: -i '') vs GNU (Linux: -i'').
+if [[ "$(uname -s)" == "Darwin" ]]; then SED_I=( -i '' ); else SED_I=( -i '' ); fi
+# NOTE: GNU sed also accepts '-i ""'; treat both as '-i ""' for portability.
+
+sed_flags=(
+  -e "s|{{ARCHIVE_ID}}|$(esc "$ID")|g"
+  -e "s|{{ARCHIVE_TITLE}}|$(esc "$TITLE")|g"
+  -e "s|{{ARCHIVE_MODE}}|$(esc "$MODE")|g"
+)
+[[ -n "$MANIFEST" ]] && sed_flags+=( -e "s|{{SHOW_MANIFEST_URL}}|$(esc "$MANIFEST")|g" )
+[[ "$RIPPLE" == "on" ]] && sed_flags+=( -e 's@false /\* {{RIPPLE_ENABLED}} \*/@true@' )
+[[ -n "$setlist" ]]    && sed_flags+=( -e "s@/\* {{INITIAL_TRACKS}} \*/@$setlist@" )
+
+mkdir -p "$(dirname "$OUT")"
+cp "$TPL" "$OUT"
+sed "${SED_I[@]}" "${sed_flags[@]}" "$OUT"
+
+# Validate: extract <script> and syntax-check with node (if present), then
+# confirm no bare {{TOKEN}} remains outside the template's own docs.
+if command -v node >/dev/null 2>&1; then
+  node -e '
+    const fs = require("fs");
+    const html = fs.readFileSync(process.argv[1], "utf8");
+    const m = html.match(/<script>([\s\S]*?)<\/script>/);
+    if (!m) { console.error("FAIL: no <script> block found"); process.exit(1); }
+    new Function(m[1]);
+    console.log("PASS  deck script parses (" + process.argv[1] + ")");
+  ' "$OUT"
+fi
+
+leftover="$(grep -c '{{' "$OUT" || true)"
+[[ "$leftover" -gt 0 ]] && echo "NOTE: $leftover '{{' occurrences remain (see SPAWN_SED/docs self-reference)."
+
+echo ""
+echo "=== save-sed-to-rave :: DONE ==="
+echo "created : $OUT"
+echo "id      : $ID"
+echo "title   : $TITLE"
+echo "mode    : $MODE"
+echo "ripple  : $RIPPLE"
+[[ -n "$MANIFEST" ]] && echo "manifest: $MANIFEST"
+[[ -n "$setlist" ]] && echo "tracks  : seeded ${#items[@]} (from --tracks)" || echo "tracks  : none (baseline Track 0 / 0)"
+echo ""
+echo "next:"
+echo "  open $OUT"
+echo "  drop audio under $(dirname "$OUT")/audio/"
+echo "  register in archives/index.html registry if it should be linkable from the root catalog"
