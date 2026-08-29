@@ -61,6 +61,15 @@ See `templates/` and the Archive Creation Manual.
 Archive_A.uXu*:*Archive_B.uXu
 ```
 
+## CyberCat deck template
+
+Independent CyberCat decks (like `CyberCat-Sunflower`) are spawned from the
+generic template (`archives/CyberCat-Generic/index.html`) via
+`./save-sed-to-rave`. Each spawn is fully self-contained — one `index.html`,
+isolated `uxu_deck_<ID>_*` storage, optional lazy manifest with graceful
+inline fallback — plus a conformant `data.json`, `data.schema.json`, and
+`song-index.json`. Runtime details: `docs/runtime/cybercat-deck-template.md`.
+
 ## Documentation
 
 On the live console:
@@ -75,6 +84,9 @@ In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, …).
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
+
+**Tests:** `npm test` runs the full node suite (syntax, smoke, token lint,
+generator, immutability, typecheck) — run it before shipping deck changes.
 
 **Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater. uXu and iNi are set up independently of each other as well: uXu is the commons; iNi is optional provenance practice.
 

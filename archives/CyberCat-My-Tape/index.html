@@ -475,6 +475,7 @@
    *   ARCHIVE_MODE       → "STANDALONE" | "LIVE" | "CATALOG"
    *   RIPPLE_ENABLED     → true | false   (default false = OFF)
    *   SHOW_MANIFEST_URL  → "" or a remote shows-catalog JSON endpoint
+   *                       (hybrid: fetched at boot; offline → inline seed)
    *   INITIAL_TRACKS     → inline track objects { title, url, duration }
    *
    * All runtime keys (localStorage / sessionStorage / IndexedDB) and any
@@ -493,7 +494,7 @@
       /* Optional show catalog: { id, title, date, tracks: [ {title,url,duration} ] } */
     ],
     setlist: [
-      { title:"one", url:"audio/one.mp3", duration:240 },{ title:"two", url:"audio/two.mp3", duration:210 }
+      { title:"one", url:"audio/one.mp3", duration:8 },{ title:"two", url:"audio/two.mp3", duration:12 }
     ]
   };
 
@@ -566,6 +567,7 @@
   let toastTimer = null;
   let pendingSeek = -1;
   let lastSaveAt = 0;
+  let manifestState = 'off';
 
   /* ------------------------------------------------------------------ */
   /* Boot / identity                                                     */
@@ -596,12 +598,9 @@
       document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
     }, 1000);
 
-    if (INITIAL_TRACKS.length) {
-      loadTracks(INITIAL_TRACKS, "INLINE", "Inline seed tape", true);
-    } else if (ARCHIVE_CONFIG.setlist.length) {
-      loadTracks(ARCHIVE_CONFIG.setlist, "CONFIG", ARCHIVE_CONFIG.archiveTitle, false);
-    }
+    if (!ARCHIVE_CONFIG.manifestUrl) seedFallback();
     renderCatalogInfo();
+    commenceManifestLoad();
 
     btnPlay.addEventListener('click', togglePlay);
     btnNext.addEventListener('click', nextTrack);
@@ -683,6 +682,65 @@
     Array.from(showBar.children).forEach((chip) => {
       chip.classList.toggle('active', showId != null && chip.dataset.showId === String(showId));
     });
+  }
+
+  /* Hybrid manifest model: when SHOW_MANIFEST_URL is configured, the deck
+   * fetches the remote catalog at boot and uses it; on any failure it falls
+   * back to the inline INITIAL_TRACKS seed. No unhandled rejection, no stall. */
+  async function fetchManifest(url) {
+    const res = await fetch(url, { headers: { 'accept': 'application/json' } });
+    if (!res.ok) throw new Error('manifest HTTP ' + res.status);
+    return await res.json();
+  }
+
+  function applyManifest(data) {
+    const shows = Array.isArray(data && data.shows)
+      ? data.shows.filter((s) => s && Array.isArray(s.tracks) && s.tracks.length)
+      : [];
+    const tracks = Array.isArray(data && data.tracks)
+      ? data.tracks.filter((t) => t && (t.url || t.src))
+      : [];
+    if (shows.length) {
+      ARCHIVE_CONFIG.shows = shows;
+      renderShows();
+      loadTracks(shows[0].tracks, shows[0].id || 'SHOW', shows[0].title || 'Manifest show', false);
+      return true;
+    }
+    if (tracks.length) {
+      loadTracks(tracks, 'MANIFEST', 'Manifest tape', false);
+      return true;
+    }
+    return false;
+  }
+
+  function seedFallback() {
+    if (playlist.length) return;
+    if (INITIAL_TRACKS.length) {
+      loadTracks(INITIAL_TRACKS, 'INLINE', 'Inline seed tape', true);
+    } else if (Array.isArray(ARCHIVE_CONFIG.setlist) && ARCHIVE_CONFIG.setlist.length) {
+      loadTracks(ARCHIVE_CONFIG.setlist, 'CONFIG', ARCHIVE_CONFIG.archiveTitle, false);
+    }
+  }
+
+  function commenceManifestLoad() {
+    if (!ARCHIVE_CONFIG.manifestUrl) return;
+    manifestState = 'fetching…';
+    renderCatalogInfo();
+    renderSpecs();
+    fetchManifest(ARCHIVE_CONFIG.manifestUrl)
+      .then((data) => {
+        const applied = applyManifest(data);
+        manifestState = applied ? 'applied — remote catalog' : 'empty — inline fallback';
+        renderCatalogInfo();
+        renderSpecs();
+        if (!applied) seedFallback();
+      })
+      .catch(() => {
+        manifestState = 'offline — inline fallback';
+        renderCatalogInfo();
+        renderSpecs();
+        seedFallback();
+      });
   }
 
   function loadTracks(tracks, showId, label, autoplay = false) {
@@ -1088,7 +1146,7 @@
         `MODE     : ${ARCHIVE_CONFIG.mode}`,
         `RIPPLE   : ${ARCHIVE_CONFIG.rippleSyncEnabled ? 'ENABLED (default)' : 'OFF (manual join)'}`,
         `HERD     : ${RIPPLE_HERD_CHANNEL}`,
-        `MANIFEST : ${ARCHIVE_CONFIG.manifestUrl || 'none — inline seed only'}`,
+        `MANIFEST : ${ARCHIVE_CONFIG.manifestUrl || 'none — inline seed only'} (${manifestState})`,
         `SHOWS    : ${Array.isArray(ARCHIVE_CONFIG.shows) ? ARCHIVE_CONFIG.shows.length : 0}`,
         `TRACKS   : ${trackCount}`,
         '',
@@ -1107,7 +1165,7 @@ uXu TUBE PLAYER · CYBERCAT GENERIC
 [+] VOLUME    : slider persisted per-archive
 [+] RIPPLE    : optional herd-sync — OFF by default; press R to join
 [+] HERD      : channel "${RIPPLE_HERD_CHANNEL}"
-[+] MANIFEST  : ${ARCHIVE_CONFIG.manifestUrl || 'inline seed only — no network'}
+[+] MANIFEST  : ${ARCHIVE_CONFIG.manifestUrl || 'inline seed only'} · ${manifestState}
 [+] STORAGE   : isolated under ${DECK_STORAGE_PREFIX}${ARCHIVE_CONFIG.archiveId}_
 [+] PARENT    : 0?0.uXu.0000 → ${ARCHIVE_CONFIG.archiveId}.uXu.{{next}}
 -------------------------------------------------------------------
@@ -1128,7 +1186,9 @@ Clone this folder and parameterize via the sed tokens at the top
 ( ARCHIVE_ID , ARCHIVE_TITLE , ARCHIVE_MODE , RIPPLE_ENABLED ,
   INITIAL_TRACKS ).
 
-Streams: drop your own audio files or remote URLs into shows[].`;
+Streams: drop your own audio files or remote URLs into shows[].
+Manifest: set SHOW_MANIFEST_URL to a shows.json endpoint ({ tracks:[], shows:[] });
+the deck fetches it at boot and falls back to the inline seed when offline.`;
   }
 
   function fmtTime(sec) {

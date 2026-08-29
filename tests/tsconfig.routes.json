@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "incremental": false
+  },
+  "include": [
+    "../next-env.d.ts",
+    "../app/api/archive/index/route.ts",
+    "../app/api/archive/open/route.ts",
+    "../app/api/archive/create/route.ts"
+  ]
+}
