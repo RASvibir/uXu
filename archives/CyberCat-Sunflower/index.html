@@ -2301,12 +2301,112 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
   // F5 Ripple Provenance — computes from loaded show catalog
   function renderProvenance() {
     if (document.getElementById('pane-provenance')?.hidden) return;
+
     const allT = window.allTapes || [];
     const el = document.getElementById("provenance-block");
     if (!el) return;
 
+    const now = new Date();
+    const livePos = rippleActive
+      ? (rippleLastPosition || ripplePosition(now.getTime()))
+      : rippleLastPosition;
+
+    const slot = livePos?.slot || null;
+    const show = slot?.show || null;
+    const track = playlist?.[trackIndex] || null;
+
+    const rating = show ? Number(show.avg_rating || 0) : 0;
+    const sourceCount = show ? Number(show.source_count || 0) : 0;
+    const sbdMultiplier = show?.has_soundboard_source ? 1.45 : 1.0;
+    const score = show ? rippleShowScore(show) : 0;
+
+    const slotDurationMs =
+      livePos?.actualSlotMs ||
+      slot?.actualMs ||
+      slot?.estMs ||
+      RIPPLE_DEFAULT_SHOW_MS;
+
+    const boundaryAt = (
+      rippleActive &&
+      livePos?.offsetMs != null
+    )
+      ? new Date(Date.now() + Math.max(0, slotDurationMs - livePos.offsetMs))
+      : null;
+
+    const nextTrackEndSec = (
+      rippleActive &&
+      Number.isFinite(player.duration) &&
+      player.duration > 0
+    )
+      ? Math.max(0, player.duration - (player.currentTime || 0))
+      : null;
+
+    const windowStart = (
+      livePos?.windowId != null
+    )
+      ? RIPPLE_EPOCH + livePos.windowId * RIPPLE_WINDOW_MS
+      : null;
+
+    const windowEnd = (
+      windowStart != null
+    )
+      ? windowStart + RIPPLE_WINDOW_MS
+      : null;
+
+    const totalSlots = rippleSchedule.length || rippleLastSchedule.length;
+
+    const repeatExclusions = (rippleLastSchedule || [])
+      .map((entry) => entry.date)
+      .filter(Boolean)
+      .join(', ') || 'none recorded';
+
+    const fmtIso = (value) => value
+      ? new Date(value).toISOString()
+      : 'not resolved';
+
+    const fmtSeconds = (value) => {
+      if (value == null || !Number.isFinite(value)) return 'n/a';
+      const total = Math.max(0, Math.floor(value));
+      const mins = Math.floor(total / 60);
+      const secs = String(total % 60).padStart(2, '0');
+      return `${mins}:${secs}`;
+    };
+
+    const liveAudit = [
+      '=== LIVE RIPPLE DECISION TRAIL =================================',
+      `CURRENT UTC: ${now.toISOString()}`,
+      `RIPPLE MODE: ${rippleActive ? 'ON — UTC HERD LOCK' : 'OFF — LOCAL QUALITY-FIRST DECK'}`,
+      `PLAYBACK AUTHORITY: ${rippleActive ? 'DETERMINISTIC UTC HERD CLOCK' : 'LOCAL USER'}`,
+      `13-DAY WINDOW ID: ${livePos?.windowId ?? 'not resolved'}`,
+      `WINDOW START: ${fmtIso(windowStart)}`,
+      `WINDOW END: ${fmtIso(windowEnd)}`,
+      `CURRENT SLOT: ${
+        livePos?.slotIndex != null && livePos.slotIndex >= 0
+          ? `${livePos.slotIndex + 1}/${totalSlots || '?'}`
+          : 'not resolved'
+      }`,
+      `CURRENT HERD SHOW DATE: ${show ? showDate(show) : 'none'}`,
+      `VENUE / CITY: ${show ? `${venueName(show)} / ${venuePlace(show) || 'unknown'}` : 'none'}`,
+      `SHOW YEAR / ERA: ${show ? String(show.year || showDate(show).slice(0, 4)) : 'none'}`,
+      `SHOW SCORE: ${show ? score.toFixed(3) : 'n/a'}`,
+      `RANKING COMPONENTS: rating ${rating.toFixed(3)} · sources ${sourceCount} · soundboard multiplier ${sbdMultiplier.toFixed(2)}`,
+      `SEED / PICK BASIS: window ${livePos?.windowId ?? 'n/a'} · year segment ${slot?.year ?? 'n/a'} · deterministic top-8 candidate`,
+      `CURRENT TRACK: ${track ? `${trackIndex + 1}/${playlist.length} · ${track.title || 'untitled'}` : 'none'}`,
+      `CURRENT TRACK OFFSET: ${fmtSeconds(player.currentTime || 0)}`,
+      `NEXT NATURAL TRACK END: ${fmtSeconds(nextTrackEndSec)}`,
+      `NEXT HERD SLOT BOUNDARY: ${boundaryAt ? boundaryAt.toISOString() : 'none'}`,
+      `BOUNDARY TIMER STATUS: ${rippleBoundaryTimer !== null ? 'ARMED' : 'IDLE'}`,
+      `LAST SYNC REASON: ${rippleLastSyncReason || 'not started'}`,
+      `LAST SYNC AT: ${rippleLastSyncAt || 'not started'}`,
+      `REPEAT EXCLUSION / WINDOW DATES: ${repeatExclusions}`,
+      '=================================================================',
+      '',
+    ].join('\n');
+
     if (!allT.length) {
-      el.innerHTML = '<div class="prov-title">RIPPLE PROVENANCE</div><div class="prov-subtitle">Catalog still loading — provenance populates when tapes are indexed.</div>';
+      el.textContent =
+        liveAudit +
+        'Catalog still loading — provenance populates when tapes are indexed.';
       return;
     }
 
@@ -2394,7 +2494,10 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
     html += `Zero user tracking. Pure anonymous community frequency. Computed client-side from indexed catalog.`;
     html += '</div>';
 
-    el.innerHTML = html;
+    el.textContent = liveAudit;
+    const catalogReport = document.createElement('div');
+    catalogReport.innerHTML = html;
+    el.appendChild(catalogReport);
   }
 
   setInterval(() => {
