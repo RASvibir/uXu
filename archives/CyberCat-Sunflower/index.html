@@ -776,7 +776,12 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu),
   const RIPPLE_DEFAULT_SHOW_MS = 2.5 * 60 * 60 * 1000;
   const RIPPLE_DEFAULT_TRACK_SEC = 420;
   let rippleActive = false;
-  let rippleSyncTimer = null;
+  let rippleStarting = false;
+  let rippleBoundaryTimer = null;
+  let rippleLastSyncAt = null;
+  let rippleLastSyncReason = 'not started';
+  let rippleLastPosition = null;
+  let rippleLastSchedule = [];
   let rippleSchedule = [];
   let rippleWindowId = -1;
   /** @type {Map<string, { playlist: object[], totalMs: number, ranked: object[] }>} */
@@ -873,6 +878,46 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     return sched.reduce((sum, slot) => sum + (slot.actualMs || slot.estMs || RIPPLE_DEFAULT_SHOW_MS), 0) || RIPPLE_DEFAULT_SHOW_MS;
   }
 
+  async function hydrateRippleSchedule(windowId) {
+    if (windowId !== rippleWindowId || !rippleSchedule.length) {
+      rippleWindowId = windowId;
+      rippleSchedule = buildRippleSchedule(shows, windowId);
+    }
+
+    const pending = rippleSchedule.filter((slot) => !slot.actualMs);
+
+    if (!pending.length) return rippleSchedule;
+
+    const concurrency = 4;
+    let cursor = 0;
+
+    async function worker() {
+      while (cursor < pending.length) {
+        const slot = pending[cursor++];
+        try {
+          const pack = await rippleLoadShow(slot.show);
+          slot.actualMs = pack.totalMs;
+        } catch (err) {
+          console.warn(
+            'ripple schedule duration fallback',
+            showDate(slot.show),
+            err
+          );
+          slot.actualMs = slot.estMs || RIPPLE_DEFAULT_SHOW_MS;
+        }
+      }
+    }
+
+    await Promise.all(
+      Array.from(
+        { length: Math.min(concurrency, pending.length) },
+        () => worker()
+      )
+    );
+
+    return rippleSchedule;
+  }
+
   function ripplePosition(now = Date.now()) {
     const windowId = rippleWindowAt(now);
     if (windowId !== rippleWindowId || !rippleSchedule.length) {
@@ -929,89 +974,253 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     return pack;
   }
 
+  function setRippleLockUI(locked) {
+    btnRipple.classList.toggle('is-live', locked);
+    deckCol.classList.toggle('ripple-on', locked);
+
+    const label = btnRipple.querySelector('.ripple-label');
+    if (label) label.textContent = locked ? 'EXIT HERD' : 'RIPPLE';
+
+    btnRipple.setAttribute('aria-pressed', locked ? 'true' : 'false');
+    btnRipple.title = locked
+      ? 'Exit herd lock and return to manual deck control'
+      : 'Join the herd — synchronized setlist ripple';
+  }
+
+  function clearRippleBoundaryTimer() {
+    if (rippleBoundaryTimer !== null) {
+      clearTimeout(rippleBoundaryTimer);
+      rippleBoundaryTimer = null;
+    }
+  }
+
+  function scheduleRippleBoundaryFromPosition(pos, actualSlotMs) {
+    clearRippleBoundaryTimer();
+
+    if (!rippleActive || !pos?.slot) return;
+
+    const slotDurationMs =
+      actualSlotMs ||
+      pos.slot.actualMs ||
+      pos.slot.estMs ||
+      RIPPLE_DEFAULT_SHOW_MS;
+
+    const remainingMs = Math.max(1000, slotDurationMs - pos.offsetMs);
+
+    rippleBoundaryTimer = setTimeout(() => {
+      rippleBoundaryTimer = null;
+
+      if (!rippleActive) return;
+
+      rippleLastSyncReason = 'scheduled-slot-boundary';
+      rippleSync(true, 'scheduled-slot-boundary');
+    }, remainingMs);
+  }
+
   function rippleApplyPack(show, pack, trackIdx, seekSec) {
+    if (!rippleActive) return false;
+
     activeShow = Object.assign({}, show, pack.detail);
     activeShowKey = showKey(activeShow);
     syncResidencySelection(activeShow);
     paintResidencyActive();
+
     activeSources = pack.ranked;
     bestSourceId = pack.ranked[0].source.id;
     currentSource = pack.best.source;
     playlist = pack.playlist;
     setDestinations = buildSetDestinations(playlist);
+
     sourceTag.textContent = 'RIPPLE';
-    sourceMeta.textContent = `Herd · ${showDate(show)} · ★${Number(show.avg_rating || 0).toFixed(2)} · segment ${String(show.year || showDate(show).slice(0, 4))}`;
+    sourceMeta.textContent =
+      `Herd · ${showDate(show)} · ★${Number(show.avg_rating || 0).toFixed(2)} · ` +
+      `segment ${String(show.year || showDate(show).slice(0, 4))}`;
     sourceMeta.title = lookupHint(activeShow, currentSource);
+
     btnBest.disabled = false;
     btnAlts.disabled = pack.ranked.length < 2;
+
     trackIndex = trackIdx;
     const track = playlist[trackIdx];
+
+    if (!track?.url) {
+      throw new Error('Herd track has no playable URL');
+    }
+
     player.src = track.url;
     player.load();
+
     const startPlay = () => {
-      if (seekSec > 1) player.currentTime = seekSec;
-      player.play().catch(() => toast('Press play to join the Ripple'));
+      if (!rippleActive) return;
+
+      if (seekSec > 1) {
+        try {
+          player.currentTime = seekSec;
+        } catch (_) {}
+      }
+
+      player.play().catch(() => {
+        if (rippleActive) toast('Press play to join the Ripple');
+      });
     };
+
     if (player.readyState >= 1) startPlay();
     else player.addEventListener('loadedmetadata', startPlay, { once: true });
+
     updateNowPlaying(track, { ripple: true });
     renderSetlist();
+
+    return true;
   }
 
-  async function rippleSync(force = false) {
-    if (!rippleActive || !shows.length) return;
-    const pos = ripplePosition();
-    const slot = pos.slot;
-    if (!slot) return;
-    const d = showDate(slot.show);
+  async function rippleSync(force = false, reason = null) {
+    if (!rippleActive || !shows.length) return false;
+
+    const windowId = rippleWindowAt(Date.now());
+
     try {
-      const pack = await rippleLoadShow(slot.show);
-      slot.actualMs = pack.totalMs;
-      const { trackIndex: ti, seekSec } = rippleTrackFromOffset(pack.playlist, pos.offsetMs);
-      const sameShow = activeShow && showDate(activeShow) === d;
-      const drift = sameShow && trackIndex === ti
-        ? Math.abs((player.currentTime || 0) - seekSec)
-        : Infinity;
-      if (force || !sameShow || drift > 18) {
-        rippleApplyPack(slot.show, pack, ti, seekSec);
-        if (force) toast(`Ripple · ${d} · herd track ${String(ti + 1).padStart(2, '0')}`);
+      await hydrateRippleSchedule(windowId);
+
+      if (!rippleActive) return false;
+
+      const pos = ripplePosition(Date.now());
+      const slot = pos?.slot;
+
+      if (!slot) {
+        throw new Error('No deterministic herd slot available');
       }
+
+      const d = showDate(slot.show);
+      const pack = await rippleLoadShow(slot.show);
+
+      if (!rippleActive) return false;
+
+      slot.actualMs = pack.totalMs;
+
+      const target = rippleTrackFromOffset(
+        pack.playlist,
+        pos.offsetMs
+      );
+
+      const sameShow =
+        activeShow && showDate(activeShow) === d;
+
+      const sameTrack =
+        sameShow && trackIndex === target.trackIndex;
+
+      const drift = sameTrack
+        ? Math.abs((player.currentTime || 0) - target.seekSec)
+        : Infinity;
+
+      rippleLastPosition = {
+        windowId: pos.windowId,
+        slotIndex: pos.slotIndex,
+        slot: { ...slot },
+        offsetMs: pos.offsetMs,
+        trackIndex: target.trackIndex,
+        seekSec: target.seekSec,
+        actualSlotMs: pack.totalMs,
+        scheduleHydrated: true,
+      };
+
+      rippleLastSchedule = rippleSchedule.map((entry) => ({
+        year: entry.year,
+        date: showDate(entry.show),
+        score: rippleShowScore(entry.show),
+        actualMs: entry.actualMs || null,
+      }));
+
+      rippleLastSyncAt = new Date().toISOString();
+      if (reason) rippleLastSyncReason = reason;
+
+      if (force || !sameShow || drift > 18) {
+        rippleApplyPack(
+          slot.show,
+          pack,
+          target.trackIndex,
+          target.seekSec
+        );
+      }
+
+      scheduleRippleBoundaryFromPosition(pos, pack.totalMs);
+
+      if (force) {
+        toast(
+          `Herd lock · ${d} · track ${String(target.trackIndex + 1).padStart(2, '0')}`
+        );
+      }
+
+      return true;
     } catch (err) {
       console.warn('ripple sync', err);
+      rippleLastSyncAt = new Date().toISOString();
+      rippleLastSyncReason = 'stream-recovery';
+      clearRippleBoundaryTimer();
+      return false;
     }
   }
 
-  function startRipple() {
+  async function startRipple() {
     if (!shows.length) {
       toast('Catalog still indexing…');
       return;
     }
+
+    if (rippleActive || rippleStarting) return;
+
+    rippleStarting = true;
     rippleActive = true;
-    btnRipple.classList.add('is-live');
-    deckCol.classList.add('ripple-on');
-    clearInterval(rippleSyncTimer);
-    rippleSync(true);
-    rippleSyncTimer = setInterval(() => rippleSync(false), 45000);
+    btnRipple.disabled = true;
+
+    rippleLastSyncReason = 'enter-ripple';
+    rippleLastSyncAt = new Date().toISOString();
+
+    try {
+      const joined = await rippleSync(true, 'enter-ripple');
+
+      if (!joined || !rippleActive) {
+        rippleActive = false;
+        clearRippleBoundaryTimer();
+        setRippleLockUI(false);
+        toast('Could not acquire herd lock — manual deck remains active');
+        return;
+      }
+
+      setRippleLockUI(true);
+      toast('Herd lock acquired — UTC synchronized');
+    } finally {
+      rippleStarting = false;
+      btnRipple.disabled = false;
+    }
   }
 
-  function stopRipple() {
-    if (!rippleActive) return;
+  function stopRipple(reason = 'manual exit') {
+    if (!rippleActive && !rippleStarting) return;
+
     rippleActive = false;
-    btnRipple.classList.remove('is-live');
-    deckCol.classList.remove('ripple-on');
-    clearInterval(rippleSyncTimer);
-    rippleSyncTimer = null;
+    rippleStarting = false;
+
+    rippleLastSyncReason = reason;
+    rippleLastSyncAt = new Date().toISOString();
+
+    clearRippleBoundaryTimer();
+    setRippleLockUI(false);
+
     if (activeShow && sourceTag.textContent === 'RIPPLE') {
-      sourceTag.textContent = currentSource?.is_soundboard ? 'SBD' : 'AUD';
+      sourceTag.textContent =
+        currentSource?.is_soundboard ? 'SBD' : 'AUD';
     }
   }
 
   function toggleRipple() {
+    if (rippleStarting) return;
+
     if (rippleActive) {
-      stopRipple();
+      stopRipple('manual exit');
       toast('Ripple off — manual deck');
       return;
     }
+
     startRipple();
   }
 
@@ -1466,6 +1675,8 @@ player.addEventListener('error', () => {
 player.addEventListener('playing', () => {
   streamRetryCount = 0;
 });
+
+  function switchTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach((pane) => {
       const on = pane.id === `pane-${tabId}`;
       pane.classList.toggle('active', on);
