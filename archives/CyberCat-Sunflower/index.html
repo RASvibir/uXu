@@ -615,7 +615,7 @@
             <div class="now-playing" id="now-playing">
               <span class="idle">Indexing Grateful Dead catalog…</span>
             </div>
-            <audio id="main-player" controls crossorigin="anonymous"></audio>
+            <audio id="main-player" controls crossorigin="anonymous" preload="metadata"></audio>
             <div class="source-bar">
               <div class="source-actions">
                 <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
@@ -1387,9 +1387,19 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   }
 
   player.addEventListener('play', () => {
+  try {
     initEq();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  });
+  } catch (err) {
+    console.warn(
+      'EQ initialization bypassed due to CORS/AudioContext restrictions:',
+      err
+    );
+  }
+
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+});
   player.addEventListener('ended', () => {
     if (rippleActive) {
       if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
@@ -1402,20 +1412,50 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
     else if (typeof triggerRippleSync === 'function') { triggerRippleSync(); } else { toast('End of tape'); }
   });
-  player.addEventListener('error', () => {
-    toast('Stream error — skipping');
-    if (rippleActive) {
-      setTimeout(() => rippleSync(true), 350);
-      return;
-    }
-    if (trackIndex >= 0 && trackIndex < playlist.length - 1) setTimeout(() => playTrack(trackIndex + 1), 350);
-  });
+  let streamRetryCount = 0;
+  let streamRetryCount = 0;
+const MAX_STREAM_RETRIES = 2;
 
-  function switchTab(tabId) {
-    document.querySelectorAll('.tab-btn').forEach((btn) => {
-      const on = btn.dataset.tab === tabId;
-      btn.classList.toggle('active', on);
-    });
+player.addEventListener('error', () => {
+  const err = player.error;
+  const resumeTime = player.currentTime;
+
+  const isRecoverable = err && (
+    err.code === MediaError.MEDIA_ERR_NETWORK ||
+    err.code === MediaError.MEDIA_ERR_DECODE
+  );
+
+  if (isRecoverable && resumeTime > 5 && streamRetryCount < MAX_STREAM_RETRIES) {
+    streamRetryCount++;
+    console.warn(
+      `Stream dropped at ${resumeTime.toFixed(1)}s — retry ${streamRetryCount}/${MAX_STREAM_RETRIES}`
+    );
+
+    player.load();
+    player.addEventListener('loadedmetadata', () => {
+      player.currentTime = resumeTime;
+      player.play().catch(() => {});
+    }, { once: true });
+
+    return;
+  }
+
+  streamRetryCount = 0;
+  toast('Stream error — skipping');
+
+  if (rippleActive) {
+    setTimeout(() => rippleSync(true), 350);
+    return;
+  }
+
+  if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
+    setTimeout(() => playTrack(trackIndex + 1), 350);
+  }
+});
+
+player.addEventListener('playing', () => {
+  streamRetryCount = 0;
+});
     document.querySelectorAll('.tab-pane').forEach((pane) => {
       const on = pane.id === `pane-${tabId}`;
       pane.classList.toggle('active', on);
@@ -1535,19 +1575,53 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       `<span style="color:var(--cyan)">▶ ${destBit}${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
   }
 
-  function playTrack(idx, opts = {}) {
-    if (!playlist.length || idx < 0 || idx >= playlist.length) return;
-    if (rippleActive && !opts.fromRipple) stopRipple();
-    trackIndex = idx;
-    const track = playlist[idx];
-    player.src = track.url;
-    player.load();
-    player.play().catch(() => toast('Press play on the deck'));
-    updateNowPlaying(track);
-    renderSetlist();
-    const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
-    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  let currentLoadController = null;
+
+function playTrack(idx, opts = {}) {
+  if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+  if (rippleActive && !opts.fromRipple) stopRipple();
+
+  if (currentLoadController) currentLoadController.abort();
+  currentLoadController = new AbortController();
+  const { signal } = currentLoadController;
+
+  trackIndex = idx;
+  const track = playlist[idx];
+
+  player.src = track.url;
+  player.load();
+
+  const startPlayback = () => {
+    if (signal.aborted) return;
+
+    player.play().catch(err => {
+      if (err.name !== 'AbortError') {
+        console.warn('Playback blocked or interrupted:', err);
+        toast('Press play on the deck');
+      }
+    });
+  };
+
+  if (player.readyState >= 2) {
+    startPlayback();
+  } else {
+    player.addEventListener('canplay', startPlayback, {
+      once: true,
+      signal
+    });
   }
+
+  updateNowPlaying(track);
+  renderSetlist();
+
+  const row = setlistOut?.querySelector(`[data-idx="${idx}"]`);
+  if (row) {
+    row.scrollIntoView({
+      block: 'nearest',
+      behavior: 'smooth'
+    });
+  }
+}
 
   function applySource(rankedItem, { announce, fromRipple } = { announce: true, fromRipple: false }) {
     if (rippleActive && !fromRipple) stopRipple();
