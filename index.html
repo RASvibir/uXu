@@ -715,7 +715,7 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu),
   const RIPPLE_DEFAULT_SHOW_MS = 2.5 * 60 * 60 * 1000;
   const RIPPLE_DEFAULT_TRACK_SEC = 420;
   let rippleActive = false;
-  let rippleSyncTimer = null;
+  let rippleBoundaryTimer = null;
   let rippleSchedule = [];
   let rippleWindowId = -1;
   /** @type {Map<string, { playlist: object[], totalMs: number, ranked: object[] }>} */
@@ -920,26 +920,42 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     }
   }
 
+  function setRippleLockUI(locked) {
+    btnRipple.classList.toggle('is-live', locked);
+    deckCol.classList.toggle('ripple-on', locked);
+
+    const label = btnRipple.querySelector('.ripple-label');
+    if (label) label.textContent = locked ? 'EXIT HERD' : 'RIPPLE';
+
+    btnRipple.setAttribute('aria-pressed', locked ? 'true' : 'false');
+    btnRipple.title = locked
+      ? 'Exit herd lock and return to manual deck control'
+      : 'Join the herd — synchronized setlist ripple';
+  }
+
+  function clearRippleBoundaryTimer() {
+    if (rippleBoundaryTimer !== null) {
+      clearTimeout(rippleBoundaryTimer);
+      rippleBoundaryTimer = null;
+    }
+  }
+
   function startRipple() {
     if (!shows.length) {
       toast('Catalog still indexing…');
       return;
     }
+    if (rippleActive) return;
     rippleActive = true;
-    btnRipple.classList.add('is-live');
-    deckCol.classList.add('ripple-on');
-    clearInterval(rippleSyncTimer);
+    setRippleLockUI(true);
     rippleSync(true);
-    rippleSyncTimer = setInterval(() => rippleSync(false), 45000);
   }
 
   function stopRipple() {
     if (!rippleActive) return;
     rippleActive = false;
-    btnRipple.classList.remove('is-live');
-    deckCol.classList.remove('ripple-on');
-    clearInterval(rippleSyncTimer);
-    rippleSyncTimer = null;
+    clearRippleBoundaryTimer();
+    setRippleLockUI(false);
     if (activeShow && sourceTag.textContent === 'RIPPLE') {
       sourceTag.textContent = currentSource?.is_soundboard ? 'SBD' : 'AUD';
     }
