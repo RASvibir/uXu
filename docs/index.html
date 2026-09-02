@@ -476,67 +476,6 @@
       color: var(--cyan); white-space: pre-wrap; margin: 0; padding: 10px;
       max-height: 100%; overflow: auto;
     }
-    .prov-panel { padding: .8rem; }
-    .prov-title {
-      font-family: var(--display); font-size: .82rem; font-weight: 700;
-      color: var(--amber); text-shadow: 0 0 10px rgba(255,210,74,.3);
-      letter-spacing: .08em; margin-bottom: .2rem;
-    }
-    .prov-subtitle { font-size: .65rem; color: var(--muted); margin-bottom: .6rem; }
-    .prov-protocol {
-      font-size: .62rem; color: var(--muted); line-height: 1.6;
-      margin-bottom: .7rem; padding: .5rem; border-radius: 6px;
-      background: rgba(0,0,0,.3); border: 1px solid rgba(93,255,138,.12);
-    }
-    .prov-protocol span { color: var(--phosphor-dim); }
-    .prov-header {
-      display: grid; grid-template-columns: 2rem 1fr 1fr 3.5rem;
-      gap: .3rem; font-size: .58rem; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .08em;
-      padding: .3rem .4rem; border-bottom: 1px solid rgba(93,255,138,.2);
-      margin-bottom: .2rem;
-    }
-    .prov-row {
-      display: grid; grid-template-columns: 2rem 1fr 1fr 3.5rem;
-      gap: .3rem; padding: .4rem .4rem; border-radius: 4px;
-      font-size: .72rem; transition: background .15s;
-      border-bottom: 1px solid rgba(93,255,138,.06);
-    }
-    .prov-row:hover { background: rgba(93,255,138,.06); }
-    .prov-rank {
-      font-family: var(--display); font-weight: 700; font-size: .7rem;
-    }
-    .prov-rank.top3 { color: var(--amber); text-shadow: 0 0 8px rgba(255,210,74,.4); }
-    .prov-rank.normal { color: var(--phosphor-dim); }
-    .prov-date { color: var(--cyan); font-variant-numeric: tabular-nums; }
-    .prov-venue { color: var(--text); }
-    .prov-city {
-      color: var(--phosphor-dim); font-size: .65rem;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .prov-count {
-      font-family: var(--display); font-weight: 700; text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-    .prov-count.hot { color: var(--magenta); text-shadow: 0 0 8px rgba(255,61,206,.35); }
-    .prov-count.warm { color: var(--amber); }
-    .prov-count.cool { color: var(--phosphor-dim); }
-    .prov-footer {
-      margin-top: .6rem; padding-top: .5rem;
-      border-top: 1px solid rgba(93,255,138,.15);
-      font-size: .6rem; color: var(--muted); line-height: 1.7;
-    }
-    .prov-footer strong { color: var(--phosphor-dim); font-weight: 400; }
-    .prov-locations {
-      margin-top: .5rem; padding: .5rem; border-radius: 6px;
-      background: rgba(0,0,0,.25); border: 1px solid rgba(77,232,255,.1);
-      font-size: .6rem; color: var(--cyan); line-height: 1.8;
-    }
-    .prov-locations .loc-tag {
-      display: inline-block; padding: .1rem .35rem; margin: .1rem;
-      border-radius: 3px; background: rgba(77,232,255,.08);
-      border: 1px solid rgba(77,232,255,.15);
-    }
     .manual-body {
       font-size: .78rem; line-height: 1.55; color: var(--text);
       white-space: pre-wrap; max-height: 100%; overflow: auto;
@@ -615,7 +554,7 @@
             <div class="now-playing" id="now-playing">
               <span class="idle">Indexing Grateful Dead catalog…</span>
             </div>
-            <audio id="main-player" controls playsinline webkit-playsinline crossorigin="anonymous" preload="metadata"></audio>
+            <audio id="main-player" controls crossorigin="anonymous"></audio>
             <div class="source-bar">
               <div class="source-actions">
                 <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
@@ -693,7 +632,7 @@
       </div>
 
       <footer class="statusbar">
-        <span><kbd>F1</kbd>–<kbd>F5</kbd> · <kbd>Enter</kbd> engage · <kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
+        <span><kbd>F1</kbd>–<kbd>F4</kbd> · <kbd>Enter</kbd> engage · <kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
         <span id="catalog-foot">Grateful Dead full catalog</span>
       </footer>
       <div class="toast" id="toast" role="status"></div>
@@ -731,7 +670,7 @@ Streams public Grateful Dead transfers — uXu does not own the recordings.
 Only add what you can lawfully share.
 
 ## Home
-Return to 0?0 for ABOUT / RTFM, iNi Provenance (uXu site), and USER OPTIONS → MANUAL LIBRARY.
+Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu), and USER OPTIONS → MANUAL LIBRARY.
 
 (Offline fallback — live manual loads from the uXu Worker when reachable.)`;
   const player = document.getElementById('main-player');
@@ -776,12 +715,7 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (uXu site), and USER OPTIONS → 
   const RIPPLE_DEFAULT_SHOW_MS = 2.5 * 60 * 60 * 1000;
   const RIPPLE_DEFAULT_TRACK_SEC = 420;
   let rippleActive = false;
-  let rippleStarting = false;
-  let rippleBoundaryTimer = null;
-  let rippleLastSyncAt = null;
-  let rippleLastSyncReason = 'not started';
-  let rippleLastPosition = null;
-  let rippleLastSchedule = [];
+  let rippleSyncTimer = null;
   let rippleSchedule = [];
   let rippleWindowId = -1;
   /** @type {Map<string, { playlist: object[], totalMs: number, ranked: object[] }>} */
@@ -878,46 +812,6 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     return sched.reduce((sum, slot) => sum + (slot.actualMs || slot.estMs || RIPPLE_DEFAULT_SHOW_MS), 0) || RIPPLE_DEFAULT_SHOW_MS;
   }
 
-  async function hydrateRippleSchedule(windowId) {
-    if (windowId !== rippleWindowId || !rippleSchedule.length) {
-      rippleWindowId = windowId;
-      rippleSchedule = buildRippleSchedule(shows, windowId);
-    }
-
-    const pending = rippleSchedule.filter((slot) => !slot.actualMs);
-
-    if (!pending.length) return rippleSchedule;
-
-    const concurrency = 4;
-    let cursor = 0;
-
-    async function worker() {
-      while (cursor < pending.length) {
-        const slot = pending[cursor++];
-        try {
-          const pack = await rippleLoadShow(slot.show);
-          slot.actualMs = pack.totalMs;
-        } catch (err) {
-          console.warn(
-            'ripple schedule duration fallback',
-            showDate(slot.show),
-            err
-          );
-          slot.actualMs = slot.estMs || RIPPLE_DEFAULT_SHOW_MS;
-        }
-      }
-    }
-
-    await Promise.all(
-      Array.from(
-        { length: Math.min(concurrency, pending.length) },
-        () => worker()
-      )
-    );
-
-    return rippleSchedule;
-  }
-
   function ripplePosition(now = Date.now()) {
     const windowId = rippleWindowAt(now);
     if (windowId !== rippleWindowId || !rippleSchedule.length) {
@@ -974,320 +868,96 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     return pack;
   }
 
-  function setRippleLockUI(locked) {
-    btnRipple.classList.toggle('is-live', locked);
-    deckCol.classList.toggle('ripple-on', locked);
-
-    const label = btnRipple.querySelector('.ripple-label');
-    if (label) label.textContent = locked ? 'EXIT HERD' : 'RIPPLE';
-
-    btnRipple.setAttribute('aria-pressed', locked ? 'true' : 'false');
-    btnRipple.title = locked
-      ? 'Exit herd lock and return to manual deck control'
-      : 'Join the herd — synchronized setlist ripple';
-  }
-
-  function clearRippleBoundaryTimer() {
-    if (rippleBoundaryTimer !== null) {
-      clearTimeout(rippleBoundaryTimer);
-      rippleBoundaryTimer = null;
-    }
-  }
-
-  function scheduleRippleBoundaryFromPosition(pos, actualSlotMs) {
-    clearRippleBoundaryTimer();
-
-    if (!rippleActive || !pos?.slot) return;
-
-    const slotDurationMs =
-      actualSlotMs ||
-      pos.slot.actualMs ||
-      pos.slot.estMs ||
-      RIPPLE_DEFAULT_SHOW_MS;
-
-    const remainingMs = Math.max(1000, slotDurationMs - pos.offsetMs);
-
-    rippleBoundaryTimer = setTimeout(() => {
-      rippleBoundaryTimer = null;
-
-      if (!rippleActive) return;
-
-      rippleLastSyncReason = 'scheduled-slot-boundary';
-      rippleSync(true, 'scheduled-slot-boundary');
-    }, remainingMs);
-  }
-
   function rippleApplyPack(show, pack, trackIdx, seekSec) {
-    if (!rippleActive) return false;
-
     activeShow = Object.assign({}, show, pack.detail);
     activeShowKey = showKey(activeShow);
     syncResidencySelection(activeShow);
     paintResidencyActive();
-
     activeSources = pack.ranked;
     bestSourceId = pack.ranked[0].source.id;
     currentSource = pack.best.source;
     playlist = pack.playlist;
     setDestinations = buildSetDestinations(playlist);
-
     sourceTag.textContent = 'RIPPLE';
-    sourceMeta.textContent =
-      `Herd · ${showDate(show)} · ★${Number(show.avg_rating || 0).toFixed(2)} · ` +
-      `segment ${String(show.year || showDate(show).slice(0, 4))}`;
+    sourceMeta.textContent = `Herd · ${showDate(show)} · ★${Number(show.avg_rating || 0).toFixed(2)} · segment ${String(show.year || showDate(show).slice(0, 4))}`;
     sourceMeta.title = lookupHint(activeShow, currentSource);
-
     btnBest.disabled = false;
     btnAlts.disabled = pack.ranked.length < 2;
-
     trackIndex = trackIdx;
     const track = playlist[trackIdx];
-
-    if (!track?.url) {
-      throw new Error('Herd track has no playable URL');
-    }
-
     player.src = track.url;
     player.load();
-
     const startPlay = () => {
-      if (!rippleActive) return;
-
-      if (seekSec > 1) {
-        try {
-          player.currentTime = seekSec;
-        } catch (_) {}
-      }
-
-      player.play().catch(() => {
-        if (rippleActive) toast('Press play to join the Ripple');
-      });
+      if (seekSec > 1) player.currentTime = seekSec;
+      player.play().catch(() => toast('Press play to join the Ripple'));
     };
-
     if (player.readyState >= 1) startPlay();
     else player.addEventListener('loadedmetadata', startPlay, { once: true });
-
     updateNowPlaying(track, { ripple: true });
     renderSetlist();
-
-    return true;
   }
 
-  async function rippleSync(force = false, reason = null) {
-    if (!rippleActive || !shows.length) return false;
-
-    const windowId = rippleWindowAt(Date.now());
-
+  async function rippleSync(force = false) {
+    if (!rippleActive || !shows.length) return;
+    const pos = ripplePosition();
+    const slot = pos.slot;
+    if (!slot) return;
+    const d = showDate(slot.show);
     try {
-      await hydrateRippleSchedule(windowId);
-
-      if (!rippleActive) return false;
-
-      const pos = ripplePosition(Date.now());
-      const slot = pos?.slot;
-
-      if (!slot) {
-        throw new Error('No deterministic herd slot available');
-      }
-
-      const d = showDate(slot.show);
       const pack = await rippleLoadShow(slot.show);
-
-      if (!rippleActive) return false;
-
       slot.actualMs = pack.totalMs;
-
-      const target = rippleTrackFromOffset(
-        pack.playlist,
-        pos.offsetMs
-      );
-
-      const sameShow =
-        activeShow && showDate(activeShow) === d;
-
-      const sameTrack =
-        sameShow && trackIndex === target.trackIndex;
-
-      const drift = sameTrack
-        ? Math.abs((player.currentTime || 0) - target.seekSec)
+      const { trackIndex: ti, seekSec } = rippleTrackFromOffset(pack.playlist, pos.offsetMs);
+      const sameShow = activeShow && showDate(activeShow) === d;
+      const drift = sameShow && trackIndex === ti
+        ? Math.abs((player.currentTime || 0) - seekSec)
         : Infinity;
-
-      rippleLastPosition = {
-        windowId: pos.windowId,
-        slotIndex: pos.slotIndex,
-        slot: { ...slot },
-        offsetMs: pos.offsetMs,
-        trackIndex: target.trackIndex,
-        seekSec: target.seekSec,
-        actualSlotMs: pack.totalMs,
-        scheduleHydrated: true,
-      };
-
-      rippleLastSchedule = rippleSchedule.map((entry) => ({
-        year: entry.year,
-        date: showDate(entry.show),
-        score: rippleShowScore(entry.show),
-        actualMs: entry.actualMs || null,
-      }));
-
-      rippleLastSyncAt = new Date().toISOString();
-      if (reason) rippleLastSyncReason = reason;
-
       if (force || !sameShow || drift > 18) {
-        rippleApplyPack(
-          slot.show,
-          pack,
-          target.trackIndex,
-          target.seekSec
-        );
+        rippleApplyPack(slot.show, pack, ti, seekSec);
+        if (force) toast(`Ripple · ${d} · herd track ${String(ti + 1).padStart(2, '0')}`);
       }
-
-      scheduleRippleBoundaryFromPosition(pos, pack.totalMs);
-
-      if (force) {
-        toast(
-          `Herd lock · ${d} · track ${String(target.trackIndex + 1).padStart(2, '0')}`
-        );
-      }
-
-      return true;
     } catch (err) {
       console.warn('ripple sync', err);
-      rippleLastSyncAt = new Date().toISOString();
-      rippleLastSyncReason = 'stream-recovery';
-      clearRippleBoundaryTimer();
-      return false;
     }
   }
 
-  async function startRipple() {
+  function startRipple() {
     if (!shows.length) {
       toast('Catalog still indexing…');
       return;
     }
-
-    if (rippleActive || rippleStarting) return;
-
-    rippleStarting = true;
     rippleActive = true;
-    btnRipple.disabled = true;
-
-    rippleLastSyncReason = 'enter-ripple';
-    rippleLastSyncAt = new Date().toISOString();
-
-    try {
-      const joined = await rippleSync(true, 'enter-ripple');
-
-      if (!joined || !rippleActive) {
-        rippleActive = false;
-        clearRippleBoundaryTimer();
-        setRippleLockUI(false);
-        toast('Could not acquire herd lock — manual deck remains active');
-        return;
-      }
-
-      setRippleLockUI(true);
-      toast('Herd lock acquired — UTC synchronized');
-    } finally {
-      rippleStarting = false;
-      btnRipple.disabled = false;
-    }
+    btnRipple.classList.add('is-live');
+    deckCol.classList.add('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSync(true);
+    rippleSyncTimer = setInterval(() => rippleSync(false), 45000);
   }
 
-  function stopRipple(reason = 'manual exit') {
-    if (!rippleActive && !rippleStarting) return;
-
+  function stopRipple() {
+    if (!rippleActive) return;
     rippleActive = false;
-    rippleStarting = false;
-
-    rippleLastSyncReason = reason;
-    rippleLastSyncAt = new Date().toISOString();
-
-    clearRippleBoundaryTimer();
-    setRippleLockUI(false);
-
+    btnRipple.classList.remove('is-live');
+    deckCol.classList.remove('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSyncTimer = null;
     if (activeShow && sourceTag.textContent === 'RIPPLE') {
-      sourceTag.textContent =
-        currentSource?.is_soundboard ? 'SBD' : 'AUD';
+      sourceTag.textContent = currentSource?.is_soundboard ? 'SBD' : 'AUD';
     }
   }
 
   function toggleRipple() {
-    if (rippleStarting) return;
-
     if (rippleActive) {
-      stopRipple('manual exit');
+      stopRipple();
       toast('Ripple off — manual deck');
       return;
     }
-
     startRipple();
   }
 
-  async function api(path, { timeoutMs = 12000 } = {}) {
-    const p = path.startsWith('/') ? path : `/${path}`;
-    const urls = [
-      `${API_BASE}/api/relisten?path=${encodeURIComponent(p)}`,
-      `${RELISTEN}${p}`,
-    ];
-    let lastErr = null;
-    for (const url of urls) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        const res = await fetch(url, { signal: controller.signal });
-        if (res.ok) return res.json();
-        lastErr = new Error(`Catalog ${res.status}`);
-      } catch (err) {
-        lastErr = (err && err.name === 'AbortError')
-          ? new Error(`Catalog timeout for ${path}`)
-          : err;
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-    throw lastErr || new Error('Catalog unreachable — check VPN or blockers');
-  }
-
-  function streamUrlCandidates(raw) {
-    if (!raw) return [];
-    const urls = [raw];
-    if (!String(raw).includes('/api/stream')) {
-      urls.push(`${API_BASE}/api/stream?url=${encodeURIComponent(raw)}`);
-    }
-    return urls;
-  }
-
-  let wantPlayback = false;
-  let wasPlayingBeforeHide = false;
-  let wakeLock = null;
-
-  function updateMediaSession(track) {
-    if (!('mediaSession' in navigator)) return;
-    try {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: (track && track.title) || 'CyberCat Sunflower',
-        artist: 'Grateful Dead',
-        album: activeShow ? `${showDate(activeShow)} · ${venueName(activeShow)}` : 'Full Catalog',
-      });
-      navigator.mediaSession.setActionHandler('previoustrack', () => playTrack(Math.max(0, trackIndex - 1)));
-      navigator.mediaSession.setActionHandler('nexttrack', () => playTrack(Math.min(playlist.length - 1, trackIndex + 1)));
-      navigator.mediaSession.setActionHandler('play', () => { player.play().catch(() => {}); });
-      navigator.mediaSession.setActionHandler('pause', () => { player.pause(); });
-    } catch (_) { /* unsupported */ }
-  }
-
-  async function requestWakeLock() {
-    try {
-      if (!('wakeLock' in navigator) || wakeLock) return;
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => { wakeLock = null; });
-    } catch (_) { /* denied */ }
-  }
-
-  async function releaseWakeLock() {
-    try { await wakeLock?.release(); } catch (_) {}
-    wakeLock = null;
+  async function api(path) {
+    const res = await fetch(`${RELISTEN}${path}`);
+    if (!res.ok) throw new Error(`Catalog ${res.status}`);
+    return res.json();
   }
 
   function showDate(s) {
@@ -1656,22 +1326,9 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   }
 
   player.addEventListener('play', () => {
-    wantPlayback = true;
-    try {
-      initEq();
-    } catch (err) {
-      console.warn(
-        'EQ initialization bypassed due to CORS/AudioContext restrictions:',
-        err
-      );
-    }
-
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume().catch(() => {});
-    }
-    requestWakeLock();
+    initEq();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   });
-  player.addEventListener('pause', () => { releaseWakeLock(); });
   player.addEventListener('ended', () => {
     if (rippleActive) {
       if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
@@ -1684,60 +1341,20 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
     else if (typeof triggerRippleSync === 'function') { triggerRippleSync(); } else { toast('End of tape'); }
   });
-  let streamRetryCount = 0;
-  const MAX_STREAM_RETRIES = 2;
-
-player.addEventListener('error', () => {
-  const err = player.error;
-  const resumeTime = player.currentTime;
-
-  const isRecoverable = err && (
-    err.code === MediaError.MEDIA_ERR_NETWORK ||
-    err.code === MediaError.MEDIA_ERR_DECODE
-  );
-
-  if (isRecoverable && resumeTime > 5 && streamRetryCount < MAX_STREAM_RETRIES) {
-    streamRetryCount++;
-    console.warn(
-      `Stream dropped at ${resumeTime.toFixed(1)}s — retry ${streamRetryCount}/${MAX_STREAM_RETRIES}`
-    );
-
-    player.load();
-    player.addEventListener('loadedmetadata', () => {
-      player.currentTime = resumeTime;
-      player.play().catch(() => {});
-    }, { once: true });
-
-    return;
-  }
-
-  streamRetryCount = 0;
-  toast('Stream error — skipping');
-
-  if (rippleActive) {
-    setTimeout(() => rippleSync(true), 350);
-    return;
-  }
-
-  if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
-    setTimeout(() => playTrack(trackIndex + 1), 350);
-  }
-});
-
-player.addEventListener('playing', () => {
-  streamRetryCount = 0;
-});
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      wasPlayingBeforeHide = wantPlayback && !player.paused && !player.ended;
+  player.addEventListener('error', () => {
+    toast('Stream error — skipping');
+    if (rippleActive) {
+      setTimeout(() => rippleSync(true), 350);
       return;
     }
-    audioCtx?.resume();
-    if (wasPlayingBeforeHide) player.play().catch(() => {});
-    if (rippleActive) rippleSync(false);
+    if (trackIndex >= 0 && trackIndex < playlist.length - 1) setTimeout(() => playTrack(trackIndex + 1), 350);
   });
 
   function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      const on = btn.dataset.tab === tabId;
+      btn.classList.toggle('active', on);
+    });
     document.querySelectorAll('.tab-pane').forEach((pane) => {
       const on = pane.id === `pane-${tabId}`;
       pane.classList.toggle('active', on);
@@ -1857,77 +1474,19 @@ player.addEventListener('playing', () => {
       `<span style="color:var(--cyan)">▶ ${destBit}${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
   }
 
-  let currentLoadController = null;
-
-function playTrack(idx, opts = {}) {
-  if (!playlist.length || idx < 0 || idx >= playlist.length) return;
-  if (rippleActive && !opts.fromRipple) stopRipple();
-
-  idx = nextPlayableIndex(playlist, idx);
-  if (idx >= playlist.length) {
-    if (rippleActive) rippleSync(true);
-    else toast('End of tape');
-    return;
-  }
-
-  if (currentLoadController) currentLoadController.abort();
-  currentLoadController = new AbortController();
-  const { signal } = currentLoadController;
-
-  trackIndex = idx;
-  const track = playlist[idx];
-  const urls = streamUrlCandidates(track.url);
-  let urlAttempt = 0;
-
-  function loadAttempt() {
-    player.src = urls[urlAttempt];
+  function playTrack(idx, opts = {}) {
+    if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+    if (rippleActive && !opts.fromRipple) stopRipple();
+    trackIndex = idx;
+    const track = playlist[idx];
+    player.src = track.url;
     player.load();
-
-    const startPlayback = () => {
-      if (signal.aborted) return;
-      const seek = Number(opts.seekSec) || 0;
-      if (seek > 0.5) {
-        try { player.currentTime = seek; } catch (_) {}
-      }
-      wantPlayback = true;
-      player.play().catch((err) => {
-        if (err.name !== 'AbortError') {
-          console.warn('Playback blocked or interrupted:', err);
-          toast('Press play on the deck');
-        }
-      });
-      updateNowPlaying(track, { ripple: opts.fromRipple || rippleActive });
-      renderSetlist();
-      updateMediaSession(track);
-      requestWakeLock();
-      const row = setlistOut?.querySelector(`[data-idx="${idx}"]`);
-      if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      if (!opts.silentToast && urlAttempt > 0) toast('Playing via commons relay');
-    };
-
-    const onStreamErr = () => {
-      urlAttempt += 1;
-      if (urlAttempt < urls.length) {
-        if (!opts.silentToast) toast('Relaying stream…');
-        loadAttempt();
-        return;
-      }
-      streamRetryCount = 0;
-      toast('Stream blocked — skipping');
-      if (rippleActive) rippleSync(true);
-      else {
-        const next = nextPlayableIndex(playlist, trackIndex + 1);
-        if (next > trackIndex) playTrack(next);
-      }
-    };
-
-    player.addEventListener('error', onStreamErr, { once: true });
-    if (player.readyState >= 2) startPlayback();
-    else player.addEventListener('canplay', startPlayback, { once: true, signal });
+    player.play().catch(() => toast('Press play on the deck'));
+    updateNowPlaying(track);
+    renderSetlist();
+    const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
+    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
-
-  loadAttempt();
-}
 
   function applySource(rankedItem, { announce, fromRipple } = { announce: true, fromRipple: false }) {
     if (rippleActive && !fromRipple) stopRipple();
@@ -1941,7 +1500,7 @@ function playTrack(idx, opts = {}) {
     btnBest.disabled = isBest;
     btnAlts.disabled = activeSources.length < 2;
     if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate transfer loaded');
-    playTrack(nextPlayableIndex(playlist, 0), { silentToast: true });
+    playTrack(0);
   }
 
   
@@ -2258,51 +1817,27 @@ async function engageShow(show, opts = {}) {
     renderYearChips(years);
 
     const all = [];
-    const queue = years.slice();
-    const concurrency = 4;
-    let completed = 0;
-    let failed = 0;
-
-    const updateProgress = (label = 'Indexing catalog') => {
-      indexStatus.textContent =
-        `${label} · ${completed}/${years.length} years · ${all.length} shows · ${failed} failed`;
-    };
-
-    updateProgress();
-
-    async function worker() {
-      while (queue.length) {
-        const y = queue.shift();
-        if (!y) break;
-        updateProgress(`Indexing ${y.year}`);
-        try {
-          const detail = await api(`/years/${y.year}`, { timeoutMs: 12000 });
-          for (const s of (detail.shows || [])) {
-            all.push({
-              ...s,
-              year: y.year,
-              venueName: venueName(s),
-              location: venuePlace(s),
-            });
-          }
-        } catch (err) {
-          failed++;
-          console.warn('year failed', y.year, err);
-        } finally {
-          completed++;
-          updateProgress();
+    for (let i = 0; i < years.length; i++) {
+      const y = years[i];
+      indexStatus.textContent = `Indexing ${y.year} (${i + 1}/${years.length})…`;
+      try {
+        const detail = await api(`/years/${y.year}`);
+        for (const s of (detail.shows || [])) {
+          all.push({
+            ...s,
+            year: y.year,
+            venueName: venueName(s),
+            location: venuePlace(s),
+          });
         }
+      } catch (err) {
+        console.warn('year failed', y.year, err);
       }
     }
-
-    await Promise.all(Array.from({ length: Math.min(concurrency, years.length) }, () => worker()));
-
     shows = all;
-    window.allTapes = all;
     document.getElementById('catalog-foot').textContent =
       `${shows.length} Grateful Dead shows indexed`;
-    indexStatus.textContent =
-      `Catalog ready · ${shows.length} shows${failed ? ` · ${failed} year failures` : ''}`;
+    indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
     btnRipple.disabled = false;
     toast(`${shows.length} shows indexed`);
     applyFilters();
@@ -2383,136 +1918,15 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
     tapesZone.textContent = '[ERROR] Could not reach catalog index';
   });
 
-  // F5 Ripple Provenance — computes from loaded show catalog
   function renderProvenance() {
     if (document.getElementById('pane-provenance')?.hidden) return;
-
     const allT = window.allTapes || [];
     const el = document.getElementById("provenance-block");
     if (!el) return;
 
-    const now = new Date();
-    const livePos = rippleActive
-      ? (rippleLastPosition || ripplePosition(now.getTime()))
-      : rippleLastPosition;
-
-    const slot = livePos?.slot || null;
-    const show = slot?.show || null;
-    const track = playlist?.[trackIndex] || null;
-
-    const rating = show ? Number(show.avg_rating || 0) : 0;
-    const sourceCount = show ? Number(show.source_count || 0) : 0;
-    const sbdMultiplier = show?.has_soundboard_source ? 1.45 : 1.0;
-    const score = show ? rippleShowScore(show) : 0;
-
-    const slotDurationMs =
-      livePos?.actualSlotMs ||
-      slot?.actualMs ||
-      slot?.estMs ||
-      RIPPLE_DEFAULT_SHOW_MS;
-
-    const boundaryAt = (
-      rippleActive &&
-      livePos?.offsetMs != null
-    )
-      ? new Date(Date.now() + Math.max(0, slotDurationMs - livePos.offsetMs))
-      : null;
-
-    const nextTrackEndSec = (
-      rippleActive &&
-      Number.isFinite(player.duration) &&
-      player.duration > 0
-    )
-      ? Math.max(0, player.duration - (player.currentTime || 0))
-      : null;
-
-    const windowStart = (
-      livePos?.windowId != null
-    )
-      ? RIPPLE_EPOCH + livePos.windowId * RIPPLE_WINDOW_MS
-      : null;
-
-    const windowEnd = (
-      windowStart != null
-    )
-      ? windowStart + RIPPLE_WINDOW_MS
-      : null;
-
-    const totalSlots = rippleSchedule.length || rippleLastSchedule.length;
-
-    const repeatExclusions = (rippleLastSchedule || [])
-      .map((entry) => entry.date)
-      .filter(Boolean)
-      .join(', ') || 'none recorded';
-
-    const fmtIso = (value) => value
-      ? new Date(value).toISOString()
-      : 'not resolved';
-
-    const fmtSeconds = (value) => {
-      if (value == null || !Number.isFinite(value)) return 'n/a';
-      const total = Math.max(0, Math.floor(value));
-      const mins = Math.floor(total / 60);
-      const secs = String(total % 60).padStart(2, '0');
-      return `${mins}:${secs}`;
-    };
-
-    const liveAudit = [
-      '=== LIVE RIPPLE DECISION TRAIL =================================',
-      `CURRENT UTC: ${now.toISOString()}`,
-      `RIPPLE MODE: ${rippleActive ? 'ON — UTC HERD LOCK' : 'OFF — LOCAL QUALITY-FIRST DECK'}`,
-      `PLAYBACK AUTHORITY: ${rippleActive ? 'DETERMINISTIC UTC HERD CLOCK' : 'LOCAL USER'}`,
-      `13-DAY WINDOW ID: ${livePos?.windowId ?? 'not resolved'}`,
-      `WINDOW START: ${fmtIso(windowStart)}`,
-      `WINDOW END: ${fmtIso(windowEnd)}`,
-      `CURRENT SLOT: ${
-        livePos?.slotIndex != null && livePos.slotIndex >= 0
-          ? `${livePos.slotIndex + 1}/${totalSlots || '?'}`
-          : 'not resolved'
-      }`,
-      `CURRENT HERD SHOW DATE: ${show ? showDate(show) : 'none'}`,
-      `VENUE / CITY: ${show ? `${venueName(show)} / ${venuePlace(show) || 'unknown'}` : 'none'}`,
-      `SHOW YEAR / ERA: ${show ? String(show.year || showDate(show).slice(0, 4)) : 'none'}`,
-      `SHOW SCORE: ${show ? score.toFixed(3) : 'n/a'}`,
-      `RANKING COMPONENTS: rating ${rating.toFixed(3)} · sources ${sourceCount} · soundboard multiplier ${sbdMultiplier.toFixed(2)}`,
-      `SEED / PICK BASIS: window ${livePos?.windowId ?? 'n/a'} · year segment ${slot?.year ?? 'n/a'} · deterministic top-8 candidate`,
-      `CURRENT TRACK: ${track ? `${trackIndex + 1}/${playlist.length} · ${track.title || 'untitled'}` : 'none'}`,
-      `CURRENT TRACK OFFSET: ${fmtSeconds(player.currentTime || 0)}`,
-      `NEXT NATURAL TRACK END: ${fmtSeconds(nextTrackEndSec)}`,
-      `NEXT HERD SLOT BOUNDARY: ${boundaryAt ? boundaryAt.toISOString() : 'none'}`,
-      `BOUNDARY TIMER STATUS: ${rippleBoundaryTimer !== null ? 'ARMED' : 'IDLE'}`,
-      `LAST SYNC REASON: ${rippleLastSyncReason || 'not started'}`,
-      `LAST SYNC AT: ${rippleLastSyncAt || 'not started'}`,
-      `REPEAT EXCLUSION / WINDOW DATES: ${repeatExclusions}`,
-      '=================================================================',
-      '',
-    ].join('\n');
-
     if (!allT.length) {
-      el.textContent =
-        liveAudit +
-        'Catalog still loading — provenance populates when tapes are indexed.';
+      el.textContent = 'Catalog still loading — provenance populates when tapes are indexed.';
       return;
-    }
-
-    function fmtDate(iso) {
-      const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (!m) return iso;
-      const mo = parseInt(m[2], 10);
-      const d = parseInt(m[3], 10);
-      const yr = m[1].slice(2);
-      return `${mo}/${d}/${yr}`;
-    }
-
-    function fmtCity(loc) {
-      if (!loc) return '';
-      const parts = loc.split(',').map(s => s.trim());
-      if (parts.length >= 2) {
-        const country = parts[parts.length - 1];
-        const city = parts.slice(0, -1).join(', ');
-        return `${city}, ${country}`;
-      }
-      return loc;
     }
 
     const dateData = {};
@@ -2531,69 +1945,42 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
       .sort((a, b) => b[1].count - a[1].count)
       .slice(0, 15);
 
-    const allCities = new Set();
-    ranked.forEach(([, d]) => d.cities.forEach(c => allCities.add(c)));
+    let text = `===================================================================
+uXu TUBE PLAYER · GLOBAL RIPPLE PROVENANCE & POPULARITY RANK
+===================================================================
+[+] PROTOCOL    : Anonymous Peer-Vibe Herd Consensus
+[+] WINDOW      : 13-Day Anti-Monopoly Rotation (Twice a Moon)
+[+] SORTING     : Ranked by Source Count
+[+] CATALOG     : ${allT.length.toLocaleString()} indexed shows
 
-    let html = '';
-    html += '<div class="prov-title">RIPPLE PROVENANCE</div>';
-    html += '<div class="prov-subtitle">Most transferred shows in the catalog · ranked by source count</div>';
-
-    html += `<div class="prov-protocol">`;
-    html += `<span>PROTOCOL</span> Anonymous Peer-Vibe Herd Consensus<br>`;
-    html += `<span>WINDOW</span> 13-Day Anti-Monopoly Rotation (Twice a Moon)<br>`;
-    html += `<span>CATALOG</span> ${allT.length.toLocaleString()} indexed shows · <span>COMPUTED</span> ${new Date().toISOString().slice(0,19)}Z`;
-    html += '</div>';
-
-    html += '<div class="prov-header"><span>#</span><span>Show Date</span><span>Venue / City</span><span style="text-align:right">Sources</span></div>';
+-------------------------------------------------------------------
+SHOW DATE   RANK   SOURCES  VENUE / CITY
+-------------------------------------------------------------------`;
 
     ranked.forEach(([date, data], i) => {
-      const rank = i + 1;
-      const rankClass = rank <= 3 ? 'top3' : 'normal';
-      const countClass = data.count >= 10 ? 'hot' : data.count >= 5 ? 'warm' : 'cool';
+      const rank = String(i + 1).padStart(2, '0');
       const venues = [...data.venues].join(' / ');
-      const cities = [...data.cities].map(c => fmtCity(c)).join(' · ');
-      html += `<div class="prov-row">`;
-      html += `<span class="prov-rank ${rankClass}">${String(rank).padStart(2, '0')}</span>`;
-      html += `<span class="prov-date">${fmtDate(date)}</span>`;
-      html += `<span class="prov-venue">${venues}<br><span class="prov-city">${cities}</span></span>`;
-      html += `<span class="prov-count ${countClass}">${data.count}</span>`;
-      html += '</div>';
+      const cities = [...data.cities].join(' · ');
+      text += `\n  ${date.padEnd(11)} #${rank.padEnd(5)} ${String(data.count).padStart(4)}     ${venues} — ${cities}`;
     });
 
     if (!ranked.length) {
-      html += '<div class="prov-subtitle" style="padding:1rem;text-align:center">No show data available yet.</div>';
+      text += '\n  No show data available yet.';
     }
 
-    if (allCities.size) {
-      html += '<div class="prov-locations"><strong>ACTIVE NODES</strong> ';
-      [...allCities].slice(0, 20).forEach(c => {
-        html += `<span class="loc-tag">${fmtCity(c)}</span>`;
-      });
-      if (allCities.size > 20) html += `<span class="loc-tag">+${allCities.size - 20} more</span>`;
-      html += '</div>';
-    }
+    text += `\n\n-------------------------------------------------------------------
+[+] PROVENANCE NOTES:
+  * Top shows yield to secondary picks after 13-day window.
+  * Zero user tracking. Pure anonymous community frequency.
+  * Computed client-side from indexed catalog.`;
 
-    html += `<div class="prov-footer">`;
-    html += `<strong>Sources</strong> = distinct recordings / transfers available in the public catalog.<br>`;
-    html += `<strong>Top shows</strong> yield to secondary picks after the 13-day window for deep discovery.<br>`;
-    html += `Zero user tracking. Pure anonymous community frequency. Computed client-side from indexed catalog.`;
-    html += '</div>';
-
-    el.textContent = liveAudit;
-    const catalogReport = document.createElement('div');
-    catalogReport.innerHTML = html;
-    el.appendChild(catalogReport);
+    el.textContent = text;
   }
 
   setInterval(() => {
-    const activePane = document.querySelector(".tab-pane.active");
-    if (activePane && activePane.id === "pane-provenance") {
-      renderProvenance();
-    }
+    if (document.getElementById('pane-provenance')?.hidden) return;
+    renderProvenance();
   }, 5000);
-
-  // Universal Tab Switcher Fallback for Dynamic Tabs (F1-F5)
-  // (tab switching handled by switchTab() above)
 
 </script>
 </body>

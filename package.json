@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/run.js"
   },
   "repository": {
     "type": "git",
@@ -31,5 +31,8 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.9.0"
   }
 }

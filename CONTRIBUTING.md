@@ -9,6 +9,8 @@
 7. **Template forks** — Only fork archives that set `allowTemplateForks` and stay within their `templateForkDepth`.
 8. **No landing PWA on child archives** — The installable **uXu** app is the public invite surface only.
 9. **License** — Code and original docs are MIT ([LICENSE](LICENSE)). Media and third-party works stay under their own terms; do not imply uXu owns them. Prefer clear provenance (optional iNi fields).
+10. **Deck changes run the suite** — For CyberCat deck template / `save-sed-to-rave` / catalog changes, run `npm test` (`tests/run.js`) and keep it green. Spawn new decks with `./save-sed-to-rave`; never hand-edit a spawned deck's `{{TOKEN}}` leftovers. Reference: `docs/runtime/cybercat-deck-template.md`.
+11. **Sunflower immutability** — `CyberCat-Sunflower` is the reference first-registered archive; treat it as read-only in PRs.
 
 `/templates/` and entries like `CyberCat-Sunflower/` are optional references.
 
