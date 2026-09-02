@@ -600,6 +600,7 @@
       <span id="ini-badge" class="ini-stamp" hidden title="iNi provenance (self-attested)" aria-label="iNi provenance"><span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span></span>
       <header class="topbar">
         <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
+        <a href="offline-player.html" title="Offline player — cached tapes &amp; local files">Offline Player</a>
         <span class="brand">CYBERCAT SUNFLOWER</span>
         <span class="path">FULL CATALOG · LIVE DECK</span>
         <span class="clock" id="live-clock">00:00:00</span>
@@ -620,6 +621,9 @@
               <div class="source-actions">
                 <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
                 <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Transfers</button>
+                <button type="button" class="ghost-btn" id="btn-queue-tape" disabled title="Queue for offline player — downloads when you engage">Queue temp</button>
+                <button type="button" class="ghost-btn" id="btn-keep-tape" disabled title="Keep in locker (max 13 permanent slots)">Keep</button>
+                <button type="button" class="ghost-btn" id="btn-export-tape" disabled title="Download tape manifest (JSON)">Export</button>
               </div>
               <span class="source-meta" id="source-meta">No tape loaded</span>
               <button type="button" class="ripple-btn" id="btn-ripple" disabled title="Join the herd — synchronized setlist ripple">
@@ -711,6 +715,7 @@
     </div>
   </div>
 
+<script src="offline-store.js"></script>
 <script>
   const RELISTEN = 'https://api.relisten.net/api/v2/artists/grateful-dead';
   const API_BASE = 'https://rasvibir-api.chrf-podcast.workers.dev';
@@ -720,6 +725,13 @@
 Open Tapes Index (F1), filter or pick a night, Engage to load the best wave.
 Use the setlist to jump songs; n/p for next/prev; o for Other Transfers.
 Tune the 5-band EQ while you listen.
+
+## Offline player
+**Queue temp** adds this show to the offline locker (manifest only — no download yet).
+Open **Offline Player** and engage the tape — audio downloads then (VPN/blocker safe relay).
+**Ripple** on the offline player joins the same live UTC herd as the main deck (network required).
+**Keep** reserves one of 13 permanent locker slots (still downloads on engage).
+Temp tapes auto-expire after 7 days unless kept.
 
 ## Keyboard
 F1 Tapes · F2 Archive Log · F3 Sys Config · F4 Manual
@@ -749,6 +761,9 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (uXu site), and USER OPTIONS → 
   const btnBest = document.getElementById('btn-best');
   const btnAlts = document.getElementById('btn-alts');
   const btnRipple = document.getElementById('btn-ripple');
+  const btnQueueTape = document.getElementById('btn-queue-tape');
+  const btnKeepTape = document.getElementById('btn-keep-tape');
+  const btnExportTape = document.getElementById('btn-export-tape');
   const deckCol = document.getElementById('deck-col');
   const altsModal = document.getElementById('alts-modal');
   const altsList = document.getElementById('alts-list');
@@ -808,6 +823,7 @@ uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 [+] RIPPLE      : global jam party · plays full setlist through, then scans herd majority
 [+] ALTERNATES  : Other Transfers button / key O
 [+] DECK        : engage a night, cue songs from the setlist
+[+] OFFLINE     : queue temp or keep (13 max) → offline-player.html · download on engage
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0002
 ${SPECS_RIPPLE}
 Lookup tip: date + venue on the deck is enough to research any tape.
@@ -1940,6 +1956,9 @@ function playTrack(idx, opts = {}) {
     sourceMeta.title = lookupHint(activeShow, currentSource);
     btnBest.disabled = isBest;
     btnAlts.disabled = activeSources.length < 2;
+    btnQueueTape.disabled = !playlist.length;
+    btnKeepTape.disabled = !playlist.length;
+    btnExportTape.disabled = !playlist.length;
     if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate transfer loaded');
     playTrack(nextPlayableIndex(playlist, 0), { silentToast: true });
   }
@@ -1970,6 +1989,9 @@ async function engageShow(show, opts = {}) {
     sourceMeta.removeAttribute('title');
     btnAlts.disabled = true;
     btnBest.disabled = true;
+    btnQueueTape.disabled = true;
+    btnKeepTape.disabled = true;
+    btnExportTape.disabled = true;
 
     try {
       const detail = await api(`/shows/${showDate(show)}`);
@@ -2045,6 +2067,85 @@ async function engageShow(show, opts = {}) {
   function closeAlts() { altsModal.classList.remove('open'); }
 
   btnAlts.addEventListener('click', openAlts);
+
+  const Store = window.CyberCatOfflineStore;
+
+  function slugifyTitle(title) {
+    return String(title || 'track')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 48) || 'track';
+  }
+
+  function buildTapeRecord() {
+    return {
+      id: activeShowKey || showKey(activeShow),
+      showDate: showDate(activeShow),
+      venue: venueName(activeShow),
+      place: venuePlace(activeShow),
+      sourceLabel: sourceMeta.textContent,
+      trackCount: playlist.length,
+      tracks: playlist.map((t, i) => ({
+        title: t.title || `Track ${i + 1}`,
+        url: t.url,
+      })),
+    };
+  }
+
+  async function queueCurrentShow({ keep = false } = {}) {
+    if (!activeShow || !playlist.length) {
+      toast('Engage a show first');
+      return;
+    }
+    const btn = keep ? btnKeepTape : btnQueueTape;
+    btn.disabled = true;
+    try {
+      await Store.queueTape(buildTapeRecord(), { keep });
+      if (keep) {
+        toast(`Kept in locker — engage in Offline Player to download (${Store.MAX_KEPT} max)`);
+      } else {
+        toast('Queued — open Offline Player and engage to download');
+      }
+    } catch (err) {
+      toast(err.message || 'Queue failed');
+    }
+    btnQueueTape.disabled = !playlist.length;
+    btnKeepTape.disabled = !playlist.length;
+  }
+
+  function exportTapeManifest() {
+    if (!activeShow || !playlist.length) {
+      toast('Engage a show first');
+      return;
+    }
+    const manifest = {
+      format: 'cybercat-tape-v1',
+      title: `${showDate(activeShow)} · ${venueName(activeShow)}`,
+      showDate: showDate(activeShow),
+      venue: venueName(activeShow),
+      place: venuePlace(activeShow),
+      sourceLabel: sourceMeta.textContent,
+      tracks: playlist.map((t, i) => ({
+        n: i + 1,
+        title: t.title || `Track ${i + 1}`,
+        url: t.url,
+        file: `${String(i + 1).padStart(2, '0')}-${slugifyTitle(t.title)}.mp3`,
+      })),
+    };
+    const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `cybercat-${showDate(activeShow)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('Manifest downloaded');
+  }
+
+  btnQueueTape.addEventListener('click', () => { queueCurrentShow({ keep: false }); });
+  btnKeepTape.addEventListener('click', () => { queueCurrentShow({ keep: true }); });
+  btnExportTape.addEventListener('click', () => { exportTapeManifest(); });
+
   btnBest.addEventListener('click', () => {
     stopRipple();
     const best = activeSources.find((x) => x.source.id === bestSourceId);
