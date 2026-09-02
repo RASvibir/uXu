@@ -34,20 +34,17 @@ uXu  (public collection)
            └── optional: iNi tag + provenance fields
 ```
 
-## Optional public notes
+## Public home (uXu commons)
 
-Separate public page for iNi practice notes, FAQ, and contact:
+The live uXu site is the public door into the commons (same place as 0?0):
 
-**https://soloist.ai/uxu**
+**https://rasvibir.github.io/uXu**
 
 Community paper trail (charter, articles, authorizations via PR — not a membership gate):
 
 **https://github.com/RASvibir/iNi**
 
-On 0?0: open Quick Nav **iNi Provenance**, then the panel link, or type
-**`INI SITE`**. Opt-in itself still happens in your archive / on the console —
-you do not need that page to practice iNi. The console stays a protocol tool;
-the page is not a membership gate.
+On 0?0: open Quick Nav **iNi Provenance**, or type **`INI`** / **`INI SITE`**. Opt-in happens in your archive `data.json` — you do not need a separate membership page.
 
 ## The provenance protocol
 
@@ -115,7 +112,7 @@ Joining iNi is not a newsletter signup. It means adopting the protocol:
 The community is defined by **practice**, not membership badges alone.
 0?0 is a front door into that idea — Quick Nav **iNi Provenance**
 (or type `INI`). Hover tip: *opt-in provenance · I and I*. Optional public
-notes: https://soloist.ai/uxu (panel link / `INI SITE`). Paper trail:
+notes: https://rasvibir.github.io/uXu (panel link / `INI SITE`). Paper trail:
 https://github.com/RASvibir/iNi.
 
 ## Conceptual pillars
@@ -167,7 +164,7 @@ cue when `optIn` is true (honesty badge — not enforcement).
 
 Questions: https://github.com/RASvibir/uXu/issues (uXu) or https://github.com/RASvibir/iNi/discussions (iNi)
 
-Optional public notes: **https://soloist.ai/uxu**  
+Optional public notes: **https://rasvibir.github.io/uXu**  
 Paper trail: **https://github.com/RASvibir/iNi**
 
 uXu software & original docs: **MIT** (`LICENSE`). Provenance fields document

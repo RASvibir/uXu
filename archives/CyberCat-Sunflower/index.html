@@ -549,7 +549,7 @@
             <div class="now-playing" id="now-playing">
               <span class="idle">Indexing Grateful Dead catalog…</span>
             </div>
-            <audio id="main-player" controls crossorigin="anonymous"></audio>
+            <audio id="main-player" controls playsinline webkit-playsinline preload="metadata" crossorigin="anonymous"></audio>
             <div class="source-bar">
               <div class="source-actions">
                 <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
@@ -661,7 +661,7 @@ Streams public Grateful Dead transfers — uXu does not own the recordings.
 Only add what you can lawfully share.
 
 ## Home
-Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu), and USER OPTIONS → MANUAL LIBRARY.
+Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → rasvibir.github.io/uXu), and USER OPTIONS → MANUAL LIBRARY.
 
 (Offline fallback — live manual loads from the uXu Worker when reachable.)`;
   const player = document.getElementById('main-player');
@@ -722,7 +722,13 @@ Return to 0?0 for ABOUT / RTFM, iNi Provenance (see website → soloist.ai/uxu),
 
 Ripple is a shared radio clock, not a popularity vote you control locally.
 Setlists keep the herd moving so the same songs do not loop endlessly.
-Key R toggles Ripple when the catalog is ready.`;
+Key R toggles Ripple when the catalog is ready.
+
+[+] BACKGROUND    : lock-screen controls (Media Session) · playsinline on mobile
+                 · tab unfocus / screen dim keeps audio if browser stays open
+                 · optional screen wake-lock while playing (tap play once)
+[+] RELAY         : catalog + streams retry via uXu API when VPN/blockers
+                 · direct ReListen / Archive.org first, commons relay on fail`;
 
   document.getElementById('specs-block').textContent =
 `===================================================================
@@ -874,18 +880,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     sourceMeta.title = lookupHint(activeShow, currentSource);
     btnBest.disabled = false;
     btnAlts.disabled = pack.ranked.length < 2;
-    trackIndex = trackIdx;
-    const track = playlist[trackIdx];
-    player.src = track.url;
-    player.load();
-    const startPlay = () => {
-      if (seekSec > 1) player.currentTime = seekSec;
-      player.play().catch(() => toast('Press play to join the Ripple'));
-    };
-    if (player.readyState >= 1) startPlay();
-    else player.addEventListener('loadedmetadata', startPlay, { once: true });
-    updateNowPlaying(track, { ripple: true });
-    renderSetlist();
+    playTrack(trackIdx, { fromRipple: true, seekSec, silentToast: true });
   }
 
   async function rippleSync(force = false) {
@@ -945,10 +940,80 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     startRipple();
   }
 
+  const CATALOG_CACHE_KEY = 'cybercat-catalog-v1';
+  let wakeLock = null;
+  let wantPlayback = false;
+  let wasPlayingBeforeHide = false;
+  let errorSkipTimer = null;
+
+  function streamUrlCandidates(raw) {
+    if (!raw) return [];
+    const urls = [raw];
+    if (!String(raw).includes('/api/stream')) {
+      urls.push(`${API_BASE}/api/stream?url=${encodeURIComponent(raw)}`);
+    }
+    return urls;
+  }
+
   async function api(path) {
-    const res = await fetch(`${RELISTEN}${path}`);
-    if (!res.ok) throw new Error(`Catalog ${res.status}`);
-    return res.json();
+    const p = path.startsWith('/') ? path : `/${path}`;
+    const urls = [
+      `${API_BASE}/api/relisten?path=${encodeURIComponent(p)}`,
+      `${RELISTEN}${p}`,
+    ];
+    let lastErr = null;
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) return res.json();
+        lastErr = new Error(`Catalog ${res.status}`);
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error('Catalog unreachable — check VPN or blockers');
+  }
+
+  function updateMediaSession(track) {
+    if (!('mediaSession' in navigator)) return;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: (track && track.title) || 'CyberCat Sunflower',
+        artist: 'Grateful Dead',
+        album: activeShow ? `${showDate(activeShow)} · ${venueName(activeShow)}` : 'Full Catalog',
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        playTrack(Math.max(0, trackIndex - 1));
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        playTrack(Math.min(playlist.length - 1, trackIndex + 1));
+      });
+      navigator.mediaSession.setActionHandler('play', () => { player.play().catch(() => {}); });
+      navigator.mediaSession.setActionHandler('pause', () => { player.pause(); });
+    } catch (_) { /* unsupported action */ }
+  }
+
+  async function requestWakeLock() {
+    try {
+      if (!('wakeLock' in navigator) || wakeLock) return;
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch (_) { /* denied or unsupported */ }
+  }
+
+  async function releaseWakeLock() {
+    try { await wakeLock?.release(); } catch (_) {}
+    wakeLock = null;
+  }
+
+  function advanceAfterStreamError() {
+    if (rippleActive) {
+      rippleSync(true);
+      return;
+    }
+    const next = nextPlayableIndex(playlist, trackIndex + 1);
+    if (next > trackIndex && next < playlist.length) playTrack(next);
+    else toast('End of tape');
   }
 
   function showDate(s) {
@@ -1317,28 +1382,46 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   }
 
   player.addEventListener('play', () => {
+    wantPlayback = true;
     initEq();
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    requestWakeLock();
+  });
+  player.addEventListener('pause', () => {
+    releaseWakeLock();
   });
   player.addEventListener('ended', () => {
+    wantPlayback = false;
+    releaseWakeLock();
     if (rippleActive) {
-      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
-        playTrack(trackIndex + 1, { fromRipple: true });
+      const next = nextPlayableIndex(playlist, trackIndex + 1);
+      if (next > trackIndex && next < playlist.length) {
+        playTrack(next, { fromRipple: true });
       } else {
         rippleSync(true);
       }
       return;
     }
-    if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
+    const next = nextPlayableIndex(playlist, trackIndex + 1);
+    if (next > trackIndex && next < playlist.length) playTrack(next);
     else toast('End of tape');
   });
   player.addEventListener('error', () => {
-    toast('Stream error — skipping');
-    if (rippleActive) {
-      setTimeout(() => rippleSync(true), 350);
+    toast('Stream error — retrying or skipping');
+    clearTimeout(errorSkipTimer);
+    errorSkipTimer = setTimeout(() => advanceAfterStreamError(), 450);
+  });
+  player.addEventListener('stalled', () => {
+    if (wantPlayback && player.paused) player.play().catch(() => {});
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      wasPlayingBeforeHide = wantPlayback && !player.paused && !player.ended;
       return;
     }
-    if (trackIndex >= 0 && trackIndex < playlist.length - 1) setTimeout(() => playTrack(trackIndex + 1), 350);
+    audioCtx?.resume();
+    if (wasPlayingBeforeHide) player.play().catch(() => {});
+    if (rippleActive) rippleSync(false);
   });
 
   function switchTab(tabId) {
@@ -1467,15 +1550,49 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
   function playTrack(idx, opts = {}) {
     if (!playlist.length || idx < 0 || idx >= playlist.length) return;
     if (rippleActive && !opts.fromRipple) stopRipple();
+    idx = nextPlayableIndex(playlist, idx);
+    if (idx >= playlist.length) {
+      if (rippleActive) rippleSync(true);
+      else toast('End of tape');
+      return;
+    }
     trackIndex = idx;
     const track = playlist[idx];
-    player.src = track.url;
-    player.load();
-    player.play().catch(() => toast('Press play on the deck'));
-    updateNowPlaying(track);
-    renderSetlist();
-    const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
-    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const urls = streamUrlCandidates(track.url);
+    let urlAttempt = 0;
+    clearTimeout(errorSkipTimer);
+
+    function loadAttempt() {
+      player.src = urls[urlAttempt];
+      player.load();
+      const start = () => {
+        const seek = Number(opts.seekSec) || 0;
+        if (seek > 0.5) player.currentTime = seek;
+        wantPlayback = true;
+        player.play().catch(() => toast('Press play on the deck'));
+        updateNowPlaying(track, { ripple: opts.fromRipple || rippleActive });
+        renderSetlist();
+        updateMediaSession(track);
+        requestWakeLock();
+        const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
+        if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        if (!opts.silentToast && urlAttempt > 0) toast('Playing via commons relay');
+      };
+      const onErr = () => {
+        urlAttempt += 1;
+        if (urlAttempt < urls.length) {
+          if (!opts.silentToast) toast('Relaying stream…');
+          loadAttempt();
+          return;
+        }
+        toast('Stream blocked — skipping');
+        errorSkipTimer = setTimeout(() => advanceAfterStreamError(), 450);
+      };
+      player.addEventListener('error', onErr, { once: true });
+      if (player.readyState >= 2) start();
+      else player.addEventListener('canplay', start, { once: true });
+    }
+    loadAttempt();
   }
 
   function applySource(rankedItem, { announce, fromRipple } = { announce: true, fromRipple: false }) {
@@ -1490,7 +1607,7 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     btnBest.disabled = isBest;
     btnAlts.disabled = activeSources.length < 2;
     if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate transfer loaded');
-    playTrack(0);
+    playTrack(nextPlayableIndex(playlist, 0), { silentToast: true });
   }
 
   async function engageShow(show, opts = {}) {
@@ -1809,6 +1926,9 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
       }
     }
     shows = all;
+    try {
+      localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ at: Date.now(), shows: all }));
+    } catch (_) { /* quota */ }
     document.getElementById('catalog-foot').textContent =
       `${shows.length} Grateful Dead shows indexed`;
     indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
@@ -1888,8 +2008,19 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
   });
 
   loadCatalog().catch((err) => {
+    try {
+      const cached = JSON.parse(localStorage.getItem(CATALOG_CACHE_KEY) || 'null');
+      if (cached && Array.isArray(cached.shows) && cached.shows.length) {
+        shows = cached.shows;
+        indexStatus.textContent = `Offline catalog · ${shows.length} shows (snapshot)`;
+        btnRipple.disabled = false;
+        toast('Using cached catalog — streams may still need relay');
+        applyFilters();
+        return;
+      }
+    } catch (_) { /* ignore */ }
     indexStatus.textContent = 'Catalog index failed: ' + err.message;
-    tapesZone.textContent = '[ERROR] Could not reach catalog index';
+    tapesZone.textContent = '[ERROR] Could not reach catalog index — try disabling strict blockers or VPN split-tunnel';
   });
 </script>
 </body>

@@ -114,7 +114,7 @@ expectations. Starter fields ship in `templates/data.json` with `optIn: false`.
 
 Snippet: `templates/snippets/ini-badge.html`. CyberCat places the stamp top-right.
 
-On 0?0: **INI**. Optional public notes: https://soloist.ai/uxu (`INI SITE`).
+On 0?0: **INI**. Optional public notes: https://rasvibir.github.io/uXu (`INI SITE`).
 Pamphlet: `archives/RTFM/INI-PROVENANCE.md`.
 
 ## Create flow (simple)

@@ -195,7 +195,7 @@
       max-height:none;
       min-height:min(82vh, 720px);
     }
-    .registry-wrap{max-height:5.5rem;}
+    .registry-wrap{max-height:calc(1.25rem + 4 * 1.52rem);}
     body.preview-focus .screen{min-height:min(92vh, 820px);}
     body{align-items:flex-start;}
   }
@@ -269,11 +269,15 @@
   .registry-box{flex:0 0 auto;}
   .registry-wrap{
     overflow:auto;
+    min-height:calc(1.25rem + 4 * 1.52rem);
     /* Header + 4 archive rows — keep the type/command screen dominant */
     max-height:calc(1.25rem + 4 * 1.52rem);
     position:relative;
   }
-  body.registry-compact .registry-wrap{max-height:3.75rem;}
+  body.registry-compact .registry-wrap{
+    min-height:calc(1.25rem + 1.52rem);
+    max-height:calc(1.25rem + 1.52rem);
+  }
   .registry-compact-btn{font-size:.62rem; padding:.15rem .35rem;}
   body.preview-focus .grid{grid-template-columns:1fr;}
   body.preview-focus .col:first-child,
@@ -1657,7 +1661,7 @@
               <div class="ini-tip" id="ini-tip" role="tooltip" hidden>
                 <span class="ini-tip-k">iNi</span>
                 <span class="ini-tip-v">opt-in provenance</span>
-                <a class="ini-tip-link" href="https://soloist.ai/uxu" target="_blank" rel="noopener">soloist.ai/uxu ↗</a>
+                <a class="ini-tip-link" href="https://rasvibir.github.io/uXu/" target="_blank" rel="noopener">uXu commons ↗</a>
               </div>
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
@@ -1843,7 +1847,8 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
   const btnInstall = document.querySelector('#btn-install');
   const LANDING_MANUAL_SLUG = 'user-guide';
   const CREATE_MANUAL_SLUG = 'archive-creation';
-  const INI_COMMUNITY_URL = 'https://soloist.ai/uxu';
+  const UXU_SITE_URL = 'https://rasvibir.github.io/uXu/';
+  const INI_COMMUNITY_URL = UXU_SITE_URL;
   const INI_PAPER_TRAIL_URL = 'https://github.com/RASvibir/iNi';
   const INI_PAGES_BASE = 'https://rasvibir.github.io/iNi/#/i/';
 
@@ -3780,24 +3785,58 @@ RTFM                    0?0 manual`);
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
 
-  function buildStarterPackFiles(result) {
+  function buildStarterPackFiles(result, fields = {}) {
     const data = result.data || {};
-    const name = data.archiveName || result.title || 'Archive';
+    const name = data.archiveName || result.title || fields.title || 'Archive';
+    const folder = (fields.folderSlug || result.folderSlug || name).replace(/\s+/g, '-');
     const readme = `# ${name}
 
 **Id:** \`${result.id}\`
 
-Created on 0?0. Live page is already registered.
+Registered on 0?0. Starter files are in your downloads.
 
-## Files
+## Your folder (put these together)
 
-- \`data.json\` — your metadata (downloaded)
-- Copy repo \`templates/index.html\` beside data.json if you want a static folder in the repo.
+\`\`\`text
+${folder}/
+  index.html          ← page visitors open
+  data.json           ← metadata + items
+  README.md           ← this file
+  manuals/
+    USER-MANUAL.md    ← visitor guide (optional)
+\`\`\`
+
+## Next steps
+
+1. Open \`index.html\` in a browser — confirm title and home link work.
+2. Edit \`data.json\` — add items under \`shows\` or \`items\`.
+3. To go live on uXu Pages: add the folder under \`archives/\` in the repo (pull request), or ask via GitHub Issues.
+4. On 0?0: your row appears in the registry — select it and Open Archive when the path is wired.
+
+Guide: \`READ archive-creation\` on 0?0.
 `;
     return {
       'data.json': JSON.stringify(data, null, 2) + '\n',
       'README.md': readme,
+      folder,
     };
+  }
+
+  async function downloadStarterPack(result, fields) {
+    const pack = buildStarterPackFiles(result, fields);
+    const folder = pack.folder || 'archive';
+    downloadTextFile(`${folder}-data.json`, pack['data.json']);
+    downloadTextFile(`${folder}-README.md`, pack['README.md']);
+    try {
+      const [indexHtml, manual] = await Promise.all([
+        fetch('starter-pack/index.html').then((r) => r.ok ? r.text() : ''),
+        fetch('starter-pack/manuals/USER-MANUAL.md').then((r) => r.ok ? r.text() : ''),
+      ]);
+      if (indexHtml) downloadTextFile(`${folder}-index.html`, indexHtml);
+      if (manual) downloadTextFile(`${folder}-USER-MANUAL.md`, manual);
+    } catch (_) {
+      toast('template files skipped — use starter-pack/ in repo');
+    }
   }
 
   async function openCreateArchiveWizard() {
@@ -3815,8 +3854,13 @@ Created on 0?0. Live page is already registered.
     if (!scroll) return;
 
     scroll.innerHTML = `
-<p class="lede">Simple folder archive</p>
-<p class="create-simple-hint">Required: a <strong>name</strong> and a short <strong>description</strong>. Everything else is optional — expand below.</p>
+<p class="lede">Create your archive in three steps</p>
+<ol class="create-steps" style="margin:0 0 .65rem;padding-left:1.15rem;color:var(--green-dim);font-size:.72rem;line-height:1.5;">
+  <li><strong>Name</strong> your archive + one-line <strong>description</strong></li>
+  <li><strong>Sign in</strong> (if needed) → <strong>Save &amp; create</strong> → confirm</li>
+  <li><strong>Download</strong> the starter folder → edit <code>data.json</code> → open <code>index.html</code> locally</li>
+</ol>
+<p class="create-simple-hint">Tier 1 template: <code>index.html</code> + <code>data.json</code> + optional <code>manuals/USER-MANUAL.md</code>. No coding required to start.</p>
 <form class="create-form" id="create-archive-form">
   <label>Name
     <input id="create-title" name="title" type="text" required maxlength="80" value="${escapeHtml(defaultTitle)}" autocomplete="off" />
@@ -3952,9 +3996,8 @@ Then press Save & create again.`);
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || data.message || `create failed (${res.status})`);
 
-        const pack = buildStarterPackFiles(data);
-        downloadTextFile(`${data.folderSlug || 'archive'}-data.json`, pack['data.json']);
-        downloadTextFile(`${data.folderSlug || 'archive'}-README.md`, pack['README.md']);
+        const pack = buildStarterPackFiles(data, { title, folderSlug: data.folderSlug });
+        await downloadStarterPack(data, { title, folderSlug: data.folderSlug });
 
         await loadRegistry();
         await refreshStewardAccess();
@@ -3966,16 +4009,23 @@ Then press Save & create again.`);
 
         hideGuidePanels();
         showOutput('CREATE ARCHIVE',
-`Done.
+`Registered on 0?0.
 
   id:     ${data.id}
   title:  ${data.title}
   status: ${data.status}
 
-Select it in the registry → Open Archive
-(or OPEN ${String(data.title).split(/\s+/)[0].toUpperCase()})
+Starter pack downloaded (index.html, data.json, README, visitor manual).
 
-Files downloaded. Live page works now.`);
+What to do next:
+  1) Put files in one folder on your computer
+  2) Edit data.json — add your first item
+  3) Open index.html in a browser to preview
+  4) For the live commons: add archives/Your-Name/ via pull request
+     or open a GitHub Issue to request hosting help
+
+On 0?0: select your row in the registry when the page path is wired.
+Full guide: READ archive-creation`);
         toast(`created ${data.id}`);
       } catch (err) {
         showOutput('ERROR', err.message);
@@ -4154,7 +4204,7 @@ const list = document.getElementById('archive-list');
 
 <h3>iNi (opt-in provenance)</h3>
 <p><strong>iNi</strong> is an optional authenticity protocol beside uXu — an “I and I” space for origin, authorship, lineage, and custody. Not required to publish on uXu.</p>
-<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Optional public notes: <a href="https://soloist.ai/uxu" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a> (panel link or <code>INI SITE</code>). Paper trail: <a href="https://github.com/RASvibir/iNi" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a>. Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
+<p>In this interface: Quick Nav <strong>iNi Provenance</strong> (or type <code>INI</code>). Public home: <a href="https://rasvibir.github.io/uXu/" target="_blank" rel="noopener" style="color:var(--cyan)">rasvibir.github.io/uXu</a> (<code>INI SITE</code> opens the guide). Paper trail: <a href="https://github.com/RASvibir/iNi" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a>. Pamphlet: <code>INI-PROVENANCE.md</code>.</p>
 
 <h3>How and why I created it</h3>
 <p>I built <strong>uXu</strong> because I wanted archives to stay <em>independent</em> and still be <em>findable</em>. Too many collections disappear into private hard drives, dead links, or platforms that own the shelf more than the librarian does.</p>
@@ -4251,7 +4301,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><td><code>ABOUT</code></td><td>What uXu is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td><code>FAQ</code></td><td>Friendly everyday how-to</td></tr>
   <tr><td><code>INI</code></td><td>iNi Provenance guide (Quick Nav flair)</td></tr>
-  <tr><td><code>INI SITE</code></td><td>Open optional iNi public notes (soloist.ai/uxu) · paper trail RASvibir/iNi</td></tr>
+  <tr><td><code>INI SITE</code></td><td>Open iNi provenance guide (same as Quick Nav) · paper trail RASvibir/iNi</td></tr>
   <tr><td><code>RTFM</code></td><td>This 0?0 manual (tabs)</td></tr>
   <tr><td><code>MANUAL</code></td><td>Manual library index (pamphlets)</td></tr>
   <tr><td><code>READ &lt;slug|n&gt;</code></td><td>Open a library pamphlet</td></tr>
@@ -4469,7 +4519,7 @@ README.md`;
 </details>
 <details>
   <summary>What is iNi?</summary>
-  <p>An optional provenance protocol defined by practice. Creators who opt in document origin, authorship, custody, and lineage. Type <strong>INI</strong> for the guide. Optional public notes: <a href="https://soloist.ai/uxu" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a> · paper trail <a href="https://github.com/RASvibir/iNi" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a>. Not required to publish on uXu.</p>
+  <p>An optional provenance protocol defined by practice. Creators who opt in document origin, authorship, custody, and lineage. Type <strong>INI</strong> for the guide. uXu site: <a href="https://rasvibir.github.io/uXu/" target="_blank" rel="noopener" style="color:var(--cyan)">rasvibir.github.io/uXu</a> · paper trail <a href="https://github.com/RASvibir/iNi" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a>. Not required to publish on uXu.</p>
 </details>
 <details>
   <summary>How do I browse?</summary>
@@ -4525,13 +4575,24 @@ README.md`;
       root.innerHTML = `
 <p class="lede"><strong>iNi</strong> — opt-in provenance beside uXu. An “I and I” practice for origin, authorship, lineage, and custody.</p>
 
-<h3>Optional public notes</h3>
-<p>A separate public page for iNi practice notes, FAQ, and contact. The console stays a protocol tool — the page is not a membership gate. Optional paper trail (charter / articles via PR): <a href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a>.</p>
+<h3>Public home</h3>
+<p>The uXu commons site is the public door — same place visitors install the app and open 0?0. Paper trail (charter / articles via PR): <a href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a>.</p>
 <p class="ini-actions">
-  <a class="ini-site" href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener">Open soloist.ai/uxu ↗</a>
-  <a class="ini-site ini-site--soft" href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener">Paper trail ↗</a>
+  <a class="ini-site" href="${UXU_SITE_URL}" target="_blank" rel="noopener">Open uXu site ↗</a>
+  <a class="ini-site ini-site--soft" href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener">iNi paper trail ↗</a>
 </p>
-<p class="muted ini-site-url"><a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">${INI_COMMUNITY_URL}</a> · or type <code>INI SITE</code></p>
+<p class="muted ini-site-url"><code>INI SITE</code> reopens this guide · <code>READ ini-provenance</code> for the full pamphlet</p>
+
+<h3>Your I page (optional showcase)</h3>
+<ol style="margin:.35rem 0;padding-left:1.2rem;color:var(--green-dim);font-size:.74rem;line-height:1.5;">
+  <li>Fork <a href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">RASvibir/iNi</a> and add <code>content/i/your-slug.md</code> (your steward page)</li>
+  <li>In your archive <code>data.json</code>: set <code>uxu.ini.optIn: true</code>, then <code>badgeLinksToIPage: true</code> and <code>iPage: "your-slug"</code></li>
+  <li>Live URL: <code>${INI_PAGES_BASE}your-slug</code> — registry iNi cue becomes a link when both opt-ins are set</li>
+</ol>
+<p class="muted">An I page is optional. You can opt into iNi provenance with only <code>data.json</code> fields — no I page required.</p>
+
+<h3>Operator crown (separate from iNi)</h3>
+<p><code>SETUP MASTER</code> · <code>CLAIM MASTER</code> · <code>ASSUME MASTER</code> are <strong>0?0 admin succession</strong> — not iNi membership. Day-to-day visitors and archive creators do not need these. Type <code>SETUP MASTER</code> when you are the operator securing the console.</p>
 
 <h3>What it is</h3>
 <p>A name, a protocol, and a community boundary defined by practice — not a company label. uXu does not require iNi. Creators who want explicit authenticity documentation may opt in.</p>
@@ -4543,7 +4604,7 @@ README.md`;
            └── optional: iNi tag + provenance fields</pre>
 
 <h3>Opt in (beta)</h3>
-<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Optional showcase: <code>showBadge</code> (default true) displays an <strong>iNi</strong> verification mark — no I page required. Optional second opt-in: <code>badgeLinksToIPage: true</code> + <code>iPage</code> slug makes the badge open your I page. Registry cue is clickable only when that link opt-in is set — honesty mark, not enforcement. You do not need the Soloist page to opt in.</p>
+<p>In your archive <code>data.json</code>, fill provenance and set <code>uxu.ini.optIn: true</code>. Optional showcase: <code>showBadge</code> (default true) displays an <strong>iNi</strong> verification mark — no I page required. Optional second opt-in: <code>badgeLinksToIPage: true</code> + <code>iPage</code> slug makes the badge open your I page. Registry cue is clickable only when that link opt-in is set — honesty mark, not enforcement.</p>
 <pre>{
   "uxu": {
     "ini": {
@@ -4576,7 +4637,7 @@ README.md`;
 <p>Type <code>MAP</code> (or F4) for the live commons tree: every registered archive under 0?0, with iNi opt-in and I page links where set. Inspect a row to read attested origin/custody fields.</p>
 
 <h3>Read more</h3>
-<p>Optional public notes: <a href="${INI_COMMUNITY_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">soloist.ai/uxu</a></p>
+<p>uXu commons: <a href="${UXU_SITE_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">rasvibir.github.io/uXu</a></p>
 <p>Community paper trail: <a href="${INI_PAPER_TRAIL_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">github.com/RASvibir/iNi</a> — charter, articles, authorizations via PR (not a membership gate).</p>
 <p>Full pamphlet: <code>READ ini-provenance</code> · <code>archives/RTFM/INI-PROVENANCE.md</code> · templates ship with <code>optIn: false</code>.</p>
 <p>Questions: <a href="https://github.com/RASvibir/uXu/issues">GitHub Issues</a></p>`;
@@ -4587,19 +4648,8 @@ README.md`;
   }
 
   function openIniSite() {
-    try {
-      window.open(INI_COMMUNITY_URL, '_blank', 'noopener');
-    } catch (_) { /* ignore */ }
-    toast('INI SITE — soloist.ai/uxu');
-    showOutput('INI SITE',
-`Optional public notes for iNi practice (Soloist)
-
-${INI_COMMUNITY_URL}
-
-Paper trail (charter / PR articles): ${INI_PAPER_TRAIL_URL}
-
-From iNi Provenance: use the panel link · or type INI SITE
-Back on 0?0: type INI for the provenance guide.`);
+    openIni();
+    toast('iNi guide — 0?0');
   }
 
   async function openRootManual(slug, opts = {}) {
@@ -4786,7 +4836,7 @@ RTFM              interactive 0?0 manual (about → ease → … → source)
 ABOUT             what uXu is (site · repo · app) · 0?0 archive interface
 FAQ               friendly functional how-to
 INI               iNi provenance protocol (opt-in)
-INI SITE          open optional iNi public notes (soloist.ai/uxu) · see panel for paper trail
+INI SITE          open iNi provenance guide (Quick Nav) · paper trail RASvibir/iNi
 MANUAL            manual library index (pamphlets)
 ARCHIVE MANUALS   index / search manuals from created archives
 FIND MANUAL <q>   filter that index
@@ -5377,7 +5427,10 @@ Next:
             .join('\n') || '  (none yet)')
         : '  Addresses hidden — SUDO, then RECOVERY LIST';
       showOutput("SETUP MASTER — interactive guide",
-`Follow these steps on 0?0. Re-run SETUP MASTER anytime to refresh checks.
+`Operator crown (admin succession) — NOT iNi provenance.
+iNi is opt-in archive documentation. The crown secures 0?0 for operators only.
+
+Follow these steps on 0?0. Re-run SETUP MASTER anytime to refresh checks.
 
 ${lines.join('\n')}
 
@@ -5559,13 +5612,19 @@ Then attest here so SETUP MASTER can check it off.`);
   const btnPreviewFocus = document.getElementById('btn-preview-focus');
   const btnPreviewModal = document.getElementById('btn-preview-modal');
   const previewBackdrop = document.getElementById('preview-backdrop');
-  document.body.classList.add('registry-compact');
-  if (btnRegistryCompact) {
-    btnRegistryCompact.textContent = 'Expand';
-    btnRegistryCompact.setAttribute('aria-pressed', 'true');
+  if (localStorage.getItem('registry-compact') === '1') {
+    document.body.classList.add('registry-compact');
+    if (btnRegistryCompact) {
+      btnRegistryCompact.textContent = 'Expand';
+      btnRegistryCompact.setAttribute('aria-pressed', 'true');
+    }
+  } else if (btnRegistryCompact) {
+    btnRegistryCompact.textContent = 'Shrink';
+    btnRegistryCompact.setAttribute('aria-pressed', 'false');
   }
   btnRegistryCompact?.addEventListener('click', () => {
     const on = document.body.classList.toggle('registry-compact');
+    localStorage.setItem('registry-compact', on ? '1' : '0');
     btnRegistryCompact.textContent = on ? 'Expand' : 'Shrink';
     btnRegistryCompact.setAttribute('aria-pressed', String(on));
   });

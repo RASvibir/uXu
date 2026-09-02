@@ -98,7 +98,7 @@ Optional authenticity protocol. Leave `optIn: false` unless you fill provenance 
 ```
 
 On 0?0: Quick Nav **iNi Provenance** or type **INI**. Optional public notes /
-`INI SITE` → https://soloist.ai/uxu. Full pamphlet: `INI-PROVENANCE.md`.
+`INI SITE` → https://rasvibir.github.io/uXu. Full pamphlet: `INI-PROVENANCE.md`.
 
 ## Template forks (creator's choice)
 

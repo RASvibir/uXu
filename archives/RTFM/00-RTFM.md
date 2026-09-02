@@ -25,7 +25,7 @@ The **0?0 manual**. On the live console it opens as a tabbed panel:
 ```text
 ABOUT / RTFM      → interactive 0?0 manual (this doc’s twin)
 INI               → iNi Provenance guide
-INI SITE          → optional iNi public notes (soloist.ai/uxu)
+INI SITE          → optional iNi public notes (rasvibir.github.io/uXu)
 MANUAL            → pamphlet library index (USER OPTIONS)
 ARCHIVE MANUALS   → search uxu.manuals on created archives
 ```
