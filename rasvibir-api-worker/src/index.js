@@ -659,7 +659,8 @@ async function insertAdminAlert(sql, { kind, archiveId, summary, detail }) {
 }
 
 async function handleAdminMonitor(sql, request, ctx) {
-  if (!ctx.session || ctx.session.role !== 'ADMIN') {
+  if (!ctx.session) return json({ error: 'unauthorized' }, 401);
+  if (ctx.session.role !== 'ADMIN') {
     return json({ error: 'forbidden: admin only' }, 403);
   }
   if (request.method === 'POST') {
@@ -681,7 +682,8 @@ async function handleAdminMonitor(sql, request, ctx) {
 
 async function handleAdminMarker(sql, request, ctx) {
   if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
-  if (!ctx.session || ctx.session.role !== 'ADMIN' || !ctx.session.sudo) {
+  if (!ctx.session) return json({ error: 'unauthorized' }, 401);
+  if (ctx.session.role !== 'ADMIN' || !ctx.session.sudo) {
     return json({ error: 'forbidden: ADMIN + SUDO' }, 403);
   }
   const body = await request.json().catch(() => ({}));
