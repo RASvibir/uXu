@@ -970,10 +970,21 @@ Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
     startRipple();
   }
 
-  async function api(path) {
-    const res = await fetch(`${RELISTEN}${path}`);
-    if (!res.ok) throw new Error(`Catalog ${res.status}`);
-    return res.json();
+  async function api(path, { timeoutMs = 12000 } = {}) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(`${RELISTEN}${path}`, { signal: controller.signal });
+      if (!res.ok) throw new Error(`Catalog ${res.status}`);
+      return res.json();
+    } catch (err) {
+      if (err && err.name === 'AbortError') {
+        throw new Error(`Catalog timeout for ${path}`);
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   function showDate(s) {
@@ -1833,27 +1844,50 @@ async function engageShow(show, opts = {}) {
     renderYearChips(years);
 
     const all = [];
-    for (let i = 0; i < years.length; i++) {
-      const y = years[i];
-      indexStatus.textContent = `Indexing ${y.year} (${i + 1}/${years.length})…`;
-      try {
-        const detail = await api(`/years/${y.year}`);
-        for (const s of (detail.shows || [])) {
-          all.push({
-            ...s,
-            year: y.year,
-            venueName: venueName(s),
-            location: venuePlace(s),
-          });
+    const queue = years.slice();
+    const concurrency = 4;
+    let completed = 0;
+    let failed = 0;
+
+    const updateProgress = (label = 'Indexing catalog') => {
+      indexStatus.textContent =
+        `${label} · ${completed}/${years.length} years · ${all.length} shows · ${failed} failed`;
+    };
+
+    updateProgress();
+
+    async function worker() {
+      while (queue.length) {
+        const y = queue.shift();
+        updateProgress(`Indexing ${y.year}`);
+        try {
+          const detail = await api(`/years/${y.year}`, { timeoutMs: 12000 });
+          for (const s of (detail.shows || [])) {
+            all.push({
+              ...s,
+              year: y.year,
+              venueName: venueName(s),
+              location: venuePlace(s),
+            });
+          }
+        } catch (err) {
+          failed++;
+          console.warn('year failed', y.year, err);
+        } finally {
+          completed++;
+          updateProgress();
         }
-      } catch (err) {
-        console.warn('year failed', y.year, err);
       }
     }
+
+    await Promise.all(Array.from({ length: Math.min(concurrency, years.length) }, () => worker()));
+
     shows = all;
+    window.allTapes = all;
     document.getElementById('catalog-foot').textContent =
       `${shows.length} Grateful Dead shows indexed`;
-    indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
+    indexStatus.textContent =
+      `Catalog ready · ${shows.length} shows${failed ? ` · ${failed} year failures` : ''}`;
     btnRipple.disabled = false;
     toast(`${shows.length} shows indexed`);
     applyFilters();
