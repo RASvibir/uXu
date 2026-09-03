@@ -1864,6 +1864,58 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
     if (!slug) return null;
     return INI_PAGES_BASE + encodeURIComponent(slug);
   }
+
+  function iniAttestationComplete(p) {
+    if (!p || typeof p !== 'object') return false;
+    const origin = String(p.origin || '').trim();
+    const custody = String(p.custody || '').trim();
+    const attested = String(p.attestedAt || '').trim();
+    return !!(origin && custody && attested);
+  }
+
+  function haystackArchive(entry) {
+    return [entry && entry.id, entry && entry.slug, entry && entry.path, entry && entry.title, entry && entry.archiveName]
+      .filter(Boolean).join(' ');
+  }
+
+  function filesNoteFallback(entry) {
+    const hay = haystackArchive(entry);
+    if (/Sunflower|cybercat-sunflower/i.test(hay)) {
+      return {
+        label: 'Relisten Grateful Dead catalog → Internet Archive transfers',
+        url: 'https://api.relisten.net/api/v2/artists/grateful-dead',
+      };
+    }
+    if (/Deck-Builder|deck-builder|DECK_BUILDER/i.test(hay)) {
+      return { label: 'You add files or links in the builder (not Sunflower’s Relisten index)', url: '' };
+    }
+    if (/My-Tape|my-tape|MY_TAPE/i.test(hay)) {
+      return { label: 'Deck manifest / links you configure', url: '' };
+    }
+    if (/Ledger/i.test(hay)) {
+      return { label: 'Private room — items in this archive’s data.json (not a public stream catalog)', url: '' };
+    }
+    if (/Starter|0\?0|root-console/i.test(hay)) {
+      return { label: 'No media catalog — console / template / docs', url: '' };
+    }
+    return { label: 'No public catalog URL declared (archive folder / data.json only)', url: '' };
+  }
+
+  function mediaSourceFromData(entry, data) {
+    const index = data && data.playback && typeof data.playback.index === 'string' ? data.playback.index.trim() : '';
+    const manifest = data && typeof data.manifestUrl === 'string' ? data.manifestUrl.trim() : '';
+    const raw = (/^https?:\/\//i.test(index) && index) || (/^https?:\/\//i.test(manifest) && manifest) || '';
+    if (raw) {
+      try {
+        const host = new URL(raw).hostname.replace(/^www\./, '');
+        let label = host;
+        if (host.includes('relisten.net')) label = 'Relisten catalog → Internet Archive transfers';
+        else if (host.includes('archive.org')) label = 'Internet Archive';
+        return { label, url: raw };
+      } catch { /* fall through */ }
+    }
+    return filesNoteFallback(entry);
+  }
   const manualToolbar = document.getElementById('manual-toolbar');
   const btnManual00 = document.getElementById('btn-manual-00');
   const btnManualLibrary = document.getElementById('btn-manual-library');
@@ -2593,7 +2645,8 @@ Guests cannot open this room.`);
         unresolved: [],
         parent: '0?0.uXu.0000',
         iniOptIn: false,
-        publicMetaLoaded: true,
+        publicMetaLoaded: false,
+        templateOf: 'CyberCat_Generic.uXu.0004',
         description: 'Visual CyberCat deck builder — separate from Sunflower.',
         archiveName: 'CyberCat Deck Builder',
       },
@@ -3231,14 +3284,19 @@ Guests cannot open this room.`);
         const cue = document.createElement(iUrl ? 'a' : 'span');
         cue.className = 'ini-cue';
         cue.textContent = entry.iniTag || 'iNi';
+        const complete = iniAttestationComplete(entry.iniProvenance);
         if (iUrl) {
           cue.href = iUrl;
           cue.target = '_blank';
           cue.rel = 'noopener';
-          cue.title = 'iNi provenance · open I page';
+          cue.title = complete
+            ? 'iNi provenance · open I page'
+            : 'iNi opted in but origin/custody/attestedAt are incomplete · open I page';
           cue.addEventListener('click', (e) => e.stopPropagation());
         } else {
-          cue.title = 'iNi provenance opted in (self-attested)';
+          cue.title = complete
+            ? 'iNi provenance opted in (self-attested)'
+            : 'iNi opted in — fill origin, custody, and attestedAt in data.json';
         }
         tdName.appendChild(cue);
       }
@@ -3321,12 +3379,23 @@ Guests cannot open this room.`);
   }
 
   function formatIniInspectBlock(entry) {
-    if (!entry || !entry.iniOptIn) return '';
-    const lines = [
-      '',
-      'iNi provenance (self-attested):',
-      `  tag:      ${entry.iniTag || 'iNi'}`,
-    ];
+    if (!entry) return '';
+    const lines = [];
+    if (entry.templateOf) {
+      lines.push('', `template of: ${entry.templateOf}${entry.templateDepth != null ? ` (depth ${entry.templateDepth})` : ''}`);
+    }
+    const files = entry.filesNote || filesNoteFallback(entry);
+    if (files && files.label) {
+      lines.push('', `files:      ${files.label}`);
+      if (files.url) lines.push(`  catalog:  ${files.url}`);
+    }
+    if (!entry.iniOptIn) {
+      if (lines.length) lines.push('  (MAP = 0?0 commons tree · INI for the iNi guide)');
+      return lines.join('\n');
+    }
+    const complete = iniAttestationComplete(entry.iniProvenance);
+    lines.push('', complete ? 'iNi provenance (self-attested):' : 'iNi provenance (opted in — attestation incomplete):');
+    lines.push(`  tag:      ${entry.iniTag || 'iNi'}`);
     if (entry.iniPageUrl) {
       lines.push(`  I page:   ${entry.iniPageUrl}`);
     } else {
@@ -3343,7 +3412,10 @@ Guests cannot open this room.`);
       if (p.conditions) lines.push(`  conditions: ${p.conditions}`);
       if (p.attestedAt) lines.push(`  attested: ${p.attestedAt}`);
     }
-    lines.push('  (MAP shows full commons tree · INI for the guide)');
+    if (!complete) {
+      lines.push('  need:     origin, custody, and attestedAt before the opt-in is complete');
+    }
+    lines.push('  (MAP = 0?0 commons tree. CyberCat Sunflower F5 is Ripple catalog trail — not this.)');
     return lines.join('\n');
   }
 
@@ -3413,17 +3485,21 @@ validation: ${entry.certainty}${iniBlock}${unresolvedBlock}${openHint}`);
 
     const treeLines = children.map((c, i) => {
       const branch = i === children.length - 1 ? '└─' : '├─';
+      const files = c.filesNote || filesNoteFallback(c);
       let note = ` (${String(c.type || 'archive').toLowerCase()})`;
+      if (c.templateOf) note += ` · fork of ${c.templateOf}`;
+      note += `\n      files: ${files.label}`;
       if (c.iniOptIn) {
-        note += c.iniPageUrl
-          ? ` · iNi ✓ · I→ ${c.iniPageUrl.replace(INI_PAGES_BASE, '')}`
-          : ' · iNi ✓';
+        const ok = iniAttestationComplete(c.iniProvenance);
+        note += ok ? ' · iNi ✓' : ' · iNi (incomplete)';
+        if (c.iniPageUrl) note += ` · I→ ${c.iniPageUrl.replace(INI_PAGES_BASE, '')}`;
       }
       return `  ${branch} ${c.id}${note}`;
     });
 
     const iniCount = children.filter((c) => c.iniOptIn).length;
     const iPageCount = children.filter((c) => c.iniPageUrl).length;
+    const completeCount = children.filter((c) => c.iniOptIn && iniAttestationComplete(c.iniProvenance)).length;
 
     showOutput('PROVENANCE MAP',
 `protocol: ${prov.protocol || 'iNi'}
@@ -3432,15 +3508,17 @@ custody:  ${prov.custody || 'I and I practice (opt-in per archive)'}
 notes:    ${prov.notes || INI_COMMUNITY_URL}
 trail:    ${prov.paper_trail || INI_PAPER_TRAIL_URL}
 
-${root ? root.id : rootId}  (root console · uXu commons)
+This MAP is the 0?0 commons tree (F4 on this console).
+Sunflower F5 / Ripple is a different trail and is unchanged.
+
+${root ? root.id : rootId}  (root console · no media catalog)
 ${treeLines.length ? treeLines.join('\n') : '  (no child archives registered yet)'}
 
-iNi opted-in: ${iniCount} archive(s) · I pages linked: ${iPageCount}
-Registry iNi cues open I pages when badgeLinksToIPage + iPage are set.
+iNi opted-in: ${iniCount} · complete: ${completeCount} · I pages: ${iPageCount}
+Inspect a row for catalog URL, origin, and custody.
 Type INI · INI SITE · READ ini-provenance for the guide.
 
-Master admin crown (CLAIM MASTER / ASSUME MASTER) is operator succession —
-separate from iNi provenance stamps.`);
+Master admin crown is operator succession — separate from iNi stamps.`);
   }
 
   function setUserOptionsOpen(open) {
@@ -3679,23 +3757,26 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
   }
 
   async function enrichOneArchive(entry) {
-    if (!entry || entry.publicMetaLoaded) return entry;
+    if (!entry || (entry.publicMetaLoaded && entry.filesNote)) return entry;
     if (entry._enrichPromise) return entry._enrichPromise;
     entry._enrichPromise = (async () => {
       const dir = archiveDirFromEntry(entry);
       if (!dir) {
+        entry.filesNote = filesNoteFallback(entry);
         entry.publicMetaLoaded = true;
         return entry;
       }
       try {
         const res = await fetch(siteBase() + dir + 'data.json', { cache: 'no-store' });
         if (!res.ok) {
+          entry.filesNote = filesNoteFallback(entry);
           entry.publicMetaLoaded = true;
           return entry;
         }
         const data = await res.json();
         applyPublicMetaFromData(entry, data);
       } catch (_) {
+        entry.filesNote = filesNoteFallback(entry);
         entry.publicMetaLoaded = true;
       }
       return entry;
@@ -3718,6 +3799,10 @@ FIND MANUAL <words> · BACK · RTFM returns to 0?0 manual`);
     entry.iniShowBadge = optIn && !(ini && ini.showBadge === false);
     entry.iniPageUrl = resolveIniPageUrl(ini);
     entry.iniProvenance = (ini && ini.provenance && typeof ini.provenance === 'object') ? ini.provenance : null;
+    const uxu = data.uxu || {};
+    entry.templateOf = uxu.templateOf ? String(uxu.templateOf) : (entry.templateOf || '');
+    entry.templateDepth = uxu.templateDepth != null ? uxu.templateDepth : entry.templateDepth;
+    entry.filesNote = mediaSourceFromData(entry, data);
     entry.archiveName = String(data.archiveName || '').trim();
     entry.artist = String(data.artist || '').trim();
     entry.curator = String(data.curator || '').trim();
@@ -4677,7 +4762,7 @@ README.md`;
 <p class="muted">Self-attestation — not a legal chain-of-custody certificate.</p>
 
 <h3>Provenance map</h3>
-<p>Type <code>MAP</code> (or F4) for the live commons tree: every registered archive under 0?0, with iNi opt-in and I page links where set. Inspect a row to read attested origin/custody fields.</p>
+<p>Type <code>MAP</code> (or <kbd>F4</kbd> on this console) for the live tree under <code>0?0.uXu.0000</code>. Each child has one <code>files:</code> line (catalog / streams). Inspect a row for the full URL and iNi fields. This is not CyberCat Sunflower <kbd>F5</kbd> (Ripple) — that deck is unchanged.</p>
 
 <h3>Read more</h3>
 <p>uXu commons: <a href="${UXU_SITE_URL}" target="_blank" rel="noopener" style="color:var(--cyan)">rasvibir.github.io/uXu</a></p>
@@ -4868,12 +4953,13 @@ INDEX ARCHIVE MANUALS · BACK · MANUAL · RTFM`);
       hideManualToolbar();
       setActiveNav("HELP");
       showOutput("HELP",
-`OPEN CYBERCAT     open archive by name (navigates)
+`OPEN CYBERCAT     open Sunflower deck
+DECK / CYBERCAT DECK   open Deck Builder (not Sunflower)
 OPEN              open currently selected archive
 LOAD 0001         load/open by id suffix
 GO CYBERCAT       alias for OPEN
 INDEX             list all archive ids
-MAP               provenance tree (commons + iNi cues)
+MAP               0?0 commons tree + iNi (F4 here; not Sunflower F5 Ripple)
 LOGS              show transparency logs
 RTFM              interactive 0?0 manual (about → ease → … → source)
 ABOUT             what uXu is (site · repo · app) · 0?0 archive interface
@@ -4928,6 +5014,16 @@ Keyboard
   /               command line · Esc back
   a r q c         account / registry / nav / command
   F1–F6           HELP INDEX MANUAL MAP LOGS SYSTEM`);
+      return;
+    }
+    if (cmd === "DECK" || cmd === "CYBERCAT DECK" || cmd === "OPEN DECK") {
+      const entry = findArchive('DECK_BUILDER') || findArchive('cybercat-deck-builder') || findArchive('deck-builder');
+      if (!entry) {
+        showOutput("ERROR", "CyberCat Deck Builder is not in the registry yet.");
+        return;
+      }
+      activateEntry(entry, { inspect: true });
+      if (canOpen(entry)) openEntry(entry);
       return;
     }
     if (cmd === "OPEN" || cmd === "GO" || cmd.startsWith("OPEN ") || cmd.startsWith("GO ") || cmd.startsWith("LOAD ")) {
