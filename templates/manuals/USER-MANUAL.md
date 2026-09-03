@@ -37,3 +37,7 @@ Declare manuals in `data.json` so 0?0 can find them:
 ## Keep It Friendly
 
 Write for visitors first. Link to deeper curator docs only if you need them.
+
+Repo software/docs: MIT (`LICENSE`). Media you link is not MIT-granted by uXu.
+On 0?0, **MAP** (F4) shows one `files:` line for your room when a catalog URL
+exists. iNi is optional honesty, not enforcement.

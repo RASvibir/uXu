@@ -28,10 +28,18 @@ Home path back to the commons: **← 0?0** / open the uXu landing.
 - F2 — Archive Log
 - F3 — Sys Config
 - F4 — This Manual
+- F5 — Ripple / catalog provenance (herd trail — **not** 0?0 MAP)
 - Enter — Engage selected tape
 - n / p — Next / previous track
 - o — Other Transfers modal
 - Escape — Close transfer modal (when open)
+- r — Ripple (same button; unchanged)
+
+## Files
+
+Streams resolve through the **Relisten** Grateful Dead catalog API, then
+**Internet Archive** transfers. On 0?0, **MAP** (F4 on the console) shows one
+`files:` line for this room. iNi fields in `data.json` are honesty, not a lock.
 
 ## Deck Surfaces
 

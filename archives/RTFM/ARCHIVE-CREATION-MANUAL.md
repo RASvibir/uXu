@@ -238,11 +238,15 @@ Public open may stop; the id and a marker remain so history stays pure.
 
 Relationships between archives can be declared with `*:*` (a link, not control).
 
+Operator **FLAG / LOCK / REMOVE** change the **registry marker** only. They do
+not rewrite another creator’s files. **MAP** `files:` is where catalogs come
+from; iNi is opt-in attestation.
+
 ## Legal Quick Rules
 
 - Share only what you may share (permission, license, or clear taping policy).
 - Prefer public libraries like Internet Archive when they already host the file.
-- uXu repo code/docs are **MIT**; media you link stays under **its** terms — registration does not transfer ownership.
+- uXu repo code/docs are **MIT** (`LICENSE`, including the media-scope note); media you link stays under **its** terms — registration does not transfer ownership.
 - Optional `uxu.ini` / iNi provenance documents origin honestly; it is not a title deed.
 - If unsure, ask the admin before publishing.
 

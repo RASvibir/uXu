@@ -35,12 +35,16 @@ ARCHIVE MANUALS   → search uxu.manuals on created archives
 ```text
 ABOUT
 CREATE ARCHIVE
+CYBERCAT DECK      ← Deck Builder (not Sunflower)
 FAQ
 ARCHIVE INDEX          ← keyboard land on boot
 USER OPTIONS ▸         ← Manual · Install · Map · Logs · System · Setup · Exit
 iNi Provenance
 RTFM
 ```
+
+On this console **F4** is **MAP** (commons tree, one `files:` line per child).
+CyberCat Sunflower **F5** is Ripple catalog trail — different surface; Ripple is unchanged.
 
 ## Keyboard (zones)
 

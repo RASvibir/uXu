@@ -22,8 +22,9 @@ This guide is for everyone. No coding required.
 2. **Open an archive** — select a row and press Enter, or click Open Archive.
 3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
 4. **Create your own archive** — `CREATE ARCHIVE` (or Create Archive). Name + description, save, confirm. Expand options only if you want them.
-5. **Try CyberCat Sunflower** — a full Grateful Dead listening deck (`OPEN CYBERCAT`).
-6. **Optional: iNi Provenance** — document origin, authorship, and custody if you want that authenticity layer. Notes: https://rasvibir.github.io/uXu (`INI SITE`). Paper trail: https://github.com/RASvibir/iNi.
+5. **Try CyberCat Sunflower** — Grateful Dead catalog (`OPEN CYBERCAT`). Files: Relisten catalog → Internet Archive transfers.
+6. **CyberCat Deck Builder** — Quick Nav **CYBERCAT DECK** or `DECK` — your files/links, not Sunflower’s index.
+7. **Optional: iNi Provenance** — origin/custody honesty (`INI`). Not enforcement. Notes: https://rasvibir.github.io/uXu (`INI SITE`). Paper trail: https://github.com/RASvibir/iNi.
 
 ## Finding Your Way (0?0)
 
@@ -35,8 +36,10 @@ This guide is for everyone. No coding required.
 - **F1** Help · **F2** Index · **F3** Manuals · **F4** Map · **F5** Logs · **F6** System
 - Long docs (ABOUT / RTFM / FAQ / iNi) open scrolled to the **top**
 
-Quick Nav (always visible): **ABOUT · CREATE · FAQ · ARCHIVE INDEX · USER OPTIONS · iNi Provenance · RTFM**  
+Quick Nav (always visible): **ABOUT · CREATE · CYBERCAT DECK · FAQ · ARCHIVE INDEX · USER OPTIONS · iNi Provenance · RTFM**  
 USER OPTIONS folds Manual Library, Install, Map, Logs, System, Setup Master, Exit.
+
+On 0?0, **F4** opens **MAP** (commons tree). On CyberCat Sunflower, **F5** is Ripple provenance (herd/catalog trail), not MAP.
 
 Useful commands:
 
@@ -51,7 +54,9 @@ RTFM
 MANUAL
 ARCHIVE MANUALS
 OPEN CYBERCAT
+DECK
 CREATE ARCHIVE
+MAP
 ```
 
 If you get lost, remember: searching for **0** or **?** always points back toward the center.
@@ -64,7 +69,9 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | **iNi Provenance** | Opt-in authenticity protocol · notes https://rasvibir.github.io/uXu · paper trail https://github.com/RASvibir/iNi |
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |
-| CyberCat Sunflower Manual | Listening / using that deck |
+| CyberCat Sunflower Manual | Listening / using that deck (F4 on the deck) |
+| CyberCat Deck Builder | F4 on that room · `DECK` from 0?0 |
+| Master Admin Guide | Operator succession + MONITOR / markers (not visitor required) |
 | Developers Handbook | Builders and coders |
 | Source Code Pamphlet | Curious readers who want a map of the repo |
 
@@ -146,10 +153,12 @@ You will get a human reply. There is no automated ticket maze.
 - Only share material you have the right to share.
 - Be kind in notes, titles, and contributions.
 - Archives stay independent — different looks and rules are normal.
+- The commons operator does **not** rewrite other people’s archive folders as curation. If something dangerous is reported, **MONITOR** alerts; **FLAG / LOCK / REMOVE** are at-will registry markers (ADMIN + SUDO), not an automatic cop.
 
 ## Next Steps
 
 - Curious listener → `OPEN CYBERCAT`, then read its Manual (F4 on that deck).
+- Make a deck → `DECK` / CYBERCAT DECK.
 - Ready to contribute → CREATE ARCHIVE or READ archive-creation.
 - Want provenance practice → **iNi Provenance** / `INI` · notes `INI SITE` → https://rasvibir.github.io/uXu · paper trail https://github.com/RASvibir/iNi.
 - Builder / coder → READ developers-handbook.

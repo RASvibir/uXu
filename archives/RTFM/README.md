@@ -15,16 +15,17 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 - **MANUAL LIBRARY** — pamphlet index on 0?0 (F3 / USER OPTIONS)
 - **User Guide** — browse, install public **uXu** app, commons links, reach admin
 - **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
-- **Master Admin Guide** — claim, seal, recovery email, optional 2FA (`SETUP MASTER`)
-- **CyberCat Sunflower Manual** — visitor / curator deck guide
+- **Master Admin Guide** — claim, seal, recovery, **MONITOR**, at-will **FLAG/LOCK/REMOVE** (`SETUP MASTER`)
+- **CyberCat Sunflower Manual** — visitor / curator deck guide (F4 on deck; F5 = Ripple trail, not 0?0 MAP)
 - **Developers Handbook** — builder / coder patterns
 - **Source Code Pamphlet** — repo map without secrets or operator internals
 - **00-RTFM.md** / **ABOUT.md** / **INI-PROVENANCE.md** — markdown twins of interactive panels
 
 Contact: https://github.com/RASvibir/uXu/issues
 
-**License:** MIT for software & original docs (`LICENSE`). Media linked by
-archives stays under its own terms — see root README.
+**License:** MIT for software & original docs (`LICENSE`, plus the scope note
+at the bottom of that file). Media linked by archives stays under its own
+terms — see root README.
 
 Templates: `/templates/` (commons-link snippet + fork policy + iNi fields).  
 Public invite PWA: **uXu** wordmark only (not branded as 0?0).

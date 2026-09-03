@@ -19,4 +19,5 @@ The how-to for new creators is **CREATE ARCHIVE** on 0?0 (opens the create templ
 ## Work on it later
 
 Edit `data.json` → `shows` (or clear and add his stuff).  
-Optional: update `manuals/USER-MANUAL.md` so visitors (when you choose to share) know what lives here.
+Optional: update `manuals/USER-MANUAL.md`. License for repo software is MIT
+(`LICENSE`); items you add keep their own terms.

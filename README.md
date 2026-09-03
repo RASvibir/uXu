@@ -17,8 +17,10 @@ Questions: [GitHub Issues](https://github.com/RASvibir/uXu/issues)
 | **uXu** (landing / PWA) | Public door into the commons |
 | **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
 | **iNi** | Independent opt-in provenance practice (self-attestation). Public notes: [rasvibir.github.io/uXu](https://rasvibir.github.io/uXu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
-| **CyberCat Sunflower** | First registered non-root archive (Grateful Dead deck) |
-| **RTFM** | Friendly manuals & reusable notes (`archives/RTFM/`) |
+| **CyberCat Sunflower** | Grateful Dead catalog deck (`OPEN CYBERCAT`) — Relisten → Internet Archive transfers |
+| **CyberCat Deck Builder** | Make a CyberCat deck (`DECK` / Quick Nav **CYBERCAT DECK**) — files you add, not Sunflower’s catalog |
+| **Ledger** | Private steward room (`OPEN LEDGER`) |
+| **RTFM** | Canonical friendly manuals (`archives/RTFM/` + 0?0 **RTFM**) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
 
 ## Canonical hierarchy
@@ -41,6 +43,8 @@ Title.uXu.NNNN
 - `NNNN` is the next free serial when an archive is created (`0000` root, `0001` first child, …).
 - Numbers are historical — not rank or ownership.
 - **Ids are forever.** Delete/lock/investigate change the **marker**, not the row. Examples: `(deleted by user)`, `(removed by admin)`, `(locked archive)`, `(under investigation)`, `(live archive)`, `(audience only)`.
+- **iNi / MAP are honesty, not enforcement.** Each MAP child has one `files:` line (where that room’s catalog/streams come from). Inspect shows the catalog URL.
+- **Operator tools are separate.** Admin **MONITOR** alerts (creates, contacts). **FLAG / LOCK / REMOVE / RESTORE** (ADMIN + SUDO) apply at the operator’s will to a selected row — not automatic, not a rewrite of someone else’s archive files. Other people’s rooms are not edited as curation; restrictions use registry markers.
 
 ## Commons link on archives
 
@@ -74,12 +78,14 @@ inline fallback — plus a conformant `data.json`, `data.schema.json`, and
 
 On the live console:
 
-- **ABOUT** / **RTFM** — 0?0 story and operator manual  
-- **iNi Provenance** — opt-in authenticity protocol · notes https://rasvibir.github.io/uXu (`INI SITE`) · paper trail https://github.com/RASvibir/iNi  
-- **USER OPTIONS** — Manual Library, Install, Map, Logs, System, …  
+- **ABOUT** / **RTFM** — canonical 0?0 how-to (tabs: About · Ease · Nav · Commands · Depth · Code · Source)  
+- **CYBERCAT DECK** / `DECK` — Deck Builder (not Sunflower)  
+- **iNi Provenance** — opt-in authenticity · `INI` / `INI SITE` · paper trail [RASvibir/iNi](https://github.com/RASvibir/iNi)  
+- **USER OPTIONS → PROVENANCE MAP** / `MAP` / **F4** — commons tree (not Sunflower **F5**, which is Ripple catalog trail)  
 - **CREATE ARCHIVE** — next serial + creation guide  
+- **MONITOR** — admin intake; **FLAG · LOCK · REMOVE · RESTORE** — admin + SUDO, at will  
 
-In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, …).
+In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, Master Admin Guide, …).
 
 ## Contributing
 
@@ -88,7 +94,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional te
 **Tests:** `npm test` runs the full node suite (syntax, smoke, token lint,
 generator, immutability, typecheck) — run it before shipping deck changes.
 
-**Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater. uXu and iNi are set up independently of each other as well: uXu is the commons; iNi is optional provenance practice.
+**Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater and not an enforcement engine. uXu and iNi are set up independently: uXu is the commons; iNi is optional provenance practice.
 
 ## License
 
@@ -105,7 +111,7 @@ generator, immutability, typecheck) — run it before shipping deck changes.
 
 ## Data & privacy
 
-Account-authenticated activity may be stored for authenticity. Users may request downloads of their own shared archive data after authentication. Admins do not casually browse private files; illegal or malicious material may be flagged and inspected under documented oversight (see User Guide).
+Account-authenticated activity may be stored for authenticity. Users may request downloads of their own shared archive data after authentication. The operator does not casually browse private files or rewrite other people’s archive folders. **MONITOR** surfaces creates and contact messages; **malice-hint** is an alert only. Restrictions or removals are **at-will markers** on the registry (`FLAG` / `LOCK` / `REMOVE` / `RESTORE`) after ADMIN + SUDO — see Master Admin Guide.
 
 ## Finding the center
 

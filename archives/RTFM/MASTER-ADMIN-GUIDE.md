@@ -110,7 +110,21 @@ If the master account is lost:
 | `RECOVERY ADD\|LIST\|REMOVE\|2FA` | Admin + SUDO |
 | `ASSUME MASTER` | Active recovery account |
 | `ACCOUNTS` | Admin + SUDO — private login email list |
+| `MONITOR` / `ALERTS` | Admin — intake (creates, contacts); `MONITOR ACK <id>` |
+| `FLAG` / `LOCK` / `REMOVE` / `RESTORE` `<id>` | Admin + SUDO — at-will registry marker (not auto; not editing other people’s files) |
 | `ARCHIVE CONTACT PENDING` / `APPROVE` / `DENY` | Admin + SUDO |
+
+## Monitor vs enforcement
+
+iNi and MAP do **not** police archives. **MONITOR** only alerts you (new rooms,
+contact / Message 0?0, optional malice-hint words). You act **at your will**:
+`SUDO`, then `FLAG` / `LOCK` / `REMOVE` / `RESTORE` on a selected id. Root
+`0?0.uXu.0000` cannot be marked. Registry reads no longer force known rooms
+back to LIVE, so a marker you set sticks. Other people’s archive folders are
+not rewritten as curation.
+
+Redeploy the API worker after pulling so `/api/admin/monitor` and
+`/api/admin/marker` exist.
 
 ## Accounts & email privacy
 

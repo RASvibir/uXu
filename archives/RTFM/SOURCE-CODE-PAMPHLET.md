@@ -109,4 +109,9 @@ not this library.
 ## License
 
 MIT for software and original documentation in this repository (`LICENSE`).
-Third-party media and linked assets keep their own licenses. See the root README.
+The file ends with a **scope note**: third-party media is not MIT-granted.
+See also the root README “License” section.
+
+Public conceptual endpoints include the usual `/api/root/*` reads. Operator
+intake (`/api/admin/monitor`, `/api/admin/marker`) is admin-session only and
+is not documented as a visitor how-to.

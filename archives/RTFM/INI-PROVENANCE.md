@@ -69,7 +69,13 @@ Typical fields (under `uxu.ini.provenance`):
 Opting in (`uxu.ini.optIn: true`) means: you have done this work seriously,
 and you accept the community’s expectations around authenticity and transparency.
 
-This is **self-attestation**, not a legal chain-of-custody certificate.
+This is **self-attestation**, not a legal chain-of-custody certificate, and **not
+enforcement**. 0?0 **MAP** (F4) is the commons tree: one `files:` line per
+archive. Inspect shows catalog URL and attested fields. CyberCat Sunflower
+**F5** is Ripple’s live catalog/herd trail — a different product.
+
+Operator **MONITOR** / **FLAG · LOCK · REMOVE** are separate: alerts and
+at-will registry markers, not iNi.
 
 ### iNi stamp → optional I page link
 

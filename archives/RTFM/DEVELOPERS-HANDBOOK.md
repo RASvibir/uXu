@@ -61,7 +61,10 @@ See Archive Creation Manual for the full tier tree. Quick map for builders:
 ## RTFM Contributions
 
 Add tagged markdown under `archives/RTFM/`, credit the source archive, keep
-licenses clear. Repo software/docs are MIT; media stays with its own terms.
+licenses clear. Repo software/docs are MIT (`LICENSE`, media-scope note at
+the end of that file); media stays with its own terms.
+Do not treat another person’s archive folder as yours to rewrite. Commons
+operator markers live on the registry, not in their files.
 Optional inspiration — never a rule book.
 
 ## Out Of Scope Here

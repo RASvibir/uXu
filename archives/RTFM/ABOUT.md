@@ -28,7 +28,7 @@ Inside the interface:
 
 - **Registry** — forever ids (`Title.uXu.NNNN`). Placemarkers keep history honest.
 - **Open** — enter archives that have a real page.
-- **Quick Nav** — ABOUT · CREATE · FAQ · ARCHIVE INDEX · USER OPTIONS · **iNi Provenance** · **RTFM**
+- **Quick Nav** — ABOUT · CREATE · **CYBERCAT DECK** · FAQ · ARCHIVE INDEX · USER OPTIONS · **iNi Provenance** · **RTFM**
 - **USER OPTIONS** — Manual Library, Install, Map, Logs, System, Setup Master, Exit
 - **Account gate** — optional; guests can browse.
 
@@ -36,7 +36,7 @@ Inside the interface:
 uXu  ← site · repo · app
 └── 0?0.uXu.0000  ← archive interface
     ├── Registry
-    ├── Quick Nav (ABOUT · FAQ · INDEX · USER OPTIONS · iNi · RTFM)
+    ├── Quick Nav (ABOUT · CREATE · DECK · FAQ · INDEX · USER OPTIONS · iNi · RTFM)
     ├── Transparency
     └── Relationships (*:*)
 ```

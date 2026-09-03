@@ -40,3 +40,7 @@ ARCHIVE MANUALS
 ## Keep it simple
 
 Tier 1 is enough. Search, custom players, and provenance can wait until you need them.
+
+License: uXu repo MIT (`LICENSE`). Practice items you put in `data.json` keep
+their own terms. `MAP` on 0?0 will show a `files:` line if you later add a
+public catalog URL.
