@@ -93,8 +93,12 @@
     }
     .topbar a:hover { background: var(--cyan); color: #041018; }
     .brand {
+      display: inline-flex; align-items: center; gap: .4rem;
       font-family: var(--display); font-size: .78rem; font-weight: 700;
       color: var(--amber); text-shadow: 0 0 12px rgba(255,210,74,.35);
+    }
+    .brand .bolt, .inline-bolt {
+      height: 1.2em; width: auto; display: inline-block; vertical-align: -0.2em; flex-shrink: 0;
     }
     .path { color: var(--muted); }
     .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; margin-right: 2.75rem; }
@@ -539,7 +543,7 @@
       <span id="ini-badge" class="ini-stamp" hidden title="iNi provenance (self-attested)" aria-label="iNi provenance"><span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span></span>
       <header class="topbar">
         <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
-        <span class="brand">CYBERCAT SUNFLOWER</span>
+        <span class="brand"><img class="bolt" src="archives/cybercat-bolt.png" alt="">CYBERCAT SUNFLOWER</span>
         <span class="path">FULL CATALOG · LIVE DECK</span>
         <span class="clock" id="live-clock">00:00:00</span>
       </header>

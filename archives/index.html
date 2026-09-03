@@ -1666,6 +1666,7 @@
               <div class="action-row" id="registry-actions" role="toolbar" aria-label="Archive actions">
                 <button type="button" class="ghost-btn accent" id="btn-open" disabled accesskey="o" title="Open (o)">Open Archive</button>
                 <button type="button" class="ghost-btn" id="btn-inspect" disabled title="Inspect selected archive">Inspect</button>
+                <button type="button" class="ghost-btn" id="btn-message" disabled title="Message 0?0 about this archive">Message 0?0</button>
                 <button type="button" class="ghost-btn" id="btn-create" accesskey="n" title="Create (n)">Create Archive</button>
                 <button type="button" class="ghost-btn" id="btn-install" hidden title="Install uXu (p)">Install uXu</button>
               </div>
@@ -1738,6 +1739,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
               <ul id="nav-list" role="menu" aria-label="Quick navigation">
                 <li data-cmd="ABOUT" tabindex="0">ABOUT</li>
                 <li data-cmd="CREATE" tabindex="0">CREATE ARCHIVE</li>
+                <li data-cmd="DECK" tabindex="0">CYBERCAT DECK</li>
                 <li data-cmd="FAQ" tabindex="0">FAQ</li>
                 <li data-cmd="INDEX" tabindex="0" class="active">ARCHIVE INDEX</li>
                 <li id="nav-user-toggle" class="nav-user-toggle" data-nav-toggle="user" tabindex="0" role="button" aria-expanded="false">USER OPTIONS ▸</li>
@@ -1843,6 +1845,7 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
   const navList = document.querySelector('#nav-list');
   const btnOpen = document.querySelector('#btn-open');
   const btnInspect = document.querySelector('#btn-inspect');
+  const btnMessage = document.querySelector('#btn-message');
   const btnCreate = document.querySelector('#btn-create');
   const btnInstall = document.querySelector('#btn-install');
   const LANDING_MANUAL_SLUG = 'user-guide';
@@ -2315,6 +2318,11 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     'CyberCat_MyTape.uXu.0005': 'CyberCat-My-Tape/index.html',
     'my-tape': 'CyberCat-My-Tape/index.html',
     'CyberCat My Tape': 'CyberCat-My-Tape/index.html',
+    'DECK_BUILDER.uXu.0006': 'CyberCat-Deck-Builder/index.html',
+    'CyberCat_Deck_Builder.uXu.0006': 'CyberCat-Deck-Builder/index.html',
+    'cybercat-deck-builder': 'CyberCat-Deck-Builder/index.html',
+    'deck-builder': 'CyberCat-Deck-Builder/index.html',
+    'CyberCat Deck Builder': 'CyberCat-Deck-Builder/index.html',
   };
 
   function siteBase(){
@@ -2390,7 +2398,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
         return false;
       }
     }
-    return /\.html?$/i.test(href) || href.includes('CyberCat-Sunflower') || href.includes('/Ledger/') || href.includes('/Starter/');
+    return /\.html?$/i.test(href) || href.includes('CyberCat-Sunflower') || href.includes('CyberCat-Deck-Builder') || href.includes('/Ledger/') || href.includes('/Starter/');
   }
 
   function isSelfHref(href){
@@ -2570,6 +2578,31 @@ Guests cannot open this room.`);
     return scored.length ? scored[0].e : null;
   }
 
+  function mergeLocalDeckCatalog() {
+    const extras = [
+      {
+        id: 'DECK_BUILDER.uXu.0006',
+        title: 'CyberCat Deck Builder',
+        slug: 'cybercat-deck-builder',
+        status: 'LIVE',
+        type: 'DECK',
+        path: 'CyberCat-Deck-Builder/index.html',
+        summary: 'Make a CyberCat deck: name, look, favicon, files or links, local download, optional Ripple. Send MESSAGE to 0?0 if something fails.',
+        updatedAt: 'local',
+        certainty: 'local',
+        unresolved: [],
+        parent: '0?0.uXu.0000',
+        iniOptIn: false,
+        publicMetaLoaded: true,
+        description: 'Visual CyberCat deck builder — separate from Sunflower.',
+        archiveName: 'CyberCat Deck Builder',
+      },
+    ];
+    extras.forEach((ex) => {
+      if (!registry.some((r) => r.id === ex.id || r.slug === ex.slug)) registry.push(ex);
+    });
+  }
+
   async function loadRegistry() {
     if (!API_BASE) {
       showOutput("ERROR", "API_BASE not configured.");
@@ -2605,6 +2638,7 @@ Guests cannot open this room.`);
         showCount: 0,
         archiveName: '',
       }));
+      mergeLocalDeckCatalog();
       refreshRegistryCount();
       renderRegistry();
       toast('Registry linked to Neon');
@@ -2612,7 +2646,10 @@ Guests cannot open this room.`);
       renderRegistry();
       enrichOpenableArchives();
     } catch (err) {
-      showOutput("ERROR", `Could not load registry from\n${API_BASE}/api/root/registry\n\n${err.message}`);
+      mergeLocalDeckCatalog();
+      refreshRegistryCount();
+      renderRegistry();
+      showOutput("ERROR", `Could not load Neon registry.\nLocal decks still listed.\n\n${err.message}`);
     }
   }
 

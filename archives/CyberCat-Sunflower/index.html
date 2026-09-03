@@ -93,8 +93,12 @@
     }
     .topbar a:hover { background: var(--cyan); color: #041018; }
     .brand {
+      display: inline-flex; align-items: center; gap: .4rem;
       font-family: var(--display); font-size: .78rem; font-weight: 700;
       color: var(--amber); text-shadow: 0 0 12px rgba(255,210,74,.35);
+    }
+    .brand .bolt, .inline-bolt {
+      height: 1.2em; width: auto; display: inline-block; vertical-align: -0.2em; flex-shrink: 0;
     }
     .path { color: var(--muted); }
     .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; margin-right: 2.75rem; }
@@ -601,7 +605,7 @@
       <header class="topbar">
         <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
         <a href="offline-player.html" title="Offline player — cached tapes &amp; local files">Offline Player</a>
-        <span class="brand">CYBERCAT SUNFLOWER</span>
+        <span class="brand"><img class="bolt" src="bolt.png" alt="">CYBERCAT SUNFLOWER</span>
         <span class="path">FULL CATALOG · LIVE DECK</span>
         <span class="clock" id="live-clock">00:00:00</span>
       </header>
@@ -719,6 +723,15 @@
 <script>
   const RELISTEN = 'https://api.relisten.net/api/v2/artists/grateful-dead';
   const API_BASE = 'https://rasvibir-api.chrf-podcast.workers.dev';
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+  function markCyberCat(s) {
+    return escapeHtml(s).replace(/CyberCat/gi, '<img class="bolt inline-bolt" src="bolt.png" alt="">$&');
+  }
   const MANUAL_FALLBACK = `# CyberCat Sunflower Manual
 
 ## First Ride
@@ -814,7 +827,7 @@ Ripple is a shared radio clock, not a popularity vote you control locally.
 Setlists keep the herd moving so the same songs do not loop endlessly.
 Key R toggles Ripple when the catalog is ready.`;
 
-  document.getElementById('specs-block').textContent =
+  document.getElementById('specs-block').innerHTML = markCyberCat(
 `===================================================================
 uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 ===================================================================
@@ -827,7 +840,7 @@ uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
 [+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0002
 ${SPECS_RIPPLE}
 Lookup tip: date + venue on the deck is enough to research any tape.
-Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
+Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`);
 
   setInterval(() => {
     document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
@@ -2410,7 +2423,7 @@ async function engageShow(show, opts = {}) {
   }
 
   fetch('data.json').then((r) => r.json()).then((data) => {
-    document.getElementById('manifesto-text-block').textContent =
+    document.getElementById('manifesto-text-block').innerHTML = markCyberCat(
 `--- CYBERCAT SUNFLOWER · FULL CATALOG ---
 
 ${(data.description || '').toUpperCase()}
@@ -2422,7 +2435,7 @@ DEFAULT: BEST WAVEFORM (SBD → REMASTER → RATING)
 ALTERNATES: OTHER TRANSFERS BUTTON
 
 Engage a date from the tapes index. Cue any song from the setlist.
-Date + venue on the deck is enough to look a tape up elsewhere.`;
+Date + venue on the deck is enough to look a tape up elsewhere.`);
 
     const ini = data.uxu && data.uxu.ini;
     const badge = document.getElementById('ini-badge');
@@ -2475,8 +2488,8 @@ Date + venue on the deck is enough to look a tape up elsewhere.`;
       }
     }
   }).catch(() => {
-    document.getElementById('manifesto-text-block').textContent =
-      'CyberCat Sunflower full Grateful Dead catalog.';
+    document.getElementById('manifesto-text-block').innerHTML =
+      markCyberCat('CyberCat Sunflower full Grateful Dead catalog.');
   });
 
   loadCatalog().catch((err) => {

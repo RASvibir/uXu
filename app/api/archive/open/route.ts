@@ -6,7 +6,8 @@ export const runtime = 'nodejs';
 const ARCHIVES_DIR = path.resolve(process.cwd(), 'archives');
 
 const ALIASES: Record<string, string> = {
-  'cybercat-sunflower': 'CyberCat-Sunflower',
+  'cybercat-deck-builder': 'CyberCat-Deck-Builder',
+  'deck-builder': 'CyberCat-Deck-Builder',
   'cybercat-generic': 'CyberCat-Generic',
   'cybercat-mytape': 'CyberCat-My-Tape',
   'my-tape': 'CyberCat-My-Tape',

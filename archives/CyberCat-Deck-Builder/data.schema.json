@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "uXu archive data.json",
+  "type": "object",
+  "required": ["archiveName"],
+  "properties": {
+    "archiveName": { "type": "string" },
+    "artist": { "type": "string" },
+    "curator": { "type": "string" },
+    "description": { "type": "string" },
+    "uxu": {
+      "type": "object",
+      "description": "Commons automations and template-fork policy",
+      "properties": {
+        "homeLink": {
+          "type": "object",
+          "properties": {
+            "style": {
+              "type": "string",
+              "enum": ["uXu", "0?0"],
+              "description": "uXu = public site chip (invite/ad style). 0?0 = console back-link for people already inside."
+            },
+            "label": {
+              "type": "string",
+              "description": "Optional override text (defaults: 'uXu' or '← 0?0')"
+            },
+            "href": {
+              "type": "string",
+              "default": "../index.html",
+              "description": "Relative path to the uXu landing page"
+            }
+          }
+        },
+        "allowTemplateForks": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, others may fork this archive as a starter template"
+        },
+        "templateForkDepth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8,
+          "default": 1,
+          "description": "How deep forks of forks may go. 0 = no forks. 1 = direct forks only. 2+ = nested."
+        },
+        "templateOf": {
+          "type": ["string", "null"],
+          "description": "Archive id this was forked from, if any"
+        },
+        "templateDepth": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Depth of this archive in a fork chain (0 = original)"
+        },
+        "manuals": {
+          "type": "array",
+          "description": "User-facing manuals for this archive. 0?0 discovers these via INDEX ARCHIVE MANUALS / ARCHIVE MANUALS search.",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Relative path to a markdown/html manual (title derived from filename)"
+              },
+              {
+                "type": "object",
+                "required": ["path"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "path": {
+                    "type": "string",
+                    "description": "Path relative to the archive folder (e.g. manuals/USER-MANUAL.md)"
+                  },
+                  "description": { "type": "string" }
+                }
+              }
+            ]
+          }
+        },
+        "tags": {
+          "type": "array",
+          "description": "Collective tags. Prefer existing commons tags (same slug links); only create when needed.",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "slug": { "type": "string" }
+                }
+              }
+            ]
+          }
+        },
+        "contactEmail": {
+          "type": ["string", "null"],
+          "description": "Optional steward contact. Prefer setting via 0?0 ARCHIVE CONTACT (DB). If present in data.json, treat as a hint — public display still follows contactEmailPublic + admin approval for public holder changes."
+        },
+        "contactEmailPublic": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, steward contact may be shown publicly after admin approval via ARCHIVE CONTACT."
+        },
+        "ini": {
+          "type": "object",
+          "description": "Optional iNi provenance opt-in. Community: https://rasvibir.github.io/uXu — see archives/RTFM/INI-PROVENANCE.md",
+          "properties": {
+            "optIn": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true, creator attests provenance fields and accepts iNi community expectations"
+            },
+            "tag": {
+              "type": "string",
+              "default": "iNi",
+              "description": "Display tag when opted in"
+            },
+            "iPage": {
+              "type": ["string", "null"],
+              "description": "I page slug (e.g. victor-birkle) or full URL. Used only when badgeLinksToIPage is true."
+            },
+            "showBadge": {
+              "type": "boolean",
+              "default": true,
+              "description": "If true (and optIn), archives may showcase the iNi provenance verification badge. Set false to opt in without displaying the badge."
+            },
+            "badgeLinksToIPage": {
+              "type": "boolean",
+              "default": false,
+              "description": "If true (and optIn + iPage), the iNi badge links to the steward's I page. Independent of showing a non-linking badge."
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "origin": { "type": "string" },
+                "authors": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "custody": { "type": "string" },
+                "lineage": { "type": "string" },
+                "conditions": { "type": "string" },
+                "attestedAt": {
+                  "type": ["string", "null"],
+                  "description": "ISO date or null when not yet attested"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "shows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string" },
+          "venue": { "type": "string" },
+          "title": { "type": "string" },
+          "setlist": { "type": "array", "items": { "type": "string" } },
+          "audioSources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "archiveOrgId": { "type": "string" },
+                "url": { "type": "string" },
+                "sourceType": { "type": "string" },
+                "label": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "description": "Generic non-show items (optional alternative to shows)"
+    }
+  }
+}
