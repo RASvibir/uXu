@@ -1602,6 +1602,7 @@
                 <div><dt>User</dt><dd id="user-label">GUEST</dd></div>
                 <div><dt>Name</dt><dd id="account-label">—</dd></div>
                 <div><dt>Sudo</dt><dd id="sudo-label">OFF</dd></div>
+                <div id="monitor-row" hidden><dt>Monitor</dt><dd id="monitor-label">—</dd></div>
               </dl>
             </div>
             <div class="box">
@@ -2190,6 +2191,34 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     document.getElementById('sudo-label').textContent = sudo ? 'ON' : 'OFF';
     document.getElementById('mode-label').textContent = authState.mode || (sudo ? 'ADMIN' : (role === 'GUEST' ? 'COMMAND' : 'USER'));
     btnSignOut.disabled = role === 'GUEST';
+    const monitorRow = document.getElementById('monitor-row');
+    if (monitorRow) monitorRow.hidden = role !== 'ADMIN';
+  }
+
+  let lastMonitorUnseen = -1;
+
+  async function peekMonitor() {
+    const monitorLabel = document.getElementById('monitor-label');
+    if ((authState.role || 'GUEST') !== 'ADMIN') {
+      if (monitorLabel) monitorLabel.textContent = '—';
+      lastMonitorUnseen = -1;
+      return null;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/monitor`, { headers: authHeaders() });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `monitor ${res.status}`);
+      const unseen = Number(data.unseen) || 0;
+      if (monitorLabel) monitorLabel.textContent = unseen ? `${unseen} unseen` : 'clear';
+      if (unseen && unseen !== lastMonitorUnseen) {
+        toast(`monitor: ${unseen} alert${unseen === 1 ? '' : 's'} · type MONITOR`);
+      }
+      lastMonitorUnseen = unseen;
+      return data;
+    } catch {
+      if (monitorLabel) monitorLabel.textContent = 'offline';
+      return null;
+    }
   }
 
   async function refreshAuth(){
@@ -2220,6 +2249,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
       if (!authState.sudo) setSudo(false);
       paintAuth();
       await refreshStewardAccess();
+      await peekMonitor();
       return authState;
     } catch (err) {
       toast(`auth check failed: ${err.message}`);
@@ -3518,7 +3548,8 @@ iNi opted-in: ${iniCount} · complete: ${completeCount} · I pages: ${iPageCount
 Inspect a row for catalog URL, origin, and custody.
 Type INI · INI SITE · READ ini-provenance for the guide.
 
-Master admin crown is operator succession — separate from iNi stamps.`);
+Master admin crown is operator succession — separate from iNi stamps.
+iNi / MAP are honesty. MONITOR alerts you; FLAG·LOCK·REMOVE are your will (SUDO).`);
   }
 
   function setUserOptionsOpen(open) {
@@ -4986,6 +5017,8 @@ CHANGE EMAIL …    change login email (OTP to current inbox)
 SIGNOUT
 WHOAMI
 ACCOUNTS          admin+SUDO: list login emails (private)
+MONITOR           admin: intake alerts (creates, contacts) — not auto-enforcement
+FLAG / LOCK / REMOVE / RESTORE   admin+SUDO: marker one archive at your will
 ARCHIVE CONTACT … set / approve archive holder emails
 SUDO              elevate ADMIN session
 UNSUDO            drop elevation
@@ -5449,6 +5482,82 @@ ${data.visibility ? `visibility: ${data.visibility}` : ''}`);
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
         showOutput("ARCHIVE CONTACT", data.message);
+      }).catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "MONITOR" || cmd === "ALERTS") {
+      if (authState.role !== 'ADMIN') {
+        showOutput("ERROR", "MONITOR is admin-only");
+        return;
+      }
+      showOutput("MONITOR", "loading operator alerts...");
+      peekMonitor().then((data) => {
+        if (!data) {
+          showOutput("MONITOR", "could not reach /api/admin/monitor — deploy the worker with this route.");
+          return;
+        }
+        const rows = data.alerts || [];
+        showOutput("MONITOR",
+`Operator inbox — alerts only. Nothing auto-locks.
+iNi provenance is not this. Act at your will: SUDO then FLAG / LOCK / REMOVE / RESTORE <id>
+
+unseen: ${data.unseen || 0}
+
+${rows.length
+  ? rows.map((a) => {
+      const seen = a.seen_at ? 'seen' : 'NEW';
+      const when = a.created_at ? String(a.created_at).slice(0, 19) : '';
+      return `#${a.id} [${seen}] ${a.kind}  ${a.archive_id || '—'}\n  ${a.summary || ''}\n  ${when}${a.detail ? `\n  ${String(a.detail).slice(0, 180)}` : ''}`;
+    }).join('\n\n')
+  : 'no alerts yet — creates and Message 0?0 / contact posts land here.'}
+
+MONITOR ACK <id>   mark one seen`);
+      });
+      return;
+    }
+    if (cmd.startsWith("MONITOR ACK ")) {
+      if (authState.role !== 'ADMIN') {
+        showOutput("ERROR", "MONITOR is admin-only");
+        return;
+      }
+      const id = cmdRaw.trim().split(/\s+/)[2];
+      fetch(`${API_BASE}/api/admin/monitor`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ id: Number(id) }),
+      }).then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+        await peekMonitor();
+        showOutput("MONITOR", `alert #${id} marked seen`);
+      }).catch((err) => showOutput("ERROR", err.message));
+      return;
+    }
+    if (cmd === "FLAG" || cmd.startsWith("FLAG ") || cmd === "LOCK" || cmd.startsWith("LOCK ")
+      || cmd === "REMOVE" || cmd.startsWith("REMOVE ") || cmd === "RESTORE" || cmd.startsWith("RESTORE ")) {
+      const verb = cmd.split(/\s+/)[0];
+      const rest = cmdRaw.trim().replace(/^(FLAG|LOCK|REMOVE|RESTORE)\s+/i, '').trim();
+      const archiveId = rest.split(/\s+/)[0] || (selected && selected.id) || '';
+      const note = rest.slice(archiveId.length).trim();
+      if (!archiveId) {
+        showOutput("ERROR", "usage: FLAG|LOCK|REMOVE|RESTORE <archiveId> [note]\nRequires ADMIN + SUDO. Select a row or pass the id. Root cannot be marked.");
+        return;
+      }
+      if (authState.role !== 'ADMIN' || !authState.sudo) {
+        showOutput("ERROR", "FLAG / LOCK / REMOVE / RESTORE need ADMIN + SUDO");
+        return;
+      }
+      showOutput(verb, `${verb} ${archiveId}...`);
+      fetch(`${API_BASE}/api/admin/marker`, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ archiveId, verb, note }),
+      }).then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `failed (${res.status})`);
+        toast(`${data.record?.status || verb} · ${archiveId}`);
+        showOutput(verb, `${data.record?.id} → ${data.record?.status}\nReload INDEX / MAP to see the marker.`);
+        loadRegistry();
       }).catch((err) => showOutput("ERROR", err.message));
       return;
     }

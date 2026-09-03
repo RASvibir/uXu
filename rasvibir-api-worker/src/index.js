@@ -99,6 +99,18 @@ async function ensureDbInit(sql) {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS admin_alerts (
+        id SERIAL PRIMARY KEY,
+        kind VARCHAR(50) NOT NULL,
+        archive_id VARCHAR(100),
+        summary TEXT NOT NULL,
+        detail TEXT,
+        seen_at TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      )
+    `;
+
     // 1. Master Admin Account Setup
     const masterEmail = 'puffintuffest@gmail.com';
     const masterUsers = await sql`SELECT id FROM neon_auth.users WHERE lower(email) = lower(${masterEmail})`;
@@ -198,27 +210,27 @@ async function handleRegistry(sql) {
   try {
     await sql`
       UPDATE archive_records
-      SET sequence = 1, title = '0?0', archive = '0?0', slug = 'root-console', status = 'LIVE', path = '/archives/index.html', kind = 'console', type = 'console', holder_handle = 'RAS.ip'
+      SET sequence = 1, title = '0?0', archive = '0?0', slug = 'root-console', path = '/archives/index.html', kind = 'console', type = 'console', holder_handle = 'RAS.ip'
       WHERE id = '0?0.uXu.0000' OR slug = 'root-console' OR slug = '0-0-root-console'
     `;
     await sql`
       UPDATE archive_records
-      SET sequence = 2, title = 'Ledger', archive = 'Ledger', slug = 'ledger', status = 'LIVE', path = '/archives/Ledger/index.html', kind = 'private', type = 'private', holder_handle = 'RAS.ip'
+      SET sequence = 2, title = 'Ledger', archive = 'Ledger', slug = 'ledger', path = '/archives/Ledger/index.html', kind = 'private', type = 'private', holder_handle = 'RAS.ip'
       WHERE id = 'Ledger.uXu.0001' OR slug = 'ledger'
     `;
     await sql`
       UPDATE archive_records
-      SET id = 'CyberCat_Sunflower.uXu.0002', sequence = 3, title = 'CyberCat Sunflower', archive = 'CyberCat Sunflower', slug = 'cybercat-sunflower', status = 'LIVE', path = '/archives/CyberCat-Sunflower/index.html', kind = 'deck', type = 'deck', holder_handle = 'RAS.ip'
+      SET id = 'CyberCat_Sunflower.uXu.0002', sequence = 3, title = 'CyberCat Sunflower', archive = 'CyberCat Sunflower', slug = 'cybercat-sunflower', path = '/archives/CyberCat-Sunflower/index.html', kind = 'deck', type = 'deck', holder_handle = 'RAS.ip'
       WHERE id = 'CyberCat_Sunflower.uXu.0002' OR id = 'CyberCat_Sunflower.uXu.0001' OR slug = 'cybercat-sunflower'
     `;
     await sql`
       INSERT INTO archive_records (id, sequence, title, archive, slug, status, path, kind, type, holder_handle)
       VALUES ('RTFM.uXu.0003', 4, 'RTFM', 'RTFM', 'rtfm', 'LIVE', '/archives/RTFM/index.html', 'library', 'library', 'RAS.ip')
-      ON CONFLICT (id) DO UPDATE SET sequence = 4, title = 'RTFM', archive = 'RTFM', slug = 'rtfm', status = 'LIVE', path = '/archives/RTFM/index.html', kind = 'library', type = 'library', holder_handle = 'RAS.ip'
+      ON CONFLICT (id) DO UPDATE SET sequence = 4, title = 'RTFM', archive = 'RTFM', slug = 'rtfm', path = '/archives/RTFM/index.html', kind = 'library', type = 'library', holder_handle = 'RAS.ip'
     `;
     await sql`
       UPDATE archive_records
-      SET id = 'Starter.uXu.0004', sequence = 5, title = 'Starter', archive = 'Starter', slug = 'starter', status = 'LIVE', path = '/archives/Starter/index.html', kind = 'template', type = 'template', holder_handle = 'RAS.ip'
+      SET id = 'Starter.uXu.0004', sequence = 5, title = 'Starter', archive = 'Starter', slug = 'starter', path = '/archives/Starter/index.html', kind = 'template', type = 'template', holder_handle = 'RAS.ip'
       WHERE id = 'Starter.uXu.0004' OR id = 'Starter.uXu.0003' OR slug = 'starter'
     `;
     await sql`
@@ -570,6 +582,82 @@ async function handleAudit(sql, request, ctx) {
   }
 }
 
+function maliceHint(text) {
+  const t = String(text || '').toLowerCase();
+  return /\b(malware|phishing|exploit|ransomware|credential.?dump|password.?list|csam|child.?sex)\b/.test(t);
+}
+
+async function insertAdminAlert(sql, { kind, archiveId, summary, detail }) {
+  try {
+    await sql`
+      INSERT INTO admin_alerts (kind, archive_id, summary, detail)
+      VALUES (${kind}, ${archiveId || null}, ${summary}, ${detail || null})
+    `;
+  } catch (err) {
+    console.error('admin alert insert failed', err);
+  }
+}
+
+async function handleAdminMonitor(sql, request, ctx) {
+  if (!ctx.session || ctx.session.role !== 'ADMIN') {
+    return json({ error: 'forbidden: admin only' }, 403);
+  }
+  if (request.method === 'POST') {
+    const body = await request.json().catch(() => ({}));
+    const id = Number(body.id);
+    if (!id) return json({ error: 'id required' }, 400);
+    await sql`UPDATE admin_alerts SET seen_at = NOW() WHERE id = ${id}`;
+    return json({ status: 'ok', id, seen: true });
+  }
+  const alerts = await sql`
+    SELECT id, kind, archive_id, summary, detail, seen_at, created_at
+    FROM admin_alerts
+    ORDER BY created_at DESC
+    LIMIT 40
+  `;
+  const unseen = alerts.filter((a) => !a.seen_at).length;
+  return json({ status: 'ok', unseen, alerts });
+}
+
+async function handleAdminMarker(sql, request, ctx) {
+  if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
+  if (!ctx.session || ctx.session.role !== 'ADMIN' || !ctx.session.sudo) {
+    return json({ error: 'forbidden: ADMIN + SUDO' }, 403);
+  }
+  const body = await request.json().catch(() => ({}));
+  const archiveId = String(body.archiveId || '').trim();
+  const verb = String(body.verb || body.status || '').trim().toUpperCase();
+  const note = String(body.note || '').trim();
+  const map = {
+    FLAG: 'UNDER_INVESTIGATION',
+    INVESTIGATE: 'UNDER_INVESTIGATION',
+    LOCK: 'LOCKED',
+    REMOVE: 'REMOVED',
+    LIVE: 'LIVE',
+    RESTORE: 'LIVE',
+  };
+  const status = map[verb] || (['LIVE', 'LOCKED', 'UNDER_INVESTIGATION', 'REMOVED'].includes(verb) ? verb : '');
+  if (!archiveId || !status) {
+    return json({ error: 'usage: FLAG|LOCK|REMOVE|RESTORE <archiveId>' }, 400);
+  }
+  if (archiveId === '0?0.uXu.0000') {
+    return json({ error: 'cannot marker the root console' }, 400);
+  }
+  const rows = await sql`UPDATE archive_records SET status = ${status} WHERE id = ${archiveId} RETURNING id, status, title`;
+  if (!rows.length) return json({ error: 'archive not found' }, 404);
+  await sql`
+    INSERT INTO transparency_logs (action, actor_email, details)
+    VALUES ('ADMIN_MARKER', ${ctx.session.email}, ${JSON.stringify({ archiveId, status, note })})
+  `;
+  await insertAdminAlert(sql, {
+    kind: 'marker',
+    archiveId,
+    summary: `${status} · ${rows[0].title || archiveId}`,
+    detail: note || `operator ${verb}`,
+  });
+  return json({ status: 'ok', record: rows[0] });
+}
+
 async function handleAccounts(sql, request, ctx) {
   if (!ctx.session) return json({ error: 'unauthorized' }, 401);
   if (ctx.session.role !== 'ADMIN' || !ctx.session.sudo) {
@@ -620,6 +708,13 @@ async function handleArchiveCreate(sql, request, ctx) {
       VALUES (${archiveId}, ${nextSeq}, ${title}, ${title}, ${slug}, 'LIVE', ${holderUserId}, ${holderHandle}, ${path}, ${kind}, ${type})
     `;
 
+    await insertAdminAlert(sql, {
+      kind: 'create',
+      archiveId,
+      summary: `new archive ${archiveId}`,
+      detail: `holder ${holderHandle || holderUserId}`,
+    });
+
     return json({
       status: 'ok',
       record: {
@@ -669,6 +764,14 @@ async function handleArchiveContact(sql, request, ctx, archiveId) {
       INSERT INTO archive_contacts (archive_id, requester_email, message)
       VALUES (${archiveId}, ${email}, ${message})
     `;
+
+    const hint = maliceHint(message);
+    await insertAdminAlert(sql, {
+      kind: hint ? 'malice-hint' : 'contact',
+      archiveId,
+      summary: hint ? `contact (watch) · ${archiveId}` : `contact · ${archiveId}`,
+      detail: String(message).slice(0, 400),
+    });
 
     return json({ status: 'ok', message: 'contact request sent to holder' });
   }
@@ -736,6 +839,8 @@ export default {
       if (pathname === '/api/auth/unsudo') return handleUnsudo(sql, request, ctx);
       if (pathname === '/api/auth/audit') return handleAudit(sql, request, ctx);
       if (pathname === '/api/auth/accounts') return handleAccounts(sql, request, ctx);
+      if (pathname === '/api/admin/monitor') return handleAdminMonitor(sql, request, ctx);
+      if (pathname === '/api/admin/marker') return handleAdminMarker(sql, request, ctx);
 
       if (pathname === '/api/auth/change-email/status' || pathname === '/api/auth/change-email/request' || pathname === '/api/auth/change-email/confirm') {
         return json({ status: 'ok', message: 'email change system operational' });
