@@ -21,15 +21,20 @@ uXu/
     index.html        0?0 root CRT console + uXu invite PWA hooks
     manifest.webmanifest / sw.js / icons/   public uXu install (landing only)
     CyberCat-Sunflower/
+    CyberCat-Deck-Builder/  visual builder; unique names per device
     RTFM/             manuals & reusable notes
     seed-13/          additional archive seed
-  apps/ini/           runtime Worker (API) + Prisma schema
+  rasvibir-api-worker/  production API Worker
+  apps/ini/           older runtime notes (may lag)
   templates/          optional starter HTML / JSON + home-link snippet
   docs/runtime/       runtime layout notes
 ```
 
 GitHub Pages publishes the `archives/` tree as the public site root.
-The Cloudflare Worker under `apps/ini` answers JSON API routes used by the console.
+The production JSON API is the Worker under `rasvibir-api-worker/`
+(older `apps/ini/` is leftover runtime notes). Keep RTFM markdown in git
+in sync with what you want people to read; seeded `manual_pages` in the
+database can lag until the worker is redeployed.
 The installable **uXu** PWA is a public invite into that landing — it does not
 present as 0?0; 0?0 is the console identity once you are inside.
 
@@ -51,12 +56,10 @@ Markdown pamphlets and code notes. Not a standard — optional inspiration.
 Interactive copies of selected manuals are also stored in the database table
 manual_pages and served through the Worker manuals endpoints.
 
-## Runtime App (apps/ini/)
+## Runtime App
 
-- src/index.js — Worker entry: root/registry/manuals/logs/provenance/system
-  and account-related routes
-- prisma/schema.prisma — describes tables such as archive_records and manual_pages
-- wrangler.toml — Worker project name and non-secret public config
+Live API: `rasvibir-api-worker/src/index.js` (deploy with Wrangler).
+`apps/ini/` is older operator notes and may lag the production worker.
 
 Public conceptual endpoints (no auth required for reading):
 
@@ -89,7 +92,8 @@ Browser (Pages)
       → Worker /api/root/manuals   → Neon manual_pages
   → CyberCat-Sunflower/index.html
       → catalog APIs / archive media
-      → optional manuals fetch by slug
+  → CyberCat-Deck-Builder/index.html
+      → local library (unique names) · isolated uxu_deck_DECK_BUILDER_* storage
 ```
 
 ## Building Locally (Idea Level)
@@ -98,6 +102,7 @@ Browser (Pages)
 2. Open archives/index.html or CyberCat via a static server.
 3. For API work, run the Worker with your own local env — never commit secrets.
 4. Prefer editing archive HTML/JSON in place; keep manuals mirrored in RTFM.
+   Do not rewrite other people’s archive folders as curation.
 
 ## Redaction Promise
 

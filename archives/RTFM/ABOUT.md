@@ -48,6 +48,7 @@ On the interface: boot lands on Quick Nav · `↑↓` move · `Enter` run ·
 toggle registry table ↔ actions ·
 click a panel to adopt it as the keyboard highlight · `r` registry ·
 `q` Quick Nav · `/` command · `a` account · `?` map.
+Copy highlighted text with ⌘C / Ctrl+C or right-click Copy.
 Long docs open at the **top**.
 
 ## iNi (opt-in provenance)
@@ -88,6 +89,7 @@ Human contact: [GitHub Issues](https://github.com/RASvibir/uXu/issues).
 - Repository software and original docs: **MIT** — see root `LICENSE`.
 - Third-party media linked by archives: not owned by uXu; keep source terms.
 - Registration ≠ ownership. Optional **iNi** provenance is self-attestation.
+- Deck Builder names on one device cannot repeat (`deck exists`).
 
 **Live:** https://rasvibir.github.io/uXu/  
 **Repo:** https://github.com/RASvibir/uXu

@@ -35,7 +35,7 @@ ARCHIVE MANUALS   → search uxu.manuals on created archives
 ```text
 ABOUT
 CREATE ARCHIVE
-CYBERCAT DECK      ← Deck Builder (not Sunflower)
+CYBERCAT DECK      ← Deck Builder (not Sunflower; unique names on this device)
 FAQ
 ARCHIVE INDEX          ← keyboard land on boot
 USER OPTIONS ▸         ← Manual · Install · Map · Logs · System · Setup · Exit
@@ -56,6 +56,8 @@ Zones (Tab)   nav → registry → command → account
               registry table ↔ actions toolbar
 Click         mouse adopts that zone as keyboard highlight
 Jump          q nav · r registry · c|/ command · a account
+Copy          highlight then ⌘C / Ctrl+C or right-click Copy
+              (letter jumps wait while a highlight or chord is active)
 ```
 
 ## Redaction

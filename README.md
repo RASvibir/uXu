@@ -18,7 +18,7 @@ Questions: [GitHub Issues](https://github.com/RASvibir/uXu/issues)
 | **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
 | **iNi** | Independent opt-in provenance practice (self-attestation). Public notes: [rasvibir.github.io/uXu](https://rasvibir.github.io/uXu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
 | **CyberCat Sunflower** | Grateful Dead catalog deck (`OPEN CYBERCAT`) — Relisten → Internet Archive transfers |
-| **CyberCat Deck Builder** | Make a CyberCat deck (`DECK` / Quick Nav **CYBERCAT DECK**) — files you add, not Sunflower’s catalog |
+| **CyberCat Deck Builder** | Make a CyberCat deck (`DECK`) — your files/links. Names unique on this device (`deck exists` if repeated). Examples: antelope, ur mom, bout treefiddy. Bolt is a small wordmark, not the favicon. Not Sunflower’s catalog. |
 | **Ledger** | Private steward room (`Ledger.uXu.0001`, `OPEN LEDGER`) |
 | **RTFM** | Canonical friendly manuals (`archives/RTFM/` + 0?0 **RTFM**) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
@@ -85,7 +85,7 @@ inline fallback — plus a conformant `data.json`, `data.schema.json`, and
 On the live console:
 
 - **ABOUT** / **RTFM** — canonical 0?0 how-to (tabs: About · Ease · Nav · Commands · Depth · Code · Source)  
-- **CYBERCAT DECK** / `DECK` — Deck Builder (not Sunflower)  
+- **CYBERCAT DECK** / `DECK` — Deck Builder (not Sunflower). Unique names on this device. 
 - **iNi Provenance** — opt-in authenticity · `INI` / `INI SITE` · paper trail [RASvibir/iNi](https://github.com/RASvibir/iNi)  
 - **USER OPTIONS → PROVENANCE MAP** / `MAP` / **F4** — commons tree (not Sunflower **F5**, which is Ripple catalog trail)  
 - **CREATE ARCHIVE** — next serial + creation guide  
@@ -108,7 +108,7 @@ generator, Sunflower immutability, route typecheck). Browser checks skip if Chro
 
 **Media clarification (not a second license):**
 
-- The MIT grant covers code, templates, and original docs in this repo, including the **0?0** console and API worker source as shipped here.
+- The MIT grant covers code, templates, and original docs in this repo, including the **0?0** console, CyberCat Deck Builder UI, and API worker source as shipped here.
 - It does **not** claim ownership of third-party media, recordings, or other assets linked or embedded by independent archives.
 - Those remain under their own licenses, permissions, and taping policies (e.g. Internet Archive items, Grateful Dead taping tradition).
 - **uXu is a commons layer for registration and discovery** — not a rights holder for contributor content.

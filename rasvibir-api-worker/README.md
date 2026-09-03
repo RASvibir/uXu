@@ -6,7 +6,8 @@ Cloudflare Worker API backend with CORS handling and Neon PostgreSQL authenticat
 
 - ✅ CORS preflight (`OPTIONS`) handling — returns `204 No Content` with proper headers
 - ✅ CORS headers appended to all outgoing responses
-- ✅ `POST /api/auth/login` — parses JSON body, queries Neon DB, verifies credentials, returns session token
+- ✅ `POST /api/auth/signup` and `POST /api/auth/login` — 0?0 account sessions
+- ✅ `GET /api/admin/monitor` — 401 without a session; 403 if not ADMIN
 - ✅ Hyperdrive integration for connection pooling (recommended) or `DATABASE_URL` secret fallback
 - ✅ `GET /api/health` — health check endpoint
 

@@ -18,7 +18,7 @@ That command refreshes a live checklist. This page is the same path in prose.
 
 ## Before You Start
 
-- You can sign up on 0?0.
+- You can sign up on 0?0 (`SIGNUP` / Sign Up → API worker).
 - Wrangler secret `ADMIN_BOOTSTRAP_SECRET` is set (for empty-throne claim only).
 - Optional but wise: `MASTER_ADMIN_EMAIL` locked to your primary email.
 - A **second email** ready for recovery (different inbox).
@@ -66,7 +66,7 @@ Recovery must be a **different email** than master.
 
 ## Step 4 — Optional: connect 2FA
 
-uXu records an **attestation** that you enabled 2FA (checklist). Real TOTP lives on your Neon account today:
+uXu records an **attestation** that you enabled 2FA (checklist). If you still use Neon for the database project, TOTP for that console is separate from 0?0 login:
 
 1. Open [Neon Console](https://console.neon.tech) → **Account settings** → **Set up two-factor authentication**  
    Docs: https://neon.com/docs/manage/accounts#two-factor-authentication
@@ -136,4 +136,4 @@ Publishing or changing a **public** archive holder contact needs your approval v
 ## Legacy
 
 CLAIM MASTER remains visible on purpose — a founding myth.
-Authority lives in Neon Auth roles + recovery keys, not in the public chant.
+Authority lives in the operator account on the API worker (handle **RAS.ip**) plus recovery keys, not in the public chant. Unauthenticated `/api/auth/claim-master` does not mint a session.

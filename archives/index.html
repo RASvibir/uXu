@@ -4395,7 +4395,7 @@ const list = document.getElementById('archive-list');
   <tr><td>ABOUT</td><td>What <strong>uXu</strong> is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
   <tr><td>CREATE ARCHIVE</td><td>Simple template · expandable options</td></tr>
-  <tr><td>CYBERCAT DECK</td><td>Deck Builder (DECK command) — not Sunflower</td></tr>
+  <tr><td>CYBERCAT DECK</td><td>Deck Builder (DECK command) — unique names · not Sunflower</td></tr>
   <tr><td>ARCHIVE INDEX</td><td>Back to registry welcome / focus</td></tr>
   <tr><td>USER OPTIONS ▸</td><td>Fold-out: Manual · Install · Map · Logs · System · Setup · Exit</td></tr>
   <tr><td>iNi Provenance</td><td>Opt-in authenticity protocol (bottom flair)</td></tr>
@@ -4412,6 +4412,7 @@ const list = document.getElementById('archive-list');
   <li><kbd>←→</kbd> stay local: <kbd>→</kbd> opens USER OPTIONS from any Quick Nav item; on registry, toggle table ↔ actions</li>
   <li>Click any panel to adopt it as the keyboard highlight (mouse and keys share one focus)</li>
   <li><kbd>r</kbd> registry · <kbd>q</kbd> Quick Nav · <kbd>/</kbd> command line · <kbd>a</kbd> account</li>
+  <li>Highlight then <kbd>⌘C</kbd> / <kbd>Ctrl+C</kbd> or right-click Copy — letter jumps wait</li>
   <li>Registry: <kbd>Enter</kbd> / <kbd>o</kbd> open · <kbd>i</kbd> inspect / quieter detail card · <kbd>Esc</kbd> dismisses tips</li>
   <li><kbd>?</kbd> full keyboard map</li>
 </ul>
@@ -4446,7 +4447,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><th>Command</th><th>What it does</th></tr>
   <tr><td><code>INDEX</code></td><td>List registry ids + placemarkers</td></tr>
   <tr><td><code>OPEN CYBERCAT</code></td><td>Sunflower deck</td></tr>
-  <tr><td><code>DECK</code></td><td>CyberCat Deck Builder</td></tr>
+  <tr><td><code>DECK</code></td><td>CyberCat Deck Builder (unique names on this device · deck exists if repeated)</td></tr>
   <tr><td><code>OPEN</code> / <code>LOAD 0001</code></td><td>Open selection or id suffix</td></tr>
   <tr><td><code>MAP</code></td><td>0?0 commons tree (F4 here) — one files: line; not Sunflower F5</td></tr>
   <tr><td><code>LOGS</code></td><td>Transparency logs</td></tr>
@@ -4985,7 +4986,7 @@ INDEX ARCHIVE MANUALS · BACK · MANUAL · RTFM`);
       setActiveNav("HELP");
       showOutput("HELP",
 `OPEN CYBERCAT     open Sunflower deck
-DECK / CYBERCAT DECK   open Deck Builder (not Sunflower)
+DECK / CYBERCAT DECK   open Deck Builder (not Sunflower; unique names)
 OPEN              open currently selected archive
 LOAD 0001         load/open by id suffix
 GO CYBERCAT       alias for OPEN

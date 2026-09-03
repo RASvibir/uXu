@@ -8,6 +8,16 @@
   let objectUrls = [];
 
   const LOOKS = {
+    Cipher: {
+      chassis: '#1a1410', hi: '#2c2418', void: '#0a0908', phosphor: '#e8b923',
+      display: '#f4e8d0', accent: '#c41e3a', amber: '#ffd76a', text: '#f4e8d0',
+      room: '#3d1f14', glow: 0.45, scan: 0.12, radius: 8, font: "'Oswald', sans-serif",
+    },
+    Brick: {
+      chassis: '#1c1010', hi: '#3a1818', void: '#0c0606', phosphor: '#e8b923',
+      display: '#f7e4d4', accent: '#9b1b30', amber: '#f0c14b', text: '#f7e4d4',
+      room: '#4a1810', glow: 0.5, scan: 0.08, radius: 6, font: "'Archivo Black', sans-serif",
+    },
     Phosphor: {
       chassis: '#1a1424', hi: '#2e243e', void: '#05030a', phosphor: '#5dff8a',
       display: '#4de8ff', accent: '#ff3dce', amber: '#ffd24a', text: '#d8ffe6',
@@ -39,6 +49,8 @@
       room: '#8a7a58', glow: 0.25, scan: 0.15, radius: 28, font: "'Share Tech Mono', monospace",
     },
   };
+
+  const DEFAULT_LOOK = LOOKS.Cipher;
 
   function canonicalTitle(userName) {
     const rest = String(userName || '').replace(/^\s*cybercat\s+/i, '').trim();
@@ -702,8 +714,8 @@
     ARCHIVE_CONFIG.archiveTitle = rec.title;
     document.getElementById('deck-name').value = rec.userName || '';
     paintCanonical();
-    writeThemeInputs(rec.theme || LOOKS.Phosphor);
-    applyTheme(rec.theme);
+    writeThemeInputs(rec.theme || DEFAULT_LOOK);
+    applyTheme(rec.theme || DEFAULT_LOOK);
     applyFavicon(rec.favicon);
     setBrandLabel(rec.title.toUpperCase());
     path.textContent = `STANDALONE · ${rec.title.toUpperCase()}`;
@@ -827,8 +839,8 @@
       path.textContent = 'STANDALONE · YOUR TAPE';
       document.title = 'CyberCat Deck Builder';
       refreshDeckSelect('');
-      writeThemeInputs(LOOKS.Phosphor);
-      applyTheme(LOOKS.Phosphor);
+      writeThemeInputs(DEFAULT_LOOK);
+      applyTheme(DEFAULT_LOOK);
       clearFavicon();
     });
     document.getElementById('saved-decks').addEventListener('change', (e) => {

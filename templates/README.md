@@ -32,6 +32,8 @@ Optional `"label"` overrides the visible text.
 The installable **uXu** app (PWA) is the public invite surface — it does not present as 0?0.
 0?0 remains the root console *inside* the commons. Child archives should not attach the landing PWA manifest.
 
+For a listening deck without a new repo folder, use 0?0 **DECK** (Deck Builder). Names are unique on that device.
+
 ## Template forks (opt-in)
 
 ```json

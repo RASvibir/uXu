@@ -23,6 +23,8 @@ Rules the linter enforces (`tests/token-lint.js`):
 - The OFF-default ripple/setlist comments and the `{{TOKEN}}` / `{{next}}`
   documentation escapes are the only sanctioned `{{` leftovers; everything
   else in a spawned deck must be token-free.
+- Deck Builder (`archives/CyberCat-Deck-Builder/`) is a spawn *host*, not a
+  spawned room: unique rest-of-names on the device; bolt height follows type.
 - `SPAWN_SED` (documented sed recipe inside the template) covers all six
   hooks, and `save-sed-to-rave` must always handle the same set — see
   `tests/generator.js` for the sync invariant.

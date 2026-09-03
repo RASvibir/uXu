@@ -23,7 +23,7 @@ This guide is for everyone. No coding required.
 3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
 4. **Create your own archive** — `CREATE ARCHIVE` (or Create Archive). Name + description, save, confirm. Expand options only if you want them.
 5. **Try CyberCat Sunflower** — Grateful Dead catalog (`OPEN CYBERCAT`). Files: Relisten catalog → Internet Archive transfers.
-6. **CyberCat Deck Builder** — Quick Nav **CYBERCAT DECK** or `DECK` — your files/links, not Sunflower’s index.
+6. **CyberCat Deck Builder** — Quick Nav **CYBERCAT DECK** or `DECK` — your files/links, not Sunflower’s index. One name per device (`deck exists` if you reuse it). Name examples: antelope, ur mom, bout treefiddy.
 7. **Optional: iNi Provenance** — origin/custody honesty (`INI`). Not enforcement. Notes: https://rasvibir.github.io/uXu (`INI SITE`). Paper trail: https://github.com/RASvibir/iNi.
 
 ## Finding Your Way (0?0)
@@ -33,6 +33,7 @@ This guide is for everyone. No coding required.
 - **← →** stay local: **→** opens USER OPTIONS from any Quick Nav item; **←** closes it; on registry, toggle table ↔ actions toolbar
 - **Click** a panel to adopt it as the keyboard highlight (mouse and keys share one focus)
 - **r** registry · **q** Quick Nav · **a** account · **/** jump to the command line · **?** keyboard map
+- **⌘C** / **Ctrl+C** and right-click **Copy** work on a highlight; letter **c** still opens command when nothing is selected
 - **F1** Help · **F2** Index · **F3** Manuals · **F4** Map · **F5** Logs · **F6** System
 - Long docs (ABOUT / RTFM / FAQ / iNi) open scrolled to the **top**
 
@@ -70,7 +71,7 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |
 | CyberCat Sunflower Manual | Listening / using that deck (F4 on the deck) |
-| CyberCat Deck Builder | F4 on that room · `DECK` from 0?0 |
+| CyberCat Deck Builder | F4 on that room · `DECK` from 0?0 · unique names |
 | Master Admin Guide | Operator succession + MONITOR / markers (not visitor required) |
 | Developers Handbook | Builders and coders |
 | Source Code Pamphlet | Curious readers who want a map of the repo |
@@ -117,7 +118,7 @@ Use `"style": "0?0"` for the console back-link. Snippet: `templates/snippets/hom
 ## Accounts (Simple View)
 
 You can browse as a guest.
-Signing up is optional and lets you keep an account with the commons.
+Signing up is optional. **Sign In / Sign Up** (form or `SIGNIN` / `SIGNUP`) talk to the uXu API worker — not a separate Neon Auth form. The public name is your **handle**; login email stays private (you and the admin). The operator account shows as **RAS.ip** with role **ADMIN**.
 Day-to-day visitors do not need admin powers.
 
 **Privacy:** your login email stays private (you and the admin). It is not shown on archives.

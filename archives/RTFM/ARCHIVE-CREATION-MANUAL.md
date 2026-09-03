@@ -36,6 +36,8 @@ That is enough.
 You do not need a custom app, a database, or special security on day one.
 Do **not** attach the public uXu PWA manifest to child archives — that install is the invite app only.
 
+For a listening deck without registering a whole new folder first, 0?0 **CYBERCAT DECK** / `DECK` opens Deck Builder. Names are unique on that browser (`deck exists` if repeated). That is not CyberCat Sunflower.
+
 ## Commons link (← 0?0 vs uXu chip)
 
 Creators decide how the link home looks:

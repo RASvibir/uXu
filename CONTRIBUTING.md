@@ -11,6 +11,8 @@
 9. **License** — Code and original docs are MIT ([LICENSE](LICENSE)). Media and third-party works stay under their own terms; do not imply uXu owns them. Prefer clear provenance (optional iNi fields).
 10. **Deck changes run the suite** — For CyberCat deck template / `save-sed-to-rave` / catalog changes, run `npm test` (`tests/run.js`) and keep it green. Spawn new decks with `./save-sed-to-rave`; never hand-edit a spawned deck's `{{TOKEN}}` leftovers. Reference: `docs/runtime/cybercat-deck-template.md`.
 11. **Sunflower immutability** — `CyberCat-Sunflower` is the reference first-registered archive; treat it as read-only in PRs.
+12. **Deck Builder names** — On this device, each CyberCat rest-of-name is unique. A repeat save is `deck exists`. Do not treat Sunflower as a name example.
+13. **0?0 copy** — Do not steal browser copy/cut/paste. Letter jumps wait while text is highlighted or ⌘/Ctrl is held.
 
 `/templates/` and entries like `CyberCat-Sunflower/` are optional references.
 

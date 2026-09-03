@@ -1,6 +1,6 @@
 # Starter — make your own archive
 
-**Id:** `Starter.uXu.0003`  
+**Id:** `Starter.uXu.0004`  
 **What it is:** the public practice room. Copy it. Don’t worry about breaking it — this folder is the teaching copy.
 
 Personal rooms (like someone’s private archive) are separate. This one stays a template for everyone.

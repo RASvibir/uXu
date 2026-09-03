@@ -9,18 +9,19 @@ and Cloudflare Worker deployment. Archive content remains in `/archives`.
 **Public visitors** should use the site / User Guide — not this file.
 This README is for operators deploying the Worker.
 
-## Auth (Neon Auth + Worker)
+## Auth (0?0 console)
 
-Neon Auth base URL is configured as a non-secret Worker var (`NEON_AUTH_BASE_URL`).
+Sign Up and Sign In on 0?0 call the API Worker (`/api/auth/signup`, `/api/auth/login`).
+The public name is the account **handle**. Operator email maps to handle **RAS.ip** and role **ADMIN**.
 
-Roles in `0?0`:
+Roles:
 
 | Role | Meaning |
 | --- | --- |
 | `GUEST` | Not signed in |
-| `USER` | Signed-in Neon Auth account |
-| `ADMIN` | Master operator (`neon_auth.user.role = admin`) |
-| `SUDO` | Temporary elevation flag for an ADMIN session |
+| `USER` | Signed-in commons account |
+| `ADMIN` | Operator |
+| `SUDO` | Temporary elevation for an ADMIN session |
 
 ### Create an account (console)
 
