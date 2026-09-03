@@ -5833,6 +5833,7 @@ Then attest here so SETUP MASTER can check it off.`);
   });
 
   document.querySelector('.grid')?.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
     if (!document.body.classList.contains('command-console-on')) return;
     if (e.target.closest('#type-stage')) return;
     dockCommandConsole();
@@ -6624,38 +6625,42 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
       return;
     }
 
-    // Letter jumps
+    // Letter jumps — never steal copy/cut/paste/select-all or a live highlight
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    if (k === '/') {
-      e.preventDefault();
-      focusCommand();
-      return;
-    }
-    if (k === 'a') { e.preventDefault(); focusAuth(); return; }
-    if (k === 'c') { e.preventDefault(); focusCommand(); return; }
-    if (k === 'r') { e.preventDefault(); userChoseZone = true; focusRegistrySelectedOrFirst(); return; }
-    if (k === 'q') { e.preventDefault(); userChoseZone = true; focusNavItem(0); return; }
-    if (k === 'o') {
-      e.preventDefault();
-      if (selected && canOpen(selected)) openEntry(selected);
-      else if (selected) activateEntry(selected, { inspect: true });
-      else toast('select an archive first');
-      return;
-    }
-    if (k === 'i') {
-      e.preventDefault();
-      toggleDetailModals();
-      return;
-    }
-    if (k === 'n') {
-      e.preventDefault();
-      openCreateArchiveWizard();
-      return;
-    }
-    if (k === 'p' && btnInstall && !btnInstall.hidden) {
-      e.preventDefault();
-      btnInstall.click();
-      return;
+    const chord = e.metaKey || e.ctrlKey || e.altKey;
+    const copying = !!(window.getSelection() && window.getSelection().toString());
+    if (!chord && !copying) {
+      if (k === '/') {
+        e.preventDefault();
+        focusCommand();
+        return;
+      }
+      if (k === 'a') { e.preventDefault(); focusAuth(); return; }
+      if (k === 'c') { e.preventDefault(); focusCommand(); return; }
+      if (k === 'r') { e.preventDefault(); userChoseZone = true; focusRegistrySelectedOrFirst(); return; }
+      if (k === 'q') { e.preventDefault(); userChoseZone = true; focusNavItem(0); return; }
+      if (k === 'o') {
+        e.preventDefault();
+        if (selected && canOpen(selected)) openEntry(selected);
+        else if (selected) activateEntry(selected, { inspect: true });
+        else toast('select an archive first');
+        return;
+      }
+      if (k === 'i') {
+        e.preventDefault();
+        toggleDetailModals();
+        return;
+      }
+      if (k === 'n') {
+        e.preventDefault();
+        openCreateArchiveWizard();
+        return;
+      }
+      if (k === 'p' && btnInstall && !btnInstall.hidden) {
+        e.preventDefault();
+        btnInstall.click();
+        return;
+      }
     }
 
     // RTFM tab arrows when panel is open (↑↓ only here — ←→ handled above)
@@ -6774,6 +6779,7 @@ Commands still work for everything (OPEN, INI, RTFM, SETUP MASTER, …).`);
 
   // Click / focus adopts the keyboard zone so mouse and keys share one highlight
   document.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
     adoptZoneFromEventTarget(e.target, { keepFocus: true });
   }, true);
   document.addEventListener('focusin', (e) => {
