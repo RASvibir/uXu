@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 52, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/app/api/auth/signup/route.ts"],"sourcesContent":["export async function GET() { return Response.json({ ok: true }) }\n"],"names":["GET","Response","json","ok"],"mappings":";;;;AAAO,eAAeA;IAAQ,OAAOC,SAASC,IAAI,CAAC;QAAEC,IAAI;IAAK;AAAG"}}]
+}

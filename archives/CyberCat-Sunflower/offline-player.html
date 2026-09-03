@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberCat · Offline Tape Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #05030a; --phosphor: #5dff8a; --cyan: #4de8ff; --magenta: #ff3dce;
+      --amber: #ffd24a; --text: #d8ffe6; --muted: #7a8f84;
+      --bezel: #1a1424; --bezel-hi: #2e243e;
+      --mono: 'Share Tech Mono', ui-monospace, monospace;
+      --display: 'Orbitron', var(--mono);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: radial-gradient(ellipse 90% 70% at 50% 0%, #1a0f2e 0%, transparent 50%),
+        radial-gradient(ellipse at center, #0c0818 0%, var(--void) 75%);
+      color: var(--phosphor); font-family: var(--mono); font-size: .78rem;
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+    .chassis {
+      flex: 1; margin: 10px; display: flex; flex-direction: column;
+      border-radius: 18px; background: linear-gradient(145deg, var(--bezel-hi), var(--bezel));
+      border: 1px solid #0a0612; box-shadow: 0 24px 60px rgba(0,0,0,.65); padding: 12px; min-height: 0;
+    }
+    .tube { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--void); border-radius: 8px; border: 2px solid #000; overflow: hidden; }
+    .topbar {
+      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; padding: .55rem .9rem;
+      background: linear-gradient(90deg, rgba(255,61,206,.18), rgba(77,232,255,.1));
+      border-bottom: 1px solid rgba(93,255,138,.25); font-size: .72rem; letter-spacing: .06em;
+    }
+    .topbar a { color: var(--cyan); text-decoration: none; border: 1px solid rgba(77,232,255,.35); padding: .2rem .5rem; }
+    .topbar a:hover { background: var(--cyan); color: #041018; }
+    .brand { display: inline-flex; align-items: center; gap: .4rem; font-family: var(--display); font-weight: 700; color: var(--amber); }
+    .brand .bolt { height: 1.1em; width: auto; display: block; object-fit: contain; image-rendering: auto; }
+    .path { color: var(--muted); margin-left: auto; }
+    .workspace { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(280px, 360px) 1fr; }
+    @media (max-width: 760px) { body { height: auto; overflow: auto; } .workspace { grid-template-columns: 1fr; } }
+    .deck { padding: .75rem; border-right: 1px solid rgba(93,255,138,.15); display: flex; flex-direction: column; gap: .6rem; }
+    .panel-h {
+      font-family: var(--display); font-size: .68rem; letter-spacing: .1em; color: var(--amber);
+      border-bottom: 1px solid rgba(93,255,138,.2); padding-bottom: .35rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .now { min-height: 3.2rem; line-height: 1.45; color: var(--text); }
+    .now .idle { color: var(--muted); }
+    .progress { height: 4px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+    .progress > i { display: block; height: 100%; width: 0%; background: var(--cyan); transition: width .2s; }
+    audio { width: 100%; margin: .25rem 0; }
+    .controls { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .btn {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(93,255,138,.35);
+      color: inherit; font: inherit; padding: .35rem .55rem; cursor: pointer;
+    }
+    .btn:hover { border-color: var(--cyan); color: var(--cyan); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn.primary { border-color: var(--phosphor); color: var(--phosphor); }
+    .btn.keep { border-color: var(--amber); color: var(--amber); }
+    .hint { color: var(--muted); font-size: .66rem; line-height: 1.4; }
+    .locker-badge { font-size: .62rem; color: var(--cyan); }
+    .sources { padding: .75rem; display: flex; flex-direction: column; gap: .55rem; min-height: 0; }
+    .source-tabs { display: flex; gap: .35rem; flex-wrap: wrap; }
+    .tab { background: transparent; border: 1px solid rgba(255,255,255,.12); color: var(--muted); font: inherit; padding: .28rem .5rem; cursor: pointer; }
+    .tab.active { border-color: var(--cyan); color: var(--cyan); }
+    .section-label { font-size: .62rem; color: var(--amber); letter-spacing: .08em; margin: .35rem 0 .15rem; }
+    .list { flex: 1; min-height: 100px; max-height: 36vh; overflow: auto; border: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.25); }
+    .row-wrap { display: flex; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .row {
+      flex: 1; text-align: left; background: transparent; border: none; color: inherit;
+      font: inherit; padding: .45rem .55rem; cursor: pointer;
+    }
+    .row:hover { background: rgba(77,232,255,.06); }
+    .row.active { background: rgba(93,255,138,.1); color: var(--phosphor); }
+    .row .sub { display: block; color: var(--muted); font-size: .64rem; margin-top: .15rem; }
+    .row-actions { display: flex; flex-direction: column; gap: 2px; padding: .25rem .35rem .25rem 0; }
+    .row-actions button {
+      font: inherit; font-size: .58rem; padding: .12rem .3rem; cursor: pointer;
+      background: transparent; border: 1px solid rgba(255,255,255,.15); color: var(--muted);
+    }
+    .row-actions button:hover { border-color: var(--cyan); color: var(--cyan); }
+    .badge-kept { color: var(--amber); }
+    .badge-temp { color: var(--magenta); }
+    .badge-ready { color: var(--phosphor); }
+    .drop { border: 1px dashed rgba(77,232,255,.35); padding: .65rem; text-align: center; color: var(--muted); font-size: .66rem; }
+    .drop.drag { border-color: var(--cyan); color: var(--cyan); background: rgba(77,232,255,.06); }
+    .toast {
+      position: fixed; right: 1rem; bottom: 1rem; z-index: 20; padding: .45rem .7rem;
+      background: rgba(10,40,24,.95); border: 1px solid var(--phosphor); opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; }
+    .statusbar {
+      padding: .4rem .9rem; font-size: .64rem; color: var(--muted);
+      border-top: 1px solid rgba(93,255,138,.15); display: flex; justify-content: space-between; gap: .5rem; flex-wrap: wrap;
+    }
+    input[type="file"] { font: inherit; font-size: .66rem; max-width: 100%; color: var(--muted); }
+    .deck.ripple-on { box-shadow: inset 0 0 24px rgba(77,232,255,.08); }
+    .deck.ripple-on .now { text-shadow: 0 0 12px rgba(77,232,255,.2); }
+    .ripple-row { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+    .ripple-btn {
+      position: relative; isolation: isolate; font-family: var(--display);
+      font-size: .62rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      color: #fff; background: linear-gradient(135deg, rgba(255,61,206,.35), rgba(77,232,255,.28));
+      border: 1px solid rgba(255,255,255,.22); padding: .38rem .85rem .34rem;
+      cursor: pointer; overflow: hidden; border-radius: 999px;
+      box-shadow: 0 0 18px rgba(255,61,206,.28), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .ripple-btn .ripple-rings {
+      position: absolute; inset: -40%; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(77,232,255,.45) 0%, transparent 42%),
+        radial-gradient(circle at 35% 40%, rgba(255,61,206,.35) 0%, transparent 38%);
+      animation: ripple-drift 4.8s ease-in-out infinite;
+    }
+    .ripple-btn::before, .ripple-btn::after {
+      content: ""; position: absolute; inset: 50%; border-radius: 50%;
+      border: 1px solid rgba(77,232,255,.55); transform: translate(-50%, -50%) scale(.2);
+      animation: ripple-expand 2.6s ease-out infinite; pointer-events: none;
+    }
+    .ripple-btn::after { border-color: rgba(255,61,206,.45); animation-delay: 1.3s; }
+    .ripple-btn:hover:not(:disabled), .ripple-btn:focus-visible:not(:disabled) { filter: brightness(1.08); }
+    .ripple-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .ripple-btn.is-live { animation: ripple-glow 2.2s ease-in-out infinite; }
+  @keyframes ripple-expand { 0% { transform: translate(-50%,-50%) scale(.2); opacity: .9; } 100% { transform: translate(-50%,-50%) scale(2.4); opacity: 0; } }
+  @keyframes ripple-drift { 0%,100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(8deg) scale(1.05); } }
+  @keyframes ripple-glow { 0%,100% { box-shadow: 0 0 18px rgba(255,61,206,.35); } 50% { box-shadow: 0 0 28px rgba(77,232,255,.45); } }
+    .ripple-setlist { max-height: 18vh; overflow: auto; border: 1px solid rgba(255,255,255,.08); margin-top: .35rem; }
+    .ripple-setlist[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <div class="chassis">
+    <div class="tube">
+      <header class="topbar">
+        <a href="index.html">← Live Deck</a>
+        <span class="brand"><img class="bolt" src="bolt.png" alt="">CYBERCAT OFFLINE</span>
+        <span class="path">13-SLOT LOCKER · DOWNLOAD ON ENGAGE</span>
+      </header>
+      <div class="workspace">
+        <section class="deck" id="deck-col">
+          <div class="panel-h">
+            <span>TAPE DECK</span>
+            <span class="locker-badge" id="locker-badge">0 / 13 kept</span>
+          </div>
+          <div class="now" id="now-playing"><span class="idle">Select a queued tape — audio downloads when you engage. Or join <strong>Ripple</strong> for the live herd feed.</span></div>
+          <div class="progress" id="dl-progress" hidden><i id="dl-bar"></i></div>
+          <audio id="player" controls playsinline webkit-playsinline preload="metadata" crossorigin="anonymous"></audio>
+          <div class="ripple-row">
+            <div class="controls">
+              <button type="button" class="btn" id="btn-prev" disabled>◀ Prev</button>
+              <button type="button" class="btn primary" id="btn-play" disabled>Play</button>
+              <button type="button" class="btn" id="btn-next" disabled>Next ▶</button>
+              <button type="button" class="btn keep" id="btn-keep-active" disabled title="Move active tape to permanent locker">Keep tape</button>
+            </div>
+            <button type="button" class="ripple-btn" id="btn-ripple" title="Join live Ripple herd — UTC synchronized stream">
+              <span class="ripple-rings" aria-hidden="true"></span>
+              <span class="ripple-label">Ripple</span>
+            </button>
+          </div>
+          <div class="ripple-setlist list" id="ripple-setlist" hidden></div>
+          <p class="hint" id="storage-hint">
+            <strong>Temp</strong> tapes queue instantly and download when you engage — they expire after 7 days.
+            <strong>Keep</strong> up to 13 shows permanently.
+            <strong>Ripple</strong> is the live UTC herd feed (network required) — same clock as the main deck.
+          </p>
+        </section>
+        <section class="sources">
+          <div class="source-tabs" role="tablist">
+            <button type="button" class="tab active" data-tab="locker">Tape locker</button>
+            <button type="button" class="tab" data-tab="local">Local files</button>
+            <button type="button" class="tab" data-tab="manifest">Manifest</button>
+          </div>
+          <div id="pane-locker">
+            <p class="hint">Queue shows on the live deck with <strong>Queue temp</strong> or <strong>Keep</strong>. Tap a tape here to engage — download runs automatically.</p>
+            <div class="section-label">KEPT · PERMANENT (max 13)</div>
+            <div class="list" id="kept-list"></div>
+            <div class="section-label">TEMP · AUTO-EXPIRE</div>
+            <div class="list" id="temp-list"></div>
+            <div class="controls" style="margin-top:.45rem">
+              <button type="button" class="btn" id="btn-refresh">Refresh</button>
+              <button type="button" class="btn" id="btn-clear-temp">Clear temp tapes</button>
+            </div>
+          </div>
+          <div id="pane-local" hidden>
+            <div class="drop" id="drop-zone">Drop audio files · or pick a folder</div>
+            <div class="controls" style="margin:.45rem 0">
+              <label class="btn">Pick files<input type="file" id="file-pick" accept="audio/*" multiple hidden></label>
+              <label class="btn">Pick folder<input type="file" id="folder-pick" accept="audio/*" webkitdirectory multiple hidden></label>
+            </div>
+            <div class="list" id="local-list"></div>
+          </div>
+          <div id="pane-manifest" hidden>
+            <p class="hint">Load a <code>.json</code> manifest. Engaging downloads tracks (temp by default).</p>
+            <label class="btn">Load manifest<input type="file" id="manifest-pick" accept=".json,application/json" hidden></label>
+            <div class="list" id="manifest-list"></div>
+          </div>
+        </section>
+      </div>
+      <footer class="statusbar">
+        <span><kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · live herd needs network</span>
+        <span id="foot-status">Offline player ready</span>
+      </footer>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+<script src="offline-store.js"></script>
+<script src="ripple-live.js"></script>
+<script>
+(function () {
+  const Store = window.CyberCatOfflineStore;
+  const player = document.getElementById('player');
+  const nowPlaying = document.getElementById('now-playing');
+  const footStatus = document.getElementById('foot-status');
+  const toastEl = document.getElementById('toast');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnPlay = document.getElementById('btn-play');
+  const btnNext = document.getElementById('btn-next');
+  const btnKeepActive = document.getElementById('btn-keep-active');
+  const btnRipple = document.getElementById('btn-ripple');
+  const deckCol = document.getElementById('deck-col');
+  const rippleSetlist = document.getElementById('ripple-setlist');
+  const dlProgress = document.getElementById('dl-progress');
+  const dlBar = document.getElementById('dl-bar');
+  const lockerBadge = document.getElementById('locker-badge');
+
+  let playlist = [];
+  let trackIndex = -1;
+  let objectUrls = [];
+  let localFileMap = new Map();
+  let toastTimer = null;
+  let activeTapeId = null;
+  let activeTapeStatus = null;
+  let downloadAbort = null;
+  let selectedTapeId = null;
+  let rippleLive = null;
+  let ripplePlaylist = [];
+  let rippleTrackIndex = -1;
+  let localMode = true;
+
+  function setRippleUI(locked) {
+    btnRipple.classList.toggle('is-live', locked);
+    deckCol.classList.toggle('ripple-on', locked);
+    const label = btnRipple.querySelector('.ripple-label');
+    if (label) label.textContent = locked ? 'EXIT HERD' : 'RIPPLE';
+    btnRipple.setAttribute('aria-pressed', locked ? 'true' : 'false');
+    rippleSetlist.hidden = !locked;
+    btnKeepActive.disabled = locked || !activeTapeId || activeTapeStatus === 'kept';
+    if (locked) {
+      localMode = false;
+      setDownloadProgress(null);
+    } else {
+      ripplePlaylist = [];
+      rippleTrackIndex = -1;
+      rippleSetlist.innerHTML = '';
+    }
+  }
+
+  function renderRippleSetlist(tracks, activeIdx) {
+    rippleSetlist.innerHTML = (tracks || [])
+      .map((t, i) => `<button type="button" class="row${i === activeIdx ? ' active' : ''}" data-ridx="${i}">${String(i + 1).padStart(2, '0')} · ${t.title || 'Track'}</button>`)
+      .join('');
+    rippleSetlist.querySelectorAll('[data-ridx]').forEach((row) => {
+      row.addEventListener('click', () => {
+        if (!rippleLive || !rippleLive.isActive()) return;
+        rippleLive.playTrackAt(Number(row.dataset.ridx));
+      });
+    });
+  }
+
+  rippleLive = window.CyberCatRippleLive.create({
+    player,
+    toast,
+    streamUrlCandidates: Store.streamUrlCandidates,
+    onLockChange: setRippleUI,
+    onCatalogProgress: ({ completed, total, shows }) => {
+      if (!rippleLive.isActive()) {
+        footStatus.textContent = total
+          ? `Indexing for Ripple · ${completed}/${total} years · ${shows} shows`
+          : footStatus.textContent;
+      }
+      if (completed >= total && total > 0) {
+        btnRipple.disabled = false;
+        footStatus.textContent = `Ripple ready · ${shows} shows indexed`;
+      }
+    },
+    onNowPlaying: ({ show, track, trackIndex: idx, total }) => {
+      rippleTrackIndex = idx;
+      const d = show && (show.display_date || show.date || show.showDate || '');
+      nowPlaying.innerHTML =
+        `<span style="color:var(--magenta)">◎ RIPPLE · HERD</span><br>` +
+        `<strong>${String(d).slice(0, 10)}</strong> · ${(show && (show.venueName || (show.venue && show.venue.name))) || 'Live'}<br>` +
+        `<span style="color:var(--cyan)">▶ ${String(idx + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')} · ${(track.title || '').toUpperCase()}</span>`;
+      footStatus.textContent = 'Ripple live · UTC herd sync';
+      btnPrev.disabled = btnNext.disabled = btnPlay.disabled = false;
+    },
+    onPlaylist: (tracks, idx) => {
+      ripplePlaylist = tracks;
+      rippleTrackIndex = idx;
+      renderRippleSetlist(tracks, idx);
+    },
+  });
+
+  btnRipple.disabled = true;
+  rippleLive.bootstrapCatalog().then((ok) => {
+    btnRipple.disabled = !ok;
+    if (ok) footStatus.textContent = 'Ripple ready · locker or live herd';
+  }).catch(() => {
+    btnRipple.title = 'Ripple unavailable — check network';
+  });
+
+  btnRipple.addEventListener('click', () => {
+    if (downloadAbort) downloadAbort.abort();
+    rippleLive.toggleRipple();
+  });
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  }
+
+  function revokeUrls() {
+    objectUrls.forEach((u) => URL.revokeObjectURL(u));
+    objectUrls = [];
+  }
+
+  function setDownloadProgress(pct) {
+    if (pct == null) {
+      dlProgress.hidden = true;
+      dlBar.style.width = '0%';
+      return;
+    }
+    dlProgress.hidden = false;
+    dlBar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  }
+
+  function setPlaylist(tracks, meta) {
+    revokeUrls();
+    playlist = tracks;
+    trackIndex = tracks.length ? 0 : -1;
+    btnPrev.disabled = btnNext.disabled = btnPlay.disabled = !tracks.length;
+    activeTapeId = meta.tapeId || null;
+    activeTapeStatus = meta.tapeStatus || null;
+    btnKeepActive.disabled = !activeTapeId || activeTapeStatus === 'kept';
+    if (meta.title) {
+      nowPlaying.innerHTML = `<strong>${meta.title}</strong><br><span style="color:var(--muted)">${meta.sub || ''}</span>`;
+    }
+    footStatus.textContent = `${tracks.length} track(s) · ${meta.label || 'ready'}`;
+    if (tracks.length) playTrack(0, { silent: true });
+    else nowPlaying.innerHTML = '<span class="idle">No tracks in queue.</span>';
+  }
+
+  function playTrack(idx, opts = {}) {
+    if (idx < 0 || idx >= playlist.length) return;
+    trackIndex = idx;
+    const track = playlist[idx];
+    revokeUrls();
+    let src = null;
+    if (track.blob) {
+      src = URL.createObjectURL(track.blob);
+      objectUrls.push(src);
+    } else if (track.file && localFileMap.has(track.file.toLowerCase())) {
+      src = URL.createObjectURL(localFileMap.get(track.file.toLowerCase()));
+      objectUrls.push(src);
+    }
+    if (!src) {
+      toast('Track not downloaded yet');
+      return;
+    }
+    player.src = src;
+    player.load();
+    const start = () => {
+      player.play().catch(() => toast('Press play on the deck'));
+      const t = track.title || `Track ${idx + 1}`;
+      nowPlaying.innerHTML =
+        `<strong>${t}</strong><br>` +
+        `<span style="color:var(--cyan)">▶ ${String(idx + 1).padStart(2, '0')} / ${String(playlist.length).padStart(2, '0')}</span>`;
+      highlightActive(idx);
+      if (!opts.silent) footStatus.textContent = `Playing ${idx + 1} of ${playlist.length}`;
+    };
+    player.addEventListener('canplay', start, { once: true });
+  }
+
+  function highlightActive(idx) {
+    document.querySelectorAll('.list .row[data-idx]').forEach((el) => {
+      el.classList.toggle('active', Number(el.dataset.idx) === idx);
+    });
+  }
+
+  function renderTrackList(containerId, tracks) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = tracks
+      .map((t, i) => `<button type="button" class="row" data-idx="${i}">${String(i + 1).padStart(2, '0')} · ${t.title || 'Track'}</button>`)
+      .join('');
+    el.querySelectorAll('[data-idx]').forEach((row) => {
+      row.addEventListener('click', () => playTrack(Number(row.dataset.idx)));
+    });
+  }
+
+  function tapeRowHtml(t) {
+    const status = t.status === 'kept' ? '<span class="badge-kept">KEPT</span>' : '<span class="badge-temp">TEMP</span>';
+    const ready = t.fullyDownloaded ? ' <span class="badge-ready">· on device</span>' : ' · manifest only';
+    const mb = t.bytes ? ` · ${(t.bytes / 1048576).toFixed(0)} MB` : '';
+    const exp = t.status === 'temp' && t.expiresAt
+      ? ` · expires ${new Date(t.expiresAt).toLocaleDateString()}`
+      : '';
+    return `<div class="row-wrap" data-id="${t.id}">
+      <button type="button" class="row" data-engage="${t.id}">
+        <span>${t.showDate} · ${t.venue || 'Show'} ${status}${ready}</span>
+        <span class="sub">${t.trackCount || 0} tracks${mb}${exp}</span>
+      </button>
+      <div class="row-actions">
+        ${t.status === 'kept'
+          ? '<button type="button" data-demote="' + t.id + '">Un-keep</button>'
+          : '<button type="button" data-promote="' + t.id + '">Keep</button>'}
+        <button type="button" data-remove="${t.id}">Remove</button>
+      </div>
+    </div>`;
+  }
+
+  function wireLockerRows() {
+    document.querySelectorAll('[data-engage]').forEach((btn) => {
+      btn.addEventListener('click', () => engageTape(btn.dataset.engage));
+    });
+    document.querySelectorAll('[data-promote]').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        try {
+          await Store.promoteToKept(btn.dataset.promote);
+          toast('Moved to kept locker');
+          refreshLocker();
+        } catch (err) { toast(err.message); }
+      });
+    });
+    document.querySelectorAll('[data-demote]').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await Store.demoteToTemp(btn.dataset.demote);
+        toast('Now temp — expires in 7 days');
+        refreshLocker();
+      });
+    });
+    document.querySelectorAll('[data-remove]').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!confirm('Remove this tape from the locker?')) return;
+        await Store.deleteTape(btn.dataset.remove);
+        if (activeTapeId === btn.dataset.remove) {
+          activeTapeId = null;
+          playlist = [];
+          player.removeAttribute('src');
+        }
+        refreshLocker();
+        toast('Removed');
+      });
+    });
+  }
+
+  async function engageTape(id) {
+    if (rippleLive && rippleLive.isActive()) {
+      rippleLive.stopRipple();
+      toast('Left Ripple — engaging locker tape');
+    }
+    if (downloadAbort) downloadAbort.abort();
+    downloadAbort = new AbortController();
+    selectedTapeId = id;
+    document.querySelectorAll('.row[data-engage]').forEach((el) => {
+      el.classList.toggle('active', el.dataset.engage === id);
+    });
+
+    let tape;
+    try {
+      tape = await Store.getTape(id);
+      if (!tape) return toast('Tape not in locker');
+      if (Store.isExpired(tape)) {
+        await Store.deleteTape(id);
+        refreshLocker();
+        return toast('Temp tape expired — queue again on live deck');
+      }
+
+      nowPlaying.innerHTML = `<span class="idle">Engaging ${tape.showDate}…</span>`;
+      footStatus.textContent = 'Downloading…';
+
+      if (!tape.fullyDownloaded) {
+        tape = await Store.downloadTape(id, {
+          signal: downloadAbort.signal,
+          onProgress: ({ index, total, title }) => {
+            const pct = ((index + 0.5) / total) * 100;
+            setDownloadProgress(pct);
+            footStatus.textContent = `Downloading ${index + 1}/${total}: ${title}`;
+          },
+        });
+      }
+      setDownloadProgress(null);
+
+      const tracks = (tape.tracks || []).map((tr) => ({ title: tr.title, blob: tr.blob }));
+      localMode = true;
+      setPlaylist(tracks, {
+        tapeId: tape.id,
+        tapeStatus: tape.status,
+        label: tape.status === 'kept' ? 'kept · offline' : 'temp · offline',
+        title: `${tape.showDate} · ${tape.venue}`,
+        sub: tape.sourceLabel || 'Downloaded tape',
+      });
+      renderTrackList('manifest-list', tracks);
+      toast(tape.status === 'kept' ? 'Kept tape engaged' : 'Temp tape engaged — expires in 7 days');
+      refreshLocker();
+    } catch (err) {
+      setDownloadProgress(null);
+      if (err.name === 'AbortError') return;
+      toast(err.message || 'Engage failed');
+      footStatus.textContent = 'Download failed';
+    }
+  }
+
+  async function refreshLocker() {
+    try {
+      await Store.purgeExpired();
+      const tapes = await Store.listTapes();
+      const kept = tapes.filter((t) => t.status === 'kept');
+      const temp = tapes.filter((t) => t.status === 'temp');
+      const summary = Store.lockerSummary(tapes);
+
+      lockerBadge.textContent = `${summary.kept} / ${summary.maxKept} kept`;
+      document.getElementById('kept-list').innerHTML = kept.length
+        ? kept.map(tapeRowHtml).join('')
+        : '<div class="row" style="cursor:default;color:var(--muted)">No kept tapes — use <strong>Keep</strong> on the live deck (max 13).</div>';
+      document.getElementById('temp-list').innerHTML = temp.length
+        ? temp.map(tapeRowHtml).join('')
+        : '<div class="row" style="cursor:default;color:var(--muted)">No temp tapes — use <strong>Queue temp</strong> on the live deck.</div>';
+
+      wireLockerRows();
+      document.getElementById('storage-hint').innerHTML =
+        `<strong>${summary.kept} / ${summary.maxKept} kept</strong> · ${summary.temp} temp · ` +
+        `${summary.ready} on device · ~${(summary.bytes / 1048576).toFixed(0)} MB used. ` +
+        'Temp tapes expire 7 days after download unless you keep them.';
+    } catch (err) {
+      toast('Locker unavailable — check browser storage');
+    }
+  }
+
+  async function loadManifest(file, { keep = false } = {}) {
+    let data;
+    try { data = JSON.parse(await file.text()); } catch { return toast('Invalid manifest JSON'); }
+    if (!data || !Array.isArray(data.tracks)) return toast('Manifest needs tracks[]');
+    const id = `manifest-${data.showDate || Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    try {
+      const tape = await Store.queueTape({
+        id,
+        showDate: data.showDate || 'Manifest',
+        venue: data.venue || '',
+        place: data.place || '',
+        sourceLabel: data.sourceLabel || 'Imported manifest',
+        trackCount: data.tracks.length,
+        tracks: data.tracks.map((t, i) => ({
+          title: t.title || t.file || `Track ${i + 1}`,
+          url: t.url || null,
+        })),
+      }, { keep });
+      await refreshLocker();
+      toast(keep ? 'Manifest kept — tap to engage' : 'Manifest queued — tap to engage');
+      engageTape(tape.id);
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+
+  function ingestLocalFiles(fileList) {
+    const files = [...fileList].filter((f) => (f.type || '').startsWith('audio/') || /\.(mp3|flac|ogg|m4a|wav|aac)$/i.test(f.name));
+    if (!files.length) return toast('No audio files found');
+    localFileMap.clear();
+    files.forEach((f) => {
+      localFileMap.set(f.name.toLowerCase(), f);
+      localFileMap.set(f.name.replace(/\.[^.]+$/, '').toLowerCase(), f);
+    });
+    const tracks = files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }))
+      .map((f) => ({ title: f.name.replace(/\.[^.]+$/, ''), file: f.name, blob: f }));
+    activeTapeId = null;
+    btnKeepActive.disabled = true;
+    setPlaylist(tracks, { label: 'local files', title: 'Local folder', sub: `${tracks.length} files` });
+    renderTrackList('local-list', tracks);
+    toast(`Loaded ${tracks.length} local file(s)`);
+  }
+
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t === tab));
+      ['locker', 'local', 'manifest'].forEach((id) => {
+        document.getElementById(`pane-${id}`).hidden = tab.dataset.tab !== id;
+      });
+    });
+  });
+
+  document.getElementById('btn-refresh').addEventListener('click', refreshLocker);
+  document.getElementById('btn-clear-temp').addEventListener('click', async () => {
+    if (!confirm('Remove all temp tapes? Kept locker is untouched.')) return;
+    const n = await Store.clearTempTapes();
+    refreshLocker();
+    toast(`Cleared ${n} temp tape(s)`);
+  });
+
+  btnKeepActive.addEventListener('click', async () => {
+    if (!activeTapeId) return;
+    try {
+      await Store.promoteToKept(activeTapeId);
+      activeTapeStatus = 'kept';
+      btnKeepActive.disabled = true;
+      toast('Tape kept permanently');
+      refreshLocker();
+    } catch (err) { toast(err.message); }
+  });
+
+  document.getElementById('file-pick').addEventListener('change', (e) => ingestLocalFiles(e.target.files));
+  document.getElementById('folder-pick').addEventListener('change', (e) => ingestLocalFiles(e.target.files));
+  document.getElementById('manifest-pick').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) loadManifest(f);
+    e.target.value = '';
+  });
+
+  const drop = document.getElementById('drop-zone');
+  ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop', (e) => {
+    if (e.dataTransfer && e.dataTransfer.files.length) ingestLocalFiles(e.dataTransfer.files);
+  });
+
+  btnPrev.addEventListener('click', () => {
+    if (rippleLive && rippleLive.isActive()) {
+      rippleLive.playTrackAt(Math.max(0, rippleTrackIndex - 1));
+      return;
+    }
+    playTrack(trackIndex - 1);
+  });
+  btnNext.addEventListener('click', () => {
+    if (rippleLive && rippleLive.isActive()) {
+      rippleLive.playTrackAt(Math.min(ripplePlaylist.length - 1, rippleTrackIndex + 1));
+      return;
+    }
+    playTrack(trackIndex + 1);
+  });
+  btnPlay.addEventListener('click', () => {
+    if (player.paused) player.play().catch(() => toast('Press play'));
+    else player.pause();
+  });
+  player.addEventListener('ended', () => {
+    if (rippleLive && rippleLive.isActive()) return;
+    if (trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
+  });
+  player.addEventListener('play', () => { btnPlay.textContent = 'Pause'; });
+  player.addEventListener('pause', () => { btnPlay.textContent = 'Play'; });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, textarea')) return;
+    if (e.key === 'r' || e.key === 'R') { e.preventDefault(); rippleLive.toggleRipple(); return; }
+    if (e.key === 'Enter' && selectedTapeId && !rippleLive.isActive()) { e.preventDefault(); engageTape(selectedTapeId); }
+    if (e.key === 'n' || e.key === 'N') { e.preventDefault(); btnNext.click(); }
+    if (e.key === 'p' || e.key === 'P') { e.preventDefault(); btnPrev.click(); }
+  });
+
+  refreshLocker();
+
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    navigator.serviceWorker.register('offline-sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 52, "column": 0}, "map": {"version":3,"sources":["file:///Users/ras.ip/uXu/app/api/auth/login/route.ts"],"sourcesContent":["import db from \"../../../lib/db.js\"; import { verify as v } from \"../../../lib/auth.js\"; import { sign } from \"../../../lib/token.js\"; export async function POST(req){ const b=await req.json(); const u=await db.master.findUnique({ where:{ email:b.email }}); if(!u) return Response.json({ ok:false }); const good=await v(b.password,u.password); if(!good) return Response.json({ ok:false }); return Response.json({ ok:true, token:sign({ id:u.id, email:u.email }) }); }\n"],"names":["POST","req","b","json","u","db","master","findUnique","where","email","Response","ok","good","v","password","token","sign","id"],"mappings":";;;;;;;;;;;;;;;;;;;;;;AAA8I,eAAeA,KAAKC,GAAG;IAAG,MAAMC,IAAE,MAAMD,IAAIE,IAAI;IAAI,MAAMC,IAAE,MAAMC,GAAGC,MAAM,CAACC,UAAU,CAAC;QAAEC,OAAM;YAAEC,OAAMP,EAAEO,KAAK;QAAC;IAAC;IAAI,IAAG,CAACL,GAAG,OAAOM,SAASP,IAAI,CAAC;QAAEQ,IAAG;IAAM;IAAI,MAAMC,OAAK,MAAMC,EAAEX,EAAEY,QAAQ,EAACV,EAAEU,QAAQ;IAAG,IAAG,CAACF,MAAM,OAAOF,SAASP,IAAI,CAAC;QAAEQ,IAAG;IAAM;IAAI,OAAOD,SAASP,IAAI,CAAC;QAAEQ,IAAG;QAAMI,OAAMC,KAAK;YAAEC,IAAGb,EAAEa,EAAE;YAAER,OAAML,EAAEK,KAAK;QAAC;IAAG;AAAI"}}]
+}

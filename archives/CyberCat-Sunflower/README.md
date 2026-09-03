@@ -25,19 +25,22 @@ Each show includes setlist, venue info, attendance, and a note about its histori
 
 ## How to Use
 
-1. Open `index.html` in a browser
-2. Click a show from the "TAPES_INDEX" tab on the right
-3. The audio player loads and the setlist displays
-4. Use the 5-band EQ to adjust bass, mids, treble
-5. Switch tabs to read the archive description or system specs
+1. Open from uXu / 0?0 (`OPEN CYBERCAT`) or open `index.html` directly
+2. Use **← 0?0 ROOT** to return to the commons landing
+3. Browse **Tapes Index** (F1); Engage a night to load audio
+4. Use the setlist and 5-band EQ; **Other Transfers** for alternates
+5. **Manual** (F4) for the visitor guide (also in 0?0 MANUAL LIBRARY)
+
+Public invite to the commons is the **uXu** app / site — this archive keeps its own CyberCat deck UI.
 
 ## Technical Details
 
-- **Audio source**: Internet Archive (archive.org)
-- **Format**: MP3 streams from Internet Archive's Grateful Dead collection
+- **Audio source**: Internet Archive (archive.org) / related catalog APIs
+- **Format**: MP3 streams from public Grateful Dead collections
 - **Data**: `data.json` contains all show metadata, audio URLs, and setlists
 - **Styling**: Pure CSS, no external dependencies (except Google Fonts)
 - **JavaScript**: Vanilla JS with Web Audio API for EQ filtering
+- **License**: MIT for deck code & original docs — see repo [LICENSE](../../LICENSE)
 
 ## The Data Structure
 
@@ -81,7 +84,16 @@ Want to add more shows? Fork the repo, add shows to `data.json`, and submit a PR
 
 ## License
 
-MIT — Do whatever you want with this code.
+**Deck software & original documentation:** [MIT License](../../LICENSE) — Copyright (c) 2026 The uXu Project.
+
+**Audio streams:** Internet Archive / related public sources under their own terms and the Grateful Dead taping tradition. uXu does **not** own those recordings. Registration on uXu does not transfer ownership of this archive’s curation either.
+
+Optional provenance fields for the commons (`uxu.ini` / iNi) are self-attestation notes, not a rights certificate.
+
+**iNi status:** opted in (`uxu.ini.optIn: true`, attested 2026-08-12).  
+**Badge:** shown (`showBadge: true`); links to I page (`badgeLinksToIPage: true`).  
+**I page:** `victor-birkle` → https://rasvibir.github.io/iNi/#/i/victor-birkle  
+Paper trail: [CyberCat Sunflower provenance writeup](https://github.com/RASvibir/iNi/blob/main/content/articles/2026-08-12-cybercat-sunflower-provenance.md).
 
 ---
 

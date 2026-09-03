@@ -1,68 +1,1987 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>uXu: The Archive Without Limits</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0a0e27;
-            color: #00ff88;
-            text-align: center;
-            padding: 5rem 2rem;
-            margin: 0;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-        .archives {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        a {
-            display: inline-block;
-            background: #ff00ff;
-            color: #0a0e27;
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 3px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-        }
-        a:hover {
-            background: #00ffff;
-            box-shadow: 0 0 20px #00ffff;
-        }
-        .footer {
-            margin-top: 3rem;
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberCat Sunflower · Grateful Dead Full Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #05030a;
+      --phosphor: #5dff8a;
+      --phosphor-dim: #2a9a55;
+      --cyan: #4de8ff;
+      --magenta: #ff3dce;
+      --amber: #ffd24a;
+      --text: #d8ffe6;
+      --muted: #7a8f84;
+      --bezel: #1a1424;
+      --bezel-hi: #2e243e;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --mono: 'Share Tech Mono', ui-monospace, monospace;
+      --display: 'Orbitron', var(--mono);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% 0%, #1a0f2e 0%, transparent 50%),
+        radial-gradient(ellipse at center, #0c0818 0%, var(--void) 75%);
+      color: var(--phosphor);
+      font-family: var(--mono);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .chassis {
+      flex: 1; min-height: 0; margin: 10px;
+      display: flex; flex-direction: column;
+      border-radius: 18px;
+      background: linear-gradient(145deg, var(--bezel-hi), var(--bezel));
+      border: 1px solid #0a0612;
+      box-shadow: 0 24px 60px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08);
+      padding: 12px; position: relative;
+    }
+    .chassis::after {
+      content: ""; position: absolute; left: 50%; bottom: 5px;
+      width: 42px; height: 6px; transform: translateX(-50%);
+      border-radius: 3px; background: #0d0a14;
+      box-shadow: 0 0 8px rgba(77,232,255,.25);
+    }
+    .tube {
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      position: relative; background: var(--void); border-radius: 8px;
+      border: 2px solid #000; overflow: hidden;
+      box-shadow: inset 0 0 80px rgba(93,255,138,.05), inset 0 0 140px rgba(0,0,0,.9);
+      animation: tube-boot .8s var(--ease) both;
+    }
+    @keyframes tube-boot {
+      from { opacity: 0; filter: brightness(2.4) saturate(1.4); }
+      to { opacity: 1; filter: none; }
+    }
+    .tube::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.5) 100%);
+    }
+    .tube::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 21;
+      background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.14) 3px);
+      opacity: .7;
+    }
+    .tube > * { position: relative; z-index: 1; }
+    .tube > .ini-stamp {
+      position: absolute;
+      z-index: 30;
+      pointer-events: auto;
+    }
+
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap; padding: .55rem .9rem;
+      background: linear-gradient(90deg, rgba(255,61,206,.18), rgba(77,232,255,.1));
+      border-bottom: 1px solid rgba(93,255,138,.25);
+      font-size: .72rem; letter-spacing: .06em;
+    }
+    .topbar a {
+      color: var(--cyan); text-decoration: none;
+      border: 1px solid rgba(77,232,255,.35); padding: .2rem .5rem;
+      transition: background .2s var(--ease), color .2s var(--ease);
+    }
+    .topbar a:hover { background: var(--cyan); color: #041018; }
+    .brand {
+      font-family: var(--display); font-size: .78rem; font-weight: 700;
+      color: var(--amber); text-shadow: 0 0 12px rgba(255,210,74,.35);
+    }
+    .path { color: var(--muted); }
+    .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; margin-right: 2.75rem; }
+
+    /* iNi provenance stamp — top-right corner; optional link = stamp-as-button */
+    .ini-stamp {
+      position: absolute;
+      top: 0.45rem;
+      right: 0.55rem;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 0.22rem 0.42rem 0.18rem;
+      border: 1.5px solid rgba(93, 255, 138, 0.65);
+      border-radius: 2px;
+      background: rgba(5, 3, 10, 0.72);
+      box-shadow:
+        0 0 0 1px rgba(255, 210, 74, 0.2),
+        inset 0 0 10px rgba(93, 255, 138, 0.08);
+      font-family: var(--display);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      text-decoration: none;
+      cursor: default;
+      transform: rotate(-6deg);
+      user-select: none;
+    }
+    .ini-stamp[hidden] { display: none !important; }
+    .ini-stamp.is-link {
+      cursor: pointer;
+      transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), filter 0.15s var(--ease);
+    }
+    .ini-stamp.is-link:hover,
+    .ini-stamp.is-link:focus-visible {
+      transform: rotate(-6deg) scale(1.06);
+      filter: brightness(1.12);
+      box-shadow:
+        0 0 0 1px rgba(255, 210, 74, 0.45),
+        0 0 14px rgba(93, 255, 138, 0.25),
+        inset 0 0 10px rgba(93, 255, 138, 0.12);
+      outline: none;
+    }
+    .ini-stamp .ini-i { color: #5dff8a; text-shadow: 0 0 8px rgba(93, 255, 138, 0.55); }
+    .ini-stamp .ini-n { color: #ffe14a; text-shadow: 0 0 8px rgba(255, 210, 74, 0.55); }
+
+    .workspace {
+      flex: 1; min-height: 0;
+      display: grid; grid-template-columns: minmax(280px, 420px) 1fr; gap: 0;
+    }
+    @media (max-width: 860px) {
+      body { overflow: auto; height: auto; }
+      .chassis { margin: 6px; height: auto; }
+      .tube { min-height: 90vh; }
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    .deck-col, .hub-col {
+      display: flex; flex-direction: column; min-height: 0;
+      padding: .75rem; gap: .65rem;
+    }
+    .deck-col {
+      border-right: 1px solid rgba(93,255,138,.15);
+      background: rgba(8,4,16,.55);
+    }
+
+    .panel {
+      background: rgba(10,7,20,.85);
+      border: 1px solid rgba(93,255,138,.28);
+      padding: .7rem .75rem;
+      display: flex; flex-direction: column; gap: .55rem;
+    }
+    .panel-h {
+      font-family: var(--display); font-size: .62rem; letter-spacing: .14em;
+      color: var(--amber);
+      border-bottom: 1px dashed rgba(255,210,74,.35);
+      padding-bottom: .35rem;
+      display: flex; justify-content: space-between; align-items: center; gap: .5rem;
+    }
+    .panel-h .tag { color: var(--cyan); letter-spacing: .08em; font-family: var(--mono); font-size: .65rem; }
+
+    .now-playing { font-size: .72rem; color: var(--text); line-height: 1.4; min-height: 3.2em; }
+    .now-playing .idle { color: var(--muted); }
+    audio {
+      width: 100%; height: 36px;
+      filter: invert(1) hue-rotate(90deg) saturate(2.2) brightness(1.05);
+    }
+
+    .source-bar {
+      display: flex; flex-wrap: wrap; gap: .45rem .55rem; align-items: center;
+    }
+    .source-actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; flex-shrink: 0; }
+    .ghost-btn {
+      font-family: var(--mono); font-size: .65rem; letter-spacing: .06em;
+      text-transform: uppercase; background: transparent; color: var(--cyan);
+      border: 1px solid rgba(77,232,255,.4); padding: .28rem .55rem; cursor: pointer;
+      transition: background .2s var(--ease), color .2s var(--ease);
+    }
+    .ghost-btn:hover, .ghost-btn:focus-visible { background: var(--cyan); color: #031018; outline: none; }
+    .ghost-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .ghost-btn.best {
+      color: var(--amber); border-color: rgba(255,210,74,.45);
+    }
+    .ghost-btn.best:hover { background: var(--amber); color: #1a1200; }
+    .source-meta { font-size: .62rem; color: var(--muted); flex: 1; min-width: 12ch; }
+
+    /* Ripple — herd-sync listening */
+    .ripple-btn {
+      position: relative;
+      isolation: isolate;
+      font-family: var(--display);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255,61,206,.35), rgba(77,232,255,.28));
+      border: 1px solid rgba(255,255,255,.22);
+      padding: .38rem .85rem .34rem;
+      flex-shrink: 0;
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: 999px;
+      box-shadow:
+        0 0 18px rgba(255,61,206,.28),
+        0 0 32px rgba(77,232,255,.12),
+        inset 0 1px 0 rgba(255,255,255,.18);
+      transition: transform .25s var(--ease), filter .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .ripple-btn .ripple-label { position: relative; z-index: 2; }
+    .ripple-btn .ripple-rings {
+      position: absolute;
+      inset: -40%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(77,232,255,.45) 0%, transparent 42%),
+        radial-gradient(circle at 35% 40%, rgba(255,61,206,.35) 0%, transparent 38%);
+      animation: ripple-drift 4.8s ease-in-out infinite;
+    }
+    .ripple-btn::before,
+    .ripple-btn::after {
+      content: "";
+      position: absolute;
+      inset: 50%;
+      border-radius: 50%;
+      border: 1px solid rgba(77,232,255,.55);
+      transform: translate(-50%, -50%) scale(.2);
+      animation: ripple-expand 2.6s ease-out infinite;
+      pointer-events: none;
+    }
+    .ripple-btn::after {
+      border-color: rgba(255,61,206,.45);
+      animation-delay: 1.3s;
+    }
+    .ripple-btn:hover:not(:disabled),
+    .ripple-btn:focus-visible:not(:disabled) {
+      outline: none;
+      transform: scale(1.04);
+      filter: hue-rotate(18deg) saturate(1.35);
+      box-shadow:
+        0 0 24px rgba(255,61,206,.45),
+        0 0 48px rgba(77,232,255,.25);
+    }
+    .ripple-btn:disabled { opacity: .4; cursor: not-allowed; animation: none; }
+    .ripple-btn.is-live {
+      animation: ripple-glow 2.2s ease-in-out infinite;
+      border-color: rgba(93,255,138,.55);
+      color: var(--phosphor);
+    }
+    .ripple-btn.is-live .ripple-label::after {
+      content: " · HERD";
+      color: var(--amber);
+      letter-spacing: .12em;
+    }
+    @keyframes ripple-expand {
+      0% { opacity: .85; transform: translate(-50%, -50%) scale(.15); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
+    }
+    @keyframes ripple-drift {
+      0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+      50% { transform: rotate(8deg) scale(1.08); filter: hue-rotate(28deg); }
+    }
+    @keyframes ripple-glow {
+      0%, 100% { box-shadow: 0 0 16px rgba(93,255,138,.35), 0 0 28px rgba(255,61,206,.2); }
+      50% { box-shadow: 0 0 28px rgba(77,232,255,.45), 0 0 44px rgba(255,61,206,.35); }
+    }
+    .deck-col.ripple-on .panel:first-child {
+      border-color: rgba(255,61,206,.45);
+      box-shadow: inset 0 0 24px rgba(77,232,255,.06);
+    }
+    .deck-col.ripple-on .now-playing { text-shadow: 0 0 12px rgba(77,232,255,.2); }
+
+    .eq-grid {
+      display: flex; justify-content: space-between; gap: .35rem;
+      padding: .55rem .4rem; border: 1px solid rgba(255,61,206,.3);
+      background: rgba(255,61,206,.04);
+    }
+    .eq-cell { display: flex; flex-direction: column; align-items: center; width: 18%; gap: .25rem; }
+    .eq-cell label { font-size: .62rem; color: var(--magenta); }
+    .eq-cell span { font-size: .62rem; color: var(--cyan); }
+    .eq-cell input[type=range] {
+      writing-mode: vertical-lr; direction: rtl; width: 18px; height: 72px;
+      accent-color: var(--phosphor); cursor: pointer;
+    }
+
+    .setlist-box {
+      flex: 1; min-height: 8rem; display: flex; flex-direction: column;
+      border: 1px solid rgba(77,232,255,.35); background: #030208; padding: .55rem .65rem;
+    }
+    .setlist-box .panel-h { border-color: rgba(77,232,255,.3); color: var(--cyan); }
+    .set-jumps {
+      display: flex; flex-wrap: wrap; gap: .3rem;
+      margin: .15rem 0 .4rem; min-height: 0;
+    }
+    .set-jumps:empty { display: none; }
+    .set-jump {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .08em;
+      text-transform: uppercase; background: transparent; color: var(--amber);
+      border: 1px solid rgba(255,210,74,.4); padding: .22rem .45rem; cursor: pointer;
+      transition: background .15s var(--ease), color .15s var(--ease);
+    }
+    .set-jump:hover, .set-jump:focus-visible {
+      background: var(--amber); color: #1a1200; outline: none;
+    }
+    .set-jump.active {
+      background: rgba(255,210,74,.2); color: var(--amber); border-color: var(--amber);
+    }
+    .set-mark {
+      display: flex; align-items: center; gap: .45rem;
+      margin: .45rem 0 .2rem; padding: .2rem 0;
+      font-size: .62rem; letter-spacing: .14em; color: var(--amber);
+      border-bottom: 1px solid rgba(255,210,74,.35); cursor: pointer;
+      font-family: var(--display);
+    }
+    .set-mark:hover { color: var(--cyan); border-color: rgba(77,232,255,.45); }
+    .setlist-scroller {
+      flex: 1; overflow-y: auto; font-size: .78rem; color: var(--text); line-height: 1.55;
+      scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a;
+    }
+    .song {
+      display: flex; gap: .55rem; align-items: center; width: 100%; text-align: left;
+      background: transparent; border: 0; border-bottom: 1px dotted rgba(255,255,255,.08);
+      color: inherit; font: inherit; padding: .35rem .3rem; cursor: pointer;
+      transition: background .15s var(--ease), color .15s var(--ease);
+    }
+    .song:hover, .song:focus-visible {
+      background: rgba(77,232,255,.1); color: var(--cyan); outline: none;
+    }
+    .song .n { color: var(--phosphor-dim); min-width: 2ch; }
+    .song .cue {
+      font-size: .58rem; letter-spacing: .08em; color: var(--amber);
+      border: 1px solid rgba(255,210,74,.35); padding: .05rem .28rem;
+      opacity: 0; transition: opacity .15s var(--ease);
+    }
+    .song:hover .cue, .song:focus-visible .cue, .song.playing .cue { opacity: 1; }
+    .song .title { flex: 1; min-width: 0; }
+    .song.playing { color: var(--cyan); background: rgba(77,232,255,.08); }
+    .song.playing .cue { color: var(--cyan); border-color: rgba(77,232,255,.45); }
+    .song.set-marker {
+      color: var(--amber);
+      background: rgba(255,210,74,.07);
+      border-bottom-color: rgba(255,210,74,.25);
+    }
+    .song.set-marker .title { letter-spacing: .04em; }
+    .empty { color: var(--muted); padding: .4rem 0; }
+
+    .hub-panel {
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      background: rgba(10,7,20,.85); border: 1px solid rgba(93,255,138,.28);
+      padding: .65rem .7rem;
+    }
+    .tab-nav {
+      display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .55rem;
+      padding-bottom: .55rem; border-bottom: 1px solid rgba(93,255,138,.2);
+    }
+    .tab-btn {
+      font-family: var(--mono); font-size: .7rem; letter-spacing: .06em;
+      text-transform: uppercase; background: transparent; color: var(--phosphor-dim);
+      border: 1px solid rgba(93,255,138,.3); padding: .4rem .7rem; cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--phosphor); color: #04120a; font-weight: 700;
+      box-shadow: 0 0 16px rgba(93,255,138,.35);
+    }
+    .tab-btn kbd { font: inherit; opacity: .65; margin-right: .25rem; }
+
+    .filter-row { display: flex; gap: .5rem; margin-bottom: .45rem; flex-wrap: wrap; }
+    .filter-row input, .filter-row select {
+      flex: 1; min-width: 140px; background: #030208;
+      border: 1px solid rgba(77,232,255,.3); color: var(--text);
+      font-family: var(--mono); font-size: .78rem; padding: .4rem .55rem; outline: none;
+    }
+    .filter-row input:focus, .filter-row select:focus {
+      border-color: var(--cyan); box-shadow: 0 0 12px rgba(77,232,255,.15);
+    }
+    .year-chips {
+      display: flex; flex-wrap: wrap; gap: .25rem; margin-bottom: .5rem; max-height: 4.8rem; overflow: auto;
+    }
+    .chip {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .04em;
+      background: transparent; color: var(--phosphor-dim);
+      border: 1px solid rgba(93,255,138,.25); padding: .15rem .4rem; cursor: pointer;
+    }
+    .chip.active { background: rgba(93,255,138,.15); color: var(--phosphor); border-color: var(--phosphor); }
+    .hint { font-size: .7rem; color: var(--magenta); margin-bottom: .4rem; }
+    .index-status { font-size: .68rem; color: var(--cyan); margin-bottom: .4rem; }
+
+    .viewport { flex: 1; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: pane-in .28s var(--ease) both; }
+    @keyframes pane-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .tape-list { display: flex; flex-direction: column; gap: .45rem; }
+    .residency {
+      background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.08);
+      transition: border-color .2s var(--ease), background .2s var(--ease);
+    }
+    .residency:hover { border-color: rgba(77,232,255,.4); background: rgba(77,232,255,.04); }
+    .residency.active { border-color: var(--phosphor); background: rgba(93,255,138,.07); }
+    .res-main {
+      display: grid; grid-template-columns: 1fr auto; gap: .45rem .75rem; align-items: center;
+      padding: .55rem .65rem; cursor: pointer;
+    }
+    .residency .tape-body { min-width: 0; }
+    .residency .date { font-family: var(--display); font-size: .68rem; color: var(--amber); letter-spacing: .06em; }
+    .residency .venue { font-size: .82rem; color: var(--text); margin: .15rem 0; }
+    .residency .meta { font-size: .68rem; color: var(--muted); }
+    .residency .engage {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .1em;
+      color: var(--cyan); border: 1px solid rgba(77,232,255,.45); background: transparent;
+      padding: .35rem .55rem; white-space: nowrap; cursor: pointer;
+      transition: background .2s var(--ease), color .2s var(--ease);
+    }
+    .residency:hover .engage, .residency .engage:focus-visible { background: var(--cyan); color: #031018; outline: none; }
+    .residency.active .engage {
+      color: #04120a; background: var(--phosphor); border-color: var(--phosphor);
+    }
+    .residency .badges { margin-top: .3rem; display: flex; gap: .3rem; flex-wrap: wrap; }
+    .badge {
+      font-size: .58rem; letter-spacing: .06em; padding: .1rem .35rem;
+      border: 1px solid rgba(93,255,138,.3); color: var(--phosphor-dim);
+    }
+    .badge.run { color: var(--magenta); border-color: rgba(255,61,206,.4); }
+    .day-row {
+      display: flex; flex-wrap: wrap; gap: .3rem;
+      padding: 0 .65rem .55rem; border-top: 1px dashed rgba(93,255,138,.12);
+      padding-top: .45rem; margin: 0 .15rem;
+    }
+    .day-chip {
+      font-family: var(--mono); font-size: .62rem; letter-spacing: .04em;
+      background: transparent; color: var(--phosphor-dim);
+      border: 1px solid rgba(93,255,138,.28); padding: .22rem .45rem; cursor: pointer;
+      transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
+    }
+    .day-chip:hover, .day-chip:focus-visible {
+      color: var(--cyan); border-color: rgba(77,232,255,.5); outline: none;
+    }
+    .day-chip.active {
+      color: #04120a; background: var(--phosphor); border-color: var(--phosphor); font-weight: 700;
+    }
+    .day-chip.live {
+      box-shadow: 0 0 10px rgba(93,255,138,.35);
+    }
+
+    .manifesto, .specs {
+      font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
+    }
+    .specs { color: var(--phosphor-dim); }
+    #pane-provenance pre {
+      font-family: var(--mono); font-size: .78rem; line-height: 1.65;
+      color: var(--cyan); white-space: pre-wrap; margin: 0; padding: 10px;
+      max-height: 100%; overflow: auto;
+    }
+    .manual-body {
+      font-size: .78rem; line-height: 1.55; color: var(--text);
+      white-space: pre-wrap; max-height: 100%; overflow: auto;
+    }
+
+    .statusbar {
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      gap: .4rem 1rem; padding: .4rem .9rem;
+      border-top: 1px solid rgba(93,255,138,.2);
+      font-size: .62rem; color: var(--muted); background: rgba(0,0,0,.35);
+    }
+    .statusbar kbd {
+      font: inherit; color: var(--cyan);
+      border: 1px solid rgba(77,232,255,.25); padding: 0 .22rem; margin: 0 .08rem;
+    }
+
+    .toast {
+      position: absolute; right: .9rem; bottom: 2.2rem; z-index: 40;
+      font-size: .72rem; padding: .4rem .65rem;
+      background: rgba(10,40,24,.95); border: 1px solid var(--phosphor); color: var(--text);
+      opacity: 0; transform: translateY(8px); pointer-events: none;
+      transition: opacity .25s var(--ease), transform .25s var(--ease);
+    }
+    .toast.show { opacity: 1; transform: none; }
+
+    .modal-backdrop {
+      position: absolute; inset: 0; z-index: 35;
+      background: rgba(0,0,0,.72); display: none;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(560px, 100%); max-height: min(70vh, 520px);
+      overflow: auto; background: #07040f;
+      border: 1px solid var(--cyan); padding: .85rem;
+      box-shadow: 0 0 40px rgba(77,232,255,.15);
+    }
+    .modal h2 {
+      margin: 0 0 .55rem; font-family: var(--display); font-size: .8rem;
+      letter-spacing: .12em; color: var(--amber); font-weight: 700;
+    }
+    .alt-row {
+      width: 100%; text-align: left; background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.1); color: inherit; font: inherit;
+      padding: .55rem .6rem; margin-bottom: .4rem; cursor: pointer;
+    }
+    .alt-row:hover { border-color: var(--cyan); }
+    .alt-row.active { border-color: var(--phosphor); background: rgba(93,255,138,.08); }
+    .alt-row .t { color: var(--text); font-size: .78rem; }
+    .alt-row .s { color: var(--muted); font-size: .66rem; margin-top: .2rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tube, .tab-pane.active { animation: none; }
+      .tape, .toast, .residency, .day-chip { transition: none; }
+    }
+  </style>
 </head>
 <body>
-    <h1>🌻 uXu: The Archive Without Limits</h1>
-    <p>A decentralized archive platform where anyone can preserve and share anything.</p>
-    
-    <div class="archives">
-        <a href="archives/CyberCat-Sunflower/index.html">🌻 CyberCat Sunflower</a>
-        <a href="archives/RTFM/README.md">📖 RTFM Resources</a>
+  <div class="chassis">
+    <div class="tube" role="application" aria-label="CyberCat Sunflower Grateful Dead full catalog">
+      <span id="ini-badge" class="ini-stamp" hidden title="iNi provenance (self-attested)" aria-label="iNi provenance"><span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span></span>
+      <header class="topbar">
+        <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
+        <span class="brand">CYBERCAT SUNFLOWER</span>
+        <span class="path">FULL CATALOG · LIVE DECK</span>
+        <span class="clock" id="live-clock">00:00:00</span>
+      </header>
+
+      <div class="workspace">
+        <section class="deck-col" id="deck-col">
+          <div class="panel">
+            <div class="panel-h">
+              <span>MASTER AUDIO DECK</span>
+              <span class="tag" id="source-tag">IDLE</span>
+            </div>
+            <div class="now-playing" id="now-playing">
+              <span class="idle">Indexing Grateful Dead catalog…</span>
+            </div>
+            <audio id="main-player" controls crossorigin="anonymous"></audio>
+            <div class="source-bar">
+              <div class="source-actions">
+                <button type="button" class="ghost-btn best" id="btn-best" disabled>Best Wave</button>
+                <button type="button" class="ghost-btn" id="btn-alts" disabled>Other Transfers</button>
+              </div>
+              <span class="source-meta" id="source-meta">No tape loaded</span>
+              <button type="button" class="ripple-btn" id="btn-ripple" disabled title="Join the herd — synchronized setlist ripple">
+                <span class="ripple-rings" aria-hidden="true"></span>
+                <span class="ripple-label">Ripple</span>
+              </button>
+            </div>
+            <div class="panel-h" style="margin-top:.15rem; border:none; padding:0;"><span>5-BAND ANALOG EQ</span></div>
+            <div class="eq-grid" aria-label="Equalizer">
+              <div class="eq-cell"><label for="eq-60">60Hz</label><input type="range" id="eq-60" min="-12" max="12" value="0" step="1"><span id="v-60">0dB</span></div>
+              <div class="eq-cell"><label for="eq-230">230Hz</label><input type="range" id="eq-230" min="-12" max="12" value="0" step="1"><span id="v-230">0dB</span></div>
+              <div class="eq-cell"><label for="eq-910">910Hz</label><input type="range" id="eq-910" min="-12" max="12" value="0" step="1"><span id="v-910">0dB</span></div>
+              <div class="eq-cell"><label for="eq-4k">4kHz</label><input type="range" id="eq-4k" min="-12" max="12" value="0" step="1"><span id="v-4k">0dB</span></div>
+              <div class="eq-cell"><label for="eq-14k">14kHz</label><input type="range" id="eq-14k" min="-12" max="12" value="0" step="1"><span id="v-14k">0dB</span></div>
+            </div>
+          </div>
+
+          <div class="setlist-box">
+            <div class="panel-h">
+              <span>SETLIST MONITOR</span>
+              <span class="tag" id="setlist-count">0 TRACKS</span>
+            </div>
+            <div class="set-jumps" id="set-jumps" aria-label="Jump to set"></div>
+            <div id="live-setlist-output" class="setlist-scroller" aria-live="polite">
+              <div class="empty">Awaiting tape engage…</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="hub-col">
+          <div class="hub-panel">
+            <div class="tab-nav" role="tablist">
+              <button type="button" class="tab-btn active" data-tab="tapes"><kbd>F1</kbd>Tapes Index</button>
+              <button type="button" class="tab-btn" data-tab="manifest"><kbd>F2</kbd>Archive Log</button>
+              <button type="button" class="tab-btn" data-tab="specs"><kbd>F3</kbd>Sys Config</button>
+              <button type="button" class="tab-btn" data-tab="manual"><kbd>F4</kbd>Manual</button>
+              <button type="button" class="tab-btn" data-tab="provenance"><kbd>F5</kbd>Provenance</button>
+            </div>
+            <div class="viewport">
+              <div id="pane-tapes" class="tab-pane active" role="tabpanel">
+                <div class="hint">Residencies group consecutive nights · day chips pick the show · ENGAGE loads the wave</div>
+                <div class="index-status" id="index-status">Indexing catalog…</div>
+                <div class="filter-row">
+                  <input type="search" id="tape-filter" placeholder="Filter date / venue / city…" autocomplete="off" />
+                  <select id="sort-mode" aria-label="Sort">
+                    <option value="date-asc">Date ↑</option>
+                    <option value="date-desc" selected>Date ↓</option>
+                    <option value="rating">Rating</option>
+                    <option value="sources">Most transfers</option>
+                  </select>
+                </div>
+                <div class="year-chips" id="year-chips"></div>
+                <div id="tapes-injection-zone" class="tape-list">Booting catalog index…</div>
+              </div>
+              <div id="pane-manifest" class="tab-pane" role="tabpanel" hidden>
+                <div class="manifesto" id="manifesto-text-block">Loading…</div>
+              </div>
+              <div id="pane-specs" class="tab-pane" role="tabpanel" hidden>
+                <div class="specs" id="specs-block"></div>
+              </div>
+              <div id="pane-provenance" class="tab-pane" role="tabpanel" hidden>
+                <pre id="provenance-block" style="font-family: inherit; white-space: pre-wrap; color: inherit; padding: 10px;"></pre>
+              </div>
+              <div id="pane-manual" class="tab-pane" role="tabpanel" hidden>
+                <div class="hint">Visitor / curator guide · also in 0?0 via MANUAL → READ cybercat-sunflower</div>
+                <div class="manual-body" id="manual-body">Loading manual…</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="statusbar">
+        <span><kbd>F1</kbd>–<kbd>F4</kbd> · <kbd>Enter</kbd> engage · <kbd>r</kbd> ripple · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>o</kbd> transfers</span>
+        <span id="catalog-foot">Grateful Dead full catalog</span>
+      </footer>
+      <div class="toast" id="toast" role="status"></div>
+
+      <div class="modal-backdrop" id="alts-modal" role="dialog" aria-modal="true" aria-labelledby="alts-title">
+        <div class="modal">
+          <h2 id="alts-title">OTHER TRANSFERS</h2>
+          <p class="hint" id="alts-sub">Pick an alternate tape. Best waveform is marked.</p>
+          <div id="alts-list"></div>
+          <div style="margin-top:.6rem;">
+            <button type="button" class="ghost-btn" id="alts-close">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <div class="footer">
-        <p>No gatekeepers. No paywalls. Just culture.</p>
-        <p><a href="https://github.com/RASvibir/uXu" style="color: #00ff88;">View on GitHub</a></p>
-    </div>
+  </div>
+
+<script>
+  const RELISTEN = 'https://api.relisten.net/api/v2/artists/grateful-dead';
+  const API_BASE = 'https://rasvibir-api.chrf-podcast.workers.dev';
+  const MANUAL_FALLBACK = `# CyberCat Sunflower Manual
+
+## First Ride
+Open Tapes Index (F1), filter or pick a night, Engage to load the best wave.
+Use the setlist to jump songs; n/p for next/prev; o for Other Transfers.
+Tune the 5-band EQ while you listen.
+
+## Keyboard
+F1 Tapes · F2 Archive Log · F3 Sys Config · F4 Manual
+Enter engage · n/p tracks · o transfers
+
+## Legal & license
+Deck code / original notes: MIT (uXu repo LICENSE).
+Streams public Grateful Dead transfers — uXu does not own the recordings.
+Only add what you can lawfully share.
+
+## Home
+Return to 0?0 for ABOUT / RTFM, iNi Provenance (https://rasvibir.github.io/uXu), and USER OPTIONS → MANUAL LIBRARY.
+
+(Offline fallback — live manual loads from the uXu Worker when reachable.)`;
+  const player = document.getElementById('main-player');
+  const nowPlaying = document.getElementById('now-playing');
+  const sourceTag = document.getElementById('source-tag');
+  const sourceMeta = document.getElementById('source-meta');
+  const setlistOut = document.getElementById('live-setlist-output');
+  const setlistCount = document.getElementById('setlist-count');
+  const tapesZone = document.getElementById('tapes-injection-zone');
+  const filterInput = document.getElementById('tape-filter');
+  const sortMode = document.getElementById('sort-mode');
+  const yearChips = document.getElementById('year-chips');
+  const indexStatus = document.getElementById('index-status');
+  const toastEl = document.getElementById('toast');
+  const btnBest = document.getElementById('btn-best');
+  const btnAlts = document.getElementById('btn-alts');
+  const btnRipple = document.getElementById('btn-ripple');
+  const deckCol = document.getElementById('deck-col');
+  const altsModal = document.getElementById('alts-modal');
+  const altsList = document.getElementById('alts-list');
+
+  const setJumps = document.getElementById('set-jumps');
+  let shows = [];
+  let filtered = [];
+  let residencies = [];
+  let yearFilter = 'ALL';
+  let activeShowKey = null;
+  let activeShow = null;
+  let activeSources = [];
+  let bestSourceId = null;
+  let currentSource = null;
+  let playlist = [];
+  let setDestinations = [];
+  let trackIndex = -1;
+  let audioCtx = null, filters = [], eqReady = false;
+  let toastTimer = null;
+  /** @type {Map<string, string>} residencyId -> selected YYYY-MM-DD */
+  const residencyDay = new Map();
+
+  const RIPPLE_EPOCH = Date.parse('2026-01-01T00:00:00Z');
+  const RIPPLE_WINDOW_MS = 13 * 24 * 60 * 60 * 1000;
+  const RIPPLE_DEFAULT_SHOW_MS = 2.5 * 60 * 60 * 1000;
+  const RIPPLE_DEFAULT_TRACK_SEC = 420;
+  let rippleActive = false;
+  let rippleSyncTimer = null;
+  let rippleSchedule = [];
+  let rippleWindowId = -1;
+  /** @type {Map<string, { playlist: object[], totalMs: number, ranked: object[] }>} */
+  const rippleShowCache = new Map();
+
+  const SPECS_RIPPLE = `
+[+] RIPPLE       : herd-sync listening — one global setlist ripple
+                 · each year-segment picks its highest-rated show (★ + transfers + SBD)
+                 · plays the full setlist start-to-finish, then advances to the next era
+                 · same show date never repeats within a 13-day rotation window
+                 · everyone on Ripple hears the same song at the same UTC moment
+                 · press Ripple again (or Best Wave / manual ENGAGE) to leave the herd
+
+Ripple is a shared radio clock, not a popularity vote you control locally.
+Setlists keep the herd moving so the same songs do not loop endlessly.
+Key R toggles Ripple when the catalog is ready.`;
+
+  document.getElementById('specs-block').textContent =
+`===================================================================
+uXu TUBE PLAYER · CYBERCAT SUNFLOWER · FULL CATALOG
+===================================================================
+[+] INDEX       : live years → every available GD show
+[+] RESIDENCY   : consecutive same-venue nights grouped · day chips
+[+] RIPPLE      : global jam party · plays full setlist through, then scans herd majority
+[+] ALTERNATES  : Other Transfers button / key O
+[+] DECK        : engage a night, cue songs from the setlist
+[+] PARENT      : 0?0.uXu.0000 → CyberCat_Sunflower.uXu.0002
+${SPECS_RIPPLE}
+Lookup tip: date + venue on the deck is enough to research any tape.
+Bootlegs, SBDs, AUDs, matrices — if it exists in the commons, it can load.`;
+
+  setInterval(() => {
+    document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
+  }, 1000);
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+  }
+
+  function rippleShowScore(show) {
+    const rating = Number(show.avg_rating) || 0;
+    const sources = Number(show.source_count) || 0;
+    const sbd = show.has_soundboard_source ? 1.45 : 1;
+    return rating * (1 + Math.log1p(sources) * 0.18) * sbd;
+  }
+
+  function rippleWindowAt(now = Date.now()) {
+    return Math.floor((now - RIPPLE_EPOCH) / RIPPLE_WINDOW_MS);
+  }
+
+  function rippleSeedIndex(seed, len) {
+    if (!len) return 0;
+    let h = (seed >>> 0) ^ 0x9e3779b9;
+    h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+    h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
+    h ^= h >>> 16;
+    return (h >>> 0) % len;
+  }
+
+  function buildRippleSchedule(catalog, windowId) {
+    const byYear = new Map();
+    for (const s of catalog) {
+      const y = String(s.year || showDate(s).slice(0, 4));
+      if (!byYear.has(y)) byYear.set(y, []);
+      byYear.get(y).push(s);
+    }
+    const years = [...byYear.keys()].sort();
+    const schedule = [];
+    const usedDates = new Set();
+    for (const year of years) {
+      const ranked = byYear.get(year).slice().sort((a, b) => rippleShowScore(b) - rippleShowScore(a));
+      const top = ranked.slice(0, Math.min(8, ranked.length));
+      if (!top.length) continue;
+      let pick = null;
+      for (let attempt = 0; attempt < top.length; attempt++) {
+        const idx = rippleSeedIndex(windowId * 9973 + Number(year) * 131 + attempt, top.length);
+        const candidate = top[idx];
+        const d = showDate(candidate);
+        if (!usedDates.has(d)) {
+          pick = candidate;
+          usedDates.add(d);
+          break;
+        }
+      }
+      if (pick) schedule.push({ year, show: pick, estMs: RIPPLE_DEFAULT_SHOW_MS });
+    }
+    return schedule;
+  }
+
+  function rippleScheduleTotalMs(sched) {
+    return sched.reduce((sum, slot) => sum + (slot.actualMs || slot.estMs || RIPPLE_DEFAULT_SHOW_MS), 0) || RIPPLE_DEFAULT_SHOW_MS;
+  }
+
+  function ripplePosition(now = Date.now()) {
+    const windowId = rippleWindowAt(now);
+    if (windowId !== rippleWindowId || !rippleSchedule.length) {
+      rippleWindowId = windowId;
+      rippleSchedule = buildRippleSchedule(shows, windowId);
+    }
+    const windowStart = RIPPLE_EPOCH + windowId * RIPPLE_WINDOW_MS;
+    const elapsed = Math.max(0, now - windowStart);
+    const total = rippleScheduleTotalMs(rippleSchedule);
+    let t = elapsed % total;
+    for (let i = 0; i < rippleSchedule.length; i++) {
+      const slot = rippleSchedule[i];
+      const dur = slot.actualMs || slot.estMs || RIPPLE_DEFAULT_SHOW_MS;
+      if (t < dur) {
+        return { windowId, slotIndex: i, slot, offsetMs: t, elapsedInWindow: elapsed };
+      }
+      t -= dur;
+    }
+    const last = rippleSchedule[rippleSchedule.length - 1];
+    return {
+      windowId,
+      slotIndex: rippleSchedule.length - 1,
+      slot: last,
+      offsetMs: 0,
+      elapsedInWindow: elapsed,
+    };
+  }
+
+  function rippleTrackFromOffset(playlist, offsetMs) {
+    let t = offsetMs;
+    for (let i = 0; i < playlist.length; i++) {
+      const dur = Math.max(1, (Number(playlist[i].duration) || RIPPLE_DEFAULT_TRACK_SEC)) * 1000;
+      if (t < dur) return { trackIndex: i, seekSec: t / 1000 };
+      t -= dur;
+    }
+    return { trackIndex: Math.max(0, playlist.length - 1), seekSec: 0 };
+  }
+
+  function ripplePlaylistTotalMs(playlist) {
+    return playlist.reduce((sum, tr) => sum + Math.max(1, Number(tr.duration) || RIPPLE_DEFAULT_TRACK_SEC) * 1000, 0);
+  }
+
+  async function rippleLoadShow(show) {
+    const d = showDate(show);
+    if (rippleShowCache.has(d)) return rippleShowCache.get(d);
+    const detail = await api(`/shows/${d}`);
+    const ranked = rankSources(detail.sources || []);
+    if (!ranked.length) throw new Error('no stream');
+    const best = ranked[0];
+    const playlist = best.tracks;
+    const totalMs = ripplePlaylistTotalMs(playlist);
+    const pack = { playlist, totalMs, ranked, detail, best };
+    rippleShowCache.set(d, pack);
+    return pack;
+  }
+
+  function rippleApplyPack(show, pack, trackIdx, seekSec) {
+    activeShow = Object.assign({}, show, pack.detail);
+    activeShowKey = showKey(activeShow);
+    syncResidencySelection(activeShow);
+    paintResidencyActive();
+    activeSources = pack.ranked;
+    bestSourceId = pack.ranked[0].source.id;
+    currentSource = pack.best.source;
+    playlist = pack.playlist;
+    setDestinations = buildSetDestinations(playlist);
+    sourceTag.textContent = 'RIPPLE';
+    sourceMeta.textContent = `Herd · ${showDate(show)} · ★${Number(show.avg_rating || 0).toFixed(2)} · segment ${String(show.year || showDate(show).slice(0, 4))}`;
+    sourceMeta.title = lookupHint(activeShow, currentSource);
+    btnBest.disabled = false;
+    btnAlts.disabled = pack.ranked.length < 2;
+    trackIndex = trackIdx;
+    const track = playlist[trackIdx];
+    player.src = track.url;
+    player.load();
+    const startPlay = () => {
+      if (seekSec > 1) player.currentTime = seekSec;
+      player.play().catch(() => toast('Press play to join the Ripple'));
+    };
+    if (player.readyState >= 1) startPlay();
+    else player.addEventListener('loadedmetadata', startPlay, { once: true });
+    updateNowPlaying(track, { ripple: true });
+    renderSetlist();
+  }
+
+  async function rippleSync(force = false) {
+    if (!rippleActive || !shows.length) return;
+    const pos = ripplePosition();
+    const slot = pos.slot;
+    if (!slot) return;
+    const d = showDate(slot.show);
+    try {
+      const pack = await rippleLoadShow(slot.show);
+      slot.actualMs = pack.totalMs;
+      const { trackIndex: ti, seekSec } = rippleTrackFromOffset(pack.playlist, pos.offsetMs);
+      const sameShow = activeShow && showDate(activeShow) === d;
+      const drift = sameShow && trackIndex === ti
+        ? Math.abs((player.currentTime || 0) - seekSec)
+        : Infinity;
+      if (force || !sameShow || drift > 18) {
+        rippleApplyPack(slot.show, pack, ti, seekSec);
+        if (force) toast(`Ripple · ${d} · herd track ${String(ti + 1).padStart(2, '0')}`);
+      }
+    } catch (err) {
+      console.warn('ripple sync', err);
+    }
+  }
+
+  function startRipple() {
+    if (!shows.length) {
+      toast('Catalog still indexing…');
+      return;
+    }
+    rippleActive = true;
+    btnRipple.classList.add('is-live');
+    deckCol.classList.add('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSync(true);
+    rippleSyncTimer = setInterval(() => rippleSync(false), 45000);
+  }
+
+  function stopRipple() {
+    if (!rippleActive) return;
+    rippleActive = false;
+    btnRipple.classList.remove('is-live');
+    deckCol.classList.remove('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSyncTimer = null;
+    if (activeShow && sourceTag.textContent === 'RIPPLE') {
+      sourceTag.textContent = currentSource?.is_soundboard ? 'SBD' : 'AUD';
+    }
+  }
+
+  function toggleRipple() {
+    if (rippleActive) {
+      stopRipple();
+      toast('Ripple off — manual deck');
+      return;
+    }
+    startRipple();
+  }
+
+  async function api(path) {
+    const res = await fetch(`${RELISTEN}${path}`);
+    if (!res.ok) throw new Error(`Catalog ${res.status}`);
+    return res.json();
+  }
+
+  function showDate(s) {
+    const raw = String((s && (s.display_date || s.date)) || '');
+    const m = raw.match(/(\d{4}-\d{2}-\d{2})/);
+    return m ? m[1] : raw.slice(0, 10);
+  }
+
+  function showKey(s) {
+    return `${showDate(s)}::${(s.venue && s.venue.name) || s.venueName || ''}`;
+  }
+
+  function venueName(s) {
+    return (s.venue && s.venue.name) || s.venueName || 'Unknown Venue';
+  }
+
+  function venuePlace(s) {
+    return (s.venue && s.venue.location) || s.location || '';
+  }
+
+  function venueKey(s) {
+    const id = (s.venue && (s.venue.uuid || s.venue.id)) || s.venue_uuid || s.venue_id;
+    if (id != null && id !== '') return `id:${id}`;
+    return `name:${venueName(s).toLowerCase()}|${venuePlace(s).toLowerCase()}`;
+  }
+
+  function daysBetween(a, b) {
+    const ms = Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z');
+    return Math.round(ms / 86400000);
+  }
+
+  function formatDayChip(iso) {
+    return iso.slice(5); // MM-DD
+  }
+
+  function formatResidencyRange(nights) {
+    const first = showDate(nights[0]);
+    const last = showDate(nights[nights.length - 1]);
+    if (first === last) return first;
+    if (first.slice(0, 7) === last.slice(0, 7)) return `${first} → ${last.slice(8)}`;
+    if (first.slice(0, 4) === last.slice(0, 4)) return `${first} → ${last.slice(5)}`;
+    return `${first} → ${last}`;
+  }
+
+  function residencyId(group) {
+    return `${group.venueKey}::${showDate(group.shows[0])}::${showDate(group.shows[group.shows.length - 1])}`;
+  }
+
+  function buildResidencies(list) {
+    const chrono = list.slice().sort((a, b) => showDate(a).localeCompare(showDate(b)) || venueName(a).localeCompare(venueName(b)));
+    const groups = [];
+    let cur = null;
+    for (const s of chrono) {
+      const vk = venueKey(s);
+      const d = showDate(s);
+      if (cur && cur.venueKey === vk) {
+        const prev = showDate(cur.shows[cur.shows.length - 1]);
+        const gap = daysBetween(prev, d);
+        if (gap === 0 || gap === 1) {
+          cur.shows.push(s);
+          continue;
+        }
+      }
+      cur = { venueKey: vk, shows: [s] };
+      groups.push(cur);
+    }
+    return groups.map((g) => {
+      const id = residencyId(g);
+      const hasSbd = g.shows.some((s) => s.has_soundboard_source);
+      const maxRating = Math.max(0, ...g.shows.map((s) => Number(s.avg_rating) || 0));
+      const maxSources = Math.max(0, ...g.shows.map((s) => Number(s.source_count) || 0));
+      const start = showDate(g.shows[0]);
+      const end = showDate(g.shows[g.shows.length - 1]);
+      return {
+        id,
+        venueKey: g.venueKey,
+        shows: g.shows,
+        nights: g.shows.length,
+        hasSbd,
+        maxRating,
+        maxSources,
+        start,
+        end,
+        venue: venueName(g.shows[0]),
+        place: venuePlace(g.shows[0]),
+      };
+    });
+  }
+
+  function sortResidencies(groups, mode) {
+    const sorted = groups.slice();
+    sorted.sort((a, b) => {
+      if (mode === 'date-asc') return a.start.localeCompare(b.start) || a.venue.localeCompare(b.venue);
+      if (mode === 'date-desc') return b.start.localeCompare(a.start) || a.venue.localeCompare(b.venue);
+      if (mode === 'rating') return b.maxRating - a.maxRating || b.start.localeCompare(a.start);
+      if (mode === 'sources') return b.maxSources - a.maxSources || b.start.localeCompare(a.start);
+      return 0;
+    });
+    return sorted;
+  }
+
+  function selectedShowForResidency(res) {
+    const picked = residencyDay.get(res.id);
+    if (picked) {
+      const hit = res.shows.find((s) => showDate(s) === picked);
+      if (hit) return hit;
+    }
+    if (activeShowKey) {
+      const live = res.shows.find((s) => showKey(s) === activeShowKey);
+      if (live) return live;
+    }
+    return res.shows[0];
+  }
+
+  function sourceTracks(source) {
+    const tracks = [];
+    for (const set of (source.sets || [])) {
+      const setName = set.name || (set.is_encore ? 'Encore' : 'Set');
+      for (const t of (set.tracks || [])) {
+        if (!t.mp3_url) continue;
+        tracks.push({
+          title: t.title || 'Track',
+          url: t.mp3_url,
+          duration: t.duration,
+          position: t.track_position,
+          set: setName,
+          isEncoreSet: !!set.is_encore,
+        });
+      }
+    }
+    return annotateSetMarkers(tracks);
+  }
+
+  function classifyMarker(title) {
+    const raw = String(title || '').trim();
+    if (!raw) return null;
+    const t = raw.toLowerCase().replace(/\s+/g, ' ');
+
+    // Explicit set placement titles: set1, set 1, set I, Set II, etc.
+    let m = t.match(/^set\s*(1|2|3|i{1,3}|one|two|three)\b/);
+    if (m) {
+      const token = String(m[1]).toLowerCase();
+      const map = { 1: 'SET I', i: 'SET I', one: 'SET I', 2: 'SET II', ii: 'SET II', two: 'SET II', 3: 'SET III', iii: 'SET III', three: 'SET III' };
+      return { kind: 'set', label: map[token] || ('SET ' + token.toUpperCase()), explicit: true };
+    }
+
+    if (/^set\s*break\b|^encore\s*break\b/.test(t)) {
+      return { kind: 'break', label: 'SET BREAK', explicit: true };
+    }
+    if (/^announcement\b|^announce\b|^stage\s*announce/.test(t)) {
+      return { kind: 'announce', label: 'ANNOUNCEMENT', explicit: true };
+    }
+    if (/^encore\b|^e:\s*/.test(t)) {
+      return { kind: 'encore', label: 'ENCORE', explicit: true };
+    }
+    // Soft mid-tape pads — only used as inferred set breaks
+    if (
+      (/^(tuning|crowd|dead air|intro|introduction)\b/.test(t) && t.length < 48)
+      || /\bdead air\b/.test(t)
+      || /\btake a step back\b/.test(t)
+    ) {
+      return { kind: 'soft', label: 'BREAK', explicit: false };
+    }
+    return null;
+  }
+
+  function isFillerTitle(title) {
+    return /^filler\b/i.test(String(title || '').trim());
+  }
+
+  function nextPlayableIndex(tracks, fromIdx) {
+    for (let i = fromIdx; i < tracks.length; i++) {
+      const mark = classifyMarker(tracks[i].title);
+      if (mark && (mark.kind === 'soft' || mark.kind === 'break')) continue;
+      if (isFillerTitle(tracks[i].title)) continue;
+      return i;
+    }
+    return fromIdx;
+  }
+
+  function romanSetLabel(n) {
+    return ['SET I', 'SET II', 'SET III', 'SET IV'][n - 1] || ('SET ' + n);
+  }
+
+  function annotateSetMarkers(tracks) {
+    return tracks.map((t) => {
+      const mark = classifyMarker(t.title);
+      return Object.assign({}, t, { marker: mark });
+    });
+  }
+
+  function buildSetDestinations(tracks) {
+    if (!tracks.length) return [];
+    const dests = [];
+    const seen = new Set();
+
+    function pushDest(idx, label, opts = {}) {
+      const i = Math.max(0, Math.min(idx, tracks.length - 1));
+      const key = i + '::' + label;
+      if (seen.has(i) && !opts.force) return;
+      seen.add(i);
+      dests.push({
+        idx: i,
+        label,
+        marker: !!opts.marker,
+        explicit: !!opts.explicit,
+      });
+    }
+
+    // Prefer real multi-set containers from the transfer when present
+    const setOrder = [];
+    tracks.forEach((t, idx) => {
+      const name = (t.isEncoreSet ? 'Encore' : (t.set || 'Set')).trim();
+      if (!setOrder.includes(name)) setOrder.push(name);
+      t._setOrd = setOrder.indexOf(name);
+    });
+    const multiSets = setOrder.length > 1 || setOrder.some((n) => /encore/i.test(n));
+    if (multiSets && setOrder.some((n) => !/^set$/i.test(n))) {
+      setOrder.forEach((name, si) => {
+        const idx = tracks.findIndex((t) => t._setOrd === si);
+        if (idx < 0) return;
+        const label = /encore/i.test(name) ? 'ENCORE' : (/^set$/i.test(name) ? romanSetLabel(si + 1) : name.toUpperCase());
+        pushDest(idx, label, { marker: idx > 0, explicit: true });
+      });
+      return dests;
+    }
+
+    pushDest(0, 'SET I', { marker: false, explicit: true });
+
+    let inferredSets = 1;
+    let usedSoft = false;
+    tracks.forEach((track, idx) => {
+      if (idx === 0) return;
+      const mark = track.marker || classifyMarker(track.title);
+      if (!mark) {
+        // Encore glued onto a song title: "E: Foo" / "Encore: Foo"
+        if (/^(?:e:|encore:)\s+\S/i.test(track.title)) {
+          pushDest(idx, 'ENCORE', { marker: true, explicit: true });
+        }
+        return;
+      }
+
+      if (mark.kind === 'set') {
+        pushDest(idx, mark.label, { marker: true, explicit: true });
+        const n = mark.label === 'SET II' ? 2 : mark.label === 'SET III' ? 3 : mark.label === 'SET I' ? 1 : inferredSets;
+        inferredSets = Math.max(inferredSets, n);
+        return;
+      }
+      if (mark.kind === 'encore') {
+        pushDest(idx, 'ENCORE', { marker: true, explicit: true });
+        return;
+      }
+      if (mark.kind === 'announce') {
+        pushDest(idx, 'ANNOUNCEMENT', { marker: true, explicit: true });
+        return;
+      }
+      if (mark.kind === 'break') {
+        inferredSets += 1;
+        const destIdx = nextPlayableIndex(tracks, idx + 1);
+        pushDest(destIdx, romanSetLabel(Math.min(inferredSets, 4)), { marker: true, explicit: true });
+        return;
+      }
+      if (mark.kind === 'soft' && !usedSoft) {
+        // One inferred mid-show break from tuning/crowd when no explicit set2 yet
+        const ratio = idx / tracks.length;
+        if (ratio >= 0.25 && ratio <= 0.78 && inferredSets === 1) {
+          usedSoft = true;
+          inferredSets = 2;
+          const destIdx = nextPlayableIndex(tracks, idx + 1);
+          pushDest(destIdx, 'SET II', { marker: true, explicit: false });
+        }
+      }
+    });
+
+    // Stable order by index; keep first label if collision
+    dests.sort((a, b) => a.idx - b.idx);
+    const unique = [];
+    const usedIdx = new Set();
+    for (const d of dests) {
+      if (usedIdx.has(d.idx)) continue;
+      usedIdx.add(d.idx);
+      unique.push(d);
+    }
+    return unique;
+  }
+
+  function scoreSource(source) {
+    const tracks = sourceTracks(source);
+    if (!tracks.length) return -1;
+    let score = 0;
+    if (source.is_soundboard) score += 100000;
+    if (source.is_remaster) score += 5000;
+    score += Math.round((Number(source.avg_rating) || 0) * 1000);
+    score += Math.min(Number(source.num_reviews) || 0, 500) * 10;
+    score += Math.min(tracks.length, 80);
+    // slight preference for known IA upstream ids
+    if (source.upstream_identifier) score += 25;
+    return score;
+  }
+
+  function rankSources(sources) {
+    return (sources || [])
+      .map((s) => ({ source: s, score: scoreSource(s), tracks: sourceTracks(s) }))
+      .filter((x) => x.score >= 0 && x.tracks.length)
+      .sort((a, b) => b.score - a.score || (b.source.avg_rating || 0) - (a.source.avg_rating || 0));
+  }
+
+  function describeSource(source, isBest) {
+    const kind = source.is_soundboard ? 'SBD' : 'AUD';
+    const rating = source.avg_rating != null ? Number(source.avg_rating).toFixed(2) : '—';
+    const taper = (source.taper || source.source || '').trim();
+    const bits = [
+      isBest ? 'BEST WAVE' : null,
+      kind,
+      source.is_remaster ? 'REMASTER' : null,
+      taper ? taper.slice(0, 42) : null,
+      `★${rating}`,
+    ].filter(Boolean);
+    return bits.join(' · ');
+  }
+
+  function transferLabel(source, idx) {
+    const kind = source.is_soundboard ? 'SBD' : 'AUD';
+    const name = (source.taper || source.source || '').trim();
+    if (name) return `${idx === 0 ? '★ ' : ''}${kind} · ${name}`;
+    return `${idx === 0 ? '★ ' : ''}${kind} · Transfer ${idx + 1}`;
+  }
+
+  function lookupHint(show, source) {
+    const date = (show && (show.display_date || show.date)) || '';
+    const venue = show ? venueName(show) : '';
+    const place = show ? venuePlace(show) : '';
+    const id = source && source.upstream_identifier;
+    return [date, venue, place, id].filter(Boolean).join(' · ');
+  }
+
+  function initEq() {
+    if (eqReady) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaElementSource(player);
+      const freqs = [60, 230, 910, 4000, 14000];
+      filters = freqs.map((freq, idx) => {
+        const f = audioCtx.createBiquadFilter();
+        f.type = idx === 0 ? 'lowshelf' : idx === freqs.length - 1 ? 'highshelf' : 'peaking';
+        f.frequency.value = freq;
+        f.gain.value = 0;
+        return f;
+      });
+      source.connect(filters[0]);
+      for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
+      filters[filters.length - 1].connect(audioCtx.destination);
+      ['60','230','910','4k','14k'].forEach((id, i) => {
+        const slider = document.getElementById('eq-' + id);
+        const label = document.getElementById('v-' + id);
+        slider.addEventListener('input', (e) => {
+          const v = Number(e.target.value);
+          filters[i].gain.setValueAtTime(v, audioCtx.currentTime);
+          label.textContent = `${v > 0 ? '+' : ''}${v}dB`;
+        });
+      });
+      eqReady = true;
+    } catch (err) {
+      console.warn('EQ offline', err);
+    }
+  }
+
+  player.addEventListener('play', () => {
+    initEq();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  });
+  player.addEventListener('ended', () => {
+    if (rippleActive) {
+      if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
+        playTrack(trackIndex + 1, { fromRipple: true });
+      } else {
+        rippleSync(true);
+      }
+      return;
+    }
+    if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
+    else if (typeof triggerRippleSync === 'function') { triggerRippleSync(); } else { toast('End of tape'); }
+  });
+  player.addEventListener('error', () => {
+    toast('Stream error — skipping');
+    if (rippleActive) {
+      setTimeout(() => rippleSync(true), 350);
+      return;
+    }
+    if (trackIndex >= 0 && trackIndex < playlist.length - 1) setTimeout(() => playTrack(trackIndex + 1), 350);
+  });
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+      const on = btn.dataset.tab === tabId;
+      btn.classList.toggle('active', on);
+    });
+    document.querySelectorAll('.tab-pane').forEach((pane) => {
+      const on = pane.id === `pane-${tabId}`;
+      pane.classList.toggle('active', on);
+      pane.hidden = !on;
+    });
+    if (tabId === 'manual') loadManualPane();
+    if (tabId === 'provenance') renderProvenance();
+  }
+  document.querySelectorAll('.tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+
+  let manualLoaded = false;
+  async function loadManualPane() {
+    const el = document.getElementById('manual-body');
+    if (!el) return;
+    if (manualLoaded && el.dataset.source === 'api') return;
+    el.textContent = 'Loading manual…';
+    try {
+      const res = await fetch(`${API_BASE}/api/root/manuals/cybercat-sunflower`);
+      const data = await res.json();
+      if (!res.ok || !data.manual?.body) throw new Error(data.error || 'manual missing');
+      el.textContent = data.manual.body;
+      el.dataset.source = 'api';
+      manualLoaded = true;
+    } catch {
+      el.textContent = MANUAL_FALLBACK;
+      el.dataset.source = 'fallback';
+      manualLoaded = true;
+    }
+  }
+
+  function renderSetJumps() {
+    setJumps.innerHTML = '';
+    if (setDestinations.length < 2) return;
+    setDestinations.forEach((dest) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'set-jump' + (trackIndex >= dest.idx && isCurrentInDest(dest) ? ' active' : '');
+      btn.textContent = dest.label;
+      btn.title = `Jump to ${dest.label} · track ${dest.idx + 1}`;
+      btn.addEventListener('click', () => {
+        playTrack(dest.idx);
+        toast(`${dest.label} · track ${String(dest.idx + 1).padStart(2, '0')}`);
+      });
+      setJumps.appendChild(btn);
+    });
+  }
+
+  function isCurrentInDest(dest) {
+    const next = setDestinations.find((d) => d.idx > dest.idx);
+    const end = next ? next.idx : playlist.length;
+    return trackIndex >= dest.idx && trackIndex < end;
+  }
+
+  function renderSetlist() {
+    setlistOut.innerHTML = '';
+    setDestinations = buildSetDestinations(playlist);
+    renderSetJumps();
+    if (!playlist.length) {
+      setlistOut.innerHTML = '<div class="empty">No playable tracks on this transfer.</div>';
+      setlistCount.textContent = '0 TRACKS';
+      return;
+    }
+    setlistCount.textContent = `${playlist.length} TRACKS`;
+    const destByIdx = new Map(setDestinations.filter((d) => d.marker || d.idx === 0).map((d) => [d.idx, d]));
+
+    playlist.forEach((track, idx) => {
+      const dest = destByIdx.get(idx);
+      if (dest && (dest.marker || (idx === 0 && setDestinations.length > 1))) {
+        const mark = document.createElement('button');
+        mark.type = 'button';
+        mark.className = 'set-mark';
+        mark.textContent = `▸ ${dest.label}`;
+        mark.setAttribute('aria-label', `Jump to ${dest.label}`);
+        mark.addEventListener('click', () => playTrack(idx));
+        setlistOut.appendChild(mark);
+      }
+
+      const row = document.createElement('button');
+      row.type = 'button';
+      const isMarker = !!(track.marker && track.marker.explicit);
+      row.className = 'song'
+        + (idx === trackIndex ? ' playing' : '')
+        + (isMarker ? ' set-marker' : '');
+      row.dataset.idx = String(idx);
+      row.setAttribute('aria-label', `Cue track ${idx + 1}: ${track.title}`);
+      const n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = String(idx + 1).padStart(2, '0');
+      const t = document.createElement('span');
+      t.className = 'title';
+      t.textContent = String(track.title).toUpperCase();
+      const cue = document.createElement('span');
+      cue.className = 'cue';
+      cue.textContent = idx === trackIndex ? 'NOW' : 'CUE';
+      row.append(n, t, cue);
+      row.addEventListener('click', () => playTrack(idx));
+      setlistOut.appendChild(row);
+    });
+  }
+
+  function updateNowPlaying(track, opts = {}) {
+    if (!activeShow) return;
+    const place = venuePlace(activeShow);
+    const dest = setDestinations.slice().reverse().find((d) => trackIndex >= d.idx);
+    const destBit = dest && setDestinations.length > 1
+      ? `<span style="color:var(--amber)">${dest.label}</span> · `
+      : '';
+    const herdBit = (opts.ripple || rippleActive)
+      ? `<span style="color:var(--magenta)">◎ RIPPLE · HERD</span><br>`
+      : '';
+    nowPlaying.innerHTML =
+      herdBit +
+      `<strong>${showDate(activeShow)}</strong> · ${venueName(activeShow)}<br>` +
+      `<span style="color:var(--muted)">${place}</span><br>` +
+      `<span style="color:var(--cyan)">▶ ${destBit}${String(trackIndex + 1).padStart(2,'0')} · ${(track.title || '').toUpperCase()}</span>`;
+  }
+
+  function playTrack(idx, opts = {}) {
+    if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+    if (rippleActive && !opts.fromRipple) stopRipple();
+    trackIndex = idx;
+    const track = playlist[idx];
+    player.src = track.url;
+    player.load();
+    player.play().catch(() => toast('Press play on the deck'));
+    updateNowPlaying(track);
+    renderSetlist();
+    const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
+    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function applySource(rankedItem, { announce, fromRipple } = { announce: true, fromRipple: false }) {
+    if (rippleActive && !fromRipple) stopRipple();
+    currentSource = rankedItem.source;
+    playlist = rankedItem.tracks;
+    setDestinations = buildSetDestinations(playlist);
+    const isBest = currentSource.id === bestSourceId;
+    sourceTag.textContent = currentSource.is_soundboard ? 'SBD' : 'AUD';
+    sourceMeta.textContent = describeSource(currentSource, isBest);
+    sourceMeta.title = lookupHint(activeShow, currentSource);
+    btnBest.disabled = isBest;
+    btnAlts.disabled = activeSources.length < 2;
+    if (announce) toast(isBest ? 'Best waveform engaged' : 'Alternate transfer loaded');
+    playTrack(0);
+  }
+
+  
+  async function pingHerdPresence(showDateStr) {
+    if (!showDateStr) return;
+    try {
+      await fetch(`${API_BASE}/api/herd/ping`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: showDateStr, active: typeof rippleActive !== "undefined" && rippleActive })
+      });
+    } catch (err) {
+      console.debug("Herd ping offline", err);
+    }
+  }
+
+async function engageShow(show, opts = {}) {
+    pingHerdPresence(showDate(show));
+    if (rippleActive && !opts.fromRipple) stopRipple();
+    activeShow = show;
+    activeShowKey = showKey(show);
+    syncResidencySelection(show);
+    paintResidencyActive();
+    nowPlaying.innerHTML = `<span class="idle">Engaging ${showDate(show)}…</span>`;
+    sourceMeta.textContent = 'Loading transfer…';
+    sourceMeta.removeAttribute('title');
+    btnAlts.disabled = true;
+    btnBest.disabled = true;
+
+    try {
+      const detail = await api(`/shows/${showDate(show)}`);
+      const ranked = rankSources(detail.sources || []);
+      if (!ranked.length) {
+        toast('No streamable transfer for this show');
+        nowPlaying.innerHTML = '<span class="idle">No playable transfer found.</span>';
+        return;
+      }
+      activeSources = ranked;
+      bestSourceId = ranked[0].source.id;
+      activeShow = Object.assign({}, show, detail);
+      applySource(ranked[0]);
+    } catch (err) {
+      toast(err.message);
+      nowPlaying.innerHTML = `<span class="idle">Engage failed: ${err.message}</span>`;
+    }
+  }
+
+  function syncResidencySelection(show) {
+    const d = showDate(show);
+    for (const res of residencies) {
+      if (res.shows.some((s) => showKey(s) === showKey(show))) {
+        residencyDay.set(res.id, d);
+      }
+    }
+  }
+
+  function paintResidencyActive() {
+    document.querySelectorAll('.residency').forEach((el) => {
+      const res = residencies.find((r) => r.id === el.dataset.rid);
+      const live = !!(res && res.shows.some((s) => showKey(s) === activeShowKey));
+      el.classList.toggle('active', live);
+      const eng = el.querySelector('.engage');
+      if (eng) eng.textContent = live ? 'LIVE' : 'ENGAGE';
+      el.querySelectorAll('.day-chip').forEach((chip) => {
+        const selected = residencyDay.get(el.dataset.rid) === chip.dataset.date
+          || (!residencyDay.get(el.dataset.rid) && res && showDate(res.shows[0]) === chip.dataset.date);
+        const isLive = chip.dataset.key === activeShowKey;
+        chip.classList.toggle('active', selected || isLive);
+        chip.classList.toggle('live', isLive);
+      });
+    });
+  }
+
+  function openAlts() {
+    if (!activeSources.length) return;
+    altsList.innerHTML = '';
+    activeSources.forEach((item, idx) => {
+      const s = item.source;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'alt-row' + (currentSource && s.id === currentSource.id ? ' active' : '');
+      btn.title = lookupHint(activeShow, s);
+      const title = document.createElement('div');
+      title.className = 't';
+      title.textContent = transferLabel(s, idx);
+      const sub = document.createElement('div');
+      sub.className = 's';
+      sub.textContent = describeSource(s, idx === 0) + ` · ${item.tracks.length} tracks`;
+      btn.append(title, sub);
+      btn.addEventListener('click', () => {
+        applySource(item);
+        closeAlts();
+      });
+      altsList.appendChild(btn);
+    });
+    document.getElementById('alts-sub').textContent =
+      `${activeSources.length} transfers · ${activeShow.display_date || activeShow.date} · ${venueName(activeShow)}`;
+    altsModal.classList.add('open');
+  }
+
+  function closeAlts() { altsModal.classList.remove('open'); }
+
+  btnAlts.addEventListener('click', openAlts);
+  btnBest.addEventListener('click', () => {
+    stopRipple();
+    const best = activeSources.find((x) => x.source.id === bestSourceId);
+    if (best) applySource(best);
+  });
+  btnRipple.addEventListener('click', toggleRipple);
+  document.getElementById('alts-close').addEventListener('click', closeAlts);
+  altsModal.addEventListener('click', (e) => { if (e.target === altsModal) closeAlts(); });
+
+  function applyFilters() {
+    const q = filterInput.value.trim().toLowerCase();
+    let list = shows.slice();
+    if (yearFilter !== 'ALL') list = list.filter((s) => String(s.year || showDate(s).slice(0, 4)) === String(yearFilter));
+    if (q) {
+      list = list.filter((s) => {
+        const blob = [showDate(s), s.display_date, venueName(s), venuePlace(s)].join(' ').toLowerCase();
+        return blob.includes(q);
+      });
+    }
+    filtered = list;
+    const mode = sortMode.value;
+    residencies = sortResidencies(buildResidencies(list), mode);
+    renderResidencies(residencies);
+    const multi = residencies.filter((r) => r.nights > 1).length;
+    indexStatus.textContent =
+      `${residencies.length} entries · ${filtered.length} nights` +
+      (multi ? ` · ${multi} residencies` : '') +
+      ` · year ${yearFilter}`;
+  }
+
+  function renderYearChips(years) {
+    yearChips.innerHTML = '';
+    const all = document.createElement('button');
+    all.type = 'button';
+    all.className = 'chip' + (yearFilter === 'ALL' ? ' active' : '');
+    all.textContent = 'ALL';
+    all.addEventListener('click', () => { yearFilter = 'ALL'; renderYearChips(years); applyFilters(); });
+    yearChips.appendChild(all);
+    years.forEach((y) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const yr = String(y.year);
+      btn.className = 'chip' + (yearFilter === yr ? ' active' : '');
+      btn.textContent = yr;
+      btn.title = `${y.show_count || 0} shows`;
+      btn.addEventListener('click', () => { yearFilter = yr; renderYearChips(years); applyFilters(); });
+      yearChips.appendChild(btn);
+    });
+  }
+
+  function renderResidencies(list) {
+    tapesZone.innerHTML = '';
+    if (!list.length) {
+      tapesZone.textContent = 'No shows match that filter.';
+      return;
+    }
+    const MAX = 400;
+    const slice = list.slice(0, MAX);
+    const frag = document.createDocumentFragment();
+
+    slice.forEach((res) => {
+      const selected = selectedShowForResidency(res);
+      residencyDay.set(res.id, showDate(selected));
+      const liveHere = res.shows.some((s) => showKey(s) === activeShowKey);
+
+      const card = document.createElement('article');
+      card.className = 'residency' + (liveHere ? ' active' : '');
+      card.dataset.rid = res.id;
+
+      const main = document.createElement('div');
+      main.className = 'res-main';
+      main.setAttribute('role', 'button');
+      main.tabIndex = 0;
+      main.setAttribute('aria-label', `Engage ${showDate(selected)} ${res.venue}`);
+
+      const body = document.createElement('div');
+      body.className = 'tape-body';
+
+      const date = document.createElement('div');
+      date.className = 'date';
+      if (res.nights > 1) {
+        date.textContent = `${formatResidencyRange(res.shows)} · ${res.nights} NIGHTS`;
+      } else {
+        date.textContent = showDate(selected);
+      }
+
+      const venue = document.createElement('div');
+      venue.className = 'venue';
+      venue.textContent = res.venue;
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const rating = selected.avg_rating != null ? Number(selected.avg_rating).toFixed(2) : '—';
+      const xfers = selected.source_count || 0;
+      const nightLabel = res.nights > 1 ? `night ${showDate(selected).slice(5)} · ` : '';
+      meta.textContent = `${res.place}${res.place ? ' · ' : ''}${nightLabel}${xfers ? `${xfers} transfers · ` : ''}★${rating}`;
+
+      const badges = document.createElement('div');
+      badges.className = 'badges';
+      if (res.nights > 1) {
+        const run = document.createElement('span');
+        run.className = 'badge run';
+        run.textContent = 'RESIDENCY';
+        badges.appendChild(run);
+      }
+      if (res.hasSbd) {
+        const b = document.createElement('span');
+        b.className = 'badge sbd';
+        b.textContent = 'SBD';
+        badges.appendChild(b);
+      }
+
+      body.append(date, venue, meta, badges);
+
+      const engage = document.createElement('button');
+      engage.type = 'button';
+      engage.className = 'engage';
+      engage.textContent = liveHere ? 'LIVE' : 'ENGAGE';
+      engage.addEventListener('click', (e) => {
+        e.stopPropagation();
+        engageShow(selectedShowForResidency(res));
+      });
+
+      main.append(body, engage);
+      main.addEventListener('click', (e) => {
+        if (e.target.closest('.engage')) return;
+        engageShow(selectedShowForResidency(res));
+      });
+      main.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          engageShow(selectedShowForResidency(res));
+        }
+      });
+
+      card.appendChild(main);
+
+      if (res.nights > 1) {
+        const days = document.createElement('div');
+        days.className = 'day-row';
+        days.setAttribute('role', 'tablist');
+        days.setAttribute('aria-label', `${res.venue} residency nights`);
+        res.shows.forEach((show) => {
+          const d = showDate(show);
+          const chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'day-chip';
+          chip.dataset.date = d;
+          chip.dataset.key = showKey(show);
+          chip.textContent = formatDayChip(d);
+          chip.title = `${d} · ${venueName(show)}`;
+          chip.setAttribute('aria-label', `Select ${d}`);
+          if (d === showDate(selected)) chip.classList.add('active');
+          if (showKey(show) === activeShowKey) chip.classList.add('live');
+          chip.addEventListener('click', (e) => {
+            e.stopPropagation();
+            residencyDay.set(res.id, d);
+            days.querySelectorAll('.day-chip').forEach((c) => {
+              c.classList.toggle('active', c.dataset.date === d);
+            });
+            // refresh meta for selected night without full re-render
+            const pick = show;
+            const r = pick.avg_rating != null ? Number(pick.avg_rating).toFixed(2) : '—';
+            const x = pick.source_count || 0;
+            meta.textContent = `${res.place}${res.place ? ' · ' : ''}night ${d.slice(5)} · ${x ? `${x} transfers · ` : ''}★${r}`;
+            engageShow(pick);
+          });
+          days.appendChild(chip);
+        });
+        card.appendChild(days);
+      }
+
+      frag.appendChild(card);
+    });
+
+    tapesZone.appendChild(frag);
+    if (list.length > MAX) {
+      const note = document.createElement('div');
+      note.className = 'empty';
+      note.textContent = `Showing ${MAX} of ${list.length} entries — refine year/search to narrow.`;
+      tapesZone.appendChild(note);
+    }
+  }
+
+  filterInput.addEventListener('input', applyFilters);
+  sortMode.addEventListener('change', applyFilters);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAlts();
+    if (e.key === 'F1') { e.preventDefault(); switchTab('tapes'); }
+    if (e.key === 'F2') { e.preventDefault(); switchTab('manifest'); }
+    if (e.key === 'F3') { e.preventDefault(); switchTab('specs'); }
+    if (e.key === 'F4') { e.preventDefault(); switchTab('manual'); }
+    if (e.key === 'F5') { e.preventDefault(); switchTab('provenance'); }
+    if (e.key === 'o' && !e.target.matches('input,select,textarea')) { e.preventDefault(); openAlts(); }
+    if (e.key === '/' && !e.target.matches('input,select,textarea')) {
+      e.preventDefault(); filterInput.focus(); filterInput.select();
+    }
+    if (e.key === 'Enter' && !e.target.matches('input,select,textarea') && residencies.length) {
+      const res = residencies.find((r) => r.shows.some((s) => showKey(s) === activeShowKey)) || residencies[0];
+      if (res) { e.preventDefault(); engageShow(selectedShowForResidency(res)); }
+    }
+    if (e.key === 'r' && !e.target.matches('input,select,textarea')) { e.preventDefault(); toggleRipple(); }
+    if (e.key === 'n' && activeShow) playTrack(Math.min(trackIndex + 1, playlist.length - 1));
+    if (e.key === 'p' && activeShow) playTrack(Math.max(trackIndex - 1, 0));
+  });
+
+  async function loadCatalog() {
+    const years = await api('/years');
+    years.sort((a, b) => Number(a.year) - Number(b.year));
+    renderYearChips(years);
+
+    const all = [];
+    for (let i = 0; i < years.length; i++) {
+      const y = years[i];
+      indexStatus.textContent = `Indexing ${y.year} (${i + 1}/${years.length})…`;
+      try {
+        const detail = await api(`/years/${y.year}`);
+        for (const s of (detail.shows || [])) {
+          all.push({
+            ...s,
+            year: y.year,
+            venueName: venueName(s),
+            location: venuePlace(s),
+          });
+        }
+      } catch (err) {
+        console.warn('year failed', y.year, err);
+      }
+    }
+    shows = all;
+    document.getElementById('catalog-foot').textContent =
+      `${shows.length} Grateful Dead shows indexed`;
+    indexStatus.textContent = `Catalog ready · ${shows.length} shows`;
+    btnRipple.disabled = false;
+    toast(`${shows.length} shows indexed`);
+    applyFilters();
+  }
+
+  fetch('data.json').then((r) => r.json()).then((data) => {
+    document.getElementById('manifesto-text-block').textContent =
+`--- CYBERCAT SUNFLOWER · FULL CATALOG ---
+
+${(data.description || '').toUpperCase()}
+
+ARTIST: ${(data.artist || 'GRATEFUL DEAD').toUpperCase()}
+CURATOR: ${(data.curator || '').toUpperCase()}
+MODE: FULL-CATALOG LIVE INDEX
+DEFAULT: BEST WAVEFORM (SBD → REMASTER → RATING)
+ALTERNATES: OTHER TRANSFERS BUTTON
+
+Engage a date from the tapes index. Cue any song from the setlist.
+Date + venue on the deck is enough to look a tape up elsewhere.`;
+
+    const ini = data.uxu && data.uxu.ini;
+    const badge = document.getElementById('ini-badge');
+    const stampHtml = '<span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span>';
+    if (badge) {
+      if (!ini || ini.optIn !== true || ini.showBadge === false) {
+        badge.hidden = true;
+      } else {
+        let url = null;
+        if (ini.badgeLinksToIPage === true && ini.iPage) {
+          const raw = String(ini.iPage).trim();
+          url = /^https?:\/\//i.test(raw)
+            ? raw
+            : ('https://rasvibir.github.io/iNi/#/i/' + encodeURIComponent(raw.replace(/^#?\/?i\//i, '')));
+        }
+        let node = badge;
+        if (url) {
+          if (badge.tagName !== 'A') {
+            const a = document.createElement('a');
+            a.id = badge.id;
+            a.className = 'ini-stamp is-link';
+            badge.replaceWith(a);
+            node = a;
+          } else {
+            node.className = 'ini-stamp is-link';
+          }
+          node.href = url;
+          node.target = '_blank';
+          node.rel = 'noopener';
+          node.title = 'iNi provenance · open I page';
+          node.setAttribute('aria-label', 'iNi provenance — open I page');
+        } else {
+          if (badge.tagName === 'A') {
+            const span = document.createElement('span');
+            span.id = badge.id;
+            span.className = 'ini-stamp';
+            badge.replaceWith(span);
+            node = span;
+          } else {
+            node.className = 'ini-stamp';
+          }
+          node.title = 'iNi provenance (self-attested)';
+          node.setAttribute('aria-label', 'iNi provenance');
+          node.removeAttribute('href');
+          node.removeAttribute('target');
+          node.removeAttribute('rel');
+        }
+        node.innerHTML = stampHtml;
+        node.hidden = false;
+      }
+    }
+  }).catch(() => {
+    document.getElementById('manifesto-text-block').textContent =
+      'CyberCat Sunflower full Grateful Dead catalog.';
+  });
+
+  loadCatalog().catch((err) => {
+    indexStatus.textContent = 'Catalog index failed: ' + err.message;
+    tapesZone.textContent = '[ERROR] Could not reach catalog index';
+  });
+
+  function renderProvenance() {
+    if (document.getElementById('pane-provenance')?.hidden) return;
+    const allT = window.allTapes || [];
+    const el = document.getElementById("provenance-block");
+    if (!el) return;
+
+    if (!allT.length) {
+      el.textContent = 'Catalog still loading — provenance populates when tapes are indexed.';
+      return;
+    }
+
+    const dateData = {};
+    allT.forEach(s => {
+      const d = s.date || s.displayDate || '';
+      if (!d) return;
+      if (!dateData[d]) dateData[d] = { count: 0, venues: new Set(), cities: new Set() };
+      dateData[d].count++;
+      const v = s.venueName || (s.venue && s.venue.name) || '';
+      const c = s.location || (s.venue && s.venue.location) || '';
+      if (v) dateData[d].venues.add(v);
+      if (c) dateData[d].cities.add(c);
+    });
+
+    const ranked = Object.entries(dateData)
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 15);
+
+    let text = `===================================================================
+uXu TUBE PLAYER · GLOBAL RIPPLE PROVENANCE & POPULARITY RANK
+===================================================================
+[+] PROTOCOL    : Anonymous Peer-Vibe Herd Consensus
+[+] WINDOW      : 13-Day Anti-Monopoly Rotation (Twice a Moon)
+[+] SORTING     : Ranked by Source Count
+[+] CATALOG     : ${allT.length.toLocaleString()} indexed shows
+
+-------------------------------------------------------------------
+SHOW DATE   RANK   SOURCES  VENUE / CITY
+-------------------------------------------------------------------`;
+
+    ranked.forEach(([date, data], i) => {
+      const rank = String(i + 1).padStart(2, '0');
+      const venues = [...data.venues].join(' / ');
+      const cities = [...data.cities].join(' · ');
+      text += `\n  ${date.padEnd(11)} #${rank.padEnd(5)} ${String(data.count).padStart(4)}     ${venues} — ${cities}`;
+    });
+
+    if (!ranked.length) {
+      text += '\n  No show data available yet.';
+    }
+
+    text += `\n\n-------------------------------------------------------------------
+[+] PROVENANCE NOTES:
+  * Top shows yield to secondary picks after 13-day window.
+  * Zero user tracking. Pure anonymous community frequency.
+  * Computed client-side from indexed catalog.`;
+
+    el.textContent = text;
+  }
+
+  setInterval(() => {
+    if (document.getElementById('pane-provenance')?.hidden) return;
+    renderProvenance();
+  }, 5000);
+
+</script>
 </body>
 </html>

@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model archive_records {
+  id               String   @id
+  title            String
+  slug             String
+  status           String
+  type             String
+  root             String?
+  archive          String
+  parent           String?
+  path             String?
+  canonical_source String?
+  backup_source    String?
+  summary          String?
+  creator          String?
+  date_label       String?
+  schema_version   String   @default("1.0.0")
+  certainty        String   @default("partial")
+  tags             Json     @default("[]")
+  distribution     Json     @default("[]")
+  provenance       Json     @default("{}")
+  relations        Json     @default("{}")
+  validation       Json     @default("{}")
+  unresolved       Json     @default("[]")
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([archive])
+  @@index([parent])
+  @@index([type])
+}
+
+model archive_links {
+  id                                                 BigInt   @id @default(autoincrement())
+  parent_archive_id                                  BigInt
+  child_archive_id                                   BigInt
+  relation_type                                      String   @default("contains")
+  created_at                                         DateTime @default(now()) @db.Timestamptz(6)
+  archives_archive_links_child_archive_idToarchives  archives @relation("archive_links_child_archive_idToarchives", fields: [child_archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  archives_archive_links_parent_archive_idToarchives archives @relation("archive_links_parent_archive_idToarchives", fields: [parent_archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([parent_archive_id, child_archive_id, relation_type])
+}
+
+model archives {
+  id                                                      BigInt              @id @default(autoincrement())
+  title                                                   String
+  slug                                                    String              @unique
+  status                                                  String              @default("active")
+  type                                                    String
+  path                                                    String              @unique
+  summary                                                 String?
+  updated_at                                              DateTime            @default(now()) @db.Timestamptz(6)
+  parent_id                                               BigInt?
+  tags                                                    String[]            @default([])
+  schema_version                                          String              @default("1.0")
+  source_certainty                                        String              @default("unknown")
+  ingest_notes                                            String?
+  validation_state                                        String              @default("unvalidated")
+  revision_notes                                          String?
+  archive_links_archive_links_child_archive_idToarchives  archive_links[]     @relation("archive_links_child_archive_idToarchives")
+  archive_links_archive_links_parent_archive_idToarchives archive_links[]     @relation("archive_links_parent_archive_idToarchives")
+  archives                                                archives?           @relation("archivesToarchives", fields: [parent_id], references: [id], onUpdate: NoAction)
+  other_archives                                          archives[]          @relation("archivesToarchives")
+  items                                                   items[]
+  provenance_events                                       provenance_events[]
+  transparency_logs                                       transparency_logs[]
+}
+
+model items {
+  id          BigInt   @id @default(autoincrement())
+  archive_id  BigInt
+  title       String
+  slug        String   @unique
+  item_type   String
+  path        String
+  summary     String?
+  media_type  String?
+  source_path String?
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+  archives    archives @relation(fields: [archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model manual_pages {
+  id         BigInt   @id @default(autoincrement())
+  slug       String   @unique
+  title      String
+  body       String
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model provenance_events {
+  id              BigInt   @id @default(autoincrement())
+  archive_id      BigInt
+  event_type      String
+  source_path     String?
+  contributor     String?
+  event_date      DateTime @default(now()) @db.Timestamptz(6)
+  custody_history String?
+  notes           String?
+  archives        archives @relation(fields: [archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tags {
+  id   BigInt @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+}
+
+model transparency_logs {
+  id             BigInt    @id @default(autoincrement())
+  archive_id     BigInt?
+  log_type       String
+  message        String
+  checksum       String?
+  schema_version String    @default("1.0")
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  archives       archives? @relation(fields: [archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}

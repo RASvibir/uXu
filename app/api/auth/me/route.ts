@@ -1,0 +1,1 @@
+import { verify as tok } from "../../../../lib/token.js"; export async function GET(req){ const h=req.headers.get("authorization"); if(!h) return Response.json({ ok:false }); try{ const u=tok(h.replace("Bearer ","")); return Response.json({ user:u }); }catch{ return Response.json({ ok:false }); }}
