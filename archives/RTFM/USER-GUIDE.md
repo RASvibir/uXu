@@ -23,7 +23,7 @@ This guide is for everyone. No coding required.
 3. **Read manuals** — **RTFM** for the 0?0 manual; **MANUAL LIBRARY** (under USER OPTIONS) for pamphlets.
 4. **Create your own archive** — `CREATE ARCHIVE` (or Create Archive). Name + description, save, confirm. Expand options only if you want them.
 5. **Try CyberCat Sunflower** — Grateful Dead catalog (`OPEN CYBERCAT`). Files: Relisten catalog → Internet Archive transfers.
-6. **CyberCat Deck Builder** — Quick Nav **CYBERCAT DECK** or `DECK` — your files/links, not Sunflower’s index. One name per device (`deck exists` if you reuse it). Name examples: antelope, ur mom, bout treefiddy.
+6. **CyberCat Deck Builder** — Quick Nav **CYBERCAT DECK** or `DECK` — your files/links, not Sunflower’s index. One name per device (`deck exists` if you reuse it). Name examples: antelope, ur mom, bout treefiddy. Empty-deck look is Lathe (steel), not Sunflower CRT. Name the tape before drop/paste so it saves.
 7. **Optional: iNi Provenance** — origin/custody honesty (`INI`). Not enforcement. Notes: https://rasvibir.github.io/uXu (`INI SITE`). Paper trail: https://github.com/RASvibir/iNi.
 
 ## Finding Your Way (0?0)
@@ -71,7 +71,7 @@ If you get lost, remember: searching for **0** or **?** always points back towar
 | User Guide (this page) | Everyday visitors — also in MANUAL LIBRARY |
 | Archive Creation Manual | Anyone ready to add an archive |
 | CyberCat Sunflower Manual | Listening / using that deck (F4 on the deck) |
-| CyberCat Deck Builder | F4 on that room · `DECK` from 0?0 · unique names |
+| CyberCat Deck Builder | F4 on that room · `DECK` from 0?0 · unique names · Lathe default |
 | Master Admin Guide | Operator succession + MONITOR / markers (not visitor required) |
 | Developers Handbook | Builders and coders |
 | Source Code Pamphlet | Curious readers who want a map of the repo |

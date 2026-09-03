@@ -89,7 +89,7 @@ Human contact: [GitHub Issues](https://github.com/RASvibir/uXu/issues).
 - Repository software and original docs: **MIT** — see root `LICENSE`.
 - Third-party media linked by archives: not owned by uXu; keep source terms.
 - Registration ≠ ownership. Optional **iNi** provenance is self-attestation.
-- Deck Builder names on one device cannot repeat (`deck exists`).
+- Deck Builder names on one device cannot repeat (`deck exists`). Empty-deck look is Lathe, not Sunflower CRT.
 
 **Live:** https://rasvibir.github.io/uXu/  
 **Repo:** https://github.com/RASvibir/uXu

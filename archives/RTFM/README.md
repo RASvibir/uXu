@@ -16,7 +16,7 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 - **User Guide** — browse, install public **uXu** app, commons links, reach admin
 - **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
 - **Master Admin Guide** — claim, seal, recovery, **MONITOR**, at-will **FLAG/LOCK/REMOVE** (`SETUP MASTER`)
-- **CyberCat Deck Builder** — F4 on that room · `DECK` from 0?0 · unique names · bolt wordmark
+- **CyberCat Deck Builder** — F4 on that room · `DECK` from 0?0 · unique names · Lathe default · bolt wordmark
 - **CyberCat Sunflower Manual** — visitor / curator deck guide (F4 on deck; F5 = Ripple trail, not 0?0 MAP)
 - **Developers Handbook** — builder / coder patterns
 - **Source Code Pamphlet** — repo map without secrets or operator internals

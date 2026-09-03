@@ -8,6 +8,16 @@
   let objectUrls = [];
 
   const LOOKS = {
+    Lathe: {
+      chassis: '#1c2228', hi: '#2e3842', void: '#0e1216', phosphor: '#4aa3d9',
+      display: '#c5d4de', accent: '#e07a3d', amber: '#d4c4a8', text: '#dce4ea',
+      room: '#1a2830', glow: 0.22, scan: 0.04, radius: 4, font: "'IBM Plex Sans', sans-serif",
+    },
+    Graphite: {
+      chassis: '#222426', hi: '#3a3d42', void: '#121314', phosphor: '#9aa3ad',
+      display: '#e6eaee', accent: '#6b8f71', amber: '#c4b8a4', text: '#e8eaed',
+      room: '#1c1e20', glow: 0.18, scan: 0.02, radius: 3, font: "'Share Tech Mono', monospace",
+    },
     Cipher: {
       chassis: '#1a1410', hi: '#2c2418', void: '#0a0908', phosphor: '#e8b923',
       display: '#f4e8d0', accent: '#c41e3a', amber: '#ffd76a', text: '#f4e8d0',
@@ -18,31 +28,6 @@
       display: '#f7e4d4', accent: '#9b1b30', amber: '#f0c14b', text: '#f7e4d4',
       room: '#4a1810', glow: 0.5, scan: 0.08, radius: 6, font: "'Archivo Black', sans-serif",
     },
-    Phosphor: {
-      chassis: '#1a1424', hi: '#2e243e', void: '#05030a', phosphor: '#5dff8a',
-      display: '#4de8ff', accent: '#ff3dce', amber: '#ffd24a', text: '#d8ffe6',
-      room: '#1a0f2e', glow: 0.65, scan: 0.55, radius: 18, font: "'Orbitron', sans-serif",
-    },
-    Amber: {
-      chassis: '#2a1c0c', hi: '#4a3218', void: '#120a04', phosphor: '#ffb020',
-      display: '#ffd24a', accent: '#ff6a3d', amber: '#ffe08a', text: '#fff3d6',
-      room: '#3a220c', glow: 0.9, scan: 0.35, radius: 12, font: "'Audiowide', sans-serif",
-    },
-    Ice: {
-      chassis: '#0c1824', hi: '#163044', void: '#030812', phosphor: '#7af0ff',
-      display: '#c8f6ff', accent: '#4d7eff', amber: '#9ad4ff', text: '#e8fbff',
-      room: '#0a2030', glow: 0.8, scan: 0.7, radius: 22, font: "'VT323', monospace",
-    },
-    Magenta: {
-      chassis: '#240818', hi: '#3e1230', void: '#10030c', phosphor: '#ff6adf',
-      display: '#ff9aee', accent: '#5dffc8', amber: '#ffd24a', text: '#ffe8fb',
-      room: '#2a0a22', glow: 1.1, scan: 0.4, radius: 16, font: "'Orbitron', sans-serif",
-    },
-    Arcade: {
-      chassis: '#111', hi: '#2a2a2a', void: '#000', phosphor: '#39ff14',
-      display: '#39ff14', accent: '#ff073a', amber: '#f5d000', text: '#d0ffd0',
-      room: '#050505', glow: 1.2, scan: 0.85, radius: 6, font: "'Press Start 2P', system-ui",
-    },
     Cream: {
       chassis: '#cfc4a8', hi: '#e8dfc8', void: '#1a1810', phosphor: '#2a6b3c',
       display: '#1e4d8c', accent: '#8c2a2a', amber: '#8a5a10', text: '#efe6d0',
@@ -50,7 +35,22 @@
     },
   };
 
-  const DEFAULT_LOOK = LOOKS.Cipher;
+  const DEFAULT_LOOK = LOOKS.Lathe;
+
+  function looksLikeSunflowerTheme(t) {
+    if (!t) return false;
+    const blob = [t.phosphor, t.display, t.accent, t.chassis, t.hi, t.void, t.font, t.room]
+      .map((v) => String(v || '').toLowerCase()).join(' ');
+    if (/5dff8a|39ff14|4de8ff|7af0ff|ff3dce|ff6adf|1a1424|05030a|orbitron|vt323|press start/.test(blob)) {
+      return true;
+    }
+    return Number(t.scan) >= 0.4;
+  }
+
+  function sanitizeTheme(t) {
+    if (!t || looksLikeSunflowerTheme(t)) return { ...DEFAULT_LOOK };
+    return t;
+  }
 
   function canonicalTitle(userName) {
     const rest = String(userName || '').replace(/^\s*cybercat\s+/i, '').trim();
@@ -98,7 +98,23 @@
   }
 
   function writeLibrary(list) {
-    try { globalThis.localStorage.setItem(LIBRARY_KEY, JSON.stringify(list)); } catch { /* ignore */ }
+    try {
+      globalThis.localStorage.setItem(LIBRARY_KEY, JSON.stringify(list));
+      return true;
+    } catch {
+      toast('Could not save — this browser’s storage is full');
+      return false;
+    }
+  }
+
+  async function fetchTimed(url) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+    try {
+      return await fetch(url, { signal: ctrl.signal });
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   function openBlobDb() {
@@ -129,6 +145,22 @@
       q.onsuccess = () => resolve(q.result || null);
       q.onerror = () => reject(q.error);
     });
+  }
+
+  async function deleteBlob(key) {
+    if (!key) return;
+    const db = await openBlobDb();
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      tx.objectStore('files').delete(key);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  function revokeAllObjectUrls() {
+    objectUrls.forEach((u) => URL.revokeObjectURL(u));
+    objectUrls = [];
   }
 
   function currentUserName() {
@@ -287,6 +319,7 @@
       return;
     }
     await ensureNamedDeck();
+    if (ARCHIVE_CONFIG.archiveId === 'DECK_BUILDER') return;
     const blobKey = `${ARCHIVE_CONFIG.archiveId}:favicon`;
     await putBlob(blobKey, file);
     let dataUrl = '';
@@ -307,6 +340,7 @@
       return;
     }
     await ensureNamedDeck();
+    if (ARCHIVE_CONFIG.archiveId === 'DECK_BUILDER') return;
     currentFavicon = { kind: 'url', url };
     await applyFavicon(currentFavicon);
     persistActiveDeck();
@@ -331,7 +365,7 @@
       toast('Nothing to download');
       return track;
     }
-    const res = await fetch(src);
+    const res = await fetchTimed(src);
     if (!res.ok) throw new Error('download HTTP ' + res.status);
     const blob = await res.blob();
     const blobKey = `${ARCHIVE_CONFIG.archiveId}:dl:${i}:${Date.now()}`;
@@ -347,6 +381,7 @@
   async function downloadTracks(scope) {
     if (!playlist.length) { toast('Load a tape first'); return; }
     await ensureNamedDeck();
+    if (ARCHIVE_CONFIG.archiveId === 'DECK_BUILDER') return;
     toast(scope === 'all' ? 'Downloading tape…' : 'Downloading track…');
     try {
       if (scope === 'all') {
@@ -356,7 +391,6 @@
       }
       persistActiveDeck();
       if (trackIndex >= 0) playTrack(trackIndex);
-      player.pause();
       toast(scope === 'all' ? 'Tape stored locally' : 'Track stored locally');
     } catch (err) {
       toast('Download failed — try a file drop or a CORS-open URL');
@@ -391,17 +425,17 @@
 
   function persistActiveDeck() {
     const id = ARCHIVE_CONFIG.archiveId;
-    if (!id || id === 'DECK_BUILDER') return;
+    if (!id || id === 'DECK_BUILDER') return false;
     if (deckExistsConflict(currentUserName(), id)) {
       showDeckExistsError(true);
-      return;
+      return false;
     }
     showDeckExistsError(false);
     const rec = {
       id,
       userName: currentUserName(),
       title: canonicalTitle(currentUserName()),
-      theme: readTheme(),
+      theme: sanitizeTheme(readTheme()),
       favicon: currentFavicon && currentFavicon.kind !== 'default' ? currentFavicon : { kind: 'default' },
       tracks: serializePlaylist(),
     };
@@ -409,9 +443,10 @@
     const idx = lib.findIndex((d) => d.id === id);
     if (idx >= 0) lib[idx] = rec;
     else lib.push(rec);
-    writeLibrary(lib);
+    if (!writeLibrary(lib)) return false;
     try { globalThis.localStorage.setItem(ACTIVE_KEY, id); } catch { /* ignore */ }
     refreshDeckSelect(id);
+    return true;
   }
 
   function renderBuilderTracks() {
@@ -457,6 +492,12 @@
   }
 
   function removeTrack(idx) {
+    const gone = playlist[idx];
+    if (gone && gone.blobKey) deleteBlob(gone.blobKey).catch(() => {});
+    if (gone && gone.url && gone.url.startsWith('blob:')) {
+      try { URL.revokeObjectURL(gone.url); } catch { /* ignore */ }
+      objectUrls = objectUrls.filter((u) => u !== gone.url);
+    }
     playlist.splice(idx, 1);
     if (trackIndex >= playlist.length) trackIndex = playlist.length - 1;
     renderSetlist();
@@ -467,29 +508,47 @@
   }
 
   async function ensureNamedDeck() {
-    if (ARCHIVE_CONFIG.archiveId !== 'DECK_BUILDER') return;
-    if (!currentUserName()) document.getElementById('deck-name').value = 'My Tape';
+    if (ARCHIVE_CONFIG.archiveId !== 'DECK_BUILDER') return true;
+    if (!currentUserName()) {
+      toast('Name the deck first');
+      return false;
+    }
     await saveNamedDeck(false);
+    return ARCHIVE_CONFIG.archiveId !== 'DECK_BUILDER';
   }
 
   async function saveNamedDeck(announce = true) {
     const userName = currentUserName();
-    if (!userName) { toast('Name the deck first'); return; }
+    if (!userName) { toast('Name the deck first'); return false; }
     if (deckExistsConflict(userName, currentDeckId())) {
       showDeckExistsError(true);
       toast('deck exists');
-      return;
+      return false;
     }
     showDeckExistsError(false);
     const id = slugFromName(userName);
+    if (!id) {
+      toast('Name needs a letter or number');
+      return false;
+    }
+    const oldId = currentDeckId();
+    if (oldId && oldId !== id) {
+      const lib = readLibrary();
+      const idx = lib.findIndex((d) => d.id === oldId);
+      if (idx >= 0) {
+        lib.splice(idx, 1);
+        if (!writeLibrary(lib)) return false;
+      }
+    }
     ARCHIVE_CONFIG.archiveId = id;
     ARCHIVE_CONFIG.archiveTitle = canonicalTitle(userName);
-    persistActiveDeck();
+    if (!persistActiveDeck()) return false;
     setBrandLabel(ARCHIVE_CONFIG.archiveTitle.toUpperCase());
     path.textContent = `STANDALONE · ${ARCHIVE_CONFIG.archiveTitle.toUpperCase()}`;
     document.title = `${ARCHIVE_CONFIG.archiveTitle} · CyberCat Deck`;
     catalogFoot.textContent = ARCHIVE_CONFIG.archiveTitle;
     if (announce) toast(`Saved ${ARCHIVE_CONFIG.archiveTitle}`);
+    return true;
   }
 
   function commitTracks(tracks, label) {
@@ -584,7 +643,7 @@
   }
 
   async function fetchArchiveItem(id) {
-    const res = await fetch(`https://archive.org/metadata/${encodeURIComponent(id)}`);
+    const res = await fetchTimed(`https://archive.org/metadata/${encodeURIComponent(id)}`);
     if (!res.ok) throw new Error('archive.org ' + res.status);
     const meta = await res.json();
     const files = Array.isArray(meta.files) ? meta.files : [];
@@ -600,7 +659,7 @@
   async function fetchRelisten(parts) {
     const pad = (n) => String(n).padStart(2, '0');
     const url = `https://api.relisten.net/api/v2/artists/${parts.artist}/years/${parts.y}/${pad(parts.mo)}/${pad(parts.d)}`;
-    const res = await fetch(url);
+    const res = await fetchTimed(url);
     if (!res.ok) throw new Error('relisten ' + res.status);
     const data = await res.json();
     const show = Array.isArray(data) ? data[0] : data;
@@ -622,6 +681,7 @@
     const text = String(raw || '').trim();
     if (!text) { toast('Paste a link, playlist, or JSON'); return; }
     await ensureNamedDeck();
+    if (ARCHIVE_CONFIG.archiveId === 'DECK_BUILDER') return;
     let tracks = [];
     if (text.startsWith('{') || text.startsWith('[')) {
       try { tracks = tracksFromJson(JSON.parse(text)); } catch { toast('JSON did not parse'); return; }
@@ -643,10 +703,10 @@
         } else if (/^https?:\/\//i.test(line)) {
           try {
             if (/\.json(\?|$)/i.test(line)) {
-              const data = await (await fetch(line)).json();
+              const data = await (await fetchTimed(line)).json();
               tracks = tracks.concat(tracksFromJson(data));
             } else if (/\.m3u8?(\?|$)/i.test(line) || /\.pls(\?|$)/i.test(line)) {
-              const body = await (await fetch(line)).text();
+              const body = await (await fetchTimed(line)).text();
               tracks = tracks.concat(/\.pls/i.test(line) ? parsePls(body) : parseM3u(body));
             } else {
               tracks.push({ title: document.getElementById('link-title').value.trim() || line.split('/').pop(), url: line, kind: 'link' });
@@ -666,6 +726,7 @@
     const files = Array.from(fileList || []);
     if (!files.length) return;
     await ensureNamedDeck();
+    if (ARCHIVE_CONFIG.archiveId === 'DECK_BUILDER') return;
     const extra = [];
     for (const file of files) {
       const name = file.name || '';
@@ -686,6 +747,8 @@
     if (!extra.length) return;
     commitTracks(extra, ARCHIVE_CONFIG.archiveTitle);
     toast(`${extra.length} item${extra.length === 1 ? '' : 's'} added`);
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) fileInput.value = '';
   }
 
   async function hydrateTracks(saved) {
@@ -714,8 +777,8 @@
     ARCHIVE_CONFIG.archiveTitle = rec.title;
     document.getElementById('deck-name').value = rec.userName || '';
     paintCanonical();
-    writeThemeInputs(rec.theme || DEFAULT_LOOK);
-    applyTheme(rec.theme || DEFAULT_LOOK);
+    writeThemeInputs(sanitizeTheme(rec.theme));
+    applyTheme(sanitizeTheme(rec.theme));
     applyFavicon(rec.favicon);
     setBrandLabel(rec.title.toUpperCase());
     path.textContent = `STANDALONE · ${rec.title.toUpperCase()}`;
@@ -768,7 +831,8 @@
     paintCanonical();
     refreshDeckSelect(null);
     mountPresets();
-    applyTheme(readTheme());
+    writeThemeInputs(DEFAULT_LOOK);
+    applyTheme(DEFAULT_LOOK);
     applyFavicon(currentFavicon);
     document.getElementById('btn-favicon-file').addEventListener('click', () => {
       document.getElementById('favicon-file').click();
@@ -827,6 +891,7 @@
       if (rippleActive) stopRipple();
       player.pause();
       player.removeAttribute('src');
+      revokeAllObjectUrls();
       ARCHIVE_CONFIG.archiveId = 'DECK_BUILDER';
       ARCHIVE_CONFIG.archiveTitle = 'CyberCat Deck Builder';
       document.getElementById('deck-name').value = '';
