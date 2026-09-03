@@ -109,8 +109,13 @@
     font-family: var(--display); font-size: .78rem; font-weight: 700;
     color: var(--amber); text-shadow: 0 0 calc(18px * var(--glow)) var(--amber);
   }
-  .brand .bolt, .name-lock .bolt {
-    height: 1.15em; width: auto; display: block; flex-shrink: 0;
+  img.bolt {
+    height: 0.82em;
+    width: auto;
+    max-height: 0.82em;
+    display: block;
+    flex-shrink: 0;
+    object-fit: contain;
   }
   .path { color: var(--muted); }
   .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; margin-right: 2.75rem; }

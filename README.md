@@ -19,7 +19,7 @@ Questions: [GitHub Issues](https://github.com/RASvibir/uXu/issues)
 | **iNi** | Independent opt-in provenance practice (self-attestation). Public notes: [rasvibir.github.io/uXu](https://rasvibir.github.io/uXu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
 | **CyberCat Sunflower** | Grateful Dead catalog deck (`OPEN CYBERCAT`) — Relisten → Internet Archive transfers |
 | **CyberCat Deck Builder** | Make a CyberCat deck (`DECK` / Quick Nav **CYBERCAT DECK**) — files you add, not Sunflower’s catalog |
-| **Ledger** | Private steward room (`OPEN LEDGER`) |
+| **Ledger** | Private steward room (`Ledger.uXu.0001`, `OPEN LEDGER`) |
 | **RTFM** | Canonical friendly manuals (`archives/RTFM/` + 0?0 **RTFM**) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
 
@@ -40,7 +40,7 @@ uXu
 Title.uXu.NNNN
 ```
 
-- `NNNN` is the next free serial when an archive is created (`0000` root, `0001` first child, …).
+- `NNNN` is a registration serial (`0000` root). New rooms should receive the **next unused** number; the serial is unique per id.
 - Numbers are historical — not rank or ownership.
 - **Ids are forever.** Delete/lock/investigate change the **marker**, not the row. Examples: `(deleted by user)`, `(removed by admin)`, `(locked archive)`, `(under investigation)`, `(live archive)`, `(audience only)`.
 - **iNi / MAP are honesty, not enforcement.** Each MAP child has one `files:` line (where that room’s catalog/streams come from). Inspect shows the catalog URL.
@@ -56,6 +56,12 @@ Creators choose how the link home looks (same destination):
 | `0?0` | **← 0?0** | Console back-link |
 
 See `templates/` and the Archive Creation Manual.
+
+## Accounts & copying on 0?0
+
+You can browse as a guest. **Sign In** / **Sign Up** (form or `SIGNIN` / `SIGNUP`) talk to the uXu API. The public name is your **handle**; login email stays private (you and the operator). The operator account displays as **RAS.ip** with role **ADMIN**.
+
+On 0?0, **highlight text then copy** with **⌘C** / **Ctrl+C** or right-click **Copy**. Letter shortcuts (`c` command, `a` account, …) do not run while a chord or a live highlight is active.
 
 ## Relationships
 
@@ -91,8 +97,8 @@ In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, Master
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
 
-**Tests:** `npm test` runs the full node suite (syntax, smoke, token lint,
-generator, immutability, typecheck) — run it before shipping deck changes.
+**Tests:** `npm test` runs the node suite (syntax, smoke, token lint,
+generator, Sunflower immutability, route typecheck). Browser checks skip if Chrome is unavailable.
 
 **Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater and not an enforcement engine. uXu and iNi are set up independently: uXu is the commons; iNi is optional provenance practice.
 
@@ -102,7 +108,7 @@ generator, immutability, typecheck) — run it before shipping deck changes.
 
 **Media clarification (not a second license):**
 
-- The MIT grant covers code, templates, and docs in this repo.
+- The MIT grant covers code, templates, and original docs in this repo, including the **0?0** console and API worker source as shipped here.
 - It does **not** claim ownership of third-party media, recordings, or other assets linked or embedded by independent archives.
 - Those remain under their own licenses, permissions, and taping policies (e.g. Internet Archive items, Grateful Dead taping tradition).
 - **uXu is a commons layer for registration and discovery** — not a rights holder for contributor content.
