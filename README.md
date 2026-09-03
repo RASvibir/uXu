@@ -18,7 +18,7 @@ Questions: [GitHub Issues](https://github.com/RASvibir/uXu/issues)
 | **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
 | **iNi** | Independent opt-in provenance practice (self-attestation). Public notes: [rasvibir.github.io/uXu](https://rasvibir.github.io/uXu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
 | **CyberCat Sunflower** | Grateful Dead catalog deck (`OPEN CYBERCAT`) — Relisten → Internet Archive transfers |
-| **CyberCat Deck Builder** | Make a CyberCat deck (`DECK`) — your files/links. Names unique on this device (`deck exists` if repeated). Examples: antelope, ur mom, bout treefiddy. Default look Lathe, not Sunflower CRT. Bolt is a clean silver wordmark (brighter outline), not the favicon. |
+| **CyberCat Deck Builder** | Make a CyberCat deck (`DECK`) — your files/links. Names unique on this device (`deck exists` if repeated). Examples: antelope, ur mom, bout treefiddy. Default look Lathe, not Sunflower CRT. Bolt is the skull-and-roses flash wordmark, not the favicon. |
 | **Ledger** | Private steward room (`Ledger.uXu.0001`, `OPEN LEDGER`) |
 | **RTFM** | Canonical friendly manuals (`archives/RTFM/` + 0?0 **RTFM**) |
 | **templates/** | Optional starters (commons link + template-fork + iNi fields) |
