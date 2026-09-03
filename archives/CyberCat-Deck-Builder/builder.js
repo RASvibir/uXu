@@ -51,6 +51,33 @@
     return slug ? `U_${slug}` : '';
   }
 
+  function nameKey(userName) {
+    return String(userName || '').replace(/^\s*cybercat\s+/i, '').trim().replace(/\s+/g, ' ').toLowerCase();
+  }
+
+  function currentDeckId() {
+    const id = ARCHIVE_CONFIG.archiveId;
+    return (!id || id === 'DECK_BUILDER') ? '' : id;
+  }
+
+  function deckExistsConflict(userName, exceptId) {
+    const key = nameKey(userName);
+    const slug = slugFromName(userName);
+    if (!key) return false;
+    return readLibrary().some((d) => {
+      if (exceptId && d.id === exceptId) return false;
+      const otherKey = nameKey(d.userName || String(d.title || '').replace(/^CyberCat\s+/i, ''));
+      return otherKey === key || (!!slug && d.id === slug);
+    });
+  }
+
+  function showDeckExistsError(on) {
+    const el = document.getElementById('deck-name-error');
+    const input = document.getElementById('deck-name');
+    if (el) el.hidden = !on;
+    if (input) input.setAttribute('aria-invalid', on ? 'true' : 'false');
+  }
+
   function readLibrary() {
     try {
       const list = JSON.parse(globalThis.localStorage.getItem(LIBRARY_KEY) || '[]');
@@ -353,6 +380,11 @@
   function persistActiveDeck() {
     const id = ARCHIVE_CONFIG.archiveId;
     if (!id || id === 'DECK_BUILDER') return;
+    if (deckExistsConflict(currentUserName(), id)) {
+      showDeckExistsError(true);
+      return;
+    }
+    showDeckExistsError(false);
     const rec = {
       id,
       userName: currentUserName(),
@@ -431,6 +463,12 @@
   async function saveNamedDeck(announce = true) {
     const userName = currentUserName();
     if (!userName) { toast('Name the deck first'); return; }
+    if (deckExistsConflict(userName, currentDeckId())) {
+      showDeckExistsError(true);
+      toast('deck exists');
+      return;
+    }
+    showDeckExistsError(false);
     const id = slugFromName(userName);
     ARCHIVE_CONFIG.archiveId = id;
     ARCHIVE_CONFIG.archiveTitle = canonicalTitle(userName);
@@ -738,6 +776,8 @@
       paintCanonical();
       setBrandLabel(canonicalTitle(currentUserName()).toUpperCase());
       document.title = `${canonicalTitle(currentUserName())} · CyberCat Deck`;
+      const name = currentUserName();
+      showDeckExistsError(!!name && deckExistsConflict(name, currentDeckId()));
     });
     ['theme-chassis', 'theme-hi', 'theme-void', 'theme-phosphor', 'theme-display',
       'theme-accent', 'theme-amber', 'theme-text', 'theme-room', 'theme-glow',
@@ -779,6 +819,7 @@
       ARCHIVE_CONFIG.archiveTitle = 'CyberCat Deck Builder';
       document.getElementById('deck-name').value = '';
       paintCanonical();
+      showDeckExistsError(false);
       playlist = [];
       loadTracks([], 'BUILDER', 'Empty tape');
       renderBuilderTracks();

@@ -421,6 +421,15 @@
   }
   .name-row input { border-left: 0; }
   .canonical { display: inline-flex; align-items: center; gap: .35rem; color: var(--amber); font-family: var(--display); font-size: .78rem; letter-spacing: .04em; }
+  .name-error {
+    margin: .35rem 0 0;
+    font-size: .68rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    text-shadow: 0 0 calc(10px * var(--glow)) var(--magenta);
+  }
+  .name-error[hidden] { display: none !important; }
   .dropzone {
     border: 1px dashed rgba(93,255,138,.4); padding: .65rem; text-align: center;
     color: var(--muted); cursor: pointer;
@@ -543,8 +552,9 @@
                 <label for="deck-name">Deck name</label>
                 <div class="name-row">
                   <span class="name-lock" title="Fixed brand anchor"><img class="bolt" src="bolt.png" alt="">CyberCat</span>
-                  <input id="deck-name" type="text" maxlength="48" placeholder="Comet, Sunflower, Live at Red Rocks" autocomplete="off">
+                  <input id="deck-name" type="text" maxlength="48" placeholder="antelope, ur mom, bout treefiddy, etc." autocomplete="off" aria-describedby="deck-name-error">
                 </div>
+                <p class="name-error" id="deck-name-error" hidden role="alert">deck exists</p>
                 <div class="canonical" id="canonical-line"><img class="bolt" src="bolt.png" alt=""><span id="canonical-title">CyberCat</span></div>
               </div>
               <div>
@@ -1428,7 +1438,8 @@ Ripple is a shared radio clock, not a popularity vote you control locally.`;
     manualBody.textContent =
 `DECK BUILDER MANUAL
 
-CyberCat is a fixed prefix. Type the rest of the name.
+CyberCat is a fixed prefix. Type the rest of the name (antelope, ur mom, bout treefiddy, etc.).
+Each name can be used once on this device. A repeat save shows deck exists.
 Colors and leave-off position save to that deck only.
 Drop files or paste stream / archive links. Reorder with ↑ ↓.
 
