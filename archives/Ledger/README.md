@@ -1,6 +1,6 @@
 # Ledger (personal)
 
-**Id:** `Ledger.uXu.0002`  
+**Id:** `Ledger.uXu.0001`  
 **Access:** private — stewards only (signed in on 0?0).
 
 This is **Ledger’s personal room**. It can grow with his own items, notes, and manuals.  

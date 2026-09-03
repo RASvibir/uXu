@@ -104,7 +104,7 @@
         },
         "ini": {
           "type": "object",
-          "description": "Optional iNi provenance opt-in. Community: https://soloist.ai/uxu — see archives/RTFM/INI-PROVENANCE.md",
+          "description": "Optional iNi provenance opt-in. Community: https://rasvibir.github.io/uXu — see archives/RTFM/INI-PROVENANCE.md",
           "properties": {
             "optIn": {
               "type": "boolean",

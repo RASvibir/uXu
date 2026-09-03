@@ -99,7 +99,7 @@ The login route expects a `neon_auth.users` table with columns:
 
 ## Security Notes
 
-- **Password hashing:** This example uses a constant-time comparison against the stored `password_hash` column. In production, use bcrypt or argon2 to hash passwords. Workers don't have native bcrypt support — consider hashing on your origin or using a dedicated auth service.
+- **Password hashing:** Signup and login store SHA-256 hex of the password (`password_hash`). Legacy plaintext rows still verify once, then are upgraded on login.
 - **Session tokens:** The generated token is a 256-bit random hex string. For JWT-based sessions, sign tokens with `JWT_SECRET` using a library like `jose`.
 - **CORS:** `Access-Control-Allow-Origin` is set to `*` for simplicity. For production, consider restricting to your specific domain (`https://rasvibir.github.io`).
 

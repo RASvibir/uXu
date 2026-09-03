@@ -31,6 +31,16 @@ for (const d of dirs) {
     continue;
   }
 
+  /* Deck Builder is a spawn host, not a spawned room: it keeps SHOW_MANIFEST_URL
+   * and SPAWN_SED documentation tokens. Identity g-tokens must still be absent. */
+  if (d.name === 'CyberCat-Deck-Builder') {
+    for (const t of ['{{ARCHIVE_ID}}', '{{ARCHIVE_TITLE}}', '{{ARCHIVE_MODE}}']) {
+      check(d.name + ' has no ' + t, !html.includes(t));
+    }
+    check(d.name + ' keeps SHOW_MANIFEST_URL spawn hook', html.includes('{{SHOW_MANIFEST_URL}}'));
+    continue;
+  }
+
   /* Spawned decks: the four g-tokens must be gone; the only sanctioned `{{`
    * leftovers are the OFF-default ripple + setlist scope comments, the generic
    * docs reference ({{TOKEN}}), the series-doc escape ({{next}}), and SPAWN_SED

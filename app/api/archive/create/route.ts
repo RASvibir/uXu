@@ -12,7 +12,10 @@ type Track = { url?: string; duration?: number | string };
 export async function POST(req: Request) {
   let body: Record<string, unknown> = {};
   try {
-    body = await req.json();
+    const parsed = await req.json();
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      body = parsed as Record<string, unknown>;
+    }
   } catch {
     return Response.json({ created: false, error: 'invalid JSON body' }, { status: 400 });
   }

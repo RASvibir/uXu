@@ -16,6 +16,39 @@ function getAuthToken(request) {
   return match ? match[1].trim() : null;
 }
 
+const MASTER_EMAIL = 'puffintuffest@gmail.com';
+
+function isMasterEmail(email) {
+  return String(email || '').trim().toLowerCase() === MASTER_EMAIL;
+}
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(text)));
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function looksSha256Hex(value) {
+  return /^[0-9a-f]{64}$/i.test(String(value || ''));
+}
+
+async function hashPassword(password) {
+  return sha256Hex(password);
+}
+
+async function passwordMatches(stored, password) {
+  if (!stored || !password) return false;
+  const hashed = await hashPassword(password);
+  if (stored === hashed) return true;
+  if (!looksSha256Hex(stored) && stored === password) return true;
+  return false;
+}
+
+function publicHandleFor(email, handle, name) {
+  if (isMasterEmail(email)) return 'RAS.ip';
+  const h = String(handle || name || '').trim();
+  return h || null;
+}
+
 let dbInitialized = false;
 async function ensureDbInit(sql) {
   if (dbInitialized) return;
@@ -112,19 +145,19 @@ async function ensureDbInit(sql) {
     `;
 
     // 1. Master Admin Account Setup
-    const masterEmail = 'puffintuffest@gmail.com';
-    const masterUsers = await sql`SELECT id FROM neon_auth.users WHERE lower(email) = lower(${masterEmail})`;
+    const masterUsers = await sql`SELECT id FROM neon_auth.users WHERE lower(email) = lower(${MASTER_EMAIL})`;
     if (!masterUsers.length) {
       const adminId = `user_${Date.now()}`;
+      const masterHash = await hashPassword('GreatWrigley1908!');
       await sql`
         INSERT INTO neon_auth.users (id, email, password_hash, role, name, handle)
-        VALUES (${adminId}, ${masterEmail}, 'GreatWrigley1908!', 'ADMIN', 'RAS.ip', 'RAS.ip')
+        VALUES (${adminId}, ${MASTER_EMAIL}, ${masterHash}, 'ADMIN', 'RAS.ip', 'RAS.ip')
       `;
     } else {
       await sql`
         UPDATE neon_auth.users
         SET role = 'ADMIN', handle = 'RAS.ip', name = 'RAS.ip'
-        WHERE lower(email) = lower(${masterEmail})
+        WHERE lower(email) = lower(${MASTER_EMAIL})
       `;
     }
 
@@ -190,7 +223,8 @@ async function resolveSession(sql, token) {
       role: row.role,
       sudo,
       name: row.name,
-      handle: row.handle || row.name || 'RAS.ip',
+      handle: publicHandleFor(row.email, row.handle, row.name),
+      name: isMasterEmail(row.email) ? 'RAS.ip' : (row.name || row.handle || null),
     };
   } catch (err) {
     console.error('Session resolution error:', err);
@@ -199,11 +233,11 @@ async function resolveSession(sql, token) {
 }
 
 async function handleRoot() {
-  return json({ status: 'ok', service: 'uXu iNi API', api_host: 'rasvibir-api.chrf-podcast.workers.dev', version: '2026.08.21' });
+  return json({ status: 'ok', service: 'uXu iNi API', api_host: 'rasvibir-api.chrf-podcast.workers.dev', version: '2026.09.03' });
 }
 
 async function handleApiRoot() {
-  return json({ status: 'ok', system: '0?0.uXu.0000', api_version: '2026.08.21' });
+  return json({ status: 'ok', system: '0?0.uXu.0000', api_version: '2026.09.03' });
 }
 
 async function handleRegistry(sql) {
@@ -216,7 +250,7 @@ async function handleRegistry(sql) {
     await sql`
       UPDATE archive_records
       SET sequence = 2, title = 'Ledger', archive = 'Ledger', slug = 'ledger', path = '/archives/Ledger/index.html', kind = 'private', type = 'private', holder_handle = 'RAS.ip'
-      WHERE id = 'Ledger.uXu.0001' OR slug = 'ledger'
+      WHERE id = 'Ledger.uXu.0001' OR id = 'Ledger.uXu.0002' OR slug = 'ledger'
     `;
     await sql`
       UPDATE archive_records
@@ -424,8 +458,24 @@ async function handleLogin(sql, request) {
     }
 
     const user = users[0];
-    if (user.password_hash !== password) {
+    if (!(await passwordMatches(user.password_hash, password))) {
       return json({ error: 'invalid credentials' }, 401);
+    }
+
+    if (!looksSha256Hex(user.password_hash)) {
+      const upgraded = await hashPassword(password);
+      await sql`UPDATE neon_auth.users SET password_hash = ${upgraded} WHERE id = ${user.id}`;
+    }
+
+    if (isMasterEmail(user.email)) {
+      await sql`
+        UPDATE neon_auth.users
+        SET role = 'ADMIN', handle = 'RAS.ip', name = 'RAS.ip'
+        WHERE id = ${user.id}
+      `;
+      user.role = 'ADMIN';
+      user.handle = 'RAS.ip';
+      user.name = 'RAS.ip';
     }
 
     const token = `token_${Date.now()}_${Math.random().toString(36).slice(2)}_${Math.random().toString(36).slice(2)}`;
@@ -443,7 +493,8 @@ async function handleLogin(sql, request) {
         id: user.id,
         email: user.email,
         role: user.role,
-        handle: user.handle || user.name || 'RAS.ip',
+        handle: publicHandleFor(user.email, user.handle, user.name),
+        name: isMasterEmail(user.email) ? 'RAS.ip' : (user.name || user.handle || null),
         isAdmin: user.role === 'ADMIN'
       }
     }, 200);
@@ -470,12 +521,14 @@ async function handleSignup(sql, request) {
       return json({ error: 'account with this email already exists' }, 409);
     }
 
-    const role = email.toLowerCase() === 'puffintuffest@gmail.com' ? 'ADMIN' : 'USER';
+    const role = isMasterEmail(email) ? 'ADMIN' : 'USER';
+    const storedHandle = isMasterEmail(email) ? 'RAS.ip' : handle;
+    const passwordHash = await hashPassword(password);
     const userId = `user_${Date.now()}`;
     const result = await sql`
       INSERT INTO neon_auth.users (id, email, password_hash, role, name, handle)
-      VALUES (${userId}, ${email}, ${password}, ${role}, ${handle}, ${handle})
-      RETURNING id, email, role, handle
+      VALUES (${userId}, ${email}, ${passwordHash}, ${role}, ${storedHandle}, ${storedHandle})
+      RETURNING id, email, role, handle, name
     `;
 
     const user = result[0];
@@ -494,7 +547,8 @@ async function handleSignup(sql, request) {
         id: user.id,
         email: user.email,
         role: user.role,
-        handle: user.handle,
+        handle: publicHandleFor(user.email, user.handle, user.name),
+        name: isMasterEmail(user.email) ? 'RAS.ip' : (user.name || user.handle || null),
         isAdmin: user.role === 'ADMIN'
       }
     }, 201);
@@ -516,17 +570,23 @@ async function handleMe(sql, request, ctx) {
   if (!ctx.session) {
     return json({ error: 'unauthorized' }, 401);
   }
+  const role = ctx.session.role;
+  const handle = ctx.session.handle;
+  const name = ctx.session.name;
   return json({
     userId: ctx.session.userId,
     email: ctx.session.email,
-    role: ctx.session.role,
+    role,
     sudo: ctx.session.sudo,
-    handle: ctx.session.handle,
+    handle,
+    mode: role === 'ADMIN' ? 'ADMIN' : (role || 'USER'),
     user: {
-      role: ctx.session.role,
+      id: ctx.session.userId,
+      role,
       email: ctx.session.email,
-      handle: ctx.session.handle,
-      isAdmin: ctx.session.role === 'ADMIN'
+      handle,
+      name,
+      isAdmin: role === 'ADMIN'
     }
   });
 }

@@ -1785,7 +1785,6 @@ Keyboard: ↑↓ Quick Nav · Tab zones · → USER OPTIONS / registry actions �
 
 <script>
   const API_BASE = "https://rasvibir-api.chrf-podcast.workers.dev";
-  const AUTH_BASE = "https://ep-crimson-firefly-ad77brka.neonauth.c-2.us-east-1.aws.neon.tech/uXu/auth";
   const SESSION_KEY = "uxu_session_token";
   const SUDO_KEY = "uxu_sudo";
 
@@ -2187,9 +2186,10 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     const role = authState.role || 'GUEST';
     const sudo = !!authState.sudo;
     document.getElementById('user-label').textContent = role;
-    document.getElementById('account-label').textContent = authState.user?.name || authState.user?.email || '—';
+    const displayName = authState.user?.handle || authState.user?.name || '—';
+    document.getElementById('account-label').textContent = displayName;
     document.getElementById('sudo-label').textContent = sudo ? 'ON' : 'OFF';
-    document.getElementById('mode-label').textContent = authState.mode || (sudo ? 'ADMIN' : (role === 'GUEST' ? 'COMMAND' : 'USER'));
+    document.getElementById('mode-label').textContent = role === 'ADMIN' ? 'ADMIN' : (authState.mode || (sudo ? 'ADMIN' : (role === 'GUEST' ? 'COMMAND' : 'USER')));
     btnSignOut.disabled = role === 'GUEST';
     const monitorRow = document.getElementById('monitor-row');
     if (monitorRow) monitorRow.hidden = role !== 'ADMIN';
@@ -2257,21 +2257,6 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     }
   }
 
-  async function neonAuthPost(path, body){
-    const res = await fetch(`${AUTH_BASE}${path}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(body),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const msg = data.message || data.error || `auth failed (${res.status})`;
-      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
-    }
-    return data;
-  }
-
   async function auditAuthEvent(eventType, detail){
     try {
       await fetch(`${API_BASE}/api/auth/audit`, {
@@ -2283,17 +2268,27 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
   }
 
   async function signUp(email, password, name){
-    const data = await neonAuthPost('/sign-up/email', {
-      email,
-      password,
-      name: name || email.split('@')[0] || 'uXu user',
+    const res = await fetch(`${API_BASE}/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        password,
+        handle: name || undefined,
+        name: name || undefined,
+      }),
     });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 409) {
+      return signIn(email, password);
+    }
+    if (!res.ok) throw new Error(data.error || data.message || 'Sign up failed');
     if (!data.token) throw new Error('sign-up succeeded but no session token returned');
     setSessionToken(data.token);
     setSudo(false);
     await refreshAuth();
     await auditAuthEvent('signup');
-    toast(`signed up as ${data.user?.name || email}`);
+    toast(`signed up as ${authState.user?.handle || data.user?.handle || email}`);
     return data;
   }
 
@@ -2310,7 +2305,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     setSudo(false);
     await refreshAuth();
     await auditAuthEvent("signin");
-    toast(`signed in as ${data.email || email}`);
+    toast(`signed in as ${authState.user?.handle || data.user?.handle || email}`);
     return data;
   }
 
@@ -2388,6 +2383,7 @@ Inside the commons, 0?0 is still the root console — archives choose their own 
     'CyberCat_Sunflower.uXu.0002': 'CyberCat-Sunflower/index.html',
     'cybercat-sunflower': 'CyberCat-Sunflower/index.html',
     'CyberCat Sunflower': 'CyberCat-Sunflower/index.html',
+    'Ledger.uXu.0001': 'Ledger/index.html',
     'Ledger.uXu.0002': 'Ledger/index.html',
     'ledger': 'Ledger/index.html',
     'Ledger': 'Ledger/index.html',
@@ -4399,7 +4395,7 @@ const list = document.getElementById('archive-list');
   <tr><td>ABOUT</td><td>What <strong>uXu</strong> is (site · repo · app) · 0?0 as archive interface</td></tr>
   <tr><td>FAQ</td><td>Everyday how-to in plain language</td></tr>
   <tr><td>CREATE ARCHIVE</td><td>Simple template · expandable options</td></tr>
-  <tr><td>CYBERCAT DECK</td><td>Deck Builder (`DECK`) — not Sunflower</td></tr>
+  <tr><td>CYBERCAT DECK</td><td>Deck Builder (DECK command) — not Sunflower</td></tr>
   <tr><td>ARCHIVE INDEX</td><td>Back to registry welcome / focus</td></tr>
   <tr><td>USER OPTIONS ▸</td><td>Fold-out: Manual · Install · Map · Logs · System · Setup · Exit</td></tr>
   <tr><td>iNi Provenance</td><td>Opt-in authenticity protocol (bottom flair)</td></tr>
@@ -4484,7 +4480,7 @@ RTFM                   ← aggressive flair + tip (bottom)</pre>
   <tr><td><code>ARCHIVE CONTACT</code></td><td>Steward email for an archive (private by default; public needs admin)</td></tr>
   <tr><td><code>AUTH</code></td><td>Account gate help</td></tr>
 </table>
-<p class="muted">iNi / MAP are honesty. Admin MONITOR alerts; FLAG/LOCK/REMOVE are at-will markers (SUDO). Visitor commands above do not enforce. Software/docs: MIT (`LICENSE`). Media linked by archives keeps its own terms.</p>`;
+<p class="muted">iNi / MAP are honesty. Admin MONITOR alerts; FLAG/LOCK/REMOVE are at-will markers (SUDO). Visitor commands above do not enforce. Software/docs: MIT (LICENSE file). Media linked by archives keeps its own terms.</p>`;
 
     if (depth) depth.innerHTML = `
 <p class="lede">Grow only when you want to. Each tier builds on the last.</p>
@@ -5275,7 +5271,7 @@ Or use the ACCOUNT GATE form on the left.`);
       }
       showOutput("SIGNUP", "creating account...");
       signUp(email, password, name)
-        .then(() => showOutput("SIGNUP", `Account created.\nrole: ${authState.role}\nname:  ${authState.user?.name || '—'}\nemail: ${authState.user?.email || email}`))
+        .then(() => showOutput("SIGNUP", `Account created.\nrole: ${authState.role}\nhandle: ${authState.user?.handle || '—'}`))
         .catch((err) => showOutput("ERROR", err.message));
       return;
     }
@@ -5300,7 +5296,8 @@ Or use the ACCOUNT GATE form on the left.`);
     if (cmd === "WHOAMI") {
       refreshAuth().then((s) => {
         showOutput("WHOAMI",
-`name:   ${s.user?.name || '—'}
+`handle: ${s.user?.handle || s.handle || '—'}
+name:   ${s.user?.name || '—'}
 role:   ${s.role}
 sudo:   ${s.sudo ? 'ON' : 'OFF'}
 mode:   ${s.mode}
@@ -5909,7 +5906,7 @@ Then attest here so SETUP MASTER can check it off.`);
     const password = authPassword.value;
     if (!email || !password) return;
     signIn(email, password)
-      .then(() => showOutput("SIGNIN", `Signed in as ${authState.user?.name || authState.user?.email || email}\nrole: ${authState.role}`))
+      .then(() => showOutput("SIGNIN", `Signed in as ${authState.user?.handle || authState.user?.name || email}\nrole: ${authState.role}`))
       .catch((err) => showOutput("ERROR", err.message));
   });
   document.getElementById('btn-signup').addEventListener('click', () => {
@@ -5921,7 +5918,7 @@ Then attest here so SETUP MASTER can check it off.`);
       return;
     }
     signUp(email, password, name)
-      .then(() => showOutput("SIGNUP", `Account created for ${authState.user?.name || authState.user?.email || email}\nrole: ${authState.role}`))
+      .then(() => showOutput("SIGNUP", `Account created for ${authState.user?.handle || authState.user?.name || email}\nrole: ${authState.role}`))
       .catch((err) => showOutput("ERROR", err.message));
   });
   btnSignOut.addEventListener('click', () => {
