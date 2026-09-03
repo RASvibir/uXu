@@ -35,7 +35,7 @@ archives/Your-Archive/
 
 `templates/` and CyberCat Sunflower are optional references — not requirements.
 CyberCat Deck Builder (`archives/CyberCat-Deck-Builder/`) is a separate room:
-unique rest-of-names on the device, bolt wordmark a hair taller than type (not favicon).
+unique rest-of-names on the device, silver bolt wordmark (not favicon).
 Empty-deck look is Lathe; Sunflower CRT packs are not in that room.
 
 ## data.json Craft
