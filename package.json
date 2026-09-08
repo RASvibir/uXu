@@ -22,7 +22,6 @@
   "homepage": "https://github.com/RASvibir/uXu#readme",
   "dependencies": {
     "@prisma/client": "^7.9.1",
-    "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
@@ -33,6 +32,7 @@
     "typescript": "^7.0.2"
   },
   "devDependencies": {
+    "@types/node": "^26.5.0",
     "puppeteer-core": "^25.9.0"
   }
 }
