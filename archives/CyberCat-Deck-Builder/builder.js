@@ -551,6 +551,89 @@
     return true;
   }
 
+  async function downloadArchivePackage() {
+    if (!await ensureNamedDeck()) return;
+
+    if (!playlist.length) {
+      toast('Add at least one track before preparing an archive');
+      return;
+    }
+
+    const tracks = playlist.map((track, index) => {
+      const isLocal = Boolean(track.blobKey) || String(track.url || '').startsWith('blob:');
+
+      return {
+        position: index + 1,
+        title: track.title || `Track ${index + 1}`,
+        sourceType: isLocal ? 'local-file-not-uploaded' : 'remote-url',
+        url: isLocal ? null : (track.url || track.src || null),
+        duration: Number(track.duration) || null,
+        mimeType: track.mimeType || track.type || null,
+        originalFileName: track.fileName || track.name || null,
+        note: isLocal
+          ? 'This local browser file is not included in the package. Add a lawful public URL before publishing.'
+          : null,
+      };
+    });
+
+    const localCount = tracks.filter((track) => track.sourceType === 'local-file-not-uploaded').length;
+
+    const archivePackage = {
+      format: 'uxu-cybercat-archive-package',
+      formatVersion: 1,
+      createdAt: new Date().toISOString(),
+      archive: {
+        title: ARCHIVE_CONFIG.archiveTitle,
+        suggestedSlug: slugFromName(currentUserName()).toLowerCase().replace(/^u_/, ''),
+        kind: 'cybercat-deck',
+        description: `CyberCat deck prepared from ${ARCHIVE_CONFIG.archiveTitle}.`,
+        storageNotice: 'This package was exported from browser-local Builder storage. Local media is not uploaded or embedded.',
+      },
+      deck: {
+        title: ARCHIVE_CONFIG.archiveTitle,
+        theme: sanitizeTheme(readTheme()),
+        favicon: currentFavicon && currentFavicon.kind !== 'default'
+          ? currentFavicon
+          : null,
+        tracks,
+      },
+      submission: {
+        state: 'prepared',
+        destination: 'uXu review',
+        remoteTrackCount: tracks.length - localCount,
+        localFileCount: localCount,
+        requirements: [
+          'Sign in to uXu before submitting for publication.',
+          'Provide lawful public URLs for any local files before public publishing.',
+          'A uXu admin or future submissions route must store and approve the archive.',
+        ],
+      },
+    };
+
+    const slug = archivePackage.archive.suggestedSlug || 'cybercat-deck';
+    const filename = `${slug}-uxu-archive-package.json`;
+    const blob = new Blob(
+      [JSON.stringify(archivePackage, null, 2) + '\n'],
+      { type: 'application/json' }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    toast(
+      localCount
+        ? `Package downloaded — ${localCount} local file${localCount === 1 ? '' : 's'} need public URLs`
+        : 'Archive package downloaded — ready for uXu review'
+    );
+  }
+
   function commitTracks(tracks, label) {
     const next = playlist.concat(tracks.filter((t) => t && (t.url || t.src)));
     loadTracks(next, ARCHIVE_CONFIG.archiveId, label || ARCHIVE_CONFIG.archiveTitle);
@@ -887,6 +970,7 @@
       document.getElementById('link-url').value = '';
     });
     document.getElementById('btn-save-deck').addEventListener('click', () => saveNamedDeck(true));
+    document.getElementById('btn-submit-archive')?.addEventListener('click', downloadArchivePackage);
     document.getElementById('btn-new-deck').addEventListener('click', () => {
       if (rippleActive) stopRipple();
       player.pause();
