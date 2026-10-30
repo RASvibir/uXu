@@ -33,12 +33,12 @@ Icon
 
 # --- Digital Audio Workstation (DAW) & Video Editing Project Dumps ---
 # Ignore massive autosave cache folders from production software.
-*.als         # Ableton Live
-*.logic       # Logic Pro
-*.cpr         # Cubase
-*.flp         # FL Studio
-*.prproj      # Adobe Premiere
-*.drp         # DaVinci Resolve
+*.als
+*.logic
+*.cpr
+*.flp
+*.prproj
+*.drp
 .render_cache/
 
 # ini runtime secrets and build artifacts
@@ -60,3 +60,8 @@ rasvibir-api-worker/.dev.vars
 rasvibir-api-worker/.dev.vars.*
 rasvibir-api-worker/.env
 rasvibir-api-worker/.env.*
+
+.env
+.env.*
+!.env.example
+.next/
