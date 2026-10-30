@@ -1,0 +1,37 @@
+<!--
+  Home / commons link — paste near the top of your archive.
+  Creation users pick ONE style in data.json → uxu.homeLink.style
+
+  Path assumes: archives/Your-Archive/ → ../index.html
+-->
+
+<!-- Style A: console home (for people already inside uXu) -->
+<a href="../index.html" class="uxu-home uxu-home--back" data-uxu-home="0?0">← 0?0</a>
+
+<!-- Style B: public site chip (ad / website style — no 0?0) -->
+<a href="../index.html" class="uxu-home uxu-home--badge" data-uxu-home="uXu">uXu</a>
+
+<!--
+  Minimal CSS:
+
+  .uxu-home {
+    display: inline-block;
+    font-family: ui-monospace, monospace;
+    font-size: .85rem;
+    text-decoration: none;
+    margin-bottom: .75rem;
+  }
+  .uxu-home--back {
+    color: #3de872;
+    border: 1px solid rgba(61,232,114,.35);
+    padding: .25rem .55rem;
+  }
+  .uxu-home--badge {
+    color: #041208;
+    background: #3de872;
+    border: 1px solid #3de872;
+    padding: .2rem .65rem;
+    letter-spacing: .06em;
+    font-weight: 700;
+  }
+-->

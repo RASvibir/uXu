@@ -1,0 +1,42 @@
+{
+  "archiveName": "Your Archive",
+  "artist": "",
+  "curator": "",
+  "description": "Short description of this independent archive.",
+  "uxu": {
+    "homeLink": {
+      "style": "uXu",
+      "href": "../index.html"
+    },
+    "allowTemplateForks": false,
+    "templateForkDepth": 1,
+    "templateOf": null,
+    "templateDepth": 0,
+    "manuals": [
+      {
+        "title": "Visitor Guide",
+        "path": "manuals/USER-MANUAL.md",
+        "description": "How to use this archive — listed in 0?0 INDEX ARCHIVE MANUALS"
+      }
+    ],
+    "tags": [],
+    "contactEmail": null,
+    "contactEmailPublic": false,
+    "ini": {
+      "optIn": false,
+      "tag": "iNi",
+      "showBadge": true,
+      "badgeLinksToIPage": false,
+      "iPage": null,
+      "provenance": {
+        "origin": "",
+        "authors": [],
+        "custody": "",
+        "lineage": "",
+        "conditions": "",
+        "attestedAt": null
+      }
+    }
+  },
+  "shows": []
+}

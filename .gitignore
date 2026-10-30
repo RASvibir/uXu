@@ -7,7 +7,9 @@
 .DS_Store
 Thumbs.db
 ehthumbs.db
-Icon?
+# macOS custom folder icon resource (Icon + carriage return) — not "icons/"
+Icon
+
 
 # --- Gigantic Raw Audio & Video Formats (Prevents GitHub Sync Crashes) ---
 # Uncompressed raw master files belong on external clouds, not GitHub.
@@ -31,10 +33,35 @@ Icon?
 
 # --- Digital Audio Workstation (DAW) & Video Editing Project Dumps ---
 # Ignore massive autosave cache folders from production software.
-*.als         # Ableton Live
-*.logic       # Logic Pro
-*.cpr         # Cubase
-*.flp         # FL Studio
-*.prproj      # Adobe Premiere
-*.drp         # DaVinci Resolve
+*.als
+*.logic
+*.cpr
+*.flp
+*.prproj
+*.drp
 .render_cache/
+
+# ini runtime secrets and build artifacts
+apps/ini/.env
+apps/ini/.env.*
+apps/ini/.dev.vars
+apps/ini/.dev.vars.*
+apps/ini/.wrangler/
+apps/ini/node_modules/
+apps/ini/.dev.vars
+
+/src/generated/prisma
+node_modules
+
+# rasvibir-api-worker (Cloudflare API — vendored in-repo)
+rasvibir-api-worker/node_modules/
+rasvibir-api-worker/.wrangler/
+rasvibir-api-worker/.dev.vars
+rasvibir-api-worker/.dev.vars.*
+rasvibir-api-worker/.env
+rasvibir-api-worker/.env.*
+
+.env
+.env.*
+!.env.example
+.next/

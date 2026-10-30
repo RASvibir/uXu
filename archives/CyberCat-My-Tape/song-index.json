@@ -1,0 +1,7 @@
+{
+  "catalog_meta": { "title": "My Tape Archive — seeded setlist index", "version": "1.0.0" },
+  "songs": {
+    "one": { "title": "one", "duration": 8, "url": "audio/one.mp3" }
+,    "two": { "title": "two", "duration": 12, "url": "audio/two.mp3" }
+  }
+}

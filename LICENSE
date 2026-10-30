@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Victor Birkle
+Copyright (c) 2026 The uXu Project
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Scope (not a second license grant)
+
+This MIT License covers the software, templates, and original documentation
+in this repository (The uXu Project). That includes the 0?0 console
+(`archives/index.html` and related pages), CyberCat Deck Builder UI,
+spawn templates, and API worker source as shipped in this repo.
+
+It does not license or transfer third-party media, recordings, images, or
+other assets that independent archives link or embed. Those remain under
+their own licenses, permissions, and taping policies. Registration on uXu
+does not make uXu a rights holder. Optional iNi provenance fields are
+self-attestation, not a legal title deed.
+
+Accounts and registry data are operational records of the commons; they are
+not licensed as “Software” by this file. Handle display and admin markers
+are described in the root README.
+
+See the root README “License” section for the same clarification in
+plain language.

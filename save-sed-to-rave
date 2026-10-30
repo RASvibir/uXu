@@ -1,0 +1,243 @@
+#!/usr/bin/env bash
+#
+# save-sed-to-rave — instantiate a new standalone CyberCat deck archive
+# from the generic template (archives/CyberCat-Generic/index.html).
+#
+# The template exposes {{TOKEN}} placeholders (see ARCHIVE_CONFIG in the
+# template). This tool runs the BSD/GNU-sed-safe replacements and emits the
+# full archive room (index.html + data.json + data.schema.json + optional
+# song-index.json), then validates the resulting deck before printing a
+# summary.
+#
+# Usage:
+#   ./save-sed-to-rave \
+#     --id MY_TAPE \
+#     --title "My Tape Archive" \
+#     [--mode STANDALONE|HERD|FULL] \
+#     [--ripple on|off] \
+#     [--manifest api/my_tape/shows.json] \
+#     [--tracks "audio/one.wav:8,audio/two.wav:12"] \
+#     [--number 0005] \
+#     [--curator "Name"] \
+#     [--from archives/CyberCat-Generic/index.html] \
+#     [--out archives/CyberCat-My-Tape/index.html]
+#
+# Flags:
+#   --id        (required) uppercase archive id, e.g. MY_TAPE — becomes the
+#               storage namespace (uxu_deck_MY_TAPE_*) and herd channel.
+#   --title     (required) human archive title.
+#   --mode      default STANDALONE.
+#   --ripple    on|off — Ripple Sync toggle in the generated deck. OFF unless
+#               explicitly "on". The deck sources via hybrid manifest model;
+#               manifest fetch is lazy, offline-safe.
+#   --manifest  optional manifest URL (e.g. api/<id>/shows.json). Fetched at
+#               boot with graceful fallback to the inline seed when offline.
+#   --tracks    optional comma-separated "path:seconds[,path:seconds...]".
+#               Seeded into the setlist; empty -> baseline (Track 0 / 0).
+#   --number    archive serial, CyberCat_<Name>.uXu.NNNN (default 0004; see
+#               README "Archive identity" — never reuse a serial).
+#   --curator   optional steward name for data.json.
+#   --from      template path (default archives/CyberCat-Generic/index.html).
+#   --out       output path (default archives/CyberCat-<PascalId>/index.html).
+#
+# Emits per spawn:
+#   index.html          the customized, isolated deck
+#   data.json           uXu-compatible metadata + isolated uxu.ini block
+#   data.schema.json    copy of the commons schema (templates/data.schema.json)
+#   song-index.json     seeded-track index (only when --tracks is given)
+#
+# Example:
+#   ./save-sed-to-rave --id MY_TAPE --title "My Tape Archive" \
+#     --manifest api/my_tape/shows.json --number 0005 \
+#     --tracks "audio/one.wav:8,audio/two.wav:12"
+
+set -euo pipefail
+
+usage() { grep -E '^# ' "$0" | sed -E 's/^# ?//' | grep -vE '^$/'; exit "${1:-0}"; }
+
+TPL="archives/CyberCat-Generic/index.html"
+SCHEMA="templates/data.schema.json"
+OUT=""
+ID=""
+TITLE=""
+MODE="STANDALONE"
+RIPPLE="off"
+MANIFEST=""
+TRACKS=""
+NUMBER="0004"
+CURATOR=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --id)        ID="${2:-}";            shift 2 ;;
+    --title)     TITLE="${2:-}";         shift 2 ;;
+    --mode)      MODE="${2:-STANDALONE}"; shift 2 ;;
+    --ripple)    RIPPLE="$(echo "${2:-off}" | tr '[:upper:]' '[:lower:]')"; shift 2 ;;
+    --manifest)  MANIFEST="${2:-}";      shift 2 ;;
+    --tracks)    TRACKS="${2:-}";        shift 2 ;;
+    --number)    NUMBER="${2:-0004}";    shift 2 ;;
+    --curator)   CURATOR="${2:-}";       shift 2 ;;
+    --from)      TPL="${2:-}";           shift 2 ;;
+    --out)       OUT="${2:-}";           shift 2 ;;
+    -h|--help)   usage 0 ;;
+    *)           echo "ERROR: unknown argument: $1" >&2; usage 1 ;;
+  esac
+done
+
+[[ -n "$ID" ]]     || { echo "ERROR: --id is required" >&2;      usage 1; }
+[[ -n "$TITLE" ]]  || { echo "ERROR: --title is required" >&2;   usage 1; }
+[[ "$RIPPLE" == "on" || "$RIPPLE" == "off" ]] || { echo "ERROR: --ripple must be on|off" >&2; usage 1; }
+[[ "$NUMBER" =~ ^[0-9]{4}$ ]] || { echo "ERROR: --number must be 4 digits (e.g. 0005)" >&2; usage 1; }
+
+ID="$(echo "$ID" | tr '[:lower:]' '[:upper:]')"
+
+# Escapes a value for use inside a sed replacement with '|' as delimiter.
+esc() { printf '%s' "$1" | sed 's/[|&\\]/\\&/g'; }
+
+# Escapes a value for embedding in JSON (" and backslash and control chars).
+esc_json() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/	/ /g' | tr '\n' ' '
+}
+
+# archives/CyberCat-Generic -> archives/CyberCat-My-Tape
+pascaldir() {
+  local id="$1" w name=""
+  while IFS= read -r w; do
+    [[ -n "$w" ]] || continue
+    w="$(echo "$w" | tr '[:upper:]' '[:lower:]')"
+    name+="-$(echo "${w:0:1}" | tr '[:lower:]' '[:upper:]')${w:1}"
+  done < <(echo "$id" | tr '_' '\n')
+  echo "CyberCat${name}"
+}
+
+# Build setlist payload: { title:"...", url:"...", duration:N },...
+setlist=""
+declare -a TRACK_PATHS=() TRACK_DURS=() TRACK_FILES=() TRACK_SLUGS=()
+if [[ -n "$TRACKS" ]]; then
+  IFS=',' read -ra items <<< "$TRACKS"
+  entries=""
+  for it in "${items[@]}"; do
+    [[ -n "$it" ]] || continue
+    IFS=':' read -r path dur <<< "$it"
+    [[ -n "$path" ]] || continue
+    file="$(echo "$(basename "$path")" | sed 's/\.[^.]*$//; s/_/ /g')"
+    slug="$(echo "$(basename "$path")" | sed 's/\.[^.]*$//' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g')"
+    entries+="{ title:\"${file}\", url:\"${path}\", duration:${dur:-0} },"
+    TRACK_PATHS+=("$path"); TRACK_DURS+=("${dur:-0}"); TRACK_FILES+=("$file"); TRACK_SLUGS+=("$slug")
+  done
+  setlist="${entries%,}"
+fi
+
+[[ -n "$OUT" ]] || OUT="archives/$(pascaldir "$ID")/index.html"
+[[ -f "$TPL" ]]    || { echo "ERROR: template not found: $TPL" >&2; exit 1; }
+[[ -f "$SCHEMA" ]] || { echo "ERROR: schema not found: $SCHEMA" >&2; exit 1; }
+
+# BSD (macOS: -i '') vs GNU (Linux: -i ''). Both accept -i "".
+SED_I=( -i '' )
+
+sed_flags=(
+  -e "s|{{ARCHIVE_ID}}|$(esc "$ID")|g"
+  -e "s|{{ARCHIVE_TITLE}}|$(esc "$TITLE")|g"
+  -e "s|{{ARCHIVE_MODE}}|$(esc "$MODE")|g"
+)
+[[ -n "$MANIFEST" ]] && sed_flags+=( -e "s|{{SHOW_MANIFEST_URL}}|$(esc "$MANIFEST")|g" )
+[[ "$RIPPLE" == "on" ]] && sed_flags+=( -e 's@false /\* {{RIPPLE_ENABLED}} \*/@true@' )
+[[ -n "$setlist" ]]    && sed_flags+=( -e "s@/\* {{INITIAL_TRACKS}} \*/@$setlist@" )
+
+DIR="$(dirname "$OUT")"
+mkdir -p "$DIR"
+cp "$TPL" "$OUT"
+sed "${SED_I[@]}" "${sed_flags[@]}" "$OUT"
+cp "$SCHEMA" "$DIR/data.schema.json"
+
+# --- data.json (uXu metadata + isolated uxu.ini; opt-in provenance OFF) ---
+{
+  echo '{'
+  echo '  "archiveId": "'"$(esc_json "$ID")"'",'
+  echo '  "archiveName": "'"$(esc_json "$TITLE")"'",'
+  echo '  "mode": "'"$(esc_json "$MODE")"'",'
+  [[ -n "$MANIFEST" ]] && echo '  "manifestUrl": "'"$(esc_json "$MANIFEST")"'",'
+  echo '  "deckTemplate": "CyberCat_Generic.uXu.0004",'
+  echo '  "storagePrefix": "uxu_deck_",'
+  echo '  "artist": "",'
+  echo '  "curator": "'"$(esc_json "$CURATOR")"'",'
+  echo '  "description": "'"$(esc_json "$TITLE")"' — CyberCat deck generated by save-sed-to-rave; storage isolated under uxu_deck_'"$ID"'_*.",'
+  echo '  "uxu": {'
+  echo '    "homeLink": { "style": "uXu", "href": "../index.html" },'
+  echo '    "allowTemplateForks": false,'
+  echo '    "templateForkDepth": 1,'
+  echo '    "templateOf": "CyberCat_Generic.uXu.0004",'
+  echo '    "templateDepth": 1,'
+  echo '    "manuals": [],'
+  echo '    "tags": [],'
+  echo '    "contactEmail": null,'
+  echo '    "contactEmailPublic": false,'
+  echo '    "ini": {'
+  echo '      "optIn": false,'
+  echo '      "tag": "iNi",'
+  echo '      "showBadge": false,'
+  echo '      "badgeLinksToIPage": false,'
+  echo '      "iPage": null,'
+  echo '      "provenance": {'
+  echo '        "origin": "",'
+  echo '        "authors": [],'
+  echo '        "custody": "Generated via save-sed-to-rave in github.com/RASvibir/uXu (template CyberCat_Generic.uXu.0004)",'
+  echo '        "lineage": "CyberCat_Generic.uXu.0004 → '"$ID"'.uXu.'"$NUMBER"'",'
+  echo '        "conditions": "Isolated standalone deck; no herd membership until Ripple is manually engaged.",'
+  echo '        "attestedAt": null'
+  echo '      }'
+  echo '    }'
+  echo '  },'
+  echo '  "shows": []'
+  echo '}'
+} > "$DIR/data.json"
+
+# --- song-index.json (only when tracks were seeded) ---
+if [[ -n "$setlist" ]]; then
+  {
+    echo '{'
+    echo '  "catalog_meta": { "title": "'"$(esc_json "$TITLE")"' — seeded setlist index", "version": "1.0.0" },'
+    echo '  "songs": {'
+    sep=""
+    for i in "${!TRACK_SLUGS[@]}"; do
+      echo "$sep    \"${TRACK_SLUGS[$i]}\": { \"title\": \"$(esc_json "${TRACK_FILES[$i]}")\", \"duration\": ${TRACK_DURS[$i]}, \"url\": \"$(esc_json "${TRACK_PATHS[$i]}")\" }"
+      sep=","
+    done
+    echo '  }'
+    echo '}'
+  } > "$DIR/song-index.json"
+fi
+
+# Validate: extract <script> and syntax-check with node (if present), then
+# confirm no bare {{TOKEN}} remains outside the template's own docs.
+if command -v node >/dev/null 2>&1; then
+  node -e '
+    const fs = require("fs");
+    const html = fs.readFileSync(process.argv[1], "utf8");
+    const m = html.match(/<script>([\s\S]*?)<\/script>/);
+    if (!m) { console.error("FAIL: no <script> block found"); process.exit(1); }
+    new Function(m[1]);
+    console.log("PASS  deck script parses (" + process.argv[1] + ")");
+  ' "$OUT"
+fi
+
+leftover="$(grep -c '{{' "$OUT" || true)"
+[[ "$leftover" -gt 0 ]] && echo "NOTE: $leftover '{{' occurrences remain (see SPAWN_SED/docs self-reference)."
+
+echo ""
+echo "=== save-sed-to-rave :: DONE ==="
+echo "created : $OUT"
+echo "id      : $ID.uXu.$NUMBER"
+echo "title   : $TITLE"
+echo "mode    : $MODE"
+echo "ripple  : $RIPPLE"
+[[ -n "$MANIFEST" ]] && echo "manifest: $MANIFEST"
+[[ -n "$setlist" ]] && echo "tracks  : seeded ${#TRACK_PATHS[@]} (from --tracks)" || echo "tracks  : none (baseline Track 0 / 0)"
+[[ -n "$CURATOR" ]] && echo "curator : $CURATOR"
+echo "files   : index.html, data.json, data.schema.json$([[ -n "$setlist" ]] && echo ', song-index.json')"
+echo ""
+echo "next:"
+echo "  open $OUT"
+echo "  drop audio under $DIR/audio/"
+echo "  register in archives/index.html registry (key: $ID.uXu.$NUMBER)"
+echo "  register via app/api/archive/create or a GitHub Issue if it should be linkable from the root catalog"

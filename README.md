@@ -1,119 +1,125 @@
-# 🌻 uXu: The Archive Without Limits
+# uXu
 
-> **No gatekeepers. No standards. No requirements—just culture.**
+**Shared archive commons.** Independent archives keep their own voice, stack, and curation. uXu registers, connects, and helps people find them.
 
-uXu is a **decentralized community archive**. A safe hub where anyone can preserve and share anything—live performances, lectures, cultural events, text files, images, code, documentation, or whatever you want to archive.
+uXu is **set up independently**. It is open source (MIT). It is not a product of any studio, and it does not speak for archives that register here.
 
-We believe culture belongs to the people who lived it. Every contribution is a standalone archive, curated and presented however the contributor chooses. No templates. No schemas. No enforced structure.
+**Live:** [https://rasvibir.github.io/uXu/](https://rasvibir.github.io/uXu/)  
+**Repo:** [https://github.com/RASvibir/uXu](https://github.com/RASvibir/uXu)  
+**Invite app:** Install **uXu** from the live page (PWA wordmark icon). The public invite does **not** brand itself as `0?0`.
 
----
+Questions: [GitHub Issues](https://github.com/RASvibir/uXu/issues)
 
-## What is uXu?
+## What you will find
 
-**A repository of repositories.** Each folder under `archives/` is an independent archive created and maintained by a community member. You own your archive. You design it. You curate it.
+| Surface | Role |
+|---------|------|
+| **uXu** (landing / PWA) | Public door into the commons |
+| **0?0** (`0?0.uXu.0000`) | Root console — registry, manuals, map, logs |
+| **iNi** | Independent opt-in provenance practice (self-attestation). Public notes: [rasvibir.github.io/uXu](https://rasvibir.github.io/uXu) · paper trail: [RASvibir/iNi](https://github.com/RASvibir/iNi) · via **iNi Provenance** / `INI` / `INI SITE` |
+| **CyberCat Sunflower** | Grateful Dead catalog deck (`OPEN CYBERCAT`) — Relisten → Internet Archive transfers |
+| **CyberCat Deck Builder** | Make a CyberCat deck (`DECK`) — your files/links. Names unique on this device (`deck exists` if repeated). Examples: antelope, ur mom, bout treefiddy. Default look Lathe, not Sunflower CRT. Bolt is the skull-and-roses flash wordmark, not the favicon. |
+| **Ledger** | Private steward room (`Ledger.uXu.0001`, `OPEN LEDGER`) |
+| **RTFM** | Canonical friendly manuals (`archives/RTFM/` + 0?0 **RTFM**) |
+| **templates/** | Optional starters (commons link + template-fork + iNi fields) |
 
-Some archives might be:
-- Interactive web players with rich metadata (like CyberCat Sunflower)
-- Simple folders with audio files and a text description
-- A single `.md` file with links
-- Video documentation with custom styling
-- Anything legal and cyber-safe
+## Canonical hierarchy
 
-**There is no "correct" way to archive. Your way is the right way.**
+```text
+uXu
+└── 0?0.uXu.0000
+    ├── Registry (forever placemarkers)
+    ├── RTFM / MANUAL library / iNi
+    ├── Transparency
+    └── Relationships (*:*)
+```
 
----
+## Archive identity
 
-## How to Contribute Your Archive
+```text
+Title.uXu.NNNN
+```
 
-### The Only Requirements
+- `NNNN` is a registration serial (`0000` root). New rooms should receive the **next unused** number; the serial is unique per id.
+- Numbers are historical — not rank or ownership.
+- **Ids are forever.** Delete/lock/investigate change the **marker**, not the row. Examples: `(deleted by user)`, `(removed by admin)`, `(locked archive)`, `(under investigation)`, `(live archive)`, `(audience only)`.
+- **iNi / MAP are honesty, not enforcement.** Each MAP child has one `files:` line (where that room’s catalog/streams come from). Inspect shows the catalog URL.
+- **Operator tools are separate.** Admin **MONITOR** alerts (creates, contacts). **FLAG / LOCK / REMOVE / RESTORE** (ADMIN + SUDO) apply at the operator’s will to a selected row — not automatic, not a rewrite of someone else’s archive files. Other people’s rooms are not edited as curation; restrictions use registry markers.
 
-- **Legal:** You must have the right to share the content you're archiving.
-- **Safe:** Content must not violate basic safety guidelines (no harassment, dangerous content, etc.).
+## Commons link on archives
 
-**That's it. Everything else is up to you.**
+Creators choose how the link home looks (same destination):
 
-### Steps to Add Your Archive
+| Style | Appearance | Feel |
+|-------|------------|------|
+| `uXu` | **uXu** chip | Public / site-ad style |
+| `0?0` | **← 0?0** | Console back-link |
 
-1. **Fork the repository**
-   ```bash
-   git clone https://github.com/RASvibir/uXu.git
-   cd uXu
-   ```
+See `templates/` and the Archive Creation Manual.
 
-2. **Create your archive folder**
-   ```bash
-   mkdir -p archives/{YourArchiveName}
-   ```
+## Accounts & copying on 0?0
 
-3. **Build your archive however you want**
-   - Create an `index.html` with custom styling and interactivity
-   - Write a README describing your collection
-   - Add a `data.json` file (or don't)
-   - Include images, code, documentation, audio files
-   - Use whatever structure makes sense for your content
+You can browse as a guest. **Sign In** / **Sign Up** (form or `SIGNIN` / `SIGNUP`) talk to the uXu API. The public name is your **handle**; login email stays private (you and the operator). The operator account displays as **RAS.ip** with role **ADMIN**.
 
-4. **Commit and push**
-   ```bash
-   git add archives/{YourArchiveName}/
-   git commit -m "Add {YourArchiveName} archive"
-   git push origin main
-   ```
+On 0?0, **highlight text then copy** with **⌘C** / **Ctrl+C** or right-click **Copy**. Letter shortcuts (`c` command, `a` account, …) do not run while a chord or a live highlight is active.
 
-5. **Open a Pull Request**
-   - Link to your archive in the PR description
-   - Briefly explain what you're archiving and why it matters
-   - We review for legality and safety only
-   - If it passes, it's merged into uXu
+## Relationships
 
----
+`*:*` declares a connection between archives. It is not ownership, endorsement, or control.
 
-## Examples in This Repo
+```text
+Archive_A.uXu*:*Archive_B.uXu
+```
 
-**CyberCat Sunflower** — An interactive web-based archive of transformative Grateful Dead performances. Includes a custom audio player, setlist browsing, and cyberpunk-themed UI. This is one contributor's vision of how to present a music archive.
+## CyberCat deck template
 
-**RTFM** — A searchable archive of working code, templates, and instructions. If you want to build an interactive archive like CyberCat, or learn how others solved problems, this is where contributors share what worked.
+Independent CyberCat decks (like `CyberCat-Sunflower`) are spawned from the
+generic template (`archives/CyberCat-Generic/index.html`) via
+`./save-sed-to-rave`. Each spawn is fully self-contained — one `index.html`,
+isolated `uxu_deck_<ID>_*` storage, optional lazy manifest with graceful
+inline fallback — plus a conformant `data.json`, `data.schema.json`, and
+`song-index.json`. Runtime details: `docs/runtime/cybercat-deck-template.md`.
 
----
+## Documentation
 
-## What Belongs in RTFM?
+On the live console:
 
-RTFM is a **shared resource archive**—not rules, not a standard, but **working examples and helpful documentation** that other contributors can learn from if they choose.
+- **ABOUT** / **RTFM** — canonical 0?0 how-to (tabs: About · Ease · Nav · Commands · Depth · Code · Source)  
+- **CYBERCAT DECK** / `DECK` — Deck Builder (not Sunflower). Unique names on this device. 
+- **iNi Provenance** — opt-in authenticity · `INI` / `INI SITE` · paper trail [RASvibir/iNi](https://github.com/RASvibir/iNi)  
+- **USER OPTIONS → PROVENANCE MAP** / `MAP` / **F4** — commons tree (not Sunflower **F5**, which is Ripple catalog trail)  
+- **CREATE ARCHIVE** — next serial + creation guide  
+- **MONITOR** — admin intake; **FLAG · LOCK · REMOVE · RESTORE** — admin + SUDO, at will  
 
-Examples:
-- HTML/CSS/JS code that works for audio players, galleries, etc.
-- Markdown templates for common archive types
-- Guides on sourcing legal audio (Internet Archive, Creative Commons, etc.)
-- Tips on structuring metadata
-- Examples of data.json files
-- Troubleshooting and gotchas
+In the repo: `archives/RTFM/` (User Guide, CyberCat manual, iNi pamphlet, Master Admin Guide, …).
 
-**Using RTFM is optional.** You can completely ignore it and build from scratch. Or you can learn from it. Your choice.
+## Contributing
 
----
+See [CONTRIBUTING.md](CONTRIBUTING.md). Keep content legal and safe. Optional templates under `/templates/`.
 
-## Community Values
+**Tests:** `npm test` runs the node suite (syntax, smoke, token lint,
+generator, Sunflower immutability, route typecheck). Browser checks skip if Chrome is unavailable.
 
-- **No gatekeepers**: We don't tell you what to archive or how to present it.
-- **No standards**: Massive interactive app? Single text file? Both are valid.
-- **Radical transparency**: Your archive is public. Your curation is visible. Your choices stand.
-- **Legal & safe**: The only hard lines. Everything else is free thought.
-- **Preservation**: Once archived here, it stays. We're not a platform—we're a vault.
-
----
+**Open doctrine (uXu · iNi):** the console documents protocols; optional public pages explain practice. Neither is a membership gate. Opt-in provenance is self-attestation — honesty about origin and custody, not enrollment theater and not an enforcement engine. uXu and iNi are set up independently: uXu is the commons; iNi is optional provenance practice.
 
 ## License
 
-MIT License — Use this code however you want. See `LICENSE` for details.
+**Software, templates, and original documentation** in this repository are licensed under the [MIT License](LICENSE) — Copyright (c) 2026 The uXu Project.
 
----
+**Media clarification (not a second license):**
 
-## Questions?
+- The MIT grant covers code, templates, and original docs in this repo, including the **0?0** console, CyberCat Deck Builder UI, and API worker source as shipped here.
+- It does **not** claim ownership of third-party media, recordings, or other assets linked or embedded by independent archives.
+- Those remain under their own licenses, permissions, and taping policies (e.g. Internet Archive items, Grateful Dead taping tradition).
+- **uXu is a commons layer for registration and discovery** — not a rights holder for contributor content.
+- Independent archives remain their creators’. Registration does not transfer ownership.
+- Optional **iNi** provenance fields document origin/custody; they are self-attestation, not a legal title deed.
 
-- **"Can I archive [thing]?"** → If it's legal and safe, yes.
-- **"Do I have to follow a format?"** → No. Build what you want.
-- **"Can I look at how others did it?"** → Yes. Check RTFM or browse existing archives.
-- **"What if my archive is weird/experimental?"** → Perfect. That's the point.
+## Data & privacy
 
----
+Account-authenticated activity may be stored for authenticity. Users may request downloads of their own shared archive data after authentication. The operator does not casually browse private files or rewrite other people’s archive folders. **MONITOR** surfaces creates and contact messages; **malice-hint** is an alert only. Restrictions or removals are **at-will markers** on the registry (`FLAG` / `LOCK` / `REMOVE` / `RESTORE`) after ADMIN + SUDO — see Master Admin Guide.
 
-**The perimeter is protected, but the gates are open for sharing.** 🌻
+## Finding the center
+
+Searching for `0` or `?` resolves toward the root console.  
+> If you can’t decide which home is better... why not both?!

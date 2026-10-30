@@ -6,6 +6,32 @@ This is **not** a standard or requirement. It's a **resource**—if you want to 
 
 ## What's in RTFM?
 
+### Interactive manuals
+- **ABOUT** — what **uXu** is (site · repo · app); 0?0 as the archive interface
+- **iNi Provenance** — Quick Nav flair + `INI` guide · notes → https://rasvibir.github.io/uXu (`INI SITE`) · paper trail → https://github.com/RASvibir/iNi · pamphlet `INI-PROVENANCE.md`
+- **RTFM (0?0 console)** — tabbed 0?0 manual: About · Ease · Nav · Commands · Depth · Code · Source
+- **FAQ** — friendly functional how-to
+- **USER OPTIONS** — Manual Library, Install, Map, Logs, System, Setup Master, Exit
+- **MANUAL LIBRARY** — pamphlet index on 0?0 (F3 / USER OPTIONS)
+- **User Guide** — browse, install public **uXu** app, commons links, reach admin
+- **Archive Creation Manual** — simple start, `uXu`/`0?0` link styles, template forks, complexity tree, placemarkers
+- **Master Admin Guide** — claim, seal, recovery, **MONITOR**, at-will **FLAG/LOCK/REMOVE** (`SETUP MASTER`)
+- **CyberCat Deck Builder** — F4 on that room · `DECK` from 0?0 · unique names · Lathe default · bolt wordmark
+- **CyberCat Sunflower Manual** — visitor / curator deck guide (F4 on deck; F5 = Ripple trail, not 0?0 MAP)
+- **Developers Handbook** — builder / coder patterns
+- **Source Code Pamphlet** — repo map without secrets or operator internals
+- **00-RTFM.md** / **ABOUT.md** / **INI-PROVENANCE.md** — markdown twins of interactive panels
+
+Contact: https://github.com/RASvibir/uXu/issues
+
+**License:** MIT for software & original docs (`LICENSE`, plus the scope note
+at the bottom of that file). Media linked by archives stays under its own
+terms — see root README.
+
+Templates: `/templates/` (commons-link snippet + fork policy + iNi fields).  
+Public invite PWA: **uXu** wordmark only (not branded as 0?0).
+Live: https://rasvibir.github.io/uXu/
+
 ### Code Examples
 - **Audio players** — Interactive HTML/CSS/JS for streaming audio with controls
 - **Gallery templates** — Image browser, slideshow, lightbox patterns
@@ -35,7 +61,7 @@ Tags: audio, player, controls, web-audio-api, interactive
 Source: CyberCat Sunflower archive
 ```
 
-Browse by topic or keyword to find what you need.
+Browse by topic or keyword to find what you need. On the live root console, run MANUAL.
 
 ## How to Contribute to RTFM
 

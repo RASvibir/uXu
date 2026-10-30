@@ -1,0 +1,306 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model archive_links {
+  id                                                 BigInt   @id @default(autoincrement())
+  parent_archive_id                                  BigInt
+  child_archive_id                                   BigInt
+  relation_type                                      String   @default("contains")
+  created_at                                         DateTime @default(now()) @db.Timestamptz(6)
+  archives_archive_links_child_archive_idToarchives  archives @relation("archive_links_child_archive_idToarchives", fields: [child_archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  archives_archive_links_parent_archive_idToarchives archives @relation("archive_links_parent_archive_idToarchives", fields: [parent_archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([parent_archive_id, child_archive_id, relation_type])
+}
+
+model archive_records {
+  id               String   @id
+  title            String
+  slug             String
+  status           String
+  type             String
+  root             String?
+  archive          String
+  parent           String?
+  path             String?
+  canonical_source String?
+  backup_source    String?
+  summary          String?
+  creator          String?
+  date_label       String?
+  schema_version   String   @default("1.0.0")
+  certainty        String   @default("partial")
+  tags             Json     @default("[]")
+  distribution     Json     @default("[]")
+  provenance       Json     @default("{}")
+  relations        Json     @default("{}")
+  validation       Json     @default("{}")
+  unresolved       Json     @default("[]")
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([archive])
+  @@index([parent])
+  @@index([type])
+}
+
+model archives {
+  id                                                      BigInt              @id @default(autoincrement())
+  title                                                   String
+  slug                                                    String              @unique
+  status                                                  String              @default("active")
+  type                                                    String
+  path                                                    String              @unique
+  summary                                                 String?
+  updated_at                                              DateTime            @default(now()) @db.Timestamptz(6)
+  parent_id                                               BigInt?
+  tags                                                    String[]            @default([])
+  schema_version                                          String              @default("1.0")
+  source_certainty                                        String              @default("unknown")
+  ingest_notes                                            String?
+  validation_state                                        String              @default("unvalidated")
+  revision_notes                                          String?
+  archive_links_archive_links_child_archive_idToarchives  archive_links[]     @relation("archive_links_child_archive_idToarchives")
+  archive_links_archive_links_parent_archive_idToarchives archive_links[]     @relation("archive_links_parent_archive_idToarchives")
+  archives                                                archives?           @relation("archivesToarchives", fields: [parent_id], references: [id], onUpdate: NoAction)
+  other_archives                                          archives[]          @relation("archivesToarchives")
+  items                                                   items[]
+  provenance_events                                       provenance_events[]
+  transparency_logs                                       transparency_logs[]
+}
+
+model chrf_access_requests {
+  id          BigInt    @id @default(autoincrement())
+  from_handle String
+  to_handle   String    @default("RAS.ip")
+  scope       String
+  body        String    @default("")
+  status      String    @default("open")
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  resolved_at DateTime? @db.Timestamptz(6)
+  resolved_by String?
+}
+
+model chrf_dispatch {
+  id          BigInt    @id @default(autoincrement())
+  from_handle String
+  to_handle   String
+  body        String
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  read_at     DateTime? @db.Timestamptz(6)
+
+  @@index([to_handle, created_at(sort: Desc)], map: "chrf_dispatch_inbox_idx")
+  @@index([from_handle, to_handle, created_at], map: "chrf_dispatch_party_idx")
+}
+
+model chrf_home_rooms {
+  id           String    @id
+  floor        Int
+  title        String
+  kind         String    @default("user")
+  owner        String
+  blurb        String    @default("")
+  status       String    @default("draft")
+  author       String
+  updated_by   String?
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime  @default(now()) @db.Timestamptz(6)
+  published_at DateTime? @db.Timestamptz(6)
+}
+
+model chrf_lobby_chat {
+  id         BigInt   @id @default(autoincrement())
+  room       String
+  handle     String
+  body       String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([room, created_at(sort: Desc)], map: "chrf_lobby_chat_room_idx")
+}
+
+model chrf_site_notices {
+  id           BigInt    @id @default(autoincrement())
+  slot         String
+  title        String
+  body         String
+  status       String    @default("draft")
+  author       String
+  updated_by   String?
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime  @default(now()) @db.Timestamptz(6)
+  published_at DateTime? @db.Timestamptz(6)
+}
+
+model chrf_space_cards {
+  handle        String   @id
+  owner_user_id String?  @db.Uuid
+  face_data     String?
+  title         String?
+  epithet       String?
+  motto         String?
+  skin_code     String?
+  glyph         String?
+  palette       String?
+  grade         String?
+  traits        Json     @default("{}")
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model chrf_staff_grants {
+  handle     String
+  scope      String
+  granted_by String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id([handle, scope])
+}
+
+model items {
+  id          BigInt   @id @default(autoincrement())
+  archive_id  BigInt
+  title       String
+  slug        String   @unique
+  item_type   String
+  path        String
+  summary     String?
+  media_type  String?
+  source_path String?
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+  archives    archives @relation(fields: [archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model manual_pages {
+  id         BigInt   @id @default(autoincrement())
+  slug       String   @unique
+  title      String
+  body       String
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model provenance_events {
+  id              BigInt   @id @default(autoincrement())
+  archive_id      BigInt
+  event_type      String
+  source_path     String?
+  contributor     String?
+  event_date      DateTime @default(now()) @db.Timestamptz(6)
+  custody_history String?
+  notes           String?
+  archives        archives @relation(fields: [archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tags {
+  id   BigInt @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+}
+
+model transparency_logs {
+  id             BigInt    @id @default(autoincrement())
+  archive_id     BigInt?
+  log_type       String
+  message        String
+  checksum       String?
+  schema_version String    @default("1.0")
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  archives       archives? @relation(fields: [archive_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model uxu_archive_access {
+  archive_id String
+  email      String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id([archive_id, email])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model uxu_archive_contact_requests {
+  id              BigInt    @id @default(autoincrement())
+  archive_id      String
+  requested_by    String    @db.Uuid
+  requested_email String
+  make_public     Boolean   @default(false)
+  status          String    @default("pending")
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  decided_at      DateTime? @db.Timestamptz(6)
+  decided_by      String?   @db.Uuid
+  note            String?
+
+  @@index([status, created_at(sort: Desc)], map: "uxu_archive_contact_req_pending_idx", where: raw("(status = 'pending'::text)"))
+}
+
+model uxu_archive_contacts {
+  archive_id     String   @id
+  contact_email  String?
+  contact_public Boolean  @default(false)
+  holder_user_id String?  @db.Uuid
+  updated_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_by     String?  @db.Uuid
+}
+
+model uxu_auth_events {
+  id         BigInt   @id @default(autoincrement())
+  user_id    String?  @db.Uuid
+  email      String?
+  event_type String
+  detail     String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model uxu_created_archives {
+  archive_id    String   @id
+  owner_user_id String   @db.Uuid
+  owner_email   String
+  folder_slug   String
+  data_json     Json
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([owner_user_id], map: "uxu_created_archives_owner_idx")
+}
+
+model uxu_email_change_requests {
+  id            BigInt    @id @default(autoincrement())
+  user_id       String    @db.Uuid
+  current_email String
+  new_email     String
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at    DateTime  @db.Timestamptz(6)
+  confirmed_at  DateTime? @db.Timestamptz(6)
+  cancelled_at  DateTime? @db.Timestamptz(6)
+
+  @@index([user_id], map: "uxu_email_change_user_pending_idx", where: raw("((confirmed_at IS NULL) AND (cancelled_at IS NULL))"))
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model uxu_recovery_accounts {
+  id                     BigInt    @id @default(autoincrement())
+  user_id                String    @unique(map: "uxu_recovery_accounts_user_active_uidx", where: raw("(revoked_at IS NULL)"))
+  email                  String
+  added_by               String?
+  two_factor_attested    Boolean   @default(false)
+  two_factor_attested_at DateTime? @db.Timestamptz(6)
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  revoked_at             DateTime? @db.Timestamptz(6)
+}
+
+model Master {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  password   String?
+}
+model users {
+  id        BigInt   @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+}

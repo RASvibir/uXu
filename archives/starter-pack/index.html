@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Archive · uXu</title>
+  <!-- Optional: do NOT add landing PWA manifest here — that belongs only on 0?0. -->
+  <style>
+    :root {
+      --bg: #0a0c0a;
+      --text: #d8ffe6;
+      --accent: #3de872;
+      --muted: #7a8f84;
+      --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: var(--mono);
+      background: var(--bg); color: var(--text); padding: 1rem 1.25rem 2rem;
+    }
+    .home-link {
+      display: inline-block; margin-bottom: 1rem;
+      font-family: var(--mono); font-size: .85rem; text-decoration: none;
+    }
+    .home-link.back {
+      color: var(--accent);
+      border: 1px solid rgba(61,232,114,.35); padding: .25rem .55rem;
+    }
+    .home-link.back:hover { background: var(--accent); color: #041208; }
+    .home-link.badge {
+      color: #041208; background: var(--accent); font-weight: 700;
+      border: 1px solid var(--accent); padding: .2rem .65rem; letter-spacing: .06em;
+    }
+    .home-link.badge:hover { filter: brightness(1.08); }
+    .ini-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-decoration: none;
+      color: #0d5c63;
+      background: #d4e8ea;
+      border: 1px solid #0d5c63;
+      padding: .2rem .55rem;
+      margin-left: .45rem;
+      vertical-align: middle;
+    }
+    .ini-badge:hover { filter: brightness(0.97); }
+    .ini-badge[hidden] { display: none !important; }
+    h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 .35rem; }
+    .tag { color: var(--muted); font-size: .8rem; margin-bottom: 1.25rem; }
+    #archive-list { display: grid; gap: .5rem; }
+    .card {
+      border: 1px solid rgba(61,232,114,.25); padding: .65rem .75rem;
+      background: rgba(61,232,114,.04);
+    }
+    .card button {
+      font: inherit; color: var(--accent); background: transparent;
+      border: 1px solid rgba(61,232,114,.4); padding: .2rem .5rem; cursor: pointer;
+    }
+    audio { width: 100%; margin-top: .75rem; }
+  </style>
+</head>
+<body>
+  <!-- Home link: choose in data.json uxu.homeLink.style → "0?0" (back) or "uXu" (site badge) -->
+  <a class="home-link badge" id="uxu-home" href="../index.html" data-uxu-home="uXu">uXu</a>
+  <!-- iNi badge: showcase when optIn (+ showBadge); link only if badgeLinksToIPage + iPage -->
+  <span id="ini-badge" class="ini-badge" hidden title="iNi provenance (self-attested)">iNi</span>
+
+  <h1 id="archive-title">Your Archive</h1>
+  <p class="tag" id="archive-tag">uXu independent archive</p>
+  <p id="archive-manuals" class="tag" hidden></p>
+
+  <div id="player-container">
+    <audio id="main-player" controls crossorigin="anonymous"></audio>
+  </div>
+  <div id="archive-list"></div>
+
+  <script>
+    function resolveIniPageUrl(ini) {
+      if (!ini || ini.optIn !== true || ini.badgeLinksToIPage !== true) return null;
+      const raw = String(ini.iPage || '').trim();
+      if (!raw) return null;
+      if (/^https?:\/\//i.test(raw)) return raw;
+      const slug = raw.replace(/^#?\/?i\//i, '').replace(/^\//, '');
+      if (!slug) return null;
+      return 'https://rasvibir.github.io/iNi/#/i/' + encodeURIComponent(slug);
+    }
+
+    function applyIniBadge(el, ini) {
+      if (!el) return;
+      if (!ini || ini.optIn !== true || ini.showBadge === false) {
+        el.hidden = true;
+        return;
+      }
+      const label = (ini.tag && String(ini.tag)) || 'iNi';
+      const url = resolveIniPageUrl(ini);
+      let node = el;
+      if (url) {
+        if (el.tagName !== 'A') {
+          const a = document.createElement('a');
+          a.id = el.id;
+          a.className = el.className;
+          el.replaceWith(a);
+          node = a;
+        }
+        node.href = url;
+        node.target = '_blank';
+        node.rel = 'noopener';
+        node.title = 'iNi provenance · open I page';
+      } else {
+        if (el.tagName === 'A') {
+          const span = document.createElement('span');
+          span.id = el.id;
+          span.className = el.className;
+          el.replaceWith(span);
+          node = span;
+        }
+        node.title = 'iNi provenance (self-attested)';
+        node.removeAttribute?.('href');
+      }
+      node.textContent = label;
+      node.hidden = false;
+    }
+
+    // Apply home-link label from data.json uxu.homeLink when present
+    fetch('data.json').then((r) => r.json()).then((data) => {
+      const title = data.archiveName || data.title || 'Your Archive';
+      document.getElementById('archive-title').textContent = title;
+      document.title = title + ' · uXu';
+      const tag = [data.artist, data.curator].filter(Boolean).join(' · ');
+      if (tag) document.getElementById('archive-tag').textContent = tag;
+
+      const home = document.getElementById('uxu-home');
+      const hl = (data.uxu && data.uxu.homeLink) || {};
+      const style = String(hl.style || 'uXu').toLowerCase();
+      home.href = hl.href || '../index.html';
+      if (style === '0?0' || style === '0q0' || style === 'back') {
+        home.textContent = hl.label || '← 0?0';
+        home.className = 'home-link back';
+        home.dataset.uxuHome = '0?0';
+      } else {
+        // Public / invite style — reads like a site chip, not "back to 0?0"
+        home.textContent = hl.label || 'uXu';
+        home.className = 'home-link badge';
+        home.dataset.uxuHome = 'uXu';
+      }
+
+      applyIniBadge(document.getElementById('ini-badge'), data.uxu && data.uxu.ini);
+
+      const manualsEl = document.getElementById('archive-manuals');
+      const manuals = (data.uxu && data.uxu.manuals) || [];
+      if (manualsEl && manuals.length) {
+        manualsEl.hidden = false;
+        manualsEl.innerHTML = manuals.map((m) => {
+          const path = typeof m === 'string' ? m : (m && m.path);
+          const label = (typeof m === 'object' && m && m.title) || path || 'Manual';
+          if (!path) return '';
+          return `<a href="${path}" style="color:var(--accent);margin-right:1rem;">${label}</a>`;
+        }).join('');
+      }
+
+      const list = document.getElementById('archive-list');
+      const player = document.getElementById('main-player');
+      const items = data.shows || data.items || [];
+      items.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const label = item.date
+          ? `${item.date} — ${item.venue || item.title || 'item'}`
+          : (item.title || `Item ${i + 1}`);
+        card.innerHTML = `<div>${label}</div>`;
+        const src = item.audioSources && item.audioSources[0];
+        const url = src && (src.url || (src.archiveOrgId
+          ? `https://archive.org/download/${src.archiveOrgId}`
+          : null));
+        if (url) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = 'Play';
+          btn.addEventListener('click', () => { player.src = url; player.play(); });
+          card.appendChild(btn);
+        }
+        list.appendChild(card);
+      });
+    }).catch((err) => {
+      document.getElementById('archive-tag').textContent = 'Add a data.json beside this file. ' + err.message;
+    });
+  </script>
+</body>
+</html>

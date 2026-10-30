@@ -32,3 +32,8 @@ The `accentGlyph` field on your archive lets you add one small, unobtrusive symb
 ## Featured status
 
 Featured placement on the uXu front page is set by the platform maintainer via the `featured` field, not something curators toggle themselves. If you'd like your archive considered, mention it in your PR — but it's never a requirement to participate in uXu.
+
+## License reminder
+
+CyberCat’s player code and original notes are MIT (uXu repo `LICENSE`).
+Internet Archive / public transfers keep their own terms. Do not imply uXu owns the recordings.

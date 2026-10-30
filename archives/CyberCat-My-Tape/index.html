@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Tape Archive · CyberCat Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #05030a;
+    --phosphor: #5dff8a;
+    --phosphor-dim: #2a9a55;
+    --cyan: #4de8ff;
+    --magenta: #ff3dce;
+    --amber: #ffd24a;
+    --text: #d8ffe6;
+    --muted: #7a8f84;
+    --bezel: #1a1424;
+    --bezel-hi: #2e243e;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    --mono: 'Share Tech Mono', ui-monospace, monospace;
+    --display: 'Orbitron', var(--mono);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  /* Deck mounts in #cybercat-deck-container: full-bleed when it is the only
+     page content, or a self-contained block when embedded in a host layout. */
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 0%, #1a0f2e 0%, transparent 50%),
+      radial-gradient(ellipse at center, #0c0818 0%, var(--void) 75%);
+    color: var(--phosphor);
+    font-family: var(--mono);
+  }
+  body:has(#cybercat-deck-container:only-child) {
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  #cybercat-deck-container {
+    display: flex; flex-direction: column; min-width: 0;
+  }
+  #cybercat-deck-container:only-child { flex: 1; min-height: 0; }
+  /* Embedded hosts (deck is not the only page content): give it a floor. */
+  #cybercat-deck-container:not(:only-child) .chassis { min-height: 68vh; }
+  .chassis {
+    flex: 1; min-height: 0; margin: 10px;
+    display: flex; flex-direction: column;
+    border-radius: 18px;
+    background: linear-gradient(145deg, var(--bezel-hi), var(--bezel));
+    border: 1px solid #0a0612;
+    box-shadow: 0 24px 60px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.08);
+    padding: 12px; position: relative;
+  }
+  .chassis::after {
+    content: ""; position: absolute; left: 50%; bottom: 5px;
+    width: 42px; height: 6px; transform: translateX(-50%);
+    border-radius: 3px; background: #0d0a14;
+    box-shadow: 0 0 8px rgba(77,232,255,.25);
+  }
+  .tube {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    position: relative; background: var(--void); border-radius: 8px;
+    border: 2px solid #000; overflow: hidden;
+    box-shadow: inset 0 0 80px rgba(93,255,138,.05), inset 0 0 140px rgba(0,0,0,.9);
+    animation: tube-boot .8s var(--ease) both;
+  }
+  @keyframes tube-boot {
+    from { opacity: 0; filter: brightness(2.4) saturate(1.4); }
+    to { opacity: 1; filter: none; }
+  }
+  .tube::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.5) 100%);
+  }
+  .tube::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 21;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.14) 3px);
+    opacity: .7;
+  }
+  .tube > * { position: relative; z-index: 1; }
+  .tube > .ini-stamp { position: absolute; z-index: 30; pointer-events: auto; }
+
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap; padding: .55rem .9rem;
+    background: linear-gradient(90deg, rgba(255,61,206,.18), rgba(77,232,255,.1));
+    border-bottom: 1px solid rgba(93,255,138,.25);
+    font-size: .72rem; letter-spacing: .06em;
+  }
+  .topbar a {
+    color: var(--cyan); text-decoration: none;
+    border: 1px solid rgba(77,232,255,.35); padding: .2rem .5rem;
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .topbar a:hover { background: var(--cyan); color: #041018; }
+  .brand { font-family: var(--display); font-size: .78rem; font-weight: 700; color: var(--amber); text-shadow: 0 0 12px rgba(255,210,74,.35); }
+  .path { color: var(--muted); }
+  .clock { color: var(--phosphor); font-variant-numeric: tabular-nums; margin-right: 2.75rem; }
+
+  .ini-stamp {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.55rem;
+    z-index: 30;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0.22rem 0.42rem 0.18rem;
+    border: 1.5px solid rgba(93, 255, 138, 0.65);
+    border-radius: 2px;
+    background: rgba(5, 3, 10, 0.72);
+    box-shadow:
+      0 0 0 1px rgba(255, 210, 74, 0.2),
+      inset 0 0 10px rgba(93, 255, 138, 0.08);
+    font-family: var(--display);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-decoration: none;
+    cursor: default;
+    transform: rotate(-6deg);
+    user-select: none;
+  }
+  .ini-stamp[hidden] { display: none !important; }
+  .ini-stamp .ini-i { color: #5dff8a; text-shadow: 0 0 8px rgba(93, 255, 138, 0.55); }
+  .ini-stamp .ini-n { color: #ffe14a; text-shadow: 0 0 8px rgba(255, 210, 74, 0.55); }
+
+  .workspace {
+    flex: 1; min-height: 0;
+    display: grid; grid-template-columns: minmax(300px, 440px) 1fr; gap: 0;
+  }
+  @media (max-width: 860px) {
+    body { overflow: auto; height: auto; }
+    .chassis { margin: 6px; height: auto; }
+    .tube { min-height: 90vh; }
+    .workspace { grid-template-columns: 1fr; }
+  }
+
+  .deck-col {
+    display: flex; flex-direction: column; min-height: 0;
+    padding: .75rem; gap: .65rem;
+    border-right: 1px solid rgba(93,255,138,.15);
+    background: rgba(8,4,16,.55);
+  }
+  .hub-col {
+    display: flex; flex-direction: column; min-height: 0;
+    padding: .75rem; gap: .65rem;
+  }
+
+  .panel {
+    background: rgba(10,7,20,.85);
+    border: 1px solid rgba(93,255,138,.28);
+    padding: .7rem .75rem;
+    display: flex; flex-direction: column; gap: .55rem;
+  }
+  .panel-h {
+    font-family: var(--display); font-size: .62rem; letter-spacing: .14em;
+    color: var(--amber);
+    border-bottom: 1px dashed rgba(255,210,74,.35);
+    padding-bottom: .35rem;
+    display: flex; justify-content: space-between; align-items: center; gap: .5rem;
+  }
+  .panel-h .tag { color: var(--cyan); letter-spacing: .08em; font-family: var(--mono); font-size: .65rem; }
+
+  .now-playing { font-size: .72rem; color: var(--text); line-height: 1.4; min-height: 3.2em; }
+  .now-playing .idle { color: var(--muted); }
+  audio { width: 100%; height: 36px; filter: invert(1) hue-rotate(90deg) saturate(2.2) brightness(1.05); }
+
+  .time-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: .62rem; font-variant-numeric: tabular-nums; color: var(--muted);
+  }
+  .time-row .tick { display: flex; gap: .35rem; align-items: center; }
+  .time-row .tick b { color: var(--cyan); font-weight: 400; }
+
+  .vol-row { display: flex; align-items: center; gap: .5rem; font-size: .62rem; color: var(--muted); letter-spacing: .06em; }
+  .vol-row input[type=range] { flex: 1; accent-color: var(--phosphor); cursor: pointer; min-width: 0; }
+  .vol-row span { color: var(--cyan); font-variant-numeric: tabular-nums; min-width: 4ch; text-align: right; }
+
+  .source-bar { display: flex; flex-wrap: wrap; gap: .45rem .55rem; align-items: center; }
+  .source-actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; flex-shrink: 0; }
+  .ghost-btn {
+    font-family: var(--mono); font-size: .65rem; letter-spacing: .06em;
+    text-transform: uppercase; background: transparent; color: var(--cyan);
+    border: 1px solid rgba(77,232,255,.4); padding: .28rem .55rem; cursor: pointer;
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .ghost-btn:hover, .ghost-btn:focus-visible { background: var(--cyan); color: #031018; outline: none; }
+  .ghost-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .source-meta { font-size: .62rem; color: var(--muted); flex: 1; min-width: 12ch; }
+
+  .ripple-btn {
+    position: relative;
+    isolation: isolate;
+    font-family: var(--display);
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(255,61,206,.35), rgba(77,232,255,.28));
+    border: 1px solid rgba(255,255,255,.22);
+    padding: .38rem .85rem .34rem;
+    flex-shrink: 0;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 999px;
+    box-shadow:
+      0 0 18px rgba(255,61,206,.28),
+      0 0 32px rgba(77,232,255,.12),
+      inset 0 1px 0 rgba(255,255,255,.18);
+    transition: transform .25s var(--ease), filter .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .ripple-btn .ripple-label { position: relative; z-index: 2; }
+  .ripple-btn .ripple-rings {
+    position: absolute;
+    inset: -40%;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(77,232,255,.45) 0%, transparent 42%),
+      radial-gradient(circle at 35% 40%, rgba(255,61,206,.35) 0%, transparent 38%);
+    animation: ripple-drift 4.8s ease-in-out infinite;
+  }
+  .ripple-btn::before,
+  .ripple-btn::after {
+    content: "";
+    position: absolute;
+    inset: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(77,232,255,.55);
+    transform: translate(-50%, -50%) scale(.2);
+    animation: ripple-expand 2.6s ease-out infinite;
+    pointer-events: none;
+  }
+  .ripple-btn::after { border-color: rgba(255,61,206,.45); animation-delay: 1.3s; }
+  .ripple-btn:hover:not(:disabled),
+  .ripple-btn:focus-visible:not(:disabled) {
+    outline: none;
+    transform: scale(1.04);
+    filter: hue-rotate(18deg) saturate(1.35);
+    box-shadow:
+      0 0 24px rgba(255,61,206,.45),
+      0 0 48px rgba(77,232,255,.25);
+  }
+  .ripple-btn:disabled { opacity: .4; cursor: not-allowed; animation: none; }
+  .ripple-btn.is-live {
+    animation: ripple-glow 2.2s ease-in-out infinite;
+    border-color: rgba(93,255,138,.55);
+    color: var(--phosphor);
+  }
+  .ripple-btn.is-live .ripple-label::after { content: " · HERD"; color: var(--amber); letter-spacing: .12em; }
+  @keyframes ripple-expand {
+    0% { opacity: .85; transform: translate(-50%, -50%) scale(.15); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
+  }
+  @keyframes ripple-drift {
+    0%, 100% { transform: rotate(0deg) scale(1); filter: hue-rotate(0deg); }
+    50% { transform: rotate(8deg) scale(1.08); filter: hue-rotate(28deg); }
+  }
+  @keyframes ripple-glow {
+    0%, 100% { box-shadow: 0 0 16px rgba(93,255,138,.35), 0 0 28px rgba(255,61,206,.2); }
+    50% { box-shadow: 0 0 28px rgba(77,232,255,.45), 0 0 44px rgba(255,61,206,.35); }
+  }
+  .deck-col.ripple-on .panel:first-child { border-color: rgba(255,61,206,.45); box-shadow: inset 0 0 24px rgba(77,232,255,.06); }
+  .deck-col.ripple-on .now-playing { text-shadow: 0 0 12px rgba(77,232,255,.2); }
+
+  .eq-grid {
+    display: flex; justify-content: space-between; gap: .35rem;
+    padding: .55rem .4rem; border: 1px solid rgba(255,61,206,.3);
+    background: rgba(255,61,206,.04);
+  }
+  .eq-cell { display: flex; flex-direction: column; align-items: center; width: 18%; gap: .25rem; }
+  .eq-cell label { font-size: .62rem; color: var(--magenta); }
+  .eq-cell span { font-size: .62rem; color: var(--cyan); }
+  .eq-cell input[type=range] {
+    writing-mode: vertical-lr; direction: rtl; width: 18px; height: 72px;
+    accent-color: var(--phosphor); cursor: pointer;
+  }
+
+  .setlist-box {
+    flex: 1; min-height: 8rem; display: flex; flex-direction: column;
+    border: 1px solid rgba(77,232,255,.35); background: #030208; padding: .55rem .65rem;
+  }
+  .setlist-box .panel-h { border-color: rgba(77,232,255,.3); color: var(--cyan); }
+  .set-jumps { display: flex; flex-wrap: wrap; gap: .3rem; margin: .15rem 0 .4rem; min-height: 0; }
+  .set-jumps:empty { display: none; }
+  .set-jump {
+    font-family: var(--mono); font-size: .62rem; letter-spacing: .08em;
+    text-transform: uppercase; background: transparent; color: var(--amber);
+    border: 1px solid rgba(255,210,74,.4); padding: .22rem .45rem; cursor: pointer;
+    transition: background .15s var(--ease), color .15s var(--ease);
+  }
+  .set-jump:hover, .set-jump:focus-visible { background: var(--amber); color: #1a1200; outline: none; }
+  .set-jump.active { background: rgba(255,210,74,.2); color: var(--amber); border-color: var(--amber); }
+  .setlist-scroller {
+    flex: 1; overflow-y: auto; font-size: .78rem; color: var(--text); line-height: 1.55;
+    scrollbar-width: thin; scrollbar-color: var(--magenta) #05030a;
+  }
+  .song {
+    display: flex; gap: .55rem; align-items: center; width: 100%; text-align: left;
+    background: transparent; border: 0; border-bottom: 1px dotted rgba(255,255,255,.08);
+    color: inherit; font: inherit; padding: .35rem .3rem; cursor: pointer;
+    transition: background .15s var(--ease), color .15s var(--ease);
+  }
+  .song:hover, .song:focus-visible { background: rgba(77,232,255,.1); color: var(--cyan); outline: none; }
+  .song .n { color: var(--phosphor-dim); min-width: 2ch; }
+  .song .cue {
+    font-size: .58rem; letter-spacing: .08em; color: var(--amber);
+    border: 1px solid rgba(255,210,74,.35); padding: .05rem .28rem;
+    opacity: 0; transition: opacity .15s var(--ease);
+  }
+  .song:hover .cue, .song:focus-visible .cue, .song.playing .cue { opacity: 1; }
+  .song .title { flex: 1; min-width: 0; }
+  .song.playing { color: var(--cyan); background: rgba(77,232,255,.08); }
+  .song.playing .cue { color: var(--cyan); border-color: rgba(77,232,255,.45); }
+  .empty { color: var(--muted); padding: .4rem 0; }
+
+  .show-bar { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .chip {
+    font-family: var(--mono); font-size: .62rem; letter-spacing: .04em;
+    background: transparent; color: var(--phosphor-dim);
+    border: 1px solid rgba(93,255,138,.25); padding: .15rem .4rem; cursor: pointer;
+  }
+  .chip:hover, .chip:focus-visible { color: var(--cyan); border-color: rgba(77,232,255,.5); outline: none; }
+  .chip.active { background: rgba(93,255,138,.15); color: var(--phosphor); border-color: var(--phosphor); }
+
+  .hub-panel {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    background: rgba(10,7,20,.85); border: 1px solid rgba(93,255,138,.28);
+    padding: .65rem .7rem; gap: .65rem;
+  }
+  .manifesto, .specs {
+    font-size: .8rem; line-height: 1.65; color: var(--cyan); white-space: pre-wrap;
+  }
+  .specs { color: var(--phosphor-dim); }
+  .manual-body {
+    font-size: .78rem; line-height: 1.55; color: var(--text);
+    white-space: pre-wrap; max-height: 100%; overflow: auto;
+  }
+
+  .statusbar {
+    display: flex; flex-wrap: wrap; justify-content: space-between;
+    gap: .4rem 1rem; padding: .4rem .9rem;
+    border-top: 1px solid rgba(93,255,138,.2);
+    font-size: .62rem; color: var(--muted); background: rgba(0,0,0,.35);
+  }
+  .statusbar kbd { font: inherit; color: var(--cyan); border: 1px solid rgba(77,232,255,.25); padding: 0 .22rem; margin: 0 .08rem; }
+
+  .toast {
+    position: absolute; right: .9rem; bottom: 2.2rem; z-index: 40;
+    font-size: .72rem; padding: .4rem .65rem;
+    background: rgba(10,40,24,.95); border: 1px solid var(--phosphor); color: var(--text);
+    opacity: 0; transform: translateY(8px); pointer-events: none;
+    transition: opacity .25s var(--ease), transform .25s var(--ease);
+  }
+  .toast.show { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tube, .tab-pane.active { animation: none; }
+    .tape, .toast { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <div id="cybercat-deck-container">
+    <div class="chassis">
+    <div class="tube" role="application" aria-label="CyberCat Generic audio deck">
+      <span id="ini-badge" class="ini-stamp" hidden title="iNi provenance (self-attested)" aria-label="iNi provenance"><span class="ini-i">i</span><span class="ini-n">N</span><span class="ini-i">i</span></span>
+
+      <header class="topbar">
+        <a href="../index.html" title="Back to 0?0 root">← 0?0 ROOT</a>
+        <span class="brand" id="brand">CYBERCAT GENERIC</span>
+        <span class="path" id="path">STANDALONE · GENERIC DECK</span>
+        <span class="clock" id="live-clock">00:00:00</span>
+      </header>
+
+      <div class="workspace">
+        <section class="deck-col" id="deck-col">
+          <div class="panel">
+            <div class="panel-h">
+              <span>MASTER AUDIO DECK</span>
+              <span class="tag" id="source-tag">IDLE</span>
+            </div>
+            <div class="now-playing" id="now-playing">
+              <span class="idle">No Track Loaded</span>
+            </div>
+            <div class="time-row">
+              <span class="tick" id="track-counter">Tape <b>0 / 0</b></span>
+              <span class="tick"><b id="time-current">00:00</b> / <b id="time-total">00:00</b></span>
+            </div>
+            <audio id="main-player" controls crossorigin="anonymous"></audio>
+            <div class="vol-row">
+              <label for="volume">VOL</label>
+              <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+              <span id="vol-label">100%</span>
+            </div>
+            <div class="source-bar">
+              <div class="source-actions">
+                <button type="button" class="ghost-btn" id="btn-play">Play</button>
+                <button type="button" class="ghost-btn" id="btn-next">Next &gt;</button>
+                <button type="button" class="ghost-btn" id="btn-prev">&lt; Prev</button>
+              </div>
+              <span class="source-meta" id="source-meta">No tape loaded</span>
+              <button type="button" class="ripple-btn" id="btn-ripple" title="Join the herd — synchronized setlist ripple">
+                <span class="ripple-rings" aria-hidden="true"></span>
+                <span class="ripple-label">Ripple</span>
+              </button>
+            </div>
+            <div class="panel-h" style="margin-top:.15rem; border:none; padding:0;"><span>5-BAND ANALOG EQ</span></div>
+            <div class="eq-grid" aria-label="Equalizer">
+              <div class="eq-cell"><label for="eq-60">60Hz</label><input type="range" id="eq-60" min="-12" max="12" value="0" step="1"><span id="v-60">0dB</span></div>
+              <div class="eq-cell"><label for="eq-230">230Hz</label><input type="range" id="eq-230" min="-12" max="12" value="0" step="1"><span id="v-230">0dB</span></div>
+              <div class="eq-cell"><label for="eq-910">910Hz</label><input type="range" id="eq-910" min="-12" max="12" value="0" step="1"><span id="v-910">0dB</span></div>
+              <div class="eq-cell"><label for="eq-4k">4kHz</label><input type="range" id="eq-4k" min="-12" max="12" value="0" step="1"><span id="v-4k">0dB</span></div>
+              <div class="eq-cell"><label for="eq-14k">14kHz</label><input type="range" id="eq-14k" min="-12" max="12" value="0" step="1"><span id="v-14k">0dB</span></div>
+            </div>
+          </div>
+
+          <div class="panel" id="shows-panel" hidden>
+            <div class="panel-h"><span>ARCHIVE SHOWS</span><span class="tag" id="shows-count">0</span></div>
+            <div class="show-bar" id="show-bar" aria-label="Available shows"></div>
+          </div>
+
+          <div class="setlist-box">
+            <div class="panel-h">
+              <span>SETLIST MONITOR</span>
+              <span class="tag" id="setlist-count">0 TRACKS</span>
+            </div>
+            <div class="set-jumps" id="set-jumps" aria-label="Jump to set"></div>
+            <div id="live-setlist-output" class="setlist-scroller" aria-live="polite">
+              <div class="empty">Awaiting tape engage…</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="hub-col">
+          <div class="hub-panel">
+            <div class="panel-h"><span>ARCHIVE LOG</span></div>
+            <pre class="manifesto" id="archive-log">Loading…</pre>
+            <div class="panel-h"><span>SYSTEM CONFIG</span></div>
+            <pre class="specs" id="specs-block"></pre>
+            <div class="panel-h"><span>DECK MANUAL</span></div>
+            <div class="manual-body" id="manual-body"></div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="statusbar">
+        <span><kbd>Enter</kbd> play/pause · <kbd>n</kbd>/<kbd>p</kbd> tracks · <kbd>r</kbd> ripple · <kbd>Space</kbd> play/pause</span>
+        <span id="catalog-foot">Generic deck · no tape loaded</span>
+      </footer>
+      <div class="toast" id="toast" role="status"></div>
+    </div>
+    </div>
+  </div>
+
+<script>
+  /* =====================================================================
+   * CYBERCAT DECK — INSTANCE CONFIGURATION (TEMPLATE TOKENS)
+   * ---------------------------------------------------------------------
+   * The single, centralized configuration block for an archive instance.
+   * The {{TOKEN}} placeholders below are the sed/bash hooks used by the
+   * save-sed-to-rave workflow to instantiate a new isolated deck:
+   *
+   *   ARCHIVE_ID         → slug (storage scope), e.g. MY_TAPE
+   *   ARCHIVE_TITLE      → human title, e.g. My Tape Archive
+   *   ARCHIVE_MODE       → "STANDALONE" | "LIVE" | "CATALOG"
+   *   RIPPLE_ENABLED     → true | false   (default false = OFF)
+   *   SHOW_MANIFEST_URL  → "" or a remote shows-catalog JSON endpoint
+   *                       (hybrid: fetched at boot; offline → inline seed)
+   *   INITIAL_TRACKS     → inline track objects { title, url, duration }
+   *
+   * All runtime keys (localStorage / sessionStorage / IndexedDB) and any
+   * herd-sync channel derive from ARCHIVE_ID, so a generic instance can
+   * never collide with (or be heard by) CyberCat-Sunflower or any other
+   * archive. Sunflower is intentionally untouched by this template.
+   * ===================================================================== */
+
+  const ARCHIVE_CONFIG = {
+    archiveId: "MY_TAPE",
+    archiveTitle: "My Tape Archive",
+    mode: "STANDALONE",
+    rippleSyncEnabled: false /* {{RIPPLE_ENABLED}} */,
+    manifestUrl: "api/my_tape/shows.json",
+    shows: [
+      /* Optional show catalog: { id, title, date, tracks: [ {title,url,duration} ] } */
+    ],
+    setlist: [
+      { title:"one", url:"audio/one.mp3", duration:8 },{ title:"two", url:"audio/two.mp3", duration:12 }
+    ]
+  };
+
+  /* Seeded track pack — alias of the setlist branch above. */
+  const INITIAL_TRACKS = ARCHIVE_CONFIG.setlist;
+
+  /* Storage scoping — the single gate for localStorage / sessionStorage /
+   * IndexedDB keys. The prefix constant keeps instances isolated and makes
+   * every key greppable (uxu_deck_<ARCHIVE_ID>_<key>). */
+  const DECK_STORAGE_PREFIX = 'uxu_deck_';
+  const STORAGE_KEY = (key) => `${DECK_STORAGE_PREFIX}${ARCHIVE_CONFIG.archiveId}_${key}`;
+
+  /* Anything that leaves this page (API calls, herd-sync channel id, room
+   * names) must derive from ARCHIVE_ID so a generic instance can never
+   * broadcast on — or receive from — another archive's channel. */
+  const RIPPLE_HERD_CHANNEL = `${ARCHIVE_CONFIG.archiveId.toLowerCase()}:herd-sync`;
+
+  /* Copy-paste spawn example (save-sed-to-rave style). Run against a copy
+   * of this file to instantiate a new archive; unchanged lines stay intact. */
+  const SPAWN_SED = String.raw`sed -i '' \
+    -e 's/MY_TAPE/MY_TAPE/g' \
+    -e 's/My Tape Archive/My Tape Archive/g' \
+    -e 's/STANDALONE/STANDALONE/g' \
+    -e 's@false /\* {{RIPPLE_ENABLED}} \*/@true@' \
+    -e 's@api/my_tape/shows.json@api/my_tape/shows.json@' \
+    -e 's@/\* {{INITIAL_TRACKS}} \*/@{ title:"Example One", url:"audio/one.mp3", duration:240 },{ title:"Example Two", url:"audio/two.mp3", duration:210 }@' \
+    archives/CyberCat-Generic/index.html`;
+
+  const player = document.getElementById('main-player');
+  const nowPlaying = document.getElementById('now-playing');
+  const sourceTag = document.getElementById('source-tag');
+  const sourceMeta = document.getElementById('source-meta');
+  const setlistOut = document.getElementById('live-setlist-output');
+  const setlistCount = document.getElementById('setlist-count');
+  const setJumps = document.getElementById('set-jumps');
+  const trackCounter = document.getElementById('track-counter');
+  const timeCurrent = document.getElementById('time-current');
+  const timeTotal = document.getElementById('time-total');
+  const toastEl = document.getElementById('toast');
+  const btnPlay = document.getElementById('btn-play');
+  const btnNext = document.getElementById('btn-next');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnRipple = document.getElementById('btn-ripple');
+  const deckCol = document.getElementById('deck-col');
+  const volumeSlider = document.getElementById('volume');
+  const volLabel = document.getElementById('vol-label');
+  const showBar = document.getElementById('show-bar');
+  const showsPanel = document.getElementById('shows-panel');
+  const showsCount = document.getElementById('shows-count');
+  const archiveLog = document.getElementById('archive-log');
+  const specsBlock = document.getElementById('specs-block');
+  const manualBody = document.getElementById('manual-body');
+  const brand = document.getElementById('brand');
+  const path = document.getElementById('path');
+  const catalogFoot = document.getElementById('catalog-foot');
+
+  const RIPPLE_EPOCH = Date.parse('2026-01-01T00:00:00Z');
+  const RIPPLE_WINDOW_MS = 13 * 24 * 60 * 60 * 1000;
+  const RIPPLE_DEFAULT_SHOW_MS = 2.5 * 60 * 60 * 1000;
+  const RIPPLE_DEFAULT_TRACK_SEC = 420;
+
+  let playlist = [];
+  let trackIndex = -1;
+  let activeShowId = null;
+  let rippleActive = false;
+  let rippleSyncTimer = null;
+  let audioCtx = null;
+  let filters = [];
+  let eqReady = false;
+  let toastTimer = null;
+  let pendingSeek = -1;
+  let lastSaveAt = 0;
+  let manifestState = 'off';
+
+  /* ------------------------------------------------------------------ */
+  /* Boot / identity                                                     */
+  /* ------------------------------------------------------------------ */
+
+  function boot() {
+    brand.textContent = ARCHIVE_CONFIG.archiveId.toUpperCase().replace(/_/g, ' ');
+    path.textContent = `${ARCHIVE_CONFIG.mode} · ${ARCHIVE_CONFIG.archiveTitle.toUpperCase()}`;
+    document.title = `${ARCHIVE_CONFIG.archiveTitle} · CyberCat Deck [${ARCHIVE_CONFIG.archiveId}]`;
+    catalogFoot.textContent = `${ARCHIVE_CONFIG.archiveId} · ${ARCHIVE_CONFIG.mode}`;
+
+    renderShows();
+    renderCatalogInfo();
+    renderSpecs();
+    renderManual();
+
+    const savedVol = readStorage('volume');
+    if (savedVol != null) {
+      const v = Number(savedVol);
+      if (Number.isFinite(v) && v >= 0 && v <= 1) {
+        player.volume = v;
+        volumeSlider.value = String(v);
+        volLabel.textContent = `${Math.round(v * 100)}%`;
+      }
+    }
+
+    setInterval(() => {
+      document.getElementById('live-clock').textContent = new Date().toTimeString().slice(0, 8);
+    }, 1000);
+
+    if (!ARCHIVE_CONFIG.manifestUrl) seedFallback();
+    renderCatalogInfo();
+    commenceManifestLoad();
+
+    btnPlay.addEventListener('click', togglePlay);
+    btnNext.addEventListener('click', nextTrack);
+    btnPrev.addEventListener('click', prevTrack);
+    btnRipple.addEventListener('click', toggleRipple);
+    volumeSlider.addEventListener('input', (e) => {
+      player.volume = Number(e.target.value);
+      volLabel.textContent = `${Math.round(player.volume * 100)}%`;
+      saveStorage('volume', String(player.volume));
+    });
+    player.addEventListener('volumechange', () => {
+      const v = player.volume;
+      volumeSlider.value = String(v);
+      volLabel.textContent = `${Math.round(v * 100)}%`;
+      saveStorage('volume', String(v));
+    });
+
+    if (audioCtxReadyForRippleRestore()) startRipple();
+  }
+
+  function audioCtxReadyForRippleRestore() {
+    return ARCHIVE_CONFIG.rippleSyncEnabled && readStorage('ripple') === '1';
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Storage helpers (namespaced, never shared across archives)          */
+  /* ------------------------------------------------------------------ */
+
+  function readStorage(key) {
+    try {
+      return globalThis.localStorage.getItem(STORAGE_KEY(key));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function saveStorage(key, value) {
+    try {
+      globalThis.localStorage.setItem(STORAGE_KEY(key), value);
+    } catch (err) {
+      /* storage unavailable — non-fatal */
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Catalog / show loading                                              */
+  /* ------------------------------------------------------------------ */
+
+  function renderShows() {
+    const shows = Array.isArray(ARCHIVE_CONFIG.shows) ? ARCHIVE_CONFIG.shows : [];
+    showsPanel.hidden = shows.length === 0;
+    showsCount.textContent = String(shows.length);
+    showBar.innerHTML = '';
+    shows.forEach((show, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip';
+      btn.dataset.showId = String(show.id ?? idx);
+      btn.textContent = `${show.date || 'SHOW'} · ${show.title || `Tape ${idx + 1}`}`;
+      btn.setAttribute('aria-label', `Engage ${show.title || 'show ' + (idx + 1)}`);
+      btn.addEventListener('click', () => engageShow(show));
+      showBar.appendChild(btn);
+    });
+    markActiveShow(activeShowId);
+  }
+
+  function engageShow(show) {
+    if (!show || !Array.isArray(show.tracks) || !show.tracks.length) {
+      toast('Show has no playable tracks');
+      return;
+    }
+    if (rippleActive) stopRipple();
+    loadTracks(show.tracks, show.id || 'SHOW', show.title || 'Untitled Tape');
+    const shows = Array.isArray(ARCHIVE_CONFIG.shows) ? ARCHIVE_CONFIG.shows : [];
+    markActiveShow(show.id ?? shows.indexOf(show));
+  }
+
+  function markActiveShow(showId) {
+    Array.from(showBar.children).forEach((chip) => {
+      chip.classList.toggle('active', showId != null && chip.dataset.showId === String(showId));
+    });
+  }
+
+  /* Hybrid manifest model: when SHOW_MANIFEST_URL is configured, the deck
+   * fetches the remote catalog at boot and uses it; on any failure it falls
+   * back to the inline INITIAL_TRACKS seed. No unhandled rejection, no stall. */
+  async function fetchManifest(url) {
+    const res = await fetch(url, { headers: { 'accept': 'application/json' } });
+    if (!res.ok) throw new Error('manifest HTTP ' + res.status);
+    return await res.json();
+  }
+
+  function applyManifest(data) {
+    const shows = Array.isArray(data && data.shows)
+      ? data.shows.filter((s) => s && Array.isArray(s.tracks) && s.tracks.length)
+      : [];
+    const tracks = Array.isArray(data && data.tracks)
+      ? data.tracks.filter((t) => t && (t.url || t.src))
+      : [];
+    if (shows.length) {
+      ARCHIVE_CONFIG.shows = shows;
+      renderShows();
+      loadTracks(shows[0].tracks, shows[0].id || 'SHOW', shows[0].title || 'Manifest show', false);
+      return true;
+    }
+    if (tracks.length) {
+      loadTracks(tracks, 'MANIFEST', 'Manifest tape', false);
+      return true;
+    }
+    return false;
+  }
+
+  function seedFallback() {
+    if (playlist.length) return;
+    if (INITIAL_TRACKS.length) {
+      loadTracks(INITIAL_TRACKS, 'INLINE', 'Inline seed tape', true);
+    } else if (Array.isArray(ARCHIVE_CONFIG.setlist) && ARCHIVE_CONFIG.setlist.length) {
+      loadTracks(ARCHIVE_CONFIG.setlist, 'CONFIG', ARCHIVE_CONFIG.archiveTitle, false);
+    }
+  }
+
+  function commenceManifestLoad() {
+    if (!ARCHIVE_CONFIG.manifestUrl) return;
+    manifestState = 'fetching…';
+    renderCatalogInfo();
+    renderSpecs();
+    fetchManifest(ARCHIVE_CONFIG.manifestUrl)
+      .then((data) => {
+        const applied = applyManifest(data);
+        manifestState = applied ? 'applied — remote catalog' : 'empty — inline fallback';
+        renderCatalogInfo();
+        renderSpecs();
+        if (!applied) seedFallback();
+      })
+      .catch(() => {
+        manifestState = 'offline — inline fallback';
+        renderCatalogInfo();
+        renderSpecs();
+        seedFallback();
+      });
+  }
+
+  function loadTracks(tracks, showId, label, autoplay = false) {
+    playlist = (tracks || []).filter((t) => t && (t.url || t.src));
+    if (!playlist.length) {
+      setlistOut.innerHTML = '<div class="empty">No playable tracks on this transfer.</div>';
+      setlistCount.textContent = '0 TRACKS';
+      sourceMeta.textContent = 'No tape loaded';
+      nowPlaying.innerHTML = '<span class="idle">No Track Loaded</span>';
+      trackCounter.innerHTML = 'Tape <b>0 / 0</b>';
+      timeCurrent.textContent = '00:00';
+      timeTotal.textContent = '00:00';
+      sourceTag.textContent = 'IDLE';
+      return;
+    }
+    activeShowId = showId;
+    trackIndex = -1;
+    markActiveShow(showId);
+    sourceMeta.textContent = `${label || 'Tape'} · ${playlist.length} tracks`;
+    playTrack(0);
+    if (autoplay) {
+      player.play().catch(() => toast('Press play on the deck'));
+    }
+    paintNowPlaying();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Transport                                                           */
+  /* ------------------------------------------------------------------ */
+
+  function togglePlay() {
+    if (!playlist.length) {
+      toast('No tape loaded');
+      return;
+    }
+    if (player.paused) player.play().catch(() => toast('Press play on the deck'));
+    else player.pause();
+  }
+
+  function playTrack(idx) {
+    if (!playlist.length || idx < 0 || idx >= playlist.length) return;
+    trackIndex = idx;
+    const track = playlist[idx];
+    player.src = track.url || track.src;
+    player.load();
+    pendingSeek = -1;
+    player.play().catch(() => toast('Press play on the deck'));
+    paintNowPlaying();
+    renderSetlist();
+    const row = setlistOut.querySelector(`[data-idx="${idx}"]`);
+    if (row) row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    saveLastPlay();
+  }
+
+  function nextTrack() {
+    if (playlist.length && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
+    else if (!playlist.length) toast('No tape loaded');
+  }
+
+  function prevTrack() {
+    if (playlist.length && trackIndex > 0) playTrack(trackIndex - 1);
+    else if (!playlist.length) toast('No tape loaded');
+  }
+
+  function paintNowPlaying() {
+    if (!playlist.length || trackIndex < 0) {
+      nowPlaying.innerHTML = '<span class="idle">No Track Loaded</span>';
+      trackCounter.innerHTML = 'Tape <b>0 / 0</b>';
+      return;
+    }
+    const track = playlist[trackIndex];
+    const dest = setJumpDestForIndex(trackIndex);
+    const destBit = dest ? `<span style="color:var(--amber)">${dest}</span> · ` : '';
+    const herdBit = rippleActive ? `<span style="color:var(--magenta)">◎ RIPPLE · HERD</span><br>` : '';
+    nowPlaying.innerHTML =
+      herdBit +
+      `<span style="color:var(--muted)">${activeShowId || 'TAPE'}</span><br>` +
+      `<span style="color:var(--cyan)">▶ ${destBit}${String(trackIndex + 1).padStart(2, '0')} · ${(track.title || '').toUpperCase()}</span>`;
+    trackCounter.innerHTML = `Tape <b>${trackIndex + 1} / ${playlist.length}</b>`;
+  }
+
+  player.addEventListener('play', () => {
+    initEq();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    btnPlay.textContent = 'Pause';
+  });
+  player.addEventListener('pause', () => {
+    btnPlay.textContent = 'Play';
+  });
+  player.addEventListener('timeupdate', () => {
+    const cur = Number(player.currentTime) || 0;
+    const dur = Number(player.duration) || 0;
+    timeCurrent.textContent = fmtTime(cur);
+    timeTotal.textContent = dur > 0 ? fmtTime(dur) : '00:00';
+    const now = Date.now();
+    if (now - lastSaveAt > 4000) {
+      lastSaveAt = now;
+      saveLastPlay();
+    }
+  });
+  player.addEventListener('loadedmetadata', () => {
+    if (pendingSeek >= 0) {
+      player.currentTime = pendingSeek;
+      pendingSeek = -1;
+    }
+  });
+  player.addEventListener('ended', () => {
+    if (rippleActive) {
+      rippleSync(true);
+      return;
+    }
+    if (trackIndex >= 0 && trackIndex < playlist.length - 1) playTrack(trackIndex + 1);
+    else toast('End of tape');
+  });
+  player.addEventListener('error', () => {
+    toast('Stream error — skipping');
+    if (rippleActive) {
+      setTimeout(() => rippleSync(true), 350);
+    } else if (trackIndex >= 0 && trackIndex < playlist.length - 1) {
+      setTimeout(() => playTrack(trackIndex + 1), 350);
+    }
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Setlist rendering + set jumps                                       */
+  /* ------------------------------------------------------------------ */
+
+  function classifyMarker(title) {
+    const t = String(title || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (/^set\s*(1|2|3|i{1,3})\b/.test(t)) {
+      const map = { 1: 'SET I', i: 'SET I', 2: 'SET II', ii: 'SET II', 3: 'SET III', iii: 'SET III' };
+      const key = String(t.match(/^set\s*(1|2|3|i{1,3})/)[1]).toLowerCase();
+      return { kind: 'set', label: map[key] || 'SET' };
+    }
+    if (/^encore\b|^e:\s*/.test(t)) return { kind: 'encore', label: 'ENCORE' };
+    return null;
+  }
+
+  function buildSetJumps(tracks) {
+    const jumps = [];
+    const labels = new Set();
+    tracks.forEach((track, idx) => {
+      const mark = classifyMarker(track.title);
+      if (mark && !labels.has(mark.label)) {
+        labels.add(mark.label);
+        jumps.push({ idx, label: mark.label });
+      }
+    });
+    if (!jumps.length && tracks.length) {
+      jumps.push({ idx: 0, label: 'SET I' });
+    }
+    return jumps;
+  }
+
+  let setJumpsList = [];
+
+  function setJumpDestForIndex(idx) {
+    let dest = null;
+    for (const j of setJumpsList) {
+      if (j.idx <= idx) dest = j.label;
+    }
+    return dest;
+  }
+
+  function renderSetJumps() {
+    setJumps.innerHTML = '';
+    if (setJumpsList.length < 2) return;
+    setJumpsList.forEach((j) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'set-jump' + (trackIndex === j.idx ? ' active' : '');
+      btn.textContent = j.label;
+      btn.title = `Jump to ${j.label} · track ${j.idx + 1}`;
+      btn.addEventListener('click', () => {
+        playTrack(j.idx);
+        toast(`${j.label} · track ${String(j.idx + 1).padStart(2, '0')}`);
+      });
+      setJumps.appendChild(btn);
+    });
+  }
+
+  function renderSetlist() {
+    setlistOut.innerHTML = '';
+    setJumpsList = buildSetJumps(playlist);
+    renderSetJumps();
+    if (!playlist.length) {
+      setlistOut.innerHTML = '<div class="empty">No playable tracks on this transfer.</div>';
+      setlistCount.textContent = '0 TRACKS';
+      return;
+    }
+    setlistCount.textContent = `${playlist.length} TRACKS`;
+    playlist.forEach((track, idx) => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'song' + (idx === trackIndex ? ' playing' : '');
+      row.dataset.idx = String(idx);
+      row.setAttribute('aria-label', `Cue track ${idx + 1}: ${track.title}`);
+      const n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = String(idx + 1).padStart(2, '0');
+      const title = document.createElement('span');
+      title.className = 'title';
+      title.textContent = String(track.title || 'Track').toUpperCase();
+      const cue = document.createElement('span');
+      cue.className = 'cue';
+      cue.textContent = idx === trackIndex ? 'NOW' : 'CUE';
+      row.append(n, title, cue);
+      row.addEventListener('click', () => playTrack(idx));
+      setlistOut.appendChild(row);
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Persistence of last-played position (namespaced per archive)        */
+  /* ------------------------------------------------------------------ */
+
+  function saveLastPlay() {
+    if (!playlist.length || trackIndex < 0) return;
+    saveStorage('last-play', JSON.stringify({
+      show: activeShowId || 'INLINE',
+      idx: trackIndex,
+      t: Math.max(0, Math.round((Number(player.currentTime) || 0) * 10) / 10)
+    }));
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Ripple herd-sync (deterministic; OFF unless configured / toggled)   */
+  /* ------------------------------------------------------------------ */
+
+  function rippleWindowAt(now = Date.now()) {
+    return Math.floor((now - RIPPLE_EPOCH) / RIPPLE_WINDOW_MS);
+  }
+
+  function rippleSeedIndex(seed, len) {
+    if (!len) return 0;
+    let h = (seed >>> 0) ^ 0x9e3779b9;
+    h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+    h = Math.imul(h ^ (h >>> 15), 0x846ca68b);
+    h ^= h >>> 16;
+    return (h >>> 0) % len;
+  }
+
+  function ripplePool() {
+    if (Array.isArray(ARCHIVE_CONFIG.shows) && ARCHIVE_CONFIG.shows.length) {
+      return ARCHIVE_CONFIG.shows.filter((s) => s && Array.isArray(s.tracks) && s.tracks.length);
+    }
+    if (playlist.length) {
+      return [{ id: activeShowId || 'LIVE', title: 'Live setlist', tracks: playlist }];
+    }
+    return [];
+  }
+
+  function rippleShowTotalMs(tracks) {
+    return tracks.reduce((sum, tr) => sum + Math.max(1, (Number(tr.duration) || RIPPLE_DEFAULT_TRACK_SEC)) * 1000, 0);
+  }
+
+  function ripplePosition(now = Date.now()) {
+    const pool = ripplePool();
+    if (!pool.length) return null;
+    const windowId = rippleWindowAt(now);
+    const show = pool[rippleSeedIndex(windowId, pool.length)];
+    const tracks = show.tracks || [];
+    if (!tracks.length) return null;
+    const totalMs = rippleShowTotalMs(tracks);
+    const windowStart = RIPPLE_EPOCH + windowId * RIPPLE_WINDOW_MS;
+    const elapsed = Math.max(0, now - windowStart);
+    const t = elapsed % totalMs;
+    let offset = t;
+    let ti = 0;
+    let seekSec = 0;
+    for (let i = 0; i < tracks.length; i++) {
+      const dur = Math.max(1, (Number(tracks[i].duration) || RIPPLE_DEFAULT_TRACK_SEC)) * 1000;
+      if (offset < dur) {
+        ti = i;
+        seekSec = offset / 1000;
+        break;
+      }
+      offset -= dur;
+    }
+    return { windowId, show, ti, seekSec, totalMs };
+  }
+
+  function rippleApply(pos) {
+    const tracks = pos.show.tracks || [];
+    if (tracks !== playlist) {
+      loadTracks(tracks, pos.show.id || 'RIPPLE', pos.show.title || 'Herd tape');
+    }
+    if (trackIndex !== pos.ti) {
+      playTrack(pos.ti);
+      pendingSeek = pos.seekSec;
+    } else {
+      const drift = Math.abs((player.currentTime || 0) - pos.seekSec);
+      if (drift > 3) {
+        if (player.readyState >= 1) player.currentTime = pos.seekSec;
+        else pendingSeek = pos.seekSec;
+      }
+    }
+  }
+
+  function rippleSync(force = false) {
+    if (!rippleActive || !playlist.length) return;
+    const pos = ripplePosition();
+    if (!pos) return;
+    try {
+      rippleApply(pos);
+      if (force) toast(`Ripple · ${pos.show.title || 'herd'} · track ${String(pos.ti + 1).padStart(2, '0')}`);
+    } catch (err) {
+      toast('ripple sync failed');
+    }
+  }
+
+  function startRipple() {
+    if (!playlist.length) {
+      toast('Nothing to ripple — load a tape');
+      return;
+    }
+    rippleActive = true;
+    btnRipple.classList.add('is-live');
+    deckCol.classList.add('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSync(true);
+    rippleSyncTimer = setInterval(() => rippleSync(false), 20000);
+    saveStorage('ripple', '1');
+  }
+
+  function stopRipple() {
+    if (!rippleActive) return;
+    rippleActive = false;
+    btnRipple.classList.remove('is-live');
+    deckCol.classList.remove('ripple-on');
+    clearInterval(rippleSyncTimer);
+    rippleSyncTimer = null;
+    saveStorage('ripple', '0');
+  }
+
+  function toggleRipple() {
+    if (rippleActive) {
+      stopRipple();
+      toast('Ripple off — manual deck');
+      return;
+    }
+    startRipple();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* EQ                                                                  */
+  /* ------------------------------------------------------------------ */
+
+  function initEq() {
+    if (eqReady) return;
+    eqReady = true;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaElementSource(player);
+      const freqs = [60, 230, 910, 4000, 14000];
+      filters = freqs.map((freq, idx) => {
+        const f = audioCtx.createBiquadFilter();
+        f.type = idx === 0 ? 'lowshelf' : idx === freqs.length - 1 ? 'highshelf' : 'peaking';
+        f.frequency.value = freq;
+        f.gain.value = 0;
+        return f;
+      });
+      source.connect(filters[0]);
+      for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
+      filters[filters.length - 1].connect(audioCtx.destination);
+      const saved = readStorage('eq');
+      let values = saved ? JSON.parse(saved) : null;
+      if (!Array.isArray(values) || values.length !== 5) values = [0, 0, 0, 0, 0];
+      ['60', '230', '910', '4k', '14k'].forEach((id, i) => {
+        const slider = document.getElementById('eq-' + id);
+        const label = document.getElementById('v-' + id);
+        filters[i].gain.setValueAtTime(values[i], audioCtx.currentTime);
+        slider.value = String(values[i]);
+        label.textContent = `${values[i] > 0 ? '+' : ''}${values[i]}dB`;
+        slider.addEventListener('input', (e) => {
+          const v = Number(e.target.value);
+          filters[i].gain.setValueAtTime(v, audioCtx.currentTime);
+          label.textContent = `${v > 0 ? '+' : ''}${v}dB`;
+          const next = [0, 1, 2, 3, 4].map((k) => Number(document.getElementById('eq-' + ['60', '230', '910', '4k', '14k'][k]).value));
+          saveStorage('eq', JSON.stringify(next));
+        });
+      });
+    } catch (err) {
+      eqReady = false;
+      toast('EQ offline — AudioContext unavailable');
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Info readouts                                                       */
+  /* ------------------------------------------------------------------ */
+
+  function renderCatalogInfo() {
+    const trackCount = Array.isArray(ARCHIVE_CONFIG.shows) && ARCHIVE_CONFIG.shows.length
+      ? ARCHIVE_CONFIG.shows.reduce((n, s) => n + (Array.isArray(s.tracks) ? s.tracks.length : 0), 0)
+      : playlist.length;
+    archiveLog.textContent =
+      [
+        '--- CYBERCAT GENERIC · AUDIO ARCHIVE ---',
+        '',
+        `HEADER   : ${ARCHIVE_CONFIG.archiveTitle}`,
+        `ARCHIVE  : ${ARCHIVE_CONFIG.archiveId}`,
+        `MODE     : ${ARCHIVE_CONFIG.mode}`,
+        `RIPPLE   : ${ARCHIVE_CONFIG.rippleSyncEnabled ? 'ENABLED (default)' : 'OFF (manual join)'}`,
+        `HERD     : ${RIPPLE_HERD_CHANNEL}`,
+        `MANIFEST : ${ARCHIVE_CONFIG.manifestUrl || 'none — inline seed only'} (${manifestState})`,
+        `SHOWS    : ${Array.isArray(ARCHIVE_CONFIG.shows) ? ARCHIVE_CONFIG.shows.length : 0}`,
+        `TRACKS   : ${trackCount}`,
+        '',
+        'Engage a tape from the setlist or shows panel. Cue any song.',
+        'Tape + track on the deck is enough to look an audio source up.',
+      ].join('\n');
+  }
+
+  function renderSpecs() {
+    specsBlock.textContent =
+`===================================================================
+uXu TUBE PLAYER · CYBERCAT GENERIC
+===================================================================
+[+] DECK      : engage a tape, cue songs from the setlist
+[+] EQ        : 5-band analog (60/230/910/4k/14k) — persisted
+[+] VOLUME    : slider persisted per-archive
+[+] RIPPLE    : optional herd-sync — OFF by default; press R to join
+[+] HERD      : channel "${RIPPLE_HERD_CHANNEL}"
+[+] MANIFEST  : ${ARCHIVE_CONFIG.manifestUrl || 'inline seed only'} · ${manifestState}
+[+] STORAGE   : isolated under ${DECK_STORAGE_PREFIX}${ARCHIVE_CONFIG.archiveId}_
+[+] PARENT    : 0?0.uXu.0000 → ${ARCHIVE_CONFIG.archiveId}.uXu.{{next}}
+-------------------------------------------------------------------
+Ripple is a shared radio clock, not a popularity vote you control locally.`;
+  }
+
+  function renderManual() {
+    manualBody.textContent =
+`DECK MANUAL
+
+Enter / Space ..... play / pause
+n / p ............. next / previous track
+r ................. toggle Ripple herd-sync
+click a title ..... cue that track
+VOL slider ........ persist volume per archive
+
+Clone this folder and parameterize via the sed tokens at the top
+( ARCHIVE_ID , ARCHIVE_TITLE , ARCHIVE_MODE , RIPPLE_ENABLED ,
+  INITIAL_TRACKS ).
+
+Streams: drop your own audio files or remote URLs into shows[].
+Manifest: set SHOW_MANIFEST_URL to a shows.json endpoint ({ tracks:[], shows:[] });
+the deck fetches it at boot and falls back to the inline seed when offline.`;
+  }
+
+  function fmtTime(sec) {
+    if (!Number.isFinite(sec) || sec < 0) sec = 0;
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Keyboard                                                            */
+  /* ------------------------------------------------------------------ */
+
+  document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    const typing = e.target && e.target.matches && e.target.matches('input,select,textarea');
+    if (typing) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      togglePlay();
+    } else if (e.key === 'n' || e.key === 'p') {
+      e.preventDefault();
+      if (e.key === 'n') nextTrack();
+      else prevTrack();
+    } else if (e.key === 'r') {
+      e.preventDefault();
+      toggleRipple();
+    }
+  });
+
+  /* ------------------------------------------------------------------ */
+  /* Startup                                                             */
+  /* ------------------------------------------------------------------ */
+
+  /* do NOT auto-resume playback at boot; decks open at track 0 / 0.
+     last-play is persisted per-archive for generator wiring if wanted. */
+
+  boot();
+</script>
+</body>
+</html>

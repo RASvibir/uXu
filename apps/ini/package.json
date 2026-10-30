@@ -1,0 +1,19 @@
+{
+  "name": "ini-runtime",
+  "private": true,
+  "version": "0.0.1",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@prisma/client": "^7.8.0",
+    "prisma": "^7.8.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.110.0"
+  }
+}
